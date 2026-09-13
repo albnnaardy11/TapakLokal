@@ -1,48 +1,200 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $dbConnected = false;
-    $dbError = null;
-    try {
-        DB::connection()->getPdo();
-        $dbConnected = true;
-    } catch (Throwable $e) {
-        $dbError = $e->getMessage();
-    }
-
-    $redisConnected = false;
-    $redisError = null;
-    try {
-        Redis::connection()->ping();
-        $redisConnected = true;
-    } catch (Throwable $e) {
-        $redisError = $e->getMessage();
-    }
-
     return Inertia::render('Welcome', [
         'appName' => config('app.name', 'TapakLokal'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-        'dbStatus' => [
-            'connected' => $dbConnected,
-            'driver' => config('database.default'),
-            'database' => config('database.connections.'.config('database.default').'.database'),
-            'host' => config('database.connections.'.config('database.default').'.host'),
-            'port' => config('database.connections.'.config('database.default').'.port'),
-            'error' => $dbError,
+        'user' => [
+            'name' => 'albnnaardy',
+            'handle' => '@petualangnyasar',
+            'points' => 0,
+            'avatar' => null,
+            'tier' => 'Petualang Perintis',
         ],
-        'redisStatus' => [
-            'connected' => $redisConnected,
-            'client' => config('database.redis.client'),
-            'host' => config('database.redis.default.host'),
-            'port' => config('database.redis.default.port'),
-            'error' => $redisError,
+        'tripCategories' => [
+            'Semua Kategori',
+            'Open Trip Alam & Gunung',
+            'Island Hopping & Bahari',
+            'Budaya & Desa Adat',
+            'Kuliner Trail Otentik',
+            'Photography Expedition',
+            'Healing & Wellness',
+        ],
+        'featuredTrips' => [
+            [
+                'id' => 1,
+                'title' => 'Bromo Midnight Sunrise & Savana Pasir Berbisik',
+                'location' => 'Probolinggo - Malang, Jawa Timur',
+                'category' => 'Open Trip Alam & Gunung',
+                'duration' => '2H 1M',
+                'price' => 385000,
+                'rating' => 4.9,
+                'review_count' => 142,
+                'slots_left' => 4,
+                'quota' => 14,
+                'departure_date' => '20 Sept 2026',
+                'image' => 'https://images.unsplash.com/photo-1605649487212-47bdab064df8?auto=format&fit=crop&w=800&q=80',
+                'akamsi' => [
+                    'name' => 'Cak Dimas Bromo',
+                    'badge' => 'Akamsi Lokal Terverifikasi',
+                    'experience' => '8 Tahun Pemandu Tengger',
+                ],
+                'highlights' => ['Penanjakan 1', 'Kawah Bromo', 'Bukit Teletubbies'],
+            ],
+            [
+                'id' => 2,
+                'title' => 'Liveaboard Komodo, Padar & Pink Beach Hidden Cove',
+                'location' => 'Labuan Bajo, Flores, NTT',
+                'category' => 'Island Hopping & Bahari',
+                'duration' => '3H 2M',
+                'price' => 2450000,
+                'rating' => 5.0,
+                'review_count' => 98,
+                'slots_left' => 3,
+                'quota' => 12,
+                'departure_date' => '25 Sept 2026',
+                'image' => 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80',
+                'akamsi' => [
+                    'name' => 'Bang Mansur Bajo',
+                    'badge' => 'Akamsi Lokal Terverifikasi',
+                    'experience' => 'Penyelam & Pelaut Lokal',
+                ],
+                'highlights' => ['Trekking Pulau Padar', 'Manta Point', 'Sunset Kalong'],
+            ],
+            [
+                'id' => 3,
+                'title' => 'Eksotisme Budaya Toraja & Rammang-Rammang Karst',
+                'location' => 'Tana Toraja & Maros, Sulawesi Selatan',
+                'category' => 'Budaya & Desa Adat',
+                'duration' => '4H 3M',
+                'price' => 1750000,
+                'rating' => 4.8,
+                'review_count' => 64,
+                'slots_left' => 6,
+                'quota' => 12,
+                'departure_date' => '02 Okt 2026',
+                'image' => 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80',
+                'akamsi' => [
+                    'name' => 'Kak Pongtorra',
+                    'badge' => 'Akamsi Lokal Terverifikasi',
+                    'experience' => 'Tetua Adat Kete Kesu',
+                ],
+                'highlights' => ['Londa Cave', 'Kete Kesu', 'Gua Karst Purba'],
+            ],
+            [
+                'id' => 4,
+                'title' => 'Tumpak Sewu Waterfall & Kawah Ijen Blue Fire Experience',
+                'location' => 'Lumajang & Banyuwangi, Jawa Timur',
+                'category' => 'Open Trip Alam & Gunung',
+                'duration' => '3H 2M',
+                'price' => 890000,
+                'rating' => 4.9,
+                'review_count' => 110,
+                'slots_left' => 2,
+                'quota' => 10,
+                'departure_date' => '09 Okt 2026',
+                'image' => 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=800&q=80',
+                'akamsi' => [
+                    'name' => 'Cak Ilham Osing',
+                    'badge' => 'Akamsi Lokal Terverifikasi',
+                    'experience' => 'Penambang & Ranger Ijen',
+                ],
+                'highlights' => ['Coban Sewu', 'Blue Fire Fenomena', 'Kawah Asam'],
+            ],
+        ],
+        'poKulinerItems' => [
+            [
+                'id' => 1,
+                'title' => 'Bakpia Kukus Tugu Jogja Premium Box (Isi 10)',
+                'origin' => 'Yogyakarta, D.I. Yogyakarta',
+                'price' => 48000,
+                'rating' => 4.9,
+                'sold' => '1.4k+ dipesan',
+                'close_date' => 'Tutup PO 2 hari lagi',
+                'image' => 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80',
+                'partner' => 'UMKM Dapur Malioboro',
+                'badge' => 'Oleh-Oleh Terfavorit',
+            ],
+            [
+                'id' => 2,
+                'title' => 'Pie Susu Dhian Asli Bali Box 50 Pcs Fresh Baked',
+                'origin' => 'Denpasar, Bali',
+                'price' => 115000,
+                'rating' => 5.0,
+                'sold' => '3.8k+ dipesan',
+                'close_date' => 'Tutup PO Besok 18:00',
+                'image' => 'https://images.unsplash.com/photo-1557082673-e962804c8651?auto=format&fit=crop&w=600&q=80',
+                'partner' => 'Pabrik Pie Dhian Bali',
+                'badge' => 'Langsung dari Oven',
+            ],
+            [
+                'id' => 3,
+                'title' => 'Pempek Candy Palembang Paket Lenjer & Kapal Selam + Cuko',
+                'origin' => 'Palembang, Sumatera Selatan',
+                'price' => 165000,
+                'rating' => 4.9,
+                'sold' => '890+ dipesan',
+                'close_date' => 'Tutup PO 3 hari lagi',
+                'image' => 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+                'partner' => 'Sentra Pempek Ilir',
+                'badge' => 'Ikan Tenggiri Murni',
+            ],
+            [
+                'id' => 4,
+                'title' => 'Lapis Legit Harum Pontianak Wijsman Recipe',
+                'origin' => 'Pontianak, Kalimantan Barat',
+                'price' => 220000,
+                'rating' => 4.9,
+                'sold' => '420+ dipesan',
+                'close_date' => 'Tutup PO 4 hari lagi',
+                'image' => 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80',
+                'partner' => 'Kue Tradisi Khatulistiwa',
+                'badge' => 'Butter Premium',
+            ],
         ],
     ]);
 });
+
+Route::get('/gabung-mitra', function () {
+    return Inertia::render('Mitra/Join', [
+        'appName' => config('app.name', 'TapakLokal'),
+        'user' => [
+            'name' => 'albnnaardy',
+            'handle' => '@petualangnyasar',
+            'points' => 0,
+            'avatar' => null,
+            'tier' => 'Petualang Perintis',
+        ],
+        'stats' => [
+            'total_guides' => '540+ Akamsi',
+            'total_merchants' => '1.250+ UMKM',
+            'revenue_distributed' => 'Rp 4,8 Miliar+',
+            'coverage_provinces' => '29 Provinsi',
+        ],
+        'partnerTypes' => [
+            [
+                'id' => 'akamsi-guide',
+                'title' => 'Pemandu Lokal (Akamsi)',
+                'badge' => 'Paling Populer',
+                'desc' => 'Untuk pemuda desa, porter, ranger taman nasional, dan penjelajah lokal yang siap memandu open trip otentik.',
+                'commission' => 'Hingga 88% hasil trip langsung ke kantongmu',
+            ],
+            [
+                'id' => 'kuliner-merchant',
+                'title' => 'Merchant Kuliner & Oleh-Oleh',
+                'badge' => 'Permintaan Tinggi',
+                'desc' => 'Produsen oleh-oleh, dapur rumahan legendaris, dan sentra camilan khas daerah untuk sistem Open PO titip belanja.',
+                'commission' => 'Tanpa potongan listing, bayar saat pesanan lunas',
+            ],
+            [
+                'id' => 'transport-stay',
+                'title' => 'Homestay & Transportasi Lokal',
+                'badge' => 'Mitra Komunitas',
+                'desc' => 'Pemilik Jeep 4x4, sewa motor trail, perahu klotok/kapal nelayan, serta penginapan tradisional & glamping warga.',
+                'commission' => 'Jadwal sewa terintegrasi langsung dengan open trip',
+            ],
+        ],
+    ]);
+})->name('mitra.join');
