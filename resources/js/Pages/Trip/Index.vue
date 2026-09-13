@@ -128,25 +128,26 @@ function handleBookTrip(bookingData) {
                         </div>
 
                         <!-- Hero Content -->
-                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-24 sm:pb-28 md:pb-36 text-white">
-                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-4 backdrop-blur-xs">
+                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-white">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-3 backdrop-blur-xs">
                                 <Compass class="w-3.5 h-3.5 text-amber-400" />
                                 <span>Paket All-Inclusive Open Trip & Private Trip</span>
                             </div>
-                            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
-                                Petualangan Nusantara<br />
-                                Tanpa Repot Mandiri.
+                            <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
+                                Petualangan Nusantara Tanpa Repot
                             </h1>
-                            <p class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
-                                Semua paket sudah termasuk <strong>penginapan transparan</strong>, <strong>kendaraan di lokasi</strong>, dan <strong>bebas pilih menu kuliner lokal</strong> sesuai seleramu tanpa biaya tambahan sepeser pun.
+                            <p class="mt-2.5 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
+                                Semua paket sudah termasuk <strong>penginapan transparan</strong>, <strong>kendaraan di lokasi</strong>, dan <strong>bebas pilih menu kuliner lokal</strong> sesuai seleramu.
                             </p>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Floating Search & Filter Bar -->
-                    <div class="max-w-5xl mx-auto -mt-16 sm:-mt-22 md:-mt-24 relative z-20 px-1 sm:px-4">
-                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 p-4 sm:p-5 backdrop-blur-xs">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+            <!-- Clean In-Flow Search & Filter Toolbar -->
+            <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-4">
+                <div class="bg-white rounded-2xl shadow-xs border border-gray-200/80 p-3.5 sm:p-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
                                 <!-- Search input -->
                                 <div class="sm:col-span-1 lg:col-span-5 bg-gray-50/90 border border-gray-200/80 rounded-xl px-3.5 py-2 flex items-center gap-2 focus-within:ring-2 focus-within:ring-[#0052cc]">
                                     <Search class="w-4 h-4 text-slate-400 shrink-0" />
@@ -195,8 +196,6 @@ function handleBookTrip(bookingData) {
                                         <option value="price-low">Harga Termurah</option>
                                         <option value="price-high">Harga Tertinggi</option>
                                     </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

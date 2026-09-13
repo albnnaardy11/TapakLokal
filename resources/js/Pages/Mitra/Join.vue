@@ -23,7 +23,8 @@ import {
     MapPin,
     Star,
     ChevronDown,
-    Send
+    Send,
+    ArrowDown,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -91,6 +92,13 @@ function handleRegister() {
         isSubmitting.value = false;
         isSuccess.value = true;
     }, 1200);
+}
+
+function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 const partnerBenefits = [
@@ -206,11 +214,11 @@ function toggleFaq(idx) {
 
         <!-- Main Content -->
         <main class="flex-1">
-            <!-- 1. HERO SECTION (Identical visual harmony with home hero) -->
-            <section class="relative pt-2 sm:pt-4 md:pt-6 pb-8 sm:pb-12">
+            <!-- 1. HERO SECTION (Clean, Inspiring, High-Impact) -->
+            <section class="relative pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8">
                 <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                    <!-- Banner Container (Rounded-3xl like main hero) -->
-                    <div class="relative rounded-2xl sm:rounded-3xl md:rounded-[36px] overflow-hidden min-h-[420px] sm:min-h-[480px] md:min-h-[520px] flex items-center justify-center text-center shadow-2xl">
+                    <!-- Banner Container -->
+                    <div class="relative rounded-2xl sm:rounded-3xl md:rounded-[36px] overflow-hidden min-h-[460px] sm:min-h-[500px] md:min-h-[540px] flex items-center justify-center text-center shadow-xl">
                         <!-- Hero Background: Authentic Indonesian mountain landscape with smiling local guide -->
                         <div class="absolute inset-0 z-0">
                             <img
@@ -219,16 +227,16 @@ function toggleFaq(idx) {
                                 class="w-full h-full object-cover object-center transform scale-105"
                             />
                             <!-- Vignette & contrast gradient -->
-                            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/85"></div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/85"></div>
                             <div class="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/60"></div>
                         </div>
 
                         <!-- Content Center -->
-                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-28 sm:pb-32 md:pb-40 text-white">
+                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-white flex flex-col items-center">
                             <!-- Badge -->
-                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-4 backdrop-blur-xs">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/30 border border-blue-400/40 text-blue-200 text-xs font-bold mb-4 backdrop-blur-xs">
                                 <Sparkles class="w-3.5 h-3.5 text-amber-400" />
-                                <span>Peluang Kemitraan Lokal 2026</span>
+                                <span>Peluang Kemitraan Lokal Resmi 2026</span>
                             </div>
 
                             <!-- Main Headline -->
@@ -238,154 +246,45 @@ function toggleFaq(idx) {
                             </h1>
 
                             <!-- Subtitle -->
-                            <p class="mt-3 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
-                                Bergabunglah bersama <strong class="text-white">Mitra Akamsi & Merchant Kuliner TapakLokal</strong>. Tanpa biaya daftar, nikmati bagi hasil transparan hingga 85%+, dan sambut ribuan petualang setiap minggu.
+                            <p class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
+                                Bergabunglah bersama ekosistem <strong class="text-white">Mitra Akamsi, Merchant Kuliner & Armada TapakLokal</strong>. Tanpa biaya pendaftaran, nikmati bagi hasil transparan hingga 85%+, dan sambut ribuan petualang setiap minggu.
                             </p>
-                        </div>
-                    </div>
 
-                    <!-- 2. FLOATING ONBOARDING REGISTRATION WIDGET (Matching home floating widget) -->
-                    <div class="max-w-5xl mx-auto -mt-20 sm:-mt-24 md:-mt-28 relative z-20 px-1 sm:px-4">
-                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 p-4 sm:p-6 md:p-8 backdrop-blur-xs">
-                            <!-- Tab Switcher -->
-                            <div class="flex items-center justify-center gap-2 sm:gap-4 mb-5 border-b border-gray-100 pb-3">
-                                <!-- Tab 1: Pemandu Akamsi -->
-                                <button
-                                    type="button"
-                                    @click="activeTab = 'guide'"
-                                    :class="[
-                                        'flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer',
-                                        activeTab === 'guide'
-                                            ? 'bg-blue-50 text-[#0052cc] ring-1 ring-blue-200 shadow-2xs'
-                                            : 'text-slate-600 hover:text-slate-900 hover:bg-gray-50'
-                                    ]"
-                                >
-                                    <div :class="['w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0', activeTab === 'guide' ? 'bg-[#0052cc] text-white' : 'bg-blue-100 text-[#0052cc]']">
-                                        <Compass class="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                    </div>
-                                    <span class="whitespace-nowrap">Pemandu Akamsi</span>
-                                </button>
-
-                                <!-- Tab 2: Merchant Kuliner -->
-                                <button
-                                    type="button"
-                                    @click="activeTab = 'merchant'"
-                                    :class="[
-                                        'flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer',
-                                        activeTab === 'merchant'
-                                            ? 'bg-orange-50 text-orange-600 ring-1 ring-orange-200 shadow-2xs'
-                                            : 'text-slate-600 hover:text-slate-900 hover:bg-gray-50'
-                                    ]"
-                                >
-                                    <div :class="['w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0', activeTab === 'merchant' ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600']">
-                                        <ShoppingBag class="w-3.5 h-3.5" />
-                                    </div>
-                                    <span class="whitespace-nowrap">Merchant Kuliner PO</span>
-                                </button>
-
-                                <!-- Tab 3: Homestay & Transport -->
-                                <button
-                                    type="button"
-                                    @click="activeTab = 'transport'"
-                                    :class="[
-                                        'flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition cursor-pointer hidden md:flex',
-                                        activeTab === 'transport'
-                                            ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 shadow-2xs'
-                                            : 'text-slate-600 hover:text-slate-900 hover:bg-gray-50'
-                                    ]"
-                                >
-                                    <div :class="['w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shrink-0', activeTab === 'transport' ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600']">
-                                        <Car class="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                                    </div>
-                                    <span class="whitespace-nowrap">Armada & Homestay</span>
-                                </button>
+                            <!-- Key Value Pills -->
+                            <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5 text-xs text-slate-200">
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
+                                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                                    <span>100% Gratis Pendaftaran</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
+                                    <CheckCircle2 class="w-4 h-4 text-amber-400 shrink-0" />
+                                    <span>Bagi Hasil s.d 85%+</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
+                                    <CheckCircle2 class="w-4 h-4 text-blue-400 shrink-0" />
+                                    <span>Pencairan H+1 Otomatis</span>
+                                </div>
                             </div>
 
-                            <!-- Success Banner -->
-                            <div v-if="isSuccess" class="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2">
-                                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                                    <CheckCircle2 class="w-7 h-7" />
-                                </div>
-                                <h3 class="font-bold text-slate-900 text-lg">Pendaftaran Anda Berhasil Terkirim!</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                                    Halo <strong>{{ formName }}</strong>, tim kurator TapakLokal akan menghubungi Anda via WhatsApp di nomor <strong>{{ formPhone }}</strong> dalam 1x24 jam untuk verifikasi rute & onboarding.
-                                </p>
+                            <!-- Action CTA Buttons -->
+                            <div class="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                                 <button
                                     type="button"
-                                    @click="isSuccess = false; formName = ''; formPhone = ''; formRegion = ''; formExperience = ''"
-                                    class="mt-3 inline-block text-xs font-bold text-[#0052cc] hover:underline"
+                                    @click="scrollToSection('form-pendaftaran')"
+                                    class="w-full sm:w-auto bg-[#0052cc] hover:bg-[#003da6] text-white font-extrabold px-7 py-3.5 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xl shadow-blue-600/30 cursor-pointer"
                                 >
-                                    Daftarkan Layanan / Wilayah Lain
+                                    <span>Daftar Jadi Mitra Sekarang</span>
+                                    <ArrowDown class="w-4 h-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="scrollToSection('simulasi-cuan')"
+                                    class="w-full sm:w-auto bg-white/15 hover:bg-white/25 text-white font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 transition backdrop-blur-md border border-white/20 cursor-pointer"
+                                >
+                                    <Calculator class="w-4 h-4 text-amber-300" />
+                                    <span>Hitung Simulasi Pendapatan</span>
                                 </button>
                             </div>
-
-                            <!-- Interactive Registration Form -->
-                            <form v-else @submit.prevent="handleRegister">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-center">
-                                    <!-- 1. Nama Lengkap / Usaha -->
-                                    <div class="sm:col-span-1 lg:col-span-3 bg-gray-50/90 border border-gray-200 rounded-xl px-3.5 py-2.5 transition focus-within:ring-2 focus-within:ring-[#0052cc]">
-                                        <label class="block text-[10px] sm:text-[11px] font-bold text-slate-700 uppercase">
-                                            {{ activeTab === 'merchant' ? 'Nama Toko / Usaha' : 'Nama Lengkap / Komunitas' }}
-                                        </label>
-                                        <input
-                                            v-model="formName"
-                                            required
-                                            type="text"
-                                            :placeholder="activeTab === 'merchant' ? 'Contoh: Bakpia Malioboro' : 'Contoh: Mas Dimas Tengger'"
-                                            class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 border-none p-0 mt-1 focus:outline-none focus:ring-0 font-medium"
-                                        />
-                                    </div>
-
-                                    <!-- 2. No. WhatsApp Aktif -->
-                                    <div class="sm:col-span-1 lg:col-span-3 bg-gray-50/90 border border-gray-200 rounded-xl px-3.5 py-2.5 transition focus-within:ring-2 focus-within:ring-[#0052cc]">
-                                        <label class="block text-[10px] sm:text-[11px] font-bold text-slate-700 uppercase">
-                                            No. WhatsApp Aktif
-                                        </label>
-                                        <input
-                                            v-model="formPhone"
-                                            required
-                                            type="tel"
-                                            placeholder="Contoh: 08123456789"
-                                            class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 border-none p-0 mt-1 focus:outline-none focus:ring-0 font-medium"
-                                        />
-                                    </div>
-
-                                    <!-- 3. Kota / Daerah Domisili -->
-                                    <div class="sm:col-span-1 lg:col-span-3 bg-gray-50/90 border border-gray-200 rounded-xl px-3.5 py-2.5 transition focus-within:ring-2 focus-within:ring-[#0052cc]">
-                                        <label class="block text-[10px] sm:text-[11px] font-bold text-slate-700 uppercase">
-                                            Daerah / Spot Wisata
-                                        </label>
-                                        <input
-                                            v-model="formRegion"
-                                            required
-                                            type="text"
-                                            placeholder="Contoh: Malang, Labuan Bajo, Bali"
-                                            class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 border-none p-0 mt-1 focus:outline-none focus:ring-0 font-medium"
-                                        />
-                                    </div>
-
-                                    <!-- 4. Submit Button -->
-                                    <div class="sm:col-span-1 lg:col-span-3 flex items-stretch">
-                                        <button
-                                            type="submit"
-                                            :disabled="isSubmitting"
-                                            class="w-full bg-[#0052cc] hover:bg-[#003da6] text-white font-bold py-3.5 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/20 cursor-pointer disabled:opacity-50"
-                                        >
-                                            <Send v-if="!isSubmitting" class="w-4 h-4" />
-                                            <span>{{ isSubmitting ? 'Mengirim Data...' : 'Gabung Sekarang (Gratis)' }}</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Trust badge below form -->
-                                <div class="mt-3.5 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-                                    <div class="flex items-center gap-1.5 text-emerald-700 font-medium text-[11px]">
-                                        <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0" />
-                                        <span>Data Anda aman & langsung diverifikasi tim lapangan resmi TapakLokal.</span>
-                                    </div>
-                                    <span class="text-[11px] font-semibold text-slate-400">Gratis pendaftaran • Tanpa kontrak mengikat</span>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -416,7 +315,7 @@ function toggleFaq(idx) {
             </section>
 
             <!-- 4. REVENUE SIMULATOR (Interaktif) -->
-            <section class="py-12 sm:py-16 bg-slate-50">
+            <section id="simulasi-cuan" class="py-12 sm:py-16 bg-slate-50">
                 <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                     <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-6 sm:p-10 md:p-12 text-white shadow-xl relative overflow-hidden">
                         <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -589,7 +488,200 @@ function toggleFaq(idx) {
                 </div>
             </section>
 
-            <!-- 7. CERITA NYATA DARI MITRA -->
+            <!-- 7. DEDICATED SECTION: FORMULIR PENDAFTARAN MITRA RESMI -->
+            <section id="form-pendaftaran" class="py-14 sm:py-20 bg-gradient-to-b from-white via-slate-50 to-white border-t border-slate-100">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-[#0052cc] border border-blue-200 text-xs font-bold mb-3">
+                            <Send class="w-3.5 h-3.5" />
+                            <span>Pendaftaran Mitra Resmi</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                            Mulai Perjalanan Kemitraan Anda
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+                            Pilih kategori layanan Anda dan isi data dasar di bawah. Tim kurator TapakLokal akan menghubungi Anda via WhatsApp dalam 1x24 jam untuk verifikasi rute & onboarding gratis.
+                        </p>
+                    </div>
+
+                    <!-- Registration Card Container -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 p-6 sm:p-8 md:p-10">
+                        <!-- Role Selector Tabs with Detailed Badges -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+                            <!-- Role 1: Pemandu Akamsi -->
+                            <button
+                                type="button"
+                                @click="activeTab = 'guide'"
+                                :class="[
+                                    'p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between',
+                                    activeTab === 'guide'
+                                        ? 'bg-blue-50/80 border-blue-300 ring-2 ring-blue-500/20 shadow-xs'
+                                        : 'bg-white border-gray-200 hover:border-blue-200 hover:bg-slate-50'
+                                ]"
+                            >
+                                <div class="flex items-center justify-between mb-2">
+                                    <div :class="['w-9 h-9 rounded-xl flex items-center justify-center', activeTab === 'guide' ? 'bg-[#0052cc] text-white' : 'bg-blue-100 text-[#0052cc]']">
+                                        <Compass class="w-4 h-4" />
+                                    </div>
+                                    <span v-if="activeTab === 'guide'" class="text-[10px] font-extrabold bg-[#0052cc] text-white px-2 py-0.5 rounded-full">Dipilih</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-slate-900">Pemandu Akamsi</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Pemandu lokal, porter, ranger adat di spot wisata.</p>
+                                </div>
+                            </button>
+
+                            <!-- Role 2: Merchant Kuliner -->
+                            <button
+                                type="button"
+                                @click="activeTab = 'merchant'"
+                                :class="[
+                                    'p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between',
+                                    activeTab === 'merchant'
+                                        ? 'bg-orange-50/80 border-orange-300 ring-2 ring-orange-500/20 shadow-xs'
+                                        : 'bg-white border-gray-200 hover:border-orange-200 hover:bg-slate-50'
+                                ]"
+                            >
+                                <div class="flex items-center justify-between mb-2">
+                                    <div :class="['w-9 h-9 rounded-xl flex items-center justify-center', activeTab === 'merchant' ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600']">
+                                        <ShoppingBag class="w-4 h-4" />
+                                    </div>
+                                    <span v-if="activeTab === 'merchant'" class="text-[10px] font-extrabold bg-orange-500 text-white px-2 py-0.5 rounded-full">Dipilih</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-slate-900">Merchant Kuliner PO</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Produsen oleh-oleh, jajanan khas, & resto UMKM.</p>
+                                </div>
+                            </button>
+
+                            <!-- Role 3: Armada & Homestay -->
+                            <button
+                                type="button"
+                                @click="activeTab = 'transport'"
+                                :class="[
+                                    'p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between',
+                                    activeTab === 'transport'
+                                        ? 'bg-emerald-50/80 border-emerald-300 ring-2 ring-emerald-500/20 shadow-xs'
+                                        : 'bg-white border-gray-200 hover:border-emerald-200 hover:bg-slate-50'
+                                ]"
+                            >
+                                <div class="flex items-center justify-between mb-2">
+                                    <div :class="['w-9 h-9 rounded-xl flex items-center justify-center', activeTab === 'transport' ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600']">
+                                        <Car class="w-4 h-4" />
+                                    </div>
+                                    <span v-if="activeTab === 'transport'" class="text-[10px] font-extrabold bg-emerald-600 text-white px-2 py-0.5 rounded-full">Dipilih</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-slate-900">Armada & Homestay</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Pemilik Jeep/perahu/Elf atau penginapan lokal.</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Success Alert -->
+                        <div v-if="isSuccess" class="p-8 bg-emerald-50 border border-emerald-200 rounded-3xl text-center space-y-3">
+                            <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+                                <CheckCircle2 class="w-8 h-8" />
+                            </div>
+                            <h3 class="font-extrabold text-slate-900 text-xl">Pendaftaran Berhasil Terkirim!</h3>
+                            <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                                Terima kasih <strong>{{ formName }}</strong>! Data Anda telah kami terima. Tim kurator TapakLokal akan menghubungi nomor WhatsApp <strong>{{ formPhone }}</strong> dalam 1x24 jam untuk verifikasi onboarding.
+                            </p>
+                            <button
+                                type="button"
+                                @click="isSuccess = false; formName = ''; formPhone = ''; formRegion = ''; formExperience = ''"
+                                class="mt-4 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[#0052cc] hover:bg-slate-50 shadow-xs cursor-pointer"
+                            >
+                                Daftarkan Layanan / Wilayah Lain
+                            </button>
+                        </div>
+
+                        <!-- Actual Form Inputs -->
+                        <form v-else @submit.prevent="handleRegister" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Nama Lengkap / Usaha -->
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-slate-700">
+                                        {{ activeTab === 'merchant' ? 'Nama Toko / Brand Kuliner' : 'Nama Lengkap / Komunitas Pemandu' }}
+                                        <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        v-model="formName"
+                                        required
+                                        type="text"
+                                        :placeholder="activeTab === 'merchant' ? 'Contoh: Bakpia Pathok Ibu Siti' : 'Contoh: Dimas Pangestu'"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0052cc] focus:border-transparent transition font-medium"
+                                    />
+                                </div>
+
+                                <!-- No WhatsApp Aktif -->
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-slate-700">
+                                        Nomor WhatsApp Aktif
+                                        <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        v-model="formPhone"
+                                        required
+                                        type="tel"
+                                        placeholder="Contoh: 081234567890"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0052cc] focus:border-transparent transition font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Daerah / Spot Wisata -->
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-slate-700">
+                                        Kota / Daerah / Spot Wisata
+                                        <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input
+                                        v-model="formRegion"
+                                        required
+                                        type="text"
+                                        placeholder="Contoh: Bromo, Malang, Labuan Bajo, Bali"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0052cc] focus:border-transparent transition font-medium"
+                                    />
+                                </div>
+
+                                <!-- Pengalaman / Spesialisasi -->
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-slate-700">
+                                        Spesialisasi / Pengalaman Singkat
+                                        <span class="text-slate-400 font-normal">(Opsional)</span>
+                                    </label>
+                                    <input
+                                        v-model="formExperience"
+                                        type="text"
+                                        :placeholder="activeTab === 'guide' ? 'Contoh: Guide trekking 5 tahun' : activeTab === 'merchant' ? 'Contoh: Produsen pia sejak 2018' : 'Contoh: Memiliki 2 unit Jeep 4x4'"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0052cc] focus:border-transparent transition font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Submit Button & Guarantee -->
+                            <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+                                <div class="flex items-center gap-2 text-emerald-700 font-semibold text-xs">
+                                    <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0" />
+                                    <span>Data Anda 100% aman & diverifikasi langsung oleh tim TapakLokal.</span>
+                                </div>
+                                <button
+                                    type="submit"
+                                    :disabled="isSubmitting"
+                                    class="w-full sm:w-auto bg-[#0052cc] hover:bg-[#003da6] text-white font-extrabold px-8 py-3.5 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-md shadow-blue-600/20 cursor-pointer disabled:opacity-50"
+                                >
+                                    <Send v-if="!isSubmitting" class="w-4 h-4" />
+                                    <span>{{ isSubmitting ? 'Mengirim Data...' : 'Kirim Pendaftaran Mitra' }}</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. CERITA NYATA DARI MITRA -->
             <section class="py-12 sm:py-16 bg-white border-t border-slate-100">
                 <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                     <div class="text-center max-w-2xl mx-auto mb-10">

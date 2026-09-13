@@ -140,24 +140,25 @@ function redeemReward(reward) {
                             <div class="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/60"></div>
                         </div>
 
-                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-20 text-white">
-                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/25 border border-amber-400/40 text-amber-300 text-xs font-bold mb-4 backdrop-blur-xs">
+                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-white">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/25 border border-amber-400/40 text-amber-300 text-xs font-bold mb-3 backdrop-blur-xs">
                                 <Crown class="w-3.5 h-3.5 text-amber-400" />
                                 <span>Program Loyalitas Petualang</span>
                             </div>
-                            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
-                                Tingkatkan Levelmu,<br />
-                                Jelajahi Lebih Dekat.
+                            <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
+                                Tingkatkan Levelmu, Jelajahi Lebih Dekat
                             </h1>
-                            <p class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
+                            <p class="mt-2.5 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
                                 Setiap kilometer perjalanan dan setiap titip oleh-oleh menambah poinmu. Nikmati potongan harga langsung, kuota prioritas, dan reward eksklusif.
                             </p>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Floating User Status Card -->
-                    <div class="max-w-3xl mx-auto -mt-16 sm:-mt-20 relative z-20 px-1 sm:px-4">
-                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 p-5 sm:p-6 backdrop-blur-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+            <!-- User Status Card (In-Flow Clean Layout) -->
+            <section class="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 pb-4">
+                <div class="bg-white rounded-2xl shadow-xs border border-gray-200/80 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div class="flex items-center gap-3.5 text-left w-full sm:w-auto">
                                 <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#0052cc] border-2 border-[#0052cc] flex items-center justify-center font-black text-base shadow-xs">
                                     {{ user.name ? user.name.charAt(0).toUpperCase() : 'A' }}
@@ -184,8 +185,6 @@ function redeemReward(reward) {
                                 >
                                     Kumpulkan Poin
                                 </Link>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>

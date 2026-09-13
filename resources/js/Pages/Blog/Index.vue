@@ -118,33 +118,33 @@ const filteredArticles = computed(() => {
                             <div class="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/60"></div>
                         </div>
 
-                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-6 pb-20 text-white">
-                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-4 backdrop-blur-xs">
+                        <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 text-white">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-3 backdrop-blur-xs">
                                 <BookOpen class="w-3.5 h-3.5 text-amber-400" />
-                                <span>Jurnal Eksplorasi & Cerita Akamsi</span>
+                                <span>Jurnal Perjalanan & Kearifan Lokal</span>
                             </div>
-                            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
-                                Catatan Petualang Nusantara.
+                            <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
+                                Catatan Petualang Nusantara
                             </h1>
-                            <p class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
+                            <p class="mt-2.5 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
                                 Inspirasi rute tersembunyi, panduan etika desa adat, dan wawasan kuliner otentik yang ditulis langsung oleh pemandu lokal.
                             </p>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Floating Search Bar -->
-                    <div class="max-w-4xl mx-auto -mt-16 sm:-mt-20 md:-mt-22 relative z-20 px-1 sm:px-4">
-                        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 p-4 backdrop-blur-xs">
-                            <div class="bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2 flex items-center gap-2">
-                                <Search class="w-4 h-4 text-slate-400 shrink-0" />
-                                <input
-                                    v-model="searchQuery"
-                                    type="text"
-                                    placeholder="Cari artikel, tips rute, atau cerita adat..."
-                                    class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 border-none p-0 focus:outline-none focus:ring-0 font-medium"
-                                />
-                            </div>
-                        </div>
+            <!-- Search Bar Section (In-Flow Clean) -->
+            <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 pb-1">
+                <div class="bg-white rounded-2xl shadow-xs border border-gray-200/80 p-3 sm:p-3.5">
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2 flex items-center gap-2">
+                        <Search class="w-4 h-4 text-slate-400 shrink-0" />
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            placeholder="Cari artikel, tips rute, atau cerita adat..."
+                            class="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 border-none p-0 focus:outline-none focus:ring-0 font-medium"
+                        />
                     </div>
                 </div>
             </section>
