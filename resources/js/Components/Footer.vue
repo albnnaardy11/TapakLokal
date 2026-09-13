@@ -1,4 +1,5 @@
 <script setup>
+import { Link } from '@inertiajs/vue3';
 import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-vue-next';
 </script>
 
@@ -9,15 +10,15 @@ import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-vue-next';
 
                 <!-- Brand Bio -->
                 <div class="lg:col-span-4 space-y-4">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-[#0052cc] flex items-center justify-center text-white shadow-xs">
+                    <Link href="/" class="flex items-center gap-2.5 group inline-flex">
+                        <div class="w-9 h-9 rounded-xl bg-[#0052cc] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition">
                             <Compass class="w-5 h-5" />
                         </div>
                         <span class="tracking-tight text-2xl font-black">
                             <span class="text-white font-extrabold">TAPAK</span>
                             <span class="text-blue-400 font-black">LOKAL</span>
                         </span>
-                    </div>
+                    </Link>
 
                     <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm">
                         Platform open trip & titip kuliner nusantara berbasis pemberdayaan warga lokal (Mitra Akamsi). Otentik, jujur, tanpa biaya tersembunyi.
@@ -39,11 +40,11 @@ import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-vue-next';
                 <div class="lg:col-span-2 space-y-3">
                     <h4 class="text-xs font-bold text-white uppercase tracking-wider">Eksplorasi</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="#open-trip" class="hover:text-white transition">Open Trip Populer</a></li>
-                        <li><a href="#open-trip" class="hover:text-white transition">Trip Privat Keluarga</a></li>
-                        <li><a href="#open-po" class="hover:text-white transition">Open PO Kuliner Asli</a></li>
-                        <li><a href="#mitra-akamsi" class="hover:text-white transition">Direktori Akamsi</a></li>
-                        <li><a href="#blog" class="hover:text-white transition">Catatan Petualang</a></li>
+                        <li><Link href="/open-trip" class="hover:text-white transition">Open Trip Populer</Link></li>
+                        <li><Link href="/open-po" class="hover:text-white transition">Open PO Kuliner Asli</Link></li>
+                        <li><Link href="/tentang-kami" class="hover:text-white transition">Tentang Kami</Link></li>
+                        <li><Link href="/gabung-mitra" class="hover:text-white transition">Direktori Akamsi</Link></li>
+                        <li><Link href="/blog" class="hover:text-white transition">Catatan Petualang</Link></li>
                     </ul>
                 </div>
 
@@ -51,13 +52,13 @@ import { Compass, Mail, Phone, MapPin, Heart } from 'lucide-vue-next';
                 <div class="lg:col-span-3 space-y-3">
                     <h4 class="text-xs font-bold text-white uppercase tracking-wider">Fitur & Komunitas</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="#" class="hover:text-white transition">Solit Bill (Split Patungan)</a></li>
-                        <li><a href="#" class="hover:text-white transition">Member Tiers & Loyalty Point</a></li>
-                        <li><a href="#" class="hover:text-white transition">Wishlist Destinasi Impian</a></li>
-                        <li><a href="#" class="hover:text-white transition">Gabung Pemandu Akamsi</a></li>
-                        <li><a href="#" class="hover:text-white transition">Daftar Merchant Kuliner UMKM</a></li>
+                        <li><Link href="/member-tiers" class="hover:text-white transition">Member Tiers & Poin</Link></li>
+                        <li><Link href="/wishlist" class="hover:text-white transition">Wishlist Destinasi</Link></li>
+                        <li><Link href="/gabung-mitra" class="hover:text-white transition font-semibold text-amber-400">Gabung Mitra Akamsi</Link></li>
+                        <li><Link href="/gabung-mitra" class="hover:text-white transition font-semibold text-orange-400">Daftar Merchant UMKM</Link></li>
                     </ul>
                 </div>
+
 
                 <!-- Kolom 4: Pembayaran & Keamanan -->
                 <div class="lg:col-span-3 space-y-3">

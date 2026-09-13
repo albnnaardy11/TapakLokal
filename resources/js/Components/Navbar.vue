@@ -38,15 +38,15 @@ const isCurrencyDropdownOpen = ref(false);
 const isBisnisDropdownOpen = ref(false);
 
 const navLinks = [
-    { name: 'Beranda', href: '/' },
-    { name: 'Open Trip', href: '/#open-trip' },
-    { name: 'Open Po Kuliner', href: '/#open-po' },
-    { name: 'Mitra Akamsi', href: '/#mitra-akamsi' },
+    { name: 'Beranda', href: '/', isRoute: true },
+    { name: 'Open Trip', href: '/open-trip', isRoute: true },
+    { name: 'Open Po Kuliner', href: '/open-po', isRoute: true },
+    { name: 'Mitra Akamsi', href: '/gabung-mitra', isRoute: true },
     { name: 'Gabung Mitra', href: '/gabung-mitra', isRoute: true, highlight: true },
     { name: 'Solit Bill', href: '#', isAction: 'solit-bill' },
-    { name: 'Wishlist', href: '/#wishlist' },
-    { name: 'Blog', href: '/#blog' },
-    { name: 'Member Tiers', href: '/#member-tiers' },
+    { name: 'Wishlist', href: '/wishlist', isRoute: true },
+    { name: 'Blog', href: '/blog', isRoute: true },
+    { name: 'Member Tiers', href: '/member-tiers', isRoute: true },
 ];
 
 function handleNavClick(link) {
@@ -55,14 +55,11 @@ function handleNavClick(link) {
     } else if (link.isRoute) {
         router.visit(link.href);
     } else {
-        if (window.location.pathname !== '/' && link.href.startsWith('/#')) {
-            router.visit(link.href);
-        } else {
-            emit('navigate', link.name);
-        }
+        emit('navigate', link.name);
     }
     isMobileMenuOpen.value = false;
 }
+
 
 function handleSearch() {
     emit('search', searchQuery.value);
