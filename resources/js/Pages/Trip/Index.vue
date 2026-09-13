@@ -4,6 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
 import BottomNav from '@/Components/BottomNav.vue';
 import Footer from '@/Components/Footer.vue';
+import TripDetailModal from '@/Components/TripDetailModal.vue';
 import {
     Compass,
     MapPin,
@@ -95,9 +96,9 @@ const filteredTrips = computed(() => {
     });
 });
 
-function handleBookTrip(trip) {
+function handleBookTrip(bookingData) {
+    showToast(`Pemesanan ${bookingData.bookingType === 'open' ? 'Open Trip' : 'Private Trip'} "${bookingData.trip.title}" (${bookingData.paxCount} Pax) berhasil dicatat!`);
     activeTripModal.value = null;
-    showToast(`Pemesanan trip "${trip.title}" berhasil dicatat! Tim Akamsi akan memverifikasi slotmu.`);
 }
 </script>
 
@@ -130,14 +131,14 @@ function handleBookTrip(trip) {
                         <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-24 sm:pb-28 md:pb-36 text-white">
                             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 border border-blue-400/40 text-blue-300 text-xs font-bold mb-4 backdrop-blur-xs">
                                 <Compass class="w-3.5 h-3.5 text-amber-400" />
-                                <span>Kurasi Rute Otentik Akamsi</span>
+                                <span>Paket All-Inclusive Open Trip & Private Trip</span>
                             </div>
                             <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] drop-shadow-md">
                                 Petualangan Nusantara<br />
-                                Bersama Teman Baru.
+                                Tanpa Repot Mandiri.
                             </h1>
                             <p class="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-100/90 font-normal leading-relaxed max-w-2xl mx-auto drop-shadow">
-                                Gabung jadwal open trip ke spot rahasia terbaik Indonesia. Dipandu langsung oleh warga setempat, tanpa biaya terselubung.
+                                Semua paket sudah termasuk <strong>penginapan transparan</strong>, <strong>kendaraan di lokasi</strong>, dan <strong>bebas pilih menu kuliner lokal</strong> sesuai seleramu tanpa biaya tambahan sepeser pun.
                             </p>
                         </div>
                     </div>
@@ -275,11 +276,31 @@ function handleBookTrip(trip) {
                                     </div>
 
                                     <!-- Akamsi Local Badge -->
-                                    <div class="mt-4 py-2 px-3 bg-blue-50/60 rounded-xl flex items-center gap-2 border border-blue-100/60">
-                                        <ShieldCheck class="w-4 h-4 text-[#0052cc] shrink-0" />
+                                    <div class="mt-3 py-1.5 px-2.5 bg-slate-50 rounded-xl flex items-center gap-2 border border-slate-100">
+                                        <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0" />
                                         <div class="truncate text-[11px]">
                                             <span class="font-bold text-slate-900">{{ trip.akamsi.name }}</span>
                                             <span class="text-slate-500 ml-1">({{ trip.akamsi.experience }})</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- All-Inclusive Feature Inclusions -->
+                                    <div class="mt-2.5 space-y-1 text-[11px] bg-blue-50/50 p-2.5 rounded-xl border border-blue-100/60">
+                                        <div class="flex items-center gap-1.5 text-slate-700 truncate" :title="trip.accommodation ? trip.accommodation.name : 'Penginapan Termasuk'">
+                                            <span class="text-blue-600 font-bold shrink-0">🏨</span>
+                                            <span class="truncate font-medium">{{ trip.accommodation ? trip.accommodation.name : 'Penginapan + Vendor Termasuk' }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-slate-700 truncate" :title="trip.vehicle ? trip.vehicle.name : 'Kendaraan Lokal Termasuk'">
+                                            <span class="text-emerald-600 font-bold shrink-0">🚙</span>
+                                            <span class="truncate font-medium">{{ trip.vehicle ? trip.vehicle.name : 'Kendaraan di Lokasi Termasuk' }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-amber-800 truncate">
+                                            <span class="text-amber-600 font-bold shrink-0">🍽️</span>
+                                            <span class="truncate font-semibold">Bebas Pilih Menu (Rp 0 Tambahan)</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-emerald-800 truncate">
+                                            <span class="text-emerald-600 font-bold shrink-0">🎁</span>
+                                            <span class="truncate font-bold">Gratis Oleh-Oleh Khas (Tanpa Add-on)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -289,20 +310,19 @@ function handleBookTrip(trip) {
                             <div class="p-4 sm:p-5 pt-0">
                                 <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
                                     <div>
-                                        <span class="text-[10px] text-slate-400 font-medium block">Mulai dari</span>
+                                        <span class="text-[10px] text-slate-400 font-medium block">All-Inclusive Mulai</span>
                                         <div class="font-black text-slate-900 text-base sm:text-lg">
                                             {{ formatRupiah(trip.price) }}
                                             <span class="text-[10px] text-slate-400 font-normal">/pax</span>
                                         </div>
                                     </div>
-                                    <button
-                                        type="button"
-                                        @click="activeTripModal = trip"
+                                    <Link
+                                        :href="route('trip.show', trip.id)"
                                         class="bg-[#0052cc] hover:bg-[#003ea8] text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                                     >
-                                        <span>Detail & Booking</span>
+                                        <span>Rincian & Foto</span>
                                         <ArrowRight class="w-3.5 h-3.5" />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -322,82 +342,6 @@ function handleBookTrip(trip) {
                 </div>
             </section>
         </main>
-
-        <!-- Trip Detail & Booking Modal -->
-        <div
-            v-if="activeTripModal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
-        >
-            <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col overflow-hidden">
-                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#0052cc] flex items-center justify-center">
-                            <Compass class="w-4 h-4" />
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base">Rincian Open Trip</h3>
-                    </div>
-                    <button
-                        type="button"
-                        @click="activeTripModal = null"
-                        class="p-1.5 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
-                    >
-                        <X class="w-5 h-5" />
-                    </button>
-                </div>
-
-                <div class="py-4 space-y-4 overflow-y-auto flex-1 pr-1">
-                    <img
-                        :src="activeTripModal.image"
-                        :alt="activeTripModal.title"
-                        class="w-full h-44 object-cover rounded-2xl shadow-xs"
-                    />
-                    <div>
-                        <h2 class="font-black text-slate-900 text-lg leading-tight">{{ activeTripModal.title }}</h2>
-                        <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
-                            <MapPin class="w-3.5 h-3.5 text-[#0052cc]" />
-                            <span>{{ activeTripModal.location }}</span>
-                            <span>•</span>
-                            <span>Jadwal: {{ activeTripModal.departure_date }}</span>
-                        </div>
-                    </div>
-
-                    <div class="p-3.5 bg-slate-50 rounded-xl space-y-1.5 text-xs text-slate-600">
-                        <div class="font-bold text-slate-900">Spot & Rute Unggulan:</div>
-                        <ul class="list-disc list-inside space-y-0.5">
-                            <li v-for="(h, idx) in activeTripModal.highlights" :key="idx">{{ h }}</li>
-                        </ul>
-                    </div>
-
-                    <div class="flex items-center justify-between p-3.5 bg-blue-50 rounded-xl border border-blue-200">
-                        <div>
-                            <span class="text-[11px] text-slate-500 block">Total Biaya Per Pax</span>
-                            <span class="text-xl font-black text-[#0052cc]">{{ formatRupiah(activeTripModal.price) }}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[11px] text-slate-500 block">Sisa Kuota</span>
-                            <span class="text-sm font-black text-amber-600">{{ activeTripModal.slots_left }} Orang</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-3 border-t border-gray-100 flex items-center gap-2">
-                    <button
-                        type="button"
-                        @click="handleBookTrip(activeTripModal)"
-                        class="flex-1 bg-[#0052cc] hover:bg-[#003da6] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
-                    >
-                        Konfirmasi Booking Slot
-                    </button>
-                    <button
-                        type="button"
-                        @click="activeTripModal = null"
-                        class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-slate-600 hover:bg-gray-50"
-                    >
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <Footer />
         <BottomNav active-menu="Open Trip" :user="user" />

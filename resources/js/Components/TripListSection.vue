@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import {
     Star,
     Clock,
@@ -8,7 +9,8 @@ import {
     ShieldCheck,
     ArrowRight,
     Heart,
-    Flame
+    Flame,
+    Gift
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -93,7 +95,7 @@ const filteredTrips = computed(() => {
                     class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
                 >
                     <!-- Trip Image Thumbnail -->
-                    <div class="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
+                    <Link :href="route('trip.show', trip.id)" class="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100 block">
                         <img
                             :src="trip.image"
                             :alt="trip.title"
@@ -105,25 +107,25 @@ const filteredTrips = computed(() => {
                             <span>{{ trip.duration }}</span>
                         </div>
 
-                        <!-- Wishlist Button -->
-                        <button
-                            type="button"
-                            @click="toggleWishlist(trip.id)"
-                            class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-xs flex items-center justify-center text-slate-600 hover:text-red-500 transition shadow-xs cursor-pointer"
-                        >
-                            <Heart
-                                :class="[
-                                    'w-4 h-4 transition',
-                                    bookmarkedIds.has(trip.id) ? 'fill-red-500 text-red-500' : ''
-                                ]"
-                            />
-                        </button>
-
                         <!-- Slots remaining badge -->
                         <div class="absolute bottom-3 left-3 bg-amber-500/90 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
                             Sisa {{ trip.slots_left }} Slot Kuota
                         </div>
-                    </div>
+                    </Link>
+
+                    <!-- Wishlist Button -->
+                    <button
+                        type="button"
+                        @click="toggleWishlist(trip.id)"
+                        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-xs flex items-center justify-center text-slate-600 hover:text-red-500 transition shadow-xs cursor-pointer z-10"
+                    >
+                        <Heart
+                            :class="[
+                                'w-4 h-4 transition',
+                                bookmarkedIds.has(trip.id) ? 'fill-red-500 text-red-500' : ''
+                            ]"
+                        />
+                    </button>
 
                     <!-- Content Body -->
                     <div class="p-4 flex-1 flex flex-col justify-between">
@@ -141,38 +143,59 @@ const filteredTrips = computed(() => {
                             </div>
 
                             <!-- Trip Title -->
-                            <h3 class="font-bold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2 group-hover:text-[#0052cc] transition">
-                                {{ trip.title }}
-                            </h3>
+                            <Link :href="route('trip.show', trip.id)" class="block">
+                                <h3 class="font-bold text-slate-900 text-sm sm:text-base leading-snug line-clamp-2 group-hover:text-[#0052cc] transition">
+                                    {{ trip.title }}
+                                </h3>
+                            </Link>
 
                             <!-- Akamsi Local Guide Badge -->
-                            <div class="mt-3 py-1.5 px-2.5 bg-slate-50 rounded-lg flex items-center gap-2 border border-slate-100">
-                                <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0" />
+                            <div class="mt-2.5 py-1.5 px-2 bg-slate-50 rounded-lg flex items-center gap-1.5 border border-slate-100">
+                                <ShieldCheck class="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                                 <div class="truncate text-[11px]">
                                     <span class="font-semibold text-slate-800">{{ trip.akamsi.name }}</span>
                                     <span class="text-slate-500 ml-1">({{ trip.akamsi.experience }})</span>
                                 </div>
                             </div>
+
+                            <!-- All-Inclusive Feature Checklist -->
+                            <div class="mt-2.5 space-y-1 text-[11px] bg-blue-50/50 p-2 rounded-xl border border-blue-100/60">
+                                <div class="flex items-center gap-1.5 text-slate-700 truncate" :title="trip.accommodation ? trip.accommodation.name : 'Penginapan Termasuk'">
+                                    <span class="text-blue-600 font-bold shrink-0">🏨</span>
+                                    <span class="truncate font-medium">{{ trip.accommodation ? trip.accommodation.name : 'Penginapan + Vendor Termasuk' }}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-slate-700 truncate" :title="trip.vehicle ? trip.vehicle.name : 'Kendaraan Lokal Termasuk'">
+                                    <span class="text-emerald-600 font-bold shrink-0">🚙</span>
+                                    <span class="truncate font-medium">{{ trip.vehicle ? trip.vehicle.name : 'Kendaraan di Lokasi Termasuk' }}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-amber-800 truncate">
+                                    <span class="text-amber-600 font-bold shrink-0">🍽️</span>
+                                    <span class="truncate font-semibold">Bebas Pilih Menu (Rp 0 Tambahan)</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-emerald-800 truncate">
+                                    <span class="text-emerald-600 font-bold shrink-0">🎁</span>
+                                    <span class="truncate font-bold">Gratis Oleh-Oleh Khas (Tanpa Add-on)</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Price & CTA -->
-                        <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <div class="mt-3.5 pt-3 border-t border-gray-100 flex items-center justify-between">
                             <div>
-                                <span class="text-[10px] text-slate-400 font-medium block">Mulai dari</span>
+                                <span class="text-[10px] text-slate-400 font-medium block">Harga All-Inclusive</span>
                                 <div class="font-black text-slate-900 text-base sm:text-lg">
                                     {{ formatRupiah(trip.price) }}
                                     <span class="text-[10px] text-slate-400 font-normal">/pax</span>
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                @click="emit('select-trip', trip)"
+                            <Link
+                                :href="route('trip.show', trip.id)"
                                 class="bg-[#0052cc] hover:bg-[#0041a3] text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-2xs cursor-pointer"
                             >
-                                <span>Detail</span>
+                                <span>Rincian & Foto</span>
                                 <ArrowRight class="w-3.5 h-3.5" />
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

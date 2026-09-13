@@ -20,11 +20,21 @@ class PageRoutesTest extends TestCase
             '/blog',
             '/member-tiers',
             '/gabung-mitra',
+            '/trip/1',
         ];
 
         foreach ($routes as $route) {
             $response = $this->get($route);
             $response->assertStatus(200);
         }
+    }
+
+    /**
+     * Test that an invalid trip returns 404.
+     */
+    public function test_invalid_trip_returns_404(): void
+    {
+        $response = $this->get('/trip/999');
+        $response->assertStatus(404);
     }
 }

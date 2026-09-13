@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { router, Head } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
 import HeroSection from '@/Components/HeroSection.vue';
 import TripListSection from '@/Components/TripListSection.vue';
@@ -86,7 +86,9 @@ function handleSearchFromNav(query) {
 }
 
 function handleSelectTrip(trip) {
-    showToast(`Membuka rincian lengkap untuk: ${trip.title}`);
+    if (trip && trip.id) {
+        router.visit(route('trip.show', trip.id));
+    }
 }
 
 function handleOrderItem(item) {
@@ -171,6 +173,7 @@ function handleToggleWishlist(tripId) {
             @navigate="currentMenu = $event"
             @open-solit-bill="isSolitBillOpen = true"
         />
+
 
         <!-- Solit Bill Interactive Modal -->
         <SolitBillModal
