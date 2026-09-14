@@ -4,6 +4,18 @@ import MainNavigation from '../Components/Home/MainNavigation.vue';
 import TripFinder from '../Components/Home/TripFinder.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
 import FlashSale from '../Components/Home/FlashSale.vue';
+import DestinationExplore from '../Components/Home/DestinationExplore.vue';
+import PartnerTrips from '../Components/Home/PartnerTrips.vue';
+import DestinationGallery from '../Components/Home/DestinationGallery.vue';
+import WhyChooseUs from '../Components/Home/WhyChooseUs.vue';
+import BookingSteps from '../Components/Home/BookingSteps.vue';
+import TrustedPartners from '../Components/Home/TrustedPartners.vue';
+import TravelBlog from '../Components/Home/TravelBlog.vue';
+import TravelFaq from '../Components/Home/TravelFaq.vue';
+import TravelerReviews from '../Components/Home/TravelerReviews.vue';
+import { ref } from 'vue';
+
+const tripFinder = ref(null);
 
 defineProps({
     appName: { type: String, default: 'TapakLokal' },
@@ -26,7 +38,7 @@ defineProps({
                         <p class="mx-auto mt-7 max-w-xl text-sm font-medium leading-relaxed text-white/80 sm:text-base">Destinasi tersembunyi, kuliner jujur, pemandu lokal terverifikasi—<br class="hidden sm:block" />tanpa biaya tersembunyi, langsung berdampak ke komunitas</p>
                     </div>
                 </div>
-                <TripFinder />
+                <TripFinder ref="tripFinder" />
             </section>
 
             <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24 lg:mt-24">
@@ -36,6 +48,15 @@ defineProps({
             <TripOptions />
 
             <FlashSale />
+            <DestinationExplore @select="tripFinder?.selectDestination($event)" />
+            <PartnerTrips @select="tripFinder?.selectDestination($event)" />
+            <DestinationGallery @select="tripFinder?.selectDestination($event)" />
+            <WhyChooseUs />
+            <BookingSteps @explore="tripFinder?.selectDestination('')" />
+            <TrustedPartners />
+            <TravelBlog />
+            <TravelFaq />
+            <TravelerReviews />
         </main>
     </div>
 </template>
