@@ -13,6 +13,7 @@ import TrustedPartners from '../Components/Home/TrustedPartners.vue';
 import TravelBlog from '../Components/Home/TravelBlog.vue';
 import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
+import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
 import { ref } from 'vue';
 
 const tripFinder = ref(null);
@@ -28,7 +29,8 @@ defineProps({
     <div class="min-h-screen overflow-x-hidden bg-[#f5f7fb] font-sans text-slate-900">
         <MainNavigation />
 
-        <main class="mx-auto max-w-[1440px] px-5 pb-28 pt-10 sm:px-10 lg:px-12 lg:pt-16">
+        <main class="relative isolate mx-auto max-w-[1440px] px-5 pb-28 pt-10 sm:px-10 lg:px-12 lg:pt-16">
+            <div class="pointer-events-none absolute -top-16 left-1/2 -z-10 h-[900px] w-screen -translate-x-1/2 bg-[radial-gradient(ellipse_at_0%_25%,rgba(154,211,255,0.35),transparent_45%),radial-gradient(ellipse_at_100%_45%,rgba(182,228,235,0.32),transparent_40%)]" aria-hidden="true"></div>
             <section class="relative mx-auto max-w-[1180px]">
                 <div class="relative isolate flex min-h-[360px] items-center justify-center overflow-hidden rounded-[24px] bg-slate-700 px-5 py-16 text-center sm:min-h-[470px] lg:min-h-[500px]">
                     <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&amp;fit=crop&amp;w=1800&amp;q=88" alt="Pura di Bali saat senja" class="absolute inset-0 -z-20 size-full object-cover" />
@@ -48,15 +50,21 @@ defineProps({
             <TripOptions />
 
             <FlashSale />
-            <DestinationExplore @select="tripFinder?.selectDestination($event)" />
-            <PartnerTrips @select="tripFinder?.selectDestination($event)" />
-            <DestinationGallery @select="tripFinder?.selectDestination($event)" />
+            <div class="relative isolate flow-root">
+                <TravelBackdrop />
+                <DestinationExplore @select="tripFinder?.selectDestination($event)" />
+                <PartnerTrips @select="tripFinder?.selectDestination($event)" />
+                <DestinationGallery @select="tripFinder?.selectDestination($event)" />
+            </div>
             <WhyChooseUs />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />
             <TrustedPartners />
             <TravelBlog />
-            <TravelFaq />
-            <TravelerReviews />
+            <div class="relative isolate flow-root pb-10 sm:pb-14">
+                <TravelBackdrop variant="stories" />
+                <TravelFaq />
+                <TravelerReviews />
+            </div>
         </main>
     </div>
 </template>
