@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import AccountExploreBanner from './AccountExploreBanner.vue';
 import { Heart, MessageCircle, Plus, Search, Send, Star, Users, X } from 'lucide-vue-next';
 defineProps({ section: { type: String, required: true } });
 const filter = ref('Semua');
@@ -34,14 +35,22 @@ const primary = 'rounded-lg bg-[#1045a5] px-4 py-2.5 text-xs font-semibold text-
 
 <template>
     <section class="text-[#26364d]">
-        <h2 class="text-xl font-extrabold tracking-tight">{{ section }}</h2>
+        <h2 :class="section === 'OT & OP Favorit' ? 'text-sm font-extrabold text-[#183660]' : 'text-xl font-extrabold tracking-tight'">{{ section }}</h2>
         <p class="mt-2 text-xs text-slate-500">{{ { 'OT & OP Favorit': 'Simpan inspirasi perjalanan dan temukan kembali trip pilihanmu.', 'Daftar Wisatawan': 'Kelola daftar peserta untuk memudahkan pemesanan berikutnya.', Chat: 'Percakapan dengan partner dan tim TapakLokal.', 'Rating & Ulasan': 'Bagikan cerita dan penilaian perjalananmu.', 'Pesan Bantuan': 'Ceritakan kendalamu agar lebih mudah ditangani.' }[section] }}</p>
 
         <template v-if="section === 'OT & OP Favorit'">
-            <label class="mt-5 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3"><Search class="size-4 text-[#078cff]" /><input v-model="search" placeholder="Cari trip favorit" aria-label="Cari trip favorit" class="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none" /></label>
-            <div class="my-4 flex gap-2"><button v-for="item in ['Semua', 'Open Trip', 'Private Trip']" :key="item" class="rounded-full border px-4 py-2 text-xs" :class="filter === item ? 'border-sky-200 bg-sky-50 text-[#078cff]' : 'border-slate-200 bg-white text-slate-500'" :aria-pressed="filter === item" @click="filter = item">{{ item }}</button></div>
-            <div class="grid gap-4 sm:grid-cols-2"><article v-for="item in visibleFavorites" :key="item.id" class="overflow-hidden rounded-2xl border border-[#e1e8f3] bg-white"><div class="relative h-40"><img :src="`https://images.unsplash.com/photo-${item.image}?auto=format&fit=crop&w=640&q=85`" :alt="item.name" class="size-full object-cover" /><button class="absolute right-3 top-3 rounded-full bg-white p-2 text-rose-500" :aria-label="`Hapus ${item.name} dari favorit`" @click="favorites = favorites.filter((favorite) => favorite.id !== item.id)"><Heart class="size-4 fill-current" /></button></div><div class="p-5"><span class="text-[10px] font-semibold text-[#078cff]">{{ item.type }}</span><h3 class="mt-2 text-sm font-bold">{{ item.name }}</h3><p class="mt-1 text-xs text-slate-400">{{ item.place }}</p><p class="mt-4 text-sm font-bold text-[#1045a5]">{{ item.price }}</p></div></article></div>
-            <p v-if="!visibleFavorites.length" class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-400">Belum ada trip favorit yang sesuai.</p>
+            <div class="mt-4 rounded-2xl border border-[#e1eaf5] bg-white p-4 shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
+                <label class="flex h-10 items-center gap-2 rounded-xl border border-[#e1eaf5] px-3 focus-within:border-[#078cff] focus-within:ring-2 focus-within:ring-sky-100"><Search class="size-4 text-[#078cff]" /><input v-model="search" type="search" placeholder="Cari perjalanan favoritmu…" aria-label="Cari trip favorit" class="min-w-0 flex-1 bg-transparent text-xs outline-none" /></label>
+                <div class="mt-3 flex flex-wrap gap-1"><button v-for="item in ['Semua', 'Open Trip', 'Private Trip']" :key="item" type="button" class="min-h-8 rounded-full px-3 py-1.5 text-[10px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" :class="filter === item ? 'bg-[#3E7BEF] text-white shadow-sm' : 'bg-[#f8fafc] text-slate-500 hover:bg-[#edf4ff]'" :aria-pressed="filter === item" @click="filter = item">{{ item }}</button></div>
+            </div>
+            <section class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_4px_20px_rgba(23,75,120,0.04)]" aria-label="Daftar favorit">
+                <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3"><h3 class="flex items-center gap-2 text-xs font-semibold text-[#183660]"><Heart class="size-4 text-[#3E7BEF]" />Pilihan favoritmu</h3><span class="rounded-full bg-[#edf4ff] px-2.5 py-1 text-[10px] text-[#3E7BEF]" aria-live="polite">{{ visibleFavorites.length }} tersimpan</span></div>
+                <div tabindex="0" role="region" aria-label="Daftar favorit, dapat digulir" class="max-h-[520px] overflow-y-auto overscroll-contain bg-[#f8fafc] p-3 sm:p-4 [scrollbar-width:thin] [scrollbar-color:#b9d5fa_transparent]">
+                    <div class="grid gap-3 sm:grid-cols-2"><article v-for="item in visibleFavorites" :key="item.id" class="group overflow-hidden rounded-xl border border-[#e1eaf5] bg-white transition duration-200 hover:border-[#aacbff] hover:shadow-md"><div class="relative h-36 overflow-hidden"><img :src="`https://images.unsplash.com/photo-${item.image}?auto=format&fit=crop&w=640&q=85`" :alt="item.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transform-none" /><div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div><span class="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-semibold text-[#3E7BEF]">{{ item.type }}</span><button type="button" class="absolute right-3 top-3 rounded-full bg-white p-2 text-rose-500 shadow-sm transition-colors hover:bg-rose-50 focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" :aria-label="`Hapus ${item.name} dari favorit`" @click="favorites = favorites.filter((favorite) => favorite.id !== item.id)"><Heart class="size-4 fill-current" /></button></div><div class="p-4"><h3 class="text-xs font-bold text-[#183660]">{{ item.name }}</h3><p class="mt-1.5 text-[11px] text-slate-500">{{ item.place }}</p><div class="mt-4 border-t border-slate-100 pt-3"><p class="text-[9px] text-slate-400">Mulai dari</p><p class="mt-1 text-sm font-bold text-[#078cff]">{{ item.price }} <span class="text-[9px] font-normal text-slate-400">/ orang</span></p></div></div></article></div>
+                    <div v-if="!visibleFavorites.length" class="rounded-xl border border-[#e1eaf5] bg-white px-4 py-10 text-center"><Heart class="mx-auto size-8 text-blue-200" /><p class="mt-3 text-xs font-semibold text-[#183660]">Belum ada trip favorit yang sesuai.</p><p class="mt-2 text-[11px] text-slate-500">Coba kata kunci atau jenis perjalanan lainnya.</p></div>
+                </div>
+            </section>
+            <AccountExploreBanner />
         </template>
 
         <template v-else-if="section === 'Daftar Wisatawan'">

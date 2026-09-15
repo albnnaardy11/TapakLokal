@@ -36,26 +36,31 @@ const showInfo = (title, text) => {
     <section aria-labelledby="points-heading">
         <h2 id="points-heading" class="text-sm font-extrabold text-[#183660]">Points Saya</h2><p class="mt-1 text-[11px] leading-5 text-slate-500">Pantau perolehan poin dan hadiah dari setiap perjalananmu.</p>
         <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <div class="relative isolate overflow-hidden rounded-2xl border border-[#e1eaf5] bg-gradient-to-br from-[#edf4ff] to-white p-5 text-[#183660] shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
-                <div class="pointer-events-none absolute -right-7 -top-8 -z-10 size-32 rounded-full bg-white/10" aria-hidden="true"></div>
-                <div class="pointer-events-none absolute -bottom-12 right-14 -z-10 size-28 rounded-full bg-white/10" aria-hidden="true"></div>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-white px-2 py-1 text-[9px] font-semibold tracking-wide"><Award class="size-3 text-[#3E7BEF]" aria-hidden="true" />TAPAKLOKAL POINTS</span>
-                <p class="mt-3 text-3xl font-bold tracking-tight">{{ formatPoints(balance) }}</p>
-                <p class="mt-1 text-xs text-slate-500">Total poin tersedia</p>
-                <button class="mt-4 rounded-lg bg-white px-3 py-2 text-[10px] font-bold text-[#3E7BEF] transition hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Tentang Points', 'Poin dan statistik pada halaman ini adalah contoh tampilan. Saldo, perolehan, masa berlaku, dan riwayat akan mengikuti data akun setelah sistem points terhubung.')">Tentang Points</button>
+            <div class="relative isolate overflow-hidden rounded-2xl border border-[#3185ef] bg-gradient-to-br from-[#1649ac] via-[#1679df] to-[#26bfda] p-6 text-white shadow-[0_8px_24px_rgba(30,106,198,0.16)]">
+                <div class="pointer-events-none absolute -right-12 -top-16 -z-10 size-60 rounded-full border-[28px] border-white/10" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute -bottom-24 right-8 -z-10 size-56 rounded-full border border-white/20" aria-hidden="true"></div>
+                <span class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-[10px] font-semibold tracking-wide"><Coins class="size-4 text-sky-100" aria-hidden="true" />TAPAKLOKAL POINTS</span>
+                <p class="mt-5 text-4xl font-extrabold tracking-tight">{{ formatPoints(balance) }}</p>
+                <p class="mt-1 text-xs text-sky-100">Total poin tersedia</p>
+                <button class="mt-5 rounded-xl bg-white px-4 py-2.5 text-[10px] font-bold text-[#3E7BEF] transition hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Tentang Points', 'Poin dan statistik pada halaman ini adalah contoh tampilan. Saldo, perolehan, masa berlaku, dan riwayat akan mengikuti data akun setelah sistem points terhubung.')">Tentang Points</button>
             </div>
-            <div class="relative isolate flex flex-col items-start overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white p-5 text-[#183660] shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
-                <div class="pointer-events-none absolute -right-8 -bottom-14 -z-10 size-44 rounded-full bg-white/15" aria-hidden="true"></div>
-                <div class="pointer-events-none absolute -top-10 right-24 -z-10 size-24 rounded-full bg-white/10" aria-hidden="true"></div>
-                <Sparkles class="mb-3 size-5 text-[#3E7BEF]" aria-hidden="true" />
-                <h3 class="max-w-52 text-sm font-bold leading-tight">Cari tahu lebih<br />banyak tentang Poin</h3>
+            <div class="relative isolate flex flex-col items-start overflow-hidden rounded-2xl border border-[#c7e5f5] bg-gradient-to-br from-[#eaf3ff] via-[#e4f6ff] to-[#bceeea] p-6 text-[#183660] shadow-[0_8px_24px_rgba(30,106,198,0.06)]">
+                <div class="pointer-events-none absolute -right-14 -bottom-24 -z-10 size-64 rounded-full border-[30px] border-white/35" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute -top-12 -right-8 -z-10 size-40 rounded-full bg-white/35" aria-hidden="true"></div>
+                <span class="mb-3 grid size-9 place-items-center rounded-xl border border-white/80 bg-white/70 text-[#1685da]"><Sparkles class="size-5" aria-hidden="true" /></span>
+                <h3 class="max-w-52 text-sm font-bold leading-tight">Perjalanan seru,<br />hadiahnya juga!</h3>
                 <p class="mt-2 max-w-56 text-xs leading-5 text-slate-500">Pelajari cara mendapatkan dan menukarkan poin untuk perjalanan berikutnya.</p>
-                <button class="mt-4 rounded-lg bg-[#078cff] px-4 py-2 text-[10px] font-bold text-white transition hover:bg-[#0878db] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Panduan Points', 'Rincian program, aktivitas yang menghasilkan poin, dan pilihan penukaran akan tersedia saat program points diaktifkan. Belum ada penambahan atau penukaran poin pada pratinjau ini.')">Pelajari</button>
+                <button class="mt-4 rounded-xl bg-[#078cff] px-4 py-2.5 text-[10px] font-bold text-white transition hover:bg-[#0878db] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Panduan Points', 'Rincian program, aktivitas yang menghasilkan poin, dan pilihan penukaran akan tersedia saat program points diaktifkan. Belum ada penambahan atau penukaran poin pada pratinjau ini.')">Pelajari</button>
             </div>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-            <div v-for="stat in statistics" :key="stat.label" class="rounded-xl border border-[#e1eaf5] bg-white p-4 shadow-[0_4px_20px_rgba(23,75,120,0.04)]"><div class="flex items-center justify-between gap-2"><p class="text-[10px] text-slate-400">{{ stat.label }}</p><component :is="stat.icon" class="size-3.5 shrink-0 text-[#3E7BEF]" aria-hidden="true" /></div><p class="mt-3 text-lg font-bold text-[#183660]">{{ stat.value }} <span class="text-[10px] font-normal text-slate-400">{{ stat.unit }}</span></p></div>
+            <div v-for="(stat, index) in statistics" :key="stat.label" class="group relative isolate overflow-hidden rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none" :class="['border-blue-100 bg-gradient-to-br from-white to-blue-50', 'border-cyan-100 bg-gradient-to-br from-white to-cyan-50', 'border-rose-100 bg-gradient-to-br from-white to-rose-50', 'border-indigo-100 bg-gradient-to-br from-white to-indigo-50'][index]">
+                <div aria-hidden="true" class="pointer-events-none absolute -bottom-9 -right-8 -z-10 size-28 rounded-full border-[18px] opacity-40" :class="['border-blue-100', 'border-cyan-100', 'border-rose-100', 'border-indigo-100'][index]"></div>
+                <div class="flex items-center gap-2.5"><span class="grid size-9 shrink-0 place-items-center rounded-xl border border-white/80 shadow-sm" :class="['bg-blue-100 text-blue-600', 'bg-cyan-100 text-cyan-700', 'bg-rose-100 text-rose-600', 'bg-indigo-100 text-indigo-600'][index]"><component :is="stat.icon" class="size-4" aria-hidden="true" /></span><p class="text-[10px] font-semibold leading-4 text-slate-600">{{ stat.label }}</p></div>
+                <p class="mt-4 flex items-baseline gap-1.5 text-2xl font-extrabold tracking-tight text-[#183660]">{{ stat.value }}<span class="text-[10px] font-medium tracking-normal text-slate-400">{{ stat.unit }}</span></p>
+                <p class="mt-1.5 text-[9px] leading-4 text-slate-500">{{ ['Poin dari perjalananmu', 'Ditukar menjadi hadiah', 'Gunakan sebelum berakhir', 'Awal cerita perjalananmu'][index] }}</p>
+            </div>
         </div>
 
         <div class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
