@@ -11,6 +11,15 @@ Route::get('/account', function (): Response {
     return Inertia::render('Account');
 })->name('account');
 
+Route::get('/trips/{tripType}/{trip}', function (string $tripType, string $trip): Response {
+    abort_unless(in_array($tripType, ['open-trip', 'private-trip'], true), 404);
+
+    return Inertia::render('TripDetail', [
+        'tripType' => $tripType,
+        'trip' => $trip,
+    ]);
+})->name('trips.show');
+
 Route::get('/', function () {
     $dbConnected = false;
     $dbError = null;
