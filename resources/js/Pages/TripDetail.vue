@@ -1,8 +1,11 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, MapPin, Minus, Plus, Search, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
+import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Copy, MapPin, Minus, Navigation, Plus, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
 import MainNavigation from '../Components/Home/MainNavigation.vue';
+import TripFaq from '../Components/Home/TripFaq.vue';
+import TripPanorama from '../Components/Home/TripPanorama.vue';
+import TripReviews from '../Components/Home/TripReviews.vue';
 
 const props = defineProps({
     tripType: { type: String, required: true },
@@ -20,8 +23,9 @@ const highlightPage = ref(0);
 const selectedHighlightPhoto = ref(0);
 const selectedDestination = ref(0);
 const routeSaved = ref(false);
-const mapSearch = ref('');
-const mapZoom = ref(12);
+const selectedFacilityCategory = ref('Semua');
+const preparedPackingItems = ref([]);
+const isCoordinatesCopied = ref(false);
 const travelers = ref(2);
 const bookingMessage = ref('');
 
@@ -64,11 +68,8 @@ const privateTrip = {
 };
 
 const detail = computed(() => isPrivateTrip.value ? privateTrip : openTrip);
-const mapEmbedUrl = computed(() => {
-    const mapTarget = mapSearch.value.trim() || detail.value.coordinates;
-
-    return `https://www.google.com/maps?q=${encodeURIComponent(mapTarget)}&z=${mapZoom.value}&output=embed`;
-});
+const mapEmbedUrl = computed(() => `https://www.google.com/maps?q=${encodeURIComponent(detail.value.coordinates)}&z=12&output=embed`);
+const mapDirectionsUrl = computed(() => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(detail.value.coordinates)}`);
 const galleryImages = computed(() => [
     ...detail.value.images,
     'https://images.unsplash.com/photo-1470165518243-ff5f2f6f9f37?auto=format&fit=crop&w=1200&q=85',
@@ -118,9 +119,43 @@ const itineraryDays = computed(() => isPrivateTrip.value ? [
     { day: 'Hari ke 1', meals: 'Lunch · Dinner', activities: ['Kumpul di Dermaga Kaliadem pukul 06.30', 'Registrasi peserta dan briefing singkat', 'Penyeberangan menuju Pulau Pramuka', 'Check-in homestay dan makan siang', 'Jelajah pulau dan aktivitas snorkeling', 'Waktu bebas untuk menikmati sunset', 'Makan malam'] },
     { day: 'Hari ke 2', meals: 'Breakfast', activities: ['Sarapan di homestay', 'Waktu bebas dan persiapan pulang', 'Check-out homestay', 'Penyeberangan kembali ke Dermaga Kaliadem', 'Tiba di Jakarta dan trip selesai'] },
 ]);
+const vendorInfo = computed(() => ({
+    name: 'BRENGGO.ID',
+    logo: '/Assets/Images/logo-vendor/logo-brenggo-tour.jpg',
+    website: 'https://www.brenggo-id.com/',
+    since: '2016',
+    location: isPrivateTrip.value ? 'Labuan Bajo, NTT' : 'Jakarta, Indonesia',
+}));
+const facilityDetails = computed(() => isPrivateTrip.value ? [
+    { category: 'Transportasi', title: 'Kapal privat selama perjalanan', note: 'Sesuai rute dan jumlah peserta yang dipilih.' },
+    { category: 'Transportasi', title: 'Penjemputan dari hotel area Labuan Bajo', note: 'Untuk lokasi yang tercakup dalam area layanan.' },
+    { category: 'Akomodasi', title: 'Kabin kapal atau homestay', note: 'Sesuai pilihan paket perjalanan.' },
+    { category: 'Makan', title: 'Makan sesuai itinerary', note: 'Sarapan, makan siang, dan makan malam sesuai program.' },
+    { category: 'Aktivitas', title: 'Tiket aktivitas utama', note: 'Termasuk aktivitas yang tercantum pada itinerary.' },
+    { category: 'Aktivitas', title: 'Alat snorkeling', note: 'Masker, snorkel, dan pelampung tersedia.' },
+    { category: 'Layanan', title: 'Pemandu lokal berpengalaman', note: 'Mendampingi rombongan selama aktivitas utama.' },
+    { category: 'Layanan', title: 'Dokumentasi perjalanan', note: 'Dokumentasi dasar untuk momen pilihan trip.' },
+] : [
+    { category: 'Transportasi', title: 'Penyeberangan kapal pulang-pergi', note: 'Dermaga Kaliadem menuju Kepulauan Seribu.' },
+    { category: 'Transportasi', title: 'Transportasi lokal sesuai rute', note: 'Untuk perpindahan yang tercantum pada itinerary.' },
+    { category: 'Akomodasi', title: 'Homestay selama 1 malam', note: 'Kamar dan fasilitas dasar sesuai paket.' },
+    { category: 'Makan', title: 'Makan 3 kali', note: 'Makan siang, makan malam, dan sarapan.' },
+    { category: 'Makan', title: 'Air mineral selama perjalanan', note: 'Tersedia pada aktivitas utama.' },
+    { category: 'Aktivitas', title: 'Kapal hopping island & snorkeling', note: 'Termasuk perjalanan menuju spot aktivitas.' },
+    { category: 'Aktivitas', title: 'Alat snorkeling', note: 'Masker, snorkel, dan pelampung tersedia.' },
+    { category: 'Layanan', title: 'Guide lokal dan P3K', note: 'Pendampingan dan perlengkapan pertolongan pertama.' },
+    { category: 'Layanan', title: 'Dokumentasi eksklusif', note: 'Dokumentasi pilihan selama trip berlangsung.' },
+]);
+const facilityCategories = computed(() => ['Semua', ...new Set(facilityDetails.value.map((facility) => facility.category))]);
+const filteredFacilityDetails = computed(() => selectedFacilityCategory.value === 'Semua'
+    ? facilityDetails.value
+    : facilityDetails.value.filter((facility) => facility.category === selectedFacilityCategory.value));
+const packingItems = computed(() => isPrivateTrip.value
+    ? ['Pakaian ganti dan baju renang', 'Tabir surya dan obat pribadi', 'Alas kaki yang tidak licin', 'Kamera atau ponsel tahan air']
+    : ['Pakaian ganti dan baju renang', 'Tabir surya dan obat pribadi', 'Handuk pribadi', 'Uang tunai untuk kebutuhan pribadi']);
 const highlightPageCount = computed(() => Math.ceil(tripHighlights.value.length / 3));
 const visibleHighlights = computed(() => tripHighlights.value.slice(highlightPage.value * 3, (highlightPage.value + 1) * 3));
-const tabs = ['Deskripsi', 'Highlight', 'Destinasi', 'Itinerary', 'Fasilitas', 'Galeri', 'Lokasi'];
+const tabs = ['Deskripsi', 'Highlight', 'Destinasi', 'Itinerary', 'Fasilitas', 'Lokasi'];
 const facilities = [
     { label: 'Homestay', icon: BedDouble },
     { label: 'Makan 3x', icon: Utensils },
@@ -171,6 +206,24 @@ const openDestinationMap = () => {
 
 const saveRoute = () => {
     routeSaved.value = !routeSaved.value;
+};
+
+const togglePackingItem = (item) => {
+    preparedPackingItems.value = preparedPackingItems.value.includes(item)
+        ? preparedPackingItems.value.filter((preparedItem) => preparedItem !== item)
+        : [...preparedPackingItems.value, item];
+};
+
+const copyDestinationCoordinates = async () => {
+    try {
+        await navigator.clipboard.writeText(detail.value.coordinates);
+        isCoordinatesCopied.value = true;
+        window.setTimeout(() => {
+            isCoordinatesCopied.value = false;
+        }, 1800);
+    } catch {
+        isCoordinatesCopied.value = false;
+    }
 };
 
 const openGallery = (imageIndex = selectedImage.value) => {
@@ -253,13 +306,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
                                 <div class="flex items-end justify-between gap-4"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">{{ detail.duration }}</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Rencana perjalanan</h2><p class="mt-1 text-xs text-[#60789c]">Agenda dapat menyesuaikan kondisi cuaca dan operasional lokal.</p></div><CalendarDays class="size-6 text-[#1688e8]" /></div><ol class="relative mt-6 space-y-5 before:absolute before:bottom-6 before:left-[17px] before:top-6 before:w-px before:bg-[#cfe4fa]"><li v-for="(itinerary, index) in itineraryDays" :key="itinerary.day" class="relative flex gap-4"><span class="z-10 grid size-9 shrink-0 place-items-center rounded-full border-4 border-white bg-[#1688e8] text-[10px] font-extrabold text-white shadow-[0_2px_7px_rgba(22,136,232,0.25)]">0{{ index + 1 }}</span><article class="min-w-0 flex-1 rounded-2xl border border-[#e1ebf6] bg-[#f9fcff] p-4"><div class="flex flex-wrap items-center justify-between gap-2"><h3 class="text-sm font-extrabold text-[#173b70]">{{ itinerary.day }}</h3><span class="rounded-full bg-[#eaf4ff] px-2.5 py-1 text-[10px] font-bold text-[#1688e8]">{{ itinerary.meals }}</span></div><ul class="mt-4 space-y-2"><li v-for="activity in itinerary.activities" :key="activity" class="flex gap-2 text-xs leading-5 text-[#496581]"><CheckCircle2 class="mt-0.5 size-3.5 shrink-0 text-[#1688e8]" />{{ activity }}</li></ul></article></li></ol>
                             </template>
                             <template v-else-if="activeTab === 'Fasilitas'">
-                                <div class="flex items-end justify-between gap-4"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Sudah termasuk</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Fasilitas perjalanan</h2></div><span class="text-xs font-semibold text-[#60789c]">{{ facilities.length }} fasilitas</span></div><div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3"><article v-for="facility in facilities" :key="facility.label" class="rounded-2xl border border-[#e1ebf6] bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(22,93,155,0.10)]"><span class="grid size-10 place-items-center rounded-xl bg-[#edf6ff] text-[#1688e8]"><component :is="facility.icon" class="size-5" /></span><h3 class="mt-3 text-xs font-bold text-[#173b70]">{{ facility.label }}</h3><p class="mt-1 text-[10px] leading-4 text-[#7186a2]">Tersedia selama perjalanan</p></article></div>
-                            </template>
-                            <template v-else-if="activeTab === 'Galeri'">
-                                <div class="flex items-end justify-between gap-4"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Momen perjalanan</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Galeri {{ detail.label }}</h2></div><button type="button" class="text-xs font-bold text-[#1688e8]" @click="openGallery()">Buka semua foto</button></div><div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3"><button v-for="(image, index) in galleryImages.slice(0, 6)" :key="`${image}-${index}`" type="button" class="group relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 text-left" @click="openGallery(index)"><img :src="image" :alt="`Foto perjalanan ${index + 1}`" class="size-full object-cover transition duration-300 group-hover:scale-105" /><span v-if="index === 5" class="absolute inset-0 grid place-items-center bg-[#092f59]/65 text-sm font-bold text-white">+{{ galleryImages.length - 6 }} foto</span></button></div>
+                                <div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Rincian paket</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Fasilitas yang kamu dapatkan</h2><p class="mt-1 text-xs text-[#60789c]">Lihat isi paket secara lengkap sebelum memilih jadwal.</p></div><span class="rounded-full bg-[#eaf4ff] px-3 py-1 text-[10px] font-bold text-[#1688e8]">{{ facilityDetails.length }} fasilitas</span></div>
+                                <div class="mt-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"><button v-for="category in facilityCategories" :key="category" type="button" class="shrink-0 rounded-full border px-3 py-2 text-xs font-bold transition" :class="selectedFacilityCategory === category ? 'border-[#1688e8] bg-[#1688e8] text-white shadow-[0_4px_10px_rgba(22,136,232,0.18)]' : 'border-[#dbe8f5] bg-white text-[#60789c] hover:border-[#a7d1f3] hover:text-[#1688e8]'" :aria-pressed="selectedFacilityCategory === category" @click="selectedFacilityCategory = category">{{ category }}</button></div>
+                                <div class="mt-5 grid items-start gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(250px,0.8fr)]"><section class="overflow-hidden rounded-2xl border border-[#e1ebf6] bg-white"><div class="flex items-center justify-between border-b border-[#edf3f8] px-4 py-3"><h3 class="flex items-center gap-2 text-sm font-bold text-[#173b70]"><CheckCircle2 class="size-4 text-emerald-500" />Termasuk dalam paket</h3><span class="text-[10px] font-semibold text-[#7186a2]">{{ filteredFacilityDetails.length }} item</span></div><ul class="divide-y divide-[#edf3f8]"><li v-for="facility in filteredFacilityDetails" :key="facility.title" class="flex gap-3 px-4 py-3"><CheckCircle2 class="mt-0.5 size-4 shrink-0 text-emerald-500" /><div><p class="text-xs font-bold text-[#31577f]">{{ facility.title }}</p><p class="mt-1 text-[11px] leading-5 text-[#7186a2]">{{ facility.note }}</p></div></li></ul></section><aside class="rounded-2xl border border-[#dceaf7] bg-[#f6faff] p-4"><div class="flex items-center justify-between gap-3"><div><p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1688e8]">Checklist traveler</p><h3 class="mt-1 text-sm font-extrabold text-[#173b70]">Yang perlu kamu siapkan</h3></div><span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-[#1688e8]">{{ preparedPackingItems.length }}/{{ packingItems.length }}</span></div><p class="mt-2 text-[11px] leading-5 text-[#60789c]">Tandai barang yang sudah siap agar persiapanmu tidak terlewat.</p><ul class="mt-4 space-y-2"><li v-for="item in packingItems" :key="item"><button type="button" class="flex w-full items-center gap-2 rounded-xl bg-white px-3 py-2.5 text-left text-xs transition hover:bg-[#edf6ff]" :class="preparedPackingItems.includes(item) ? 'text-[#1688e8]' : 'text-[#496581]'" :aria-pressed="preparedPackingItems.includes(item)" @click="togglePackingItem(item)"><span class="grid size-5 shrink-0 place-items-center rounded-md border" :class="preparedPackingItems.includes(item) ? 'border-[#1688e8] bg-[#1688e8] text-white' : 'border-[#c9dcea] bg-white text-transparent'"><CheckCircle2 class="size-3.5" /></span>{{ item }}</button></li></ul><div class="mt-4 rounded-xl border border-rose-100 bg-rose-50 p-3"><p class="flex items-center gap-1.5 text-[11px] font-bold text-rose-700"><XCircle class="size-4" />Tidak termasuk</p><p class="mt-1 text-[11px] leading-5 text-rose-600">Pengeluaran pribadi, makan di luar program, serta transportasi menuju titik kumpul.</p></div></aside></div>
                             </template>
                             <template v-else-if="activeTab === 'Lokasi'">
-                                <div class="flex items-end justify-between gap-4"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Titik keberangkatan</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Lokasi perjalanan</h2></div><MapPin class="size-6 text-[#1688e8]" /></div><div class="relative mt-5 h-72 overflow-hidden rounded-2xl border border-[#dce9f5] bg-slate-100"><iframe :src="mapEmbedUrl" :title="`Peta lokasi ${detail.title}`" class="size-full border-0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><div class="absolute bottom-3 left-3 rounded-xl bg-white px-3 py-2 shadow-[0_3px_14px_rgba(15,47,82,0.18)]"><p class="text-[10px] font-bold text-[#173b70]">{{ detail.startPoint }}</p><p class="mt-0.5 text-[9px] text-[#7186a2]">{{ detail.location }}</p></div></div>
+                                <div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[11px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Titik keberangkatan</p><h2 class="mt-1 text-xl font-extrabold tracking-tight text-[#173b70]">Panduan menuju lokasi</h2><p class="mt-1 text-xs text-[#60789c]">Informasi penting agar kamu tiba tepat waktu di titik kumpul.</p></div><span class="inline-flex items-center gap-1.5 rounded-full border border-[#d6e8f8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#1688e8]"><MapPin class="size-3.5" />Meeting point</span></div>
+                                <div class="mt-5 grid overflow-hidden rounded-2xl border border-[#dfe9f4] bg-white shadow-[0_10px_26px_rgba(27,75,122,0.06)] lg:grid-cols-[300px_minmax(0,1fr)]"><aside class="flex flex-col p-5 sm:p-6"><div class="flex items-start gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-xl border border-[#d7e9f9] bg-[#f4faff] text-[#1688e8]"><MapPin class="size-5" :stroke-width="2.5" /></span><div><p class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#7186a2]">Lokasi kumpul</p><h3 class="mt-1 text-sm font-extrabold leading-5 text-[#173b70]">{{ detail.startPoint }}</h3><p class="mt-1 text-[11px] leading-4 text-[#60789c]">{{ detail.location }}</p></div></div><div class="mt-5 grid grid-cols-2 divide-x divide-[#e7eef6] rounded-xl border border-[#e1ebf5] bg-[#fbfdff]"><div class="p-3"><p class="text-[10px] font-semibold text-[#7186a2]">Waktu kumpul</p><p class="mt-1 text-xs font-extrabold text-[#173b70]">06.30 WIB</p></div><div class="p-3"><p class="text-[10px] font-semibold text-[#7186a2]">Datang lebih awal</p><p class="mt-1 text-xs font-extrabold text-[#b66d11]">30 menit</p></div></div><div class="mt-5 border-y border-[#e7eef6] py-4"><div class="flex items-center justify-between gap-3"><div><p class="text-[10px] font-bold uppercase tracking-[0.12em] text-[#7186a2]">Koordinat lokasi</p><p class="mt-1 font-mono text-[11px] font-bold text-[#31577f]">{{ detail.coordinates }}</p></div><button type="button" class="grid size-8 place-items-center rounded-lg border border-[#d7e9f9] text-[#1688e8] transition hover:bg-[#edf7ff]" :aria-label="isCoordinatesCopied ? 'Koordinat tersalin' : 'Salin koordinat'" @click="copyDestinationCoordinates"><CheckCircle2 v-if="isCoordinatesCopied" class="size-4 text-emerald-500" /><Copy v-else class="size-4" /></button></div></div><div class="mt-4 flex gap-2"><CheckCircle2 class="mt-0.5 size-4 shrink-0 text-emerald-500" /><p class="text-[11px] leading-5 text-[#60789c]">Bawa e-ticket dan hubungi admin jika diperkirakan terlambat.</p></div><a :href="mapDirectionsUrl" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#1688e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,136,232,0.22)] transition hover:bg-[#0875d0]"><Navigation class="size-4" />Mulai navigasi</a></aside><div class="relative h-72 border-t border-[#e2ebf4] bg-slate-100 lg:h-auto lg:min-h-[370px] lg:border-l lg:border-t-0"><iframe :src="mapEmbedUrl" :title="`Peta lokasi ${detail.title}`" class="size-full border-0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><div class="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-[10px] font-bold text-[#31577f] shadow-[0_3px_12px_rgba(15,47,82,0.16)]"><span class="grid size-5 place-items-center rounded-full bg-[#eaf4ff] text-[#1688e8]"><MapPin class="size-3" /></span>{{ detail.location }}</div></div></div>
                             </template>
 
                             <template v-if="activeTab === 'Deskripsi'">
@@ -277,9 +330,21 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
 
                     <section class="mt-4 rounded-2xl border border-[#e1eaf5] bg-white p-4"><div class="flex items-center justify-between"><h2 class="flex items-center gap-2 text-xs font-bold text-[#173b70]"><Compass class="size-4 text-[#1677e8]" />Fasilitas</h2><span class="text-[10px] font-semibold text-[#1677e8]">Lihat semua</span></div><div class="mt-4 grid grid-cols-3 gap-2"><div v-for="facility in facilities" :key="facility.label" class="grid min-h-20 place-items-center rounded-xl bg-[#f7faff] p-2 text-center"><component :is="facility.icon" class="size-5 text-[#1677e8]" /><span class="mt-2 text-[9px] font-medium text-[#56708d]">{{ facility.label }}</span></div></div></section>
 
-                    <section class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white p-4"><h2 class="flex items-center gap-2 text-xs font-bold text-[#173b70]"><MapPin class="size-4 text-[#1677e8]" />Lokasi</h2><div class="relative mt-3 h-64 overflow-hidden rounded-xl border border-slate-200 bg-slate-100"><iframe :src="mapEmbedUrl" :title="`Peta lokasi ${detail.title}`" class="size-full border-0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><form class="absolute left-3 right-12 top-3" @submit.prevent><label class="flex h-10 items-center gap-2 rounded-lg bg-white px-3 text-slate-500 shadow-[0_2px_10px_rgba(15,47,82,0.2)]"><Search class="size-4 shrink-0" /><input v-model="mapSearch" type="search" class="min-w-0 flex-1 bg-transparent text-xs text-slate-700 outline-none placeholder:text-slate-400" placeholder="Cari lokasi atau alamat" aria-label="Cari lokasi pada peta" /></label></form><div class="absolute bottom-3 right-3 overflow-hidden rounded-lg bg-white shadow-[0_2px_10px_rgba(15,47,82,0.22)]"><button type="button" class="grid size-9 place-items-center border-b border-slate-200 text-[#173b70] transition hover:bg-slate-50 disabled:text-slate-300" aria-label="Perkecil peta" :disabled="mapZoom <= 3" @click="mapZoom -= 1"><Minus class="size-4" :stroke-width="3" /></button><button type="button" class="grid size-9 place-items-center text-[#173b70] transition hover:bg-slate-50 disabled:text-slate-300" aria-label="Perbesar peta" :disabled="mapZoom >= 18" @click="mapZoom += 1"><Plus class="size-4" :stroke-width="3" /></button></div></div></section>
                 </aside>
             </div>
+
+            <section class="mt-7 rounded-2xl border border-[#dfeaf5] bg-white p-4 shadow-[0_10px_28px_rgba(23,75,120,0.05)] sm:p-5" aria-labelledby="vendor-heading">
+                <div class="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(230px,0.65fr)_minmax(270px,0.85fr)] lg:gap-0">
+                    <div class="flex items-center gap-5 lg:pr-6"><img :src="vendorInfo.logo" :alt="`Logo ${vendorInfo.name}`" class="size-24 shrink-0 object-contain" /><div class="min-w-0"><p class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#1688e8]">Diselenggarakan oleh</p><h2 id="vendor-heading" class="mt-2 text-xl font-extrabold tracking-tight"><span class="text-[#f0272e]">BRENGGO</span><span class="text-[#173b70]">.ID</span></h2><p class="mt-2 max-w-sm text-[11px] leading-4 text-[#55739b]">Penyedia perjalanan terpercaya untuk pengalaman wisata terbaik di seluruh Indonesia.</p><div class="mt-2.5 flex items-center gap-2"><Star class="size-4 fill-[#f5a000] text-[#f5a000]" /><span class="text-xs font-extrabold text-[#173b70]">4.9</span><span class="text-[10px] text-[#7186a2]">(1.248 ulasan)</span></div><div class="mt-3 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 rounded-full bg-[#edf7ff] px-2.5 py-1 text-[9px] font-semibold text-[#1688e8]"><ShieldCheck class="size-3.5" />Vendor Terverifikasi</span><span class="inline-flex items-center gap-1 rounded-full bg-[#edf7ff] px-2.5 py-1 text-[9px] font-semibold text-[#1688e8]"><ShieldCheck class="size-3.5" />Proses Aman & Terpercaya</span></div></div></div>
+                    <div class="grid gap-4 border-y border-[#e5eef7] py-5 sm:grid-cols-3 lg:border-x lg:border-y-0 lg:grid-cols-1 lg:px-6 lg:py-0"><div class="flex items-center gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#edf7ff] text-[#1688e8]"><Clock3 class="size-4" /></span><div><p class="text-[10px] text-[#7186a2]">100%</p><p class="text-[10px] font-bold text-[#35577f]">Fast respon &lt; 1 jam</p></div></div><div class="flex items-center gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#edf7ff] text-[#1688e8]"><CalendarDays class="size-4" /></span><div><p class="text-[10px] text-[#7186a2]">Bergabung sejak</p><p class="text-[10px] font-bold text-[#35577f]">{{ vendorInfo.since }}</p></div></div><div class="flex items-center gap-3"><span class="grid size-8 shrink-0 place-items-center rounded-full bg-[#edf7ff] text-[#1688e8]"><MapPin class="size-4" /></span><div><p class="text-[10px] text-[#7186a2]">Lokasi operasional</p><p class="text-[10px] font-bold text-[#35577f]">{{ vendorInfo.location }}</p></div></div></div>
+                    <aside class="rounded-lg bg-[#edf7ff] p-4"><h3 class="flex items-center gap-2 text-xs font-extrabold text-[#173b70]"><Users class="size-5 text-[#1688e8]" />Mengapa pilih vendor ini?</h3><ul class="mt-4 space-y-3"><li v-for="item in ['Tim profesional dan berpengalaman', 'Perlengkapan wisata terstandar', 'Dokumentasi lengkap foto & video', 'Pelayanan ramah dan responsif']" :key="item" class="flex gap-2 text-[10px] leading-4 text-[#55739b]"><CheckCircle2 class="mt-0.5 size-3.5 shrink-0 text-[#1688e8]" />{{ item }}</li></ul></aside>
+                </div>
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-4 rounded-lg bg-[#edf7ff] px-4 py-3"><div class="flex items-center gap-3"><span class="grid size-9 place-items-center rounded-full border border-white bg-[#f7fbff] text-[#1688e8]"><Users class="size-4" /></span><div><h3 class="text-[11px] font-extrabold text-[#173b70]">Lihat Trip lain dari Jelajahi Nusantara</h3><p class="mt-0.5 text-[9px] text-[#60789c]">Masih banyak destinasi menarik lainnya dengan pengalaman seru!</p></div></div><a :href="vendorInfo.website" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 rounded-full border border-[#1688e8] bg-white px-4 py-2 text-[10px] font-bold text-[#1688e8] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#1179dc] hover:bg-[#1688e8] hover:text-white hover:shadow-[0_6px_14px_rgba(22,136,232,0.28)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1688e8]">Lihat Semua Trip Vendor<ChevronRight class="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" /></a></div>
+            </section>
+
+            <TripPanorama :trip-type="tripType" />
+            <TripFaq :trip-type="tripType" />
+            <TripReviews :trip-type="tripType" />
         </main>
 
         <Teleport to="body">
