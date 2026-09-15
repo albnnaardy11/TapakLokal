@@ -51,7 +51,7 @@ const goToPage = (number) => {
         </div>
         <footer v-if="orders.length" class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
             <p class="text-[10px] text-slate-500" aria-live="polite">Menampilkan {{ start + 1 }}–{{ Math.min(start + pageSize, orders.length) }} dari {{ orders.length }} pesanan</p>
-            <nav v-if="pageCount > 1" aria-label="Halaman pesanan" class="flex items-center gap-1">
+            <nav aria-label="Halaman pesanan" class="flex items-center gap-1">
                 <button type="button" aria-label="Halaman sebelumnya" :disabled="currentPage === 1" class="grid size-8 place-items-center rounded-full text-[#3E7BEF] hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-30" @click="goToPage(currentPage - 1)"><ChevronLeft class="size-4" /></button>
                 <button v-for="number in pageNumbers" :key="number" type="button" :aria-label="`Halaman ${number}`" :aria-current="currentPage === number ? 'page' : undefined" class="grid size-8 place-items-center rounded-full text-xs font-semibold transition-colors" :class="currentPage === number ? 'bg-[#3E7BEF] text-white' : 'text-slate-500 hover:bg-blue-50 hover:text-[#3E7BEF]'" @click="goToPage(number)">{{ number }}</button>
                 <button type="button" aria-label="Halaman berikutnya" :disabled="currentPage === pageCount" class="grid size-8 place-items-center rounded-full text-[#3E7BEF] hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-30" @click="goToPage(currentPage + 1)"><ChevronRight class="size-4" /></button>

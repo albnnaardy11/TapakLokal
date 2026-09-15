@@ -54,6 +54,13 @@ const trips = [
 ];
 const orders = [
     { id: 'TL-2025-001', name: 'Pantai Drini', location: 'Gunungkidul, Yogyakarta', price: 'Rp 702.800', image: beach, type: 'Open Trip', status: 'Selesai', date: '24 Sep 2025', travelers: 2, points: 800, payment: 'Pembayaran berhasil' },
+    ...['Karimunjawa', 'Ranu Kumbolo', 'Prambanan', 'Pulau Pramuka', 'Merbabu', 'Dieng', 'Labuan Bajo', 'Bromo', 'Raja Ampat', 'Lombok', 'Bali'].map((destination, index) => ({
+        id: `DEMO-ORDER-${index + 2}`, name: index % 4 === 0 ? `Oleh-oleh ${destination}` : `Open Trip ${destination}`,
+        location: destination, price: `Rp ${(450000 + index * 125000).toLocaleString('id-ID')}`,
+        image: index % 2 === 0 ? beach : mountain, type: index % 4 === 0 ? 'Open PO' : 'Open Trip',
+        status: ['Selesai', 'Berlangsung', 'Batal'][index % 3], date: `${index + 10} Sep 2026`, travelers: 2,
+        points: index % 3 === 0 ? 300 : 0, payment: index % 3 === 2 ? 'Pesanan dibatalkan' : 'Pembayaran berhasil',
+    })),
 ];
 const filteredOrders = computed(() => orders.filter((order) => (type.value === 'Semua' || order.type === type.value) && (status.value === 'Semua' || order.status === status.value)));
 const showDetail = (item) => { detail.value = item; modal.value.showModal(); };
