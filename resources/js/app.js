@@ -11,7 +11,7 @@ const appName = import.meta.env.VITE_APP_NAME || 'TapakLokal';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
-        resolvePageComponent(
+        name === 'Account' ? import('./Pages/Account.vue') : resolvePageComponent(
             `./Pages/${name}.vue`,
             import.meta.glob('./Pages/**/*.vue'),
         ),

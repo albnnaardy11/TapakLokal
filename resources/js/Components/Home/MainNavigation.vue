@@ -1,6 +1,7 @@
 <script setup>
 import { Bell, ChevronDown, CircleHelp, Menu, Search, ShoppingBag, UsersRound, X } from 'lucide-vue-next';
 import { ref } from 'vue';
+import AccountDropdown from './AccountDropdown.vue';
 
 const isMobileMenuOpen = ref(false);
 const openPopover = ref(null);
@@ -47,9 +48,9 @@ const submitGlobalSearch = () => notify(globalSearch.value.trim() ? `Mencari “
                 <button class="flex h-8 items-center gap-1 rounded-lg px-2 transition hover:bg-[#edf3ff]" @click="notify('Pusat bantuan siap membantu.')"><CircleHelp class="size-3.5 text-[#3E7BEF]" />Bantuan</button>
                 <button class="flex h-8 items-center gap-1 rounded-lg px-2 transition hover:bg-[#edf3ff]" @click="notify('Komunitas TapakLokal dipilih.')"><UsersRound class="size-3.5 text-[#3E7BEF]" />Komunitas</button>
                 <span class="mx-1 h-5 w-px bg-slate-200"></span>
-                <div class="relative"><button class="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition hover:bg-slate-50" @click="openPopover = openPopover === 'account' ? null : 'account'"><span class="grid size-8 place-items-center rounded-full border-2 border-[#B7874B] bg-[#3E7BEF] text-xs font-bold text-white shadow-[0_0_0_2px_#f6ead9]">A</span><span class="text-left leading-tight"><span class="block text-[11px] text-slate-800">albnnaardy</span><span class="block text-[9px] font-medium text-slate-400">Petualang Baru</span></span><span class="h-7 w-px bg-[#B7874B]/70"></span><span class="text-center leading-tight"><span class="block text-sm font-bold text-[#3E7BEF]">0</span><span class="block text-[9px] font-medium text-slate-500">points</span></span><ChevronDown class="size-3 text-[#3E7BEF]" /></button><div v-if="openPopover === 'account'" class="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-slate-100 bg-white p-1.5 shadow-[0_12px_30px_rgba(15,44,92,0.16)]"><button class="w-full rounded-lg px-3 py-2.5 text-left hover:bg-[#edf3ff]" @click="notify('Profil akun dibuka.'); openPopover = null">Profil Saya</button><button class="w-full rounded-lg px-3 py-2.5 text-left hover:bg-[#edf3ff]" @click="notify('Belum ada pesanan aktif.'); openPopover = null">Pesanan Saya</button></div></div>
+                <AccountDropdown />
             </div>
-            <button class="ml-auto rounded-lg p-2 text-[#3E7BEF] hover:bg-[#edf3ff] xl:hidden" :aria-expanded="isMobileMenuOpen" aria-label="Buka menu" @click="isMobileMenuOpen = !isMobileMenuOpen"><X v-if="isMobileMenuOpen" class="size-5" /><Menu v-else class="size-5" /></button>
+            <AccountDropdown compact class="ml-auto mr-2 xl:hidden" /><button class="rounded-lg p-2 text-[#3E7BEF] hover:bg-[#edf3ff] xl:hidden" :aria-expanded="isMobileMenuOpen" aria-label="Buka menu" @click="isMobileMenuOpen = !isMobileMenuOpen"><X v-if="isMobileMenuOpen" class="size-5" /><Menu v-else class="size-5" /></button>
         </div>
 
         <nav class="hidden bg-[#3E7BEF] lg:block"><div class="mx-auto flex h-11 max-w-[1180px] items-center px-5 sm:px-8"><div class="flex h-full items-center gap-0.5"><button v-for="item in navItems" :key="item.label" class="relative flex h-8 items-center rounded-md px-3 text-sm font-semibold transition-colors duration-150 hover:bg-white/10" :class="activeNav === item.label ? 'text-white' : 'text-white/80 hover:text-white'" @click="selectNavigation(item)">{{ item.label }}<span v-if="activeNav === item.label" class="absolute inset-x-3 -bottom-1.5 h-0.5 bg-white"></span></button></div><form class="ml-auto w-48" @submit.prevent="submitGlobalSearch"><label class="flex h-7 items-center gap-1.5 rounded-full bg-white px-3 text-slate-400"><input v-model="globalSearch" class="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400" placeholder="Search ..." /><Search class="size-3.5 text-[#3E7BEF]" /></label></form></div></nav>

@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
+
+Route::get('/account', function (): Response {
+    return Inertia::render('Account');
+})->name('account');
 
 Route::get('/', function () {
     $dbConnected = false;
