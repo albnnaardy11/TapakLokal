@@ -2,11 +2,11 @@
 import { Head } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Copy, MapPin, Minus, Navigation, Plus, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
-import MainNavigation from '../Components/Home/MainNavigation.vue';
-import TripFaq from '../Components/Home/TripFaq.vue';
-import TripPanorama from '../Components/Home/TripPanorama.vue';
-import TripReviews from '../Components/Home/TripReviews.vue';
-import TripRecommendations from '../Components/Home/TripRecommendations.vue';
+import MainNavigation from '../Components/Shared/MainNavigation.vue';
+import TripFaq from '../Components/TripDetail/TripFaq.vue';
+import TripPanorama from '../Components/TripDetail/TripPanorama.vue';
+import TripReviews from '../Components/TripDetail/TripReviews.vue';
+import TripRecommendations from '../Components/TripDetail/TripRecommendations.vue';
 
 const props = defineProps({
     tripType: { type: String, required: true },

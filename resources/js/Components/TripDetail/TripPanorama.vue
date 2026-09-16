@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { ArrowLeft, ArrowRight, Expand, MapPin, X } from 'lucide-vue-next';
-import PanoramaMark from './PanoramaMark.vue';
+import PanoramaMark from '../Shared/PanoramaMark.vue';
 
 const props = defineProps({
     tripType: { type: String, required: true },

@@ -1,6 +1,6 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import MainNavigation from '../Components/Home/MainNavigation.vue';
+import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TripFinder from '../Components/Home/TripFinder.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
 import DestinationExplore from '../Components/Home/DestinationExplore.vue';

@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowRight, ChevronRight, MapPin, Play, Search, X } from 'lucide-vue-next';
-import PanoramaMark from './PanoramaMark.vue';
+import PanoramaMark from '../Shared/PanoramaMark.vue';
 import { computed, nextTick, ref } from 'vue';
 
 defineEmits(['select']);
