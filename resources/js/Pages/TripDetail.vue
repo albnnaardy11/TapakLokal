@@ -29,6 +29,8 @@ const preparedPackingItems = ref([]);
 const isCoordinatesCopied = ref(false);
 const travelers = ref(2);
 const bookingMessage = ref('');
+const isBookingModalOpen = ref(false);
+const departureDate = ref('2026-09-19');
 
 const openTrip = {
     title: 'Open Trip Tur Pulau Pramuka',
@@ -69,6 +71,12 @@ const privateTrip = {
 };
 
 const detail = computed(() => isPrivateTrip.value ? privateTrip : openTrip);
+const bookingTotal = computed(() => {
+    const price = Number(detail.value.price.replace(/\D/g, ''));
+
+    return new Intl.NumberFormat('id-ID').format(price * travelers.value);
+});
+const departureDateLabel = computed(() => new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${departureDate.value}T00:00:00`)));
 const mapEmbedUrl = computed(() => `https://www.google.com/maps?q=${encodeURIComponent(detail.value.coordinates)}&z=12&output=embed`);
 const mapDirectionsUrl = computed(() => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(detail.value.coordinates)}`);
 const galleryImages = computed(() => [
@@ -173,7 +181,12 @@ const updateTravelers = (amount) => {
 };
 
 const checkAvailability = () => {
-    bookingMessage.value = `${detail.value.label} untuk ${travelers.value} orang siap dicek. Pilih tanggal keberangkatan untuk melanjutkan.`;
+    bookingMessage.value = '';
+    isBookingModalOpen.value = true;
+};
+
+const submitBooking = () => {
+    bookingMessage.value = `Pesanan untuk ${travelers.value} orang pada ${departureDateLabel.value} siap dilanjutkan.`;
 };
 
 const openItinerary = () => {
@@ -325,15 +338,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
                     </section>
                 </section>
 
-                <aside class="lg:sticky lg:top-[118px]"><section class="rounded-2xl border border-[#dce7f4] bg-white p-5 shadow-[0_8px_28px_rgba(23,75,120,0.08)]"><p class="text-xs text-slate-400 line-through">{{ detail.originalPrice }}</p><div class="mt-1 flex items-end gap-2"><p class="text-2xl font-extrabold tracking-tight text-[#173b70]">{{ detail.price }}</p><span class="pb-1 text-[10px] text-slate-500">/ orang</span></div><p class="mt-1 text-[11px] text-slate-500">Harga dapat berubah sesuai jadwal dan jumlah peserta.</p><div class="mt-4 rounded-xl bg-[#f5f9ff] p-3"><p class="text-[10px] font-semibold text-[#627a99]">Keberangkatan</p><p class="mt-1 flex items-center gap-2 text-xs font-bold text-[#31577f]"><CalendarDays class="size-4 text-[#1677e8]" />{{ detail.date }}</p></div><div class="mt-3 flex items-center justify-between rounded-xl border border-[#e1eaf5] px-3 py-2.5"><span class="flex items-center gap-2 text-xs font-semibold text-[#31577f]"><Users class="size-4 text-[#1677e8]" />Jumlah peserta</span><div class="flex items-center gap-2"><button type="button" class="grid size-7 place-items-center rounded-lg bg-[#f1f6fc] text-[#1677e8]" aria-label="Kurangi peserta" @click="updateTravelers(-1)"><Minus class="size-3.5" /></button><span class="w-4 text-center text-xs font-bold">{{ travelers }}</span><button type="button" class="grid size-7 place-items-center rounded-lg bg-[#eaf4ff] text-[#1677e8]" aria-label="Tambah peserta" @click="updateTravelers(1)"><Plus class="size-3.5" /></button></div></div><button type="button" class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1677e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,119,232,0.25)] transition hover:bg-[#0d68d1]" @click="checkAvailability"><CalendarDays class="size-4" />Cek ketersediaan</button><p v-if="bookingMessage" role="status" class="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-[10px] leading-4 text-emerald-700">{{ bookingMessage }}</p><p class="mt-3 flex items-center gap-1.5 text-[10px] text-[#1677e8]"><Star class="size-3.5 fill-current" />Dapatkan hingga 400 poin TapakLokal</p></section>
-
-                    <section class="mt-4 grid gap-4 rounded-2xl border border-[#e1eaf5] bg-white p-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"><div><h2 class="flex items-center gap-2 text-sm font-bold text-[#173b70]"><CheckCircle2 class="size-4 text-emerald-500" />Termasuk</h2><ul class="mt-3 space-y-2.5"><li v-for="item in includes" :key="item" class="flex gap-2 text-xs leading-5 text-slate-600"><CheckCircle2 class="mt-0.5 size-3.5 shrink-0 text-emerald-500" />{{ item }}</li></ul></div><div><h2 class="flex items-center gap-2 text-sm font-bold text-[#173b70]"><XCircle class="size-4 text-rose-500" />Tidak termasuk</h2><ul class="mt-3 space-y-2.5"><li v-for="item in excludes" :key="item" class="flex gap-2 text-xs leading-5 text-slate-600"><XCircle class="mt-0.5 size-3.5 shrink-0 text-rose-500" />{{ item }}</li></ul></div></section>
+                <aside class="lg:sticky lg:top-[118px]"><section class="rounded-2xl border border-[#dce7f4] bg-white p-5 shadow-[0_8px_28px_rgba(23,75,120,0.08)]"><p class="text-xs text-slate-400 line-through">{{ detail.originalPrice }}</p><div class="mt-1 flex items-end gap-2"><p class="text-2xl font-extrabold tracking-tight text-[#173b70]">{{ detail.price }}</p><span class="pb-1 text-[10px] text-slate-500">/ orang</span></div><p class="mt-1 text-[11px] text-slate-500">Harga dapat berubah sesuai jadwal dan jumlah peserta.</p><div class="mt-4 rounded-xl bg-[#f5f9ff] p-3"><p class="text-[10px] font-semibold text-[#627a99]">Keberangkatan</p><p class="mt-1 flex items-center gap-2 text-xs font-bold text-[#31577f]"><CalendarDays class="size-4 text-[#1677e8]" />{{ detail.date }}</p></div><button type="button" class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1677e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,119,232,0.25)] transition hover:bg-[#0d68d1]" @click="checkAvailability"><CalendarDays class="size-4" />Cek ketersediaan</button><p class="mt-3 flex items-center gap-1.5 text-[10px] text-[#1677e8]"><Star class="size-3.5 fill-current" />Dapatkan hingga 400 poin TapakLokal</p></section>
 
                     <section class="mt-4 rounded-2xl border border-[#e1eaf5] bg-white p-4"><div class="flex items-center justify-between"><h2 class="flex items-center gap-2 text-xs font-bold text-[#173b70]"><Compass class="size-4 text-[#1677e8]" />Fasilitas</h2><span class="text-[10px] font-semibold text-[#1677e8]">Lihat semua</span></div><div class="mt-4 grid grid-cols-3 gap-2"><div v-for="facility in facilities" :key="facility.label" class="grid min-h-20 place-items-center rounded-xl bg-[#f7faff] p-2 text-center"><component :is="facility.icon" class="size-5 text-[#1677e8]" /><span class="mt-2 text-[9px] font-medium text-[#56708d]">{{ facility.label }}</span></div></div></section>
 
                 </aside>
-            </div>
 
+            <div class="lg:col-start-1">
             <section class="mt-7 rounded-2xl border border-[#dfeaf5] bg-white p-4 shadow-[0_10px_28px_rgba(23,75,120,0.05)] sm:p-5" aria-labelledby="vendor-heading">
                 <div class="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(230px,0.65fr)_minmax(270px,0.85fr)] lg:gap-0">
                     <div class="flex items-center gap-5 lg:pr-6"><img :src="vendorInfo.logo" :alt="`Logo ${vendorInfo.name}`" class="size-24 shrink-0 object-contain" /><div class="min-w-0"><p class="text-[9px] font-bold uppercase tracking-[0.08em] text-[#1688e8]">Diselenggarakan oleh</p><h2 id="vendor-heading" class="mt-2 text-xl font-extrabold tracking-tight"><span class="text-[#f0272e]">BRENGGO</span><span class="text-[#173b70]">.ID</span></h2><p class="mt-2 max-w-sm text-[11px] leading-4 text-[#55739b]">Penyedia perjalanan terpercaya untuk pengalaman wisata terbaik di seluruh Indonesia.</p><div class="mt-2.5 flex items-center gap-2"><Star class="size-4 fill-[#f5a000] text-[#f5a000]" /><span class="text-xs font-extrabold text-[#173b70]">4.9</span><span class="text-[10px] text-[#7186a2]">(1.248 ulasan)</span></div><div class="mt-3 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 rounded-full bg-[#edf7ff] px-2.5 py-1 text-[9px] font-semibold text-[#1688e8]"><ShieldCheck class="size-3.5" />Vendor Terverifikasi</span><span class="inline-flex items-center gap-1 rounded-full bg-[#edf7ff] px-2.5 py-1 text-[9px] font-semibold text-[#1688e8]"><ShieldCheck class="size-3.5" />Proses Aman & Terpercaya</span></div></div></div>
@@ -347,7 +358,18 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
             <TripFaq :trip-type="tripType" />
             <TripReviews :trip-type="tripType" />
             <TripRecommendations :trip-type="tripType" />
+            </div>
+            </div>
         </main>
+
+        <Teleport to="body">
+            <div v-if="isBookingModalOpen" class="fixed inset-0 z-[120] flex items-center justify-center bg-[#071a32]/55 p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="booking-modal-heading" @click.self="isBookingModalOpen = false">
+                <div class="max-h-full w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl [scrollbar-width:thin]">
+                    <header class="flex items-center justify-between border-b border-[#e6eef7] px-5 py-4 sm:px-6"><div><p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1688e8]">Pesan trip</p><h2 id="booking-modal-heading" class="mt-1 text-lg font-extrabold text-[#173b70]">Lengkapi detail pesanan</h2></div><button type="button" class="grid size-9 place-items-center rounded-full text-[#60789c] transition hover:bg-[#f1f6fb]" aria-label="Tutup pemesanan" @click="isBookingModalOpen = false"><X class="size-5" /></button></header>
+                    <div class="p-5 sm:p-6"><h3 class="text-center text-base font-extrabold text-[#173b70]">{{ detail.title }}</h3><p class="mt-1 text-center text-xs text-[#7186a2]">{{ detail.startPoint }} · {{ detail.duration }}</p><div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"><section class="min-w-0"><div class="flex items-center justify-between border-b border-[#e6eef7] pb-3"><div><p class="text-xs font-extrabold text-[#173b70]">Peserta</p><p class="mt-1 text-[11px] text-[#7186a2]">Harga berlaku untuk peserta dewasa.</p></div><span class="rounded-full bg-[#edf7ff] px-2.5 py-1 text-[10px] font-bold text-[#1688e8]">{{ detail.price }} / orang</span></div><div class="mt-4 flex items-center justify-between rounded-xl border border-[#dceaf7] bg-[#fbfdff] p-4"><div><p class="text-sm font-extrabold text-[#173b70]">Dewasa</p><p class="mt-1 text-[11px] text-[#7186a2]">Usia 3 tahun ke atas</p></div><div class="flex items-center gap-3"><button type="button" class="grid size-9 place-items-center rounded-lg bg-[#eef5fc] text-[#1688e8]" aria-label="Kurangi peserta" @click="updateTravelers(-1)"><Minus class="size-4" /></button><span class="w-5 text-center text-sm font-extrabold text-[#173b70]">{{ travelers }}</span><button type="button" class="grid size-9 place-items-center rounded-lg bg-[#e7f4ff] text-[#1688e8]" aria-label="Tambah peserta" @click="updateTravelers(1)"><Plus class="size-4" /></button></div></div><div class="mt-5 rounded-xl border border-[#dceaf7] bg-[#f8fbff] p-4"><p class="text-xs font-extrabold text-[#173b70]">Catatan perjalanan</p><p class="mt-2 text-[11px] leading-5 text-[#60789c]">Pilih tanggal keberangkatan terlebih dahulu. Detail titik kumpul dan e-ticket dikirim setelah pesanan dikonfirmasi.</p></div></section><aside class="rounded-2xl bg-[#f5f9ff] p-4 sm:p-5"><label class="block text-xs font-extrabold text-[#173b70]">Keberangkatan<input v-model="departureDate" type="date" class="mt-2 w-full rounded-xl border border-[#cfe0ef] bg-white px-3 py-2.5 text-xs font-semibold text-[#31577f] outline-none focus:border-[#1688e8] focus:ring-2 focus:ring-[#1688e8]/15" /></label><p class="mt-2 text-[10px] text-[#7186a2]">Pilih tanggal keberangkatan yang tersedia.</p><div class="mt-5 border-y border-[#dce8f3] py-4"><h4 class="text-base font-extrabold text-[#173b70]">Rincian pesanan</h4><dl class="mt-3 space-y-2 text-[11px]"><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Tanggal trip</dt><dd class="text-right font-bold text-[#31577f]">{{ departureDateLabel }}</dd></div><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Durasi</dt><dd class="font-bold text-[#31577f]">{{ detail.duration }}</dd></div><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Dewasa ×{{ travelers }}</dt><dd class="font-bold text-[#31577f]">Rp {{ bookingTotal }}</dd></div></dl></div><div class="mt-4 flex items-baseline justify-between gap-3"><span class="text-sm font-extrabold text-[#173b70]">Total</span><span class="text-lg font-extrabold text-[#173b70]">Rp {{ bookingTotal }}</span></div><p class="mt-2 flex items-center justify-end gap-1 text-[10px] text-[#d99b00]"><Star class="size-3 fill-current" />Dapatkan hingga 400 poin</p><button type="button" class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1688e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,136,232,0.24)] transition hover:bg-[#0875d0]" @click="submitBooking">Pesan sekarang<ChevronRight class="size-4" /></button><a href="https://wa.me/" target="_blank" rel="noopener noreferrer" class="mt-3 flex min-h-10 items-center justify-center rounded-xl border border-emerald-400 bg-white px-4 text-xs font-bold text-emerald-600">Tanya via WhatsApp</a></aside></div><p v-if="bookingMessage" role="status" class="mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700">{{ bookingMessage }}</p></div>
+                </div>
+            </div>
+        </Teleport>
 
         <Teleport to="body">
             <div v-if="isGalleryOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#071a32]/92 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Galeri foto perjalanan" @click.self="closeGallery">
