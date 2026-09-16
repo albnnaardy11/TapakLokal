@@ -54,7 +54,7 @@ const showInfo = (title, text) => {
             </div>
         </div>
 
-        <div class="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div v-for="(stat, index) in statistics" :key="stat.label" class="group relative isolate overflow-hidden rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none" :class="['border-blue-100 bg-gradient-to-br from-white to-blue-50', 'border-cyan-100 bg-gradient-to-br from-white to-cyan-50', 'border-rose-100 bg-gradient-to-br from-white to-rose-50', 'border-indigo-100 bg-gradient-to-br from-white to-indigo-50'][index]">
                 <div aria-hidden="true" class="pointer-events-none absolute -bottom-9 -right-8 -z-10 size-28 rounded-full border-[18px] opacity-40" :class="['border-blue-100', 'border-cyan-100', 'border-rose-100', 'border-indigo-100'][index]"></div>
                 <div class="flex items-center gap-2.5"><span class="grid size-9 shrink-0 place-items-center rounded-xl border border-white/80 shadow-sm" :class="['bg-blue-100 text-blue-600', 'bg-cyan-100 text-cyan-700', 'bg-rose-100 text-rose-600', 'bg-indigo-100 text-indigo-600'][index]"><component :is="stat.icon" class="size-4" aria-hidden="true" /></span><p class="text-[10px] font-semibold leading-4 text-slate-600">{{ stat.label }}</p></div>

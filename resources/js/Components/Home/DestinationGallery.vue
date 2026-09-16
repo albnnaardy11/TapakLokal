@@ -134,7 +134,7 @@ const showAll = () => {
             </div>
         </div>
 
-        <div class="flex h-[560px] min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl bg-white/95 p-5 sm:p-6">
+        <div class="flex h-[420px] min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl bg-white/95 p-5 sm:h-[500px] sm:p-6 lg:h-[560px]">
             <div class="mb-4 flex items-center gap-3">
                 <label class="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-[#e5edf8] bg-[#f8fbff] px-3.5 py-1 transition duration-200 focus-within:border-[#078cff] focus-within:bg-white focus-within:ring-4 focus-within:ring-sky-100">
                     <Search class="size-5 shrink-0 text-[#078cff]" aria-hidden="true" />
