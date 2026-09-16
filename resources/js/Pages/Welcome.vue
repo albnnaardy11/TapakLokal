@@ -14,6 +14,7 @@ import TravelBlog from '../Components/Home/TravelBlog.vue';
 import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
 import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
+import MainFooter from '../Components/Home/MainFooter.vue';
 import { ref } from 'vue';
 
 const tripFinder = ref(null);
@@ -66,5 +67,7 @@ defineProps({
                 <TravelerReviews />
             </div>
         </main>
+
+        <MainFooter />
     </div>
 </template>

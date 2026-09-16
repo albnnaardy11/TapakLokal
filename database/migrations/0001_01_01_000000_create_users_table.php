@@ -14,9 +14,19 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('username')->nullable()->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable(); // Nullable untuk login langsung via Google OAuth
+            $table->string('google_id')->nullable()->unique()->index();
+            $table->string('avatar')->nullable();
+            $table->string('phone', 20)->nullable()->unique();
+            $table->enum('role', ['traveler', 'guide', 'admin'])->default('traveler');
+            $table->enum('member_tier', ['bronze', 'silver', 'gold', 'platinum'])->default('bronze');
+            $table->unsignedInteger('points')->default(0);
+            $table->decimal('wallet_balance', 14, 2)->default(0);
+            $table->text('bio')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
