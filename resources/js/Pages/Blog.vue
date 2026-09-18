@@ -2,6 +2,10 @@
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { ArrowRight, ArrowUpRight, Clock3 } from 'lucide-vue-next';
+import BlogDestinationCta from '../Components/Blog/BlogDestinationCta.vue';
+import BlogDestinations from '../Components/Blog/BlogDestinations.vue';
+import BlogLocalStories from '../Components/Blog/BlogLocalStories.vue';
+import BlogNewsletter from '../Components/Blog/BlogNewsletter.vue';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TravelBlog from '../Components/Home/TravelBlog.vue';
 import { articles } from '../Components/Home/travelArticles';
@@ -62,6 +66,10 @@ const articleImage = (article, width) => `https://images.unsplash.com/photo-${ar
             <div id="cerita" class="flow-root scroll-mt-28">
                 <TravelBlog ref="travelBlog" />
             </div>
+            <BlogDestinations />
+            <BlogDestinationCta />
+            <BlogLocalStories />
+            <BlogNewsletter />
         </main>
     </div>
 </template>
