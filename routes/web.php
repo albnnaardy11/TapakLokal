@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
+Route::get('/blog', function (): Response {
+    return Inertia::render('Blog');
+})->name('blog');
+
 Route::get('/account', function (): Response {
     return Inertia::render('Account');
 })->name('account');
