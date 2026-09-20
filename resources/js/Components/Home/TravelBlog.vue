@@ -78,7 +78,7 @@ onBeforeUnmount(() => observer?.disconnect());
         </div>
         <div ref="carousel" :class="isBlogPage ? 'mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'" @scroll="syncPage">
             <article v-for="article in filteredArticles" :key="article.id" class="group flex flex-col overflow-hidden rounded-2xl border border-[#e1eaf3] bg-white shadow-[0_3px_12px_rgba(23,75,120,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[#b8dafa] hover:shadow-[0_8px_20px_rgba(23,75,120,0.08)] motion-reduce:transition-none" :class="isBlogPage ? 'min-w-0' : 'w-[85%] shrink-0 snap-start sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-60px)/4)]'">
-                <button type="button" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#3E7BEF]" :aria-label="`Baca ${article.title}`" @click="readArticle(article)">
+                <Link :href="route('blog.show', { article: article.id })" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#3E7BEF]" :aria-label="`Baca ${article.title}`">
                     <div class="relative aspect-[4/3] w-full overflow-hidden bg-sky-100">
                         <img :src="`https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=640&q=85`" :alt="article.category" loading="lazy" class="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" />
                         <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-[#2e69d9] shadow-sm">{{ article.category }}</span>
@@ -89,7 +89,7 @@ onBeforeUnmount(() => observer?.disconnect());
                         <p class="mt-2 text-sm leading-6 text-slate-500">{{ article.excerpt }}</p>
                         <span class="mt-auto flex justify-start pt-6"><span class="inline-flex items-center gap-2 text-xs font-bold text-[#3E7BEF] transition-colors duration-200 hover:text-[#2e69d9]">Baca cerita <ArrowRight class="size-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" /></span></span>
                     </div>
-                </button>
+                </Link>
             </article>
         </div>
         <nav v-if="!isBlogPage && positions.length > 1" class="mt-2 flex justify-center gap-1" aria-label="Halaman artikel">

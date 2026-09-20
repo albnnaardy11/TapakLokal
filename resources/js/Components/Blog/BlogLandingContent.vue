@@ -53,10 +53,10 @@ const articleImage = (article, width = 900) => `https://images.unsplash.com/phot
             </div>
             <div class="mt-7 grid gap-4 lg:grid-cols-2">
                 <article v-for="article in visibleArticles" :key="article.id" class="group overflow-hidden rounded-2xl border border-[#dfeaf4] bg-white shadow-[0_5px_18px_rgba(23,75,120,0.04)] transition-shadow hover:shadow-[0_12px_28px_rgba(23,75,120,0.10)]">
-                    <button type="button" class="grid h-full w-full text-left sm:grid-cols-[42%_minmax(0,1fr)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#078cff]" @click="emit('read', article)">
+                    <Link :href="route('blog.show', { article: article.id })" class="grid h-full w-full text-left sm:grid-cols-[42%_minmax(0,1fr)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#078cff]">
                         <span class="relative block min-h-48 overflow-hidden bg-sky-100 sm:min-h-full"><img :src="articleImage(article)" :alt="article.title" loading="lazy" class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105" /><span class="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[9px] font-bold text-[#0875d2] shadow-sm">{{ article.category }}</span></span>
                         <span class="flex min-w-0 flex-col p-5 sm:p-6"><span class="inline-flex items-center gap-1.5 text-[10px] text-slate-400"><Clock3 class="size-3.5" />4 menit baca</span><span class="mt-3 text-lg font-bold leading-snug tracking-tight text-[#172c50] transition-colors group-hover:text-[#078cff]">{{ article.title }}</span><span class="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{{ article.excerpt }}</span><span class="mt-auto flex items-center gap-2 pt-5 text-xs font-bold text-[#078cff]">Baca panduan <ArrowRight class="size-4 transition-transform duration-200 group-hover:translate-x-1" /></span></span>
-                    </button>
+                    </Link>
                 </article>
             </div>
         </section>

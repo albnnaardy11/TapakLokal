@@ -8,7 +8,7 @@ import AuthModal from './AuthModal.vue';
 const isMobileMenuOpen = ref(false);
 const openPopover = ref(null);
 const currentPage = usePage();
-const activeNav = computed(() => currentPage.component === 'Blog' ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
+const activeNav = computed(() => (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
 const globalSearch = ref('');
 const notification = ref('');
 const isAuthModalOpen = ref(false);

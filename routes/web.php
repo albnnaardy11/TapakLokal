@@ -11,6 +11,12 @@ Route::get('/blog', function (): Response {
     return Inertia::render('Blog');
 })->name('blog');
 
+Route::get('/blog/{article}', function (string $article): Response {
+    return Inertia::render('BlogDetail', [
+        'articleId' => $article,
+    ]);
+})->name('blog.show');
+
 Route::get('/panduan-aksesibilitas', function (): Response {
     return Inertia::render('AccessibilityGuide');
 })->name('accessibility.guide');
