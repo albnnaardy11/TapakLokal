@@ -25,7 +25,7 @@ const moveToPage = (page) => {
 
     const maximumScroll = carousel.value.scrollWidth - carousel.value.clientWidth;
     currentPage.value = page;
-    carousel.value.scrollTo({ left: (maximumScroll / (pageCount - 1)) * page, behavior: 'smooth' });
+    carousel.value.scrollTo({ left: (maximumScroll / (pageCount - 1)) * page, behavior: document.documentElement.dataset.a11yAnimation === '1' || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
 };
 
 const nextPage = () => moveToPage((currentPage.value + 1) % pageCount);
@@ -41,7 +41,11 @@ const updateCurrentPage = () => {
 
 const startAutoplay = () => {
     window.clearInterval(autoplayTimer);
-    autoplayTimer = window.setInterval(nextPage, 4500);
+    autoplayTimer = window.setInterval(() => {
+        if (document.documentElement.dataset.a11yAnimation !== '1' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            nextPage();
+        }
+    }, 4500);
 };
 
 const pauseAutoplay = () => window.clearInterval(autoplayTimer);

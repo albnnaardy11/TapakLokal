@@ -3,6 +3,7 @@ import { articles } from './travelArticles';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const currentPage = usePage();
+const isBlogPage = computed(() => currentPage.component === 'Blog');
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Compass, MapPinned, Utensils, X } from 'lucide-vue-next';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
@@ -32,7 +33,7 @@ const syncPage = () => {
 };
 const measure = () => {
     const element = carousel.value;
-    if (! element) {
+    if (! element || isBlogPage.value || ! element.firstElementChild) {
         return;
     }
     const maximum = Math.max(0, element.scrollWidth - element.clientWidth);
@@ -62,41 +63,41 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24" aria-labelledby="travel-blog-heading">
+    <section class="mx-auto mt-16 max-w-[1180px] sm:mt-20" aria-labelledby="travel-blog-heading">
         <div class="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Filter kategori cerita">
-            <button v-for="category in categories" :key="category.label" type="button" class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-xs font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" :class="activeCategory === category.label ? 'border-[#078cff] bg-[#078cff] text-white shadow-[0_5px_12px_rgba(7,140,255,0.2)]' : 'border-[#e1eaf3] bg-white text-[#486581] hover:border-[#b8dafa] hover:bg-[#f5faff]'" @click="activeCategory = category.label"><component :is="category.icon" class="size-4" />{{ category.label }}</button>
+            <button v-for="category in categories" :key="category.label" type="button" class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-xs font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" :aria-pressed="activeCategory === category.label" :class="activeCategory === category.label ? 'border-[#3E7BEF] bg-[#3E7BEF] text-white shadow-[0_5px_12px_rgba(7,140,255,0.2)]' : 'border-[#e1eaf3] bg-white text-[#486581] hover:border-[#b8dafa] hover:bg-[#f5faff]'" @click="activeCategory = category.label"><component :is="category.icon" class="size-4" />{{ category.label }}</button>
         </div>
         <div class="mt-8 flex items-end justify-between gap-5">
             <div>
-                <p class="text-[10px] font-bold tracking-[0.14em] text-[#078cff]">REKOMENDASI CERITA</p>
-                <h2 id="travel-blog-heading" class="mt-2 text-2xl font-extrabold leading-tight tracking-tight text-[#172c50] sm:text-3xl">Temukan cerita untuk <span class="text-[#078cff]">perjalananmu</span></h2>
+                <p class="text-xs font-bold tracking-[0.14em] text-[#3E7BEF]">REKOMENDASI CERITA</p>
+                <h2 id="travel-blog-heading" class="mt-2 text-2xl font-extrabold leading-tight tracking-tight text-[#172c50] sm:text-3xl">Temukan cerita untuk <span class="text-[#3E7BEF]">perjalananmu</span></h2>
                 <p class="mt-3 text-sm text-slate-500">Panduan yang membantu sebelum memilih dan berangkat.</p>
-                <Link v-if="currentPage.component !== 'Blog'" :href="route('blog')" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#078cff] hover:underline">Lihat semua cerita <ArrowRight class="size-4" aria-hidden="true" /></Link>
+                <Link v-if="currentPage.component !== 'Blog'" :href="route('blog')" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#3E7BEF] hover:underline">Lihat semua cerita <ArrowRight class="size-4" aria-hidden="true" /></Link>
             </div>
-            <div class="hidden shrink-0 items-center gap-3 sm:flex"><span class="text-xs text-slate-500">{{ filteredArticles.length }} cerita</span><div class="flex gap-2"><button type="button" class="grid size-10 place-items-center rounded-full border border-sky-100 bg-white text-[#078cff] transition hover:bg-sky-50 disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-[#078cff]" :disabled="page === 0" aria-label="Artikel sebelumnya" @click="move(page - 1)"><ArrowLeft class="size-4" /></button><button type="button" class="grid size-10 place-items-center rounded-full bg-[#078cff] text-white transition hover:bg-[#0875d2] disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" :disabled="page === positions.length - 1" aria-label="Artikel berikutnya" @click="move(page + 1)"><ArrowRight class="size-4" /></button></div></div>
+            <div v-if="!isBlogPage" class="hidden shrink-0 items-center gap-3 sm:flex"><span class="text-xs text-slate-500">{{ filteredArticles.length }} cerita</span><div class="flex gap-2"><button type="button" class="grid size-10 place-items-center rounded-full border border-sky-100 bg-white text-[#3E7BEF] transition hover:bg-sky-50 disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" :disabled="page === 0" aria-label="Artikel sebelumnya" @click="move(page - 1)"><ArrowLeft class="size-4" /></button><button type="button" class="grid size-10 place-items-center rounded-full bg-[#3E7BEF] text-white transition hover:bg-[#2e69d9] disabled:opacity-35 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" :disabled="page === positions.length - 1" aria-label="Artikel berikutnya" @click="move(page + 1)"><ArrowRight class="size-4" /></button></div></div>
         </div>
-        <div ref="carousel" class="mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" @scroll="syncPage">
-            <article v-for="article in filteredArticles" :key="article.id" class="group flex w-[85%] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-[#e1eaf3] bg-white shadow-[0_3px_12px_rgba(23,75,120,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[#b8dafa] hover:shadow-[0_8px_20px_rgba(23,75,120,0.08)] motion-reduce:transition-none sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-60px)/4)]">
-                <button type="button" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#078cff]" :aria-label="`Baca ${article.title}`" @click="readArticle(article)">
+        <div ref="carousel" :class="isBlogPage ? 'mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'" @scroll="syncPage">
+            <article v-for="article in filteredArticles" :key="article.id" class="group flex flex-col overflow-hidden rounded-2xl border border-[#e1eaf3] bg-white shadow-[0_3px_12px_rgba(23,75,120,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[#b8dafa] hover:shadow-[0_8px_20px_rgba(23,75,120,0.08)] motion-reduce:transition-none" :class="isBlogPage ? 'min-w-0' : 'w-[85%] shrink-0 snap-start sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-60px)/4)]'">
+                <button type="button" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#3E7BEF]" :aria-label="`Baca ${article.title}`" @click="readArticle(article)">
                     <div class="relative aspect-[4/3] w-full overflow-hidden bg-sky-100">
                         <img :src="`https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=640&q=85`" :alt="article.category" loading="lazy" class="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" />
-                        <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1.5 text-[9px] font-bold text-[#0875d2] shadow-sm">{{ article.category }}</span>
+                        <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-[#2e69d9] shadow-sm">{{ article.category }}</span>
                     </div>
                     <div class="flex flex-1 flex-col p-5">
-                        <span class="flex items-center justify-between gap-3 text-[10px] text-slate-400"><span>{{ articleDates[article.id] }}</span><span class="inline-flex items-center gap-1.5"><Clock3 class="size-3.5" aria-hidden="true" />4 menit baca</span></span>
-                        <h3 class="mt-3 text-base font-bold leading-snug text-[#172c50] transition-colors group-hover:text-[#078cff]">{{ article.title }}</h3>
-                        <p class="mt-2 text-xs leading-5 text-slate-500">{{ article.excerpt }}</p>
-                        <span class="mt-auto flex justify-end pt-6"><span class="inline-flex items-center gap-2 text-xs font-bold text-[#078cff] transition-colors duration-200 hover:text-[#056fc5]">Baca cerita <ArrowRight class="size-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" /></span></span>
+                        <span class="flex items-center justify-between gap-3 text-xs text-slate-500"><span>{{ articleDates[article.id] }}</span><span class="inline-flex items-center gap-1.5"><Clock3 class="size-3.5" aria-hidden="true" />4 menit baca</span></span>
+                        <h3 class="mt-3 text-base font-bold leading-snug text-[#172c50] transition-colors group-hover:text-[#3E7BEF]">{{ article.title }}</h3>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">{{ article.excerpt }}</p>
+                        <span class="mt-auto flex justify-start pt-6"><span class="inline-flex items-center gap-2 text-xs font-bold text-[#3E7BEF] transition-colors duration-200 hover:text-[#2e69d9]">Baca cerita <ArrowRight class="size-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" /></span></span>
                     </div>
                 </button>
             </article>
         </div>
-        <nav v-if="positions.length > 1" class="mt-2 flex justify-center gap-1" aria-label="Halaman artikel">
-            <button v-for="(position, index) in positions" :key="index" type="button" class="grid min-h-8 min-w-8 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-[#078cff]" :aria-label="`Halaman artikel ${index + 1}`" :aria-current="page === index ? 'page' : undefined" @click="move(index)"><span class="h-2 rounded-full transition-all" :class="page === index ? 'w-6 bg-[#078cff]' : 'w-2 bg-slate-200 hover:bg-sky-300'"></span></button>
+        <nav v-if="!isBlogPage && positions.length > 1" class="mt-2 flex justify-center gap-1" aria-label="Halaman artikel">
+            <button v-for="(position, index) in positions" :key="index" type="button" class="grid min-h-8 min-w-8 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" :aria-label="`Halaman artikel ${index + 1}`" :aria-current="page === index ? 'page' : undefined" @click="move(index)"><span class="h-2 rounded-full transition-all" :class="page === index ? 'w-6 bg-[#3E7BEF]' : 'w-2 bg-slate-200 hover:bg-sky-300'"></span></button>
         </nav>
         <dialog ref="dialog" class="fixed inset-0 m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-3xl bg-white p-0 text-[#172c50] shadow-2xl backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm" aria-labelledby="blog-article-title" @click=" $event.target === dialog && dialog.close()">
             <div v-if="selectedArticle" class="p-6 sm:p-9">
-                <div class="flex items-center justify-between gap-4"><span class="text-xs font-bold text-[#078cff]">{{ selectedArticle.category }}</span><button type="button" autofocus class="grid size-9 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-[#078cff]" aria-label="Tutup artikel" @click="dialog.close()"><X class="size-5" /></button></div>
+                <div class="flex items-center justify-between gap-4"><span class="text-xs font-bold text-[#3E7BEF]">{{ selectedArticle.category }}</span><button type="button" autofocus class="grid size-9 place-items-center rounded-full bg-slate-100 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" aria-label="Tutup artikel" @click="dialog.close()"><X class="size-5" /></button></div>
                 <h2 id="blog-article-title" class="mt-5 text-2xl font-extrabold leading-tight">{{ selectedArticle.title }}</h2>
                 <p class="mt-4 text-sm font-medium leading-6 text-slate-500">{{ selectedArticle.excerpt }}</p>
                 <p class="mt-5 text-base leading-8 text-slate-600">{{ selectedArticle.body }}</p>

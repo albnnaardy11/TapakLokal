@@ -11,6 +11,10 @@ Route::get('/blog', function (): Response {
     return Inertia::render('Blog');
 })->name('blog');
 
+Route::get('/panduan-aksesibilitas', function (): Response {
+    return Inertia::render('AccessibilityGuide');
+})->name('accessibility.guide');
+
 Route::get('/account', function (): Response {
     return Inertia::render('Account');
 })->name('account');

@@ -32,11 +32,11 @@ const articleImage = (article, width) => `https://images.unsplash.com/photo-${ar
                         <button type="button" class="flex h-full min-h-[440px] w-full flex-col items-start justify-between gap-20 p-6 text-left text-white focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white sm:min-h-[510px] sm:p-9" @click="travelBlog?.readArticle(featured)">
                             <span aria-hidden="true"></span>
                             <span class="flex w-full flex-col gap-4">
-                                <span class="text-[11px] font-semibold text-white/80">Bali, Indonesia · Inspirasi Destinasi</span>
+                                <span class="text-xs font-semibold text-white/80">Bali, Indonesia · Inspirasi Destinasi</span>
                                 <span class="max-w-lg text-3xl font-bold leading-[1.15] tracking-tight sm:text-[40px]">{{ featured.title }}</span>
                                 <span class="max-w-md text-sm leading-6 text-white/80">Berhenti sejenak. Temukan ritme yang lebih pelan di antara pura, danau, dan cerita setempat.</span>
                                 <span class="mt-2 flex items-center justify-between border-t border-white/25 pt-5">
-                                    <span class="flex items-center gap-2 text-xs text-white/80"><Clock3 class="size-3.5" aria-hidden="true" />1 menit baca</span>
+                                    <span class="flex items-center gap-2 text-xs text-white/80"><Clock3 class="size-3.5" aria-hidden="true" />4 menit baca</span>
                                     <span class="group/cta relative inline-flex h-10 w-10 items-center overflow-hidden rounded-full bg-white text-[#172c50] transition-[width,background-color,color] duration-300 hover:w-[132px] hover:bg-[#3E7BEF] hover:text-white">
                                         <ArrowUpRight class="absolute left-2.5 size-5 transition-all duration-200 group-hover/cta:-translate-y-2 group-hover/cta:translate-x-2 group-hover/cta:opacity-0" aria-hidden="true" />
                                         <span class="ml-4 whitespace-nowrap text-sm font-bold opacity-0 transition-opacity duration-150 group-hover/cta:opacity-100 group-hover/cta:delay-100">Baca cerita</span>
@@ -53,10 +53,10 @@ const articleImage = (article, width) => `https://images.unsplash.com/photo-${ar
                                     <img :src="articleImage(article, 640)" :alt="index === 0 ? 'Pemandangan kepulauan dan laut tropis' : 'Lanskap hijau destinasi Indonesia'" class="size-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105 lg:absolute lg:inset-0" />
                                 </span>
                                 <span class="flex flex-1 flex-col gap-3 p-5 lg:py-7">
-                                    <span class="text-[10px] font-bold uppercase tracking-[0.08em] text-[#3E7BEF]">{{ article.category }}</span>
+                                    <span class="text-xs font-bold uppercase tracking-[0.08em] text-[#3E7BEF]">{{ article.category }}</span>
                                     <span class="text-lg font-bold leading-snug tracking-tight transition-colors group-hover:text-[#3E7BEF]">{{ article.title }}</span>
-                                    <span class="line-clamp-2 text-xs leading-5 text-slate-500">{{ article.excerpt }}</span>
-                                    <span class="mt-auto flex items-center justify-between gap-3 pt-3"><span class="inline-flex items-center gap-1.5 text-[10px] text-slate-500"><Clock3 class="size-3" aria-hidden="true" />1 menit baca</span><span class="group/cta relative grid size-10 place-items-center overflow-hidden rounded-full bg-[#edf6ff] text-[#3E7BEF] transition-colors duration-300 hover:bg-[#3E7BEF] hover:text-white"><ArrowUpRight class="absolute size-5 transition-all duration-300 ease-out group-hover/cta:-translate-y-2 group-hover/cta:translate-x-2 group-hover/cta:opacity-0" aria-hidden="true" /><ArrowRight class="size-5 -translate-x-2 opacity-0 transition-all duration-300 ease-out group-hover/cta:translate-x-0 group-hover/cta:opacity-100" aria-hidden="true" /></span></span>
+                                    <span class="line-clamp-2 text-sm leading-6 text-slate-500">{{ article.excerpt }}</span>
+                                    <span class="mt-auto flex items-center justify-between gap-3 pt-3"><span class="inline-flex items-center gap-1.5 text-xs text-slate-500"><Clock3 class="size-3" aria-hidden="true" />4 menit baca</span><span class="group/cta relative grid size-10 place-items-center overflow-hidden rounded-full bg-[#edf6ff] text-[#3E7BEF] transition-colors duration-300 hover:bg-[#3E7BEF] hover:text-white"><ArrowUpRight class="absolute size-5 transition-all duration-300 ease-out group-hover/cta:-translate-y-2 group-hover/cta:translate-x-2 group-hover/cta:opacity-0" aria-hidden="true" /><ArrowRight class="size-5 -translate-x-2 opacity-0 transition-all duration-300 ease-out group-hover/cta:translate-x-0 group-hover/cta:opacity-100" aria-hidden="true" /></span></span>
                                 </span>
                             </button>
                         </article>

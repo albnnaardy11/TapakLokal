@@ -40,7 +40,7 @@ const updatePagination = () => {
 const moveToPage = (page) => {
     carousel.value?.scrollTo({
         left: pagePositions.value[page],
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+        behavior: document.documentElement.dataset.a11yAnimation === '1' || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
     });
 };
 
@@ -54,7 +54,11 @@ const pauseAutoplay = () => window.clearInterval(autoplayTimer);
 const startAutoplay = () => {
     pauseAutoplay();
     if (! isHovered && ! hasFocus && ! showAll.value && ! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        autoplayTimer = window.setInterval(nextTrip, 4500);
+        autoplayTimer = window.setInterval(() => {
+            if (document.documentElement.dataset.a11yAnimation !== '1') {
+                nextTrip();
+            }
+        }, 4500);
     }
 };
 

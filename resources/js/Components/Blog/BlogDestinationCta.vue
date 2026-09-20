@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-vue-next';
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24" aria-labelledby="article-destination-heading">
+    <section class="mx-auto mt-16 max-w-[1180px] sm:mt-20" aria-labelledby="article-destination-heading">
         <div class="relative isolate min-h-[244px] overflow-hidden rounded-2xl border border-[#d8eafb] bg-[#eaf6ff] px-6 py-8 sm:px-9 sm:py-9 lg:grid lg:h-[244px] lg:min-h-0 lg:grid-cols-[400px_minmax(0,1fr)] lg:items-center lg:gap-10 lg:px-12 lg:py-0">
             <div class="relative hidden h-[244px] lg:block" aria-hidden="true">
                 <img src="/Assets/Images/blog/cta-blog.webp" alt="" class="absolute -left-6 top-1 h-[234px] w-auto max-w-none object-contain" />

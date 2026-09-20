@@ -1,0 +1,73 @@
+/* Keep the controls outside page filters so users can always reset the display. */
+.accessibility-tools {
+    --accessibility-brand: #3e7bef;
+    font-family: 'Instrument Sans', Arial, sans-serif;
+    color: #172c50;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.accessibility-tools button { cursor: pointer; }
+.accessibility-tools :is(button, a):focus-visible { outline: 3px solid #172c50; outline-offset: 3px; }
+.accessibility-launchers { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 90; display: flex; flex-direction: column; gap: 8px; }
+.accessibility-fab { display: grid; place-items: center; width: 56px; height: 56px; border: 2px solid var(--accessibility-brand); border-radius: 50%; background: white; color: var(--accessibility-brand); box-shadow: 0 6px 24px #172c5010; transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.accessibility-fab:hover, .accessibility-fab:focus-visible, .accessibility-fab--top { background: var(--accessibility-brand); color: white; box-shadow: 0 6px 20px #3e7bef30; }
+.accessibility-fab--top:hover { background: #2e69d9; border-color: #2e69d9; }
+.accessibility-panel { position: fixed; inset: auto 16px var(--accessibility-panel-bottom, 84px) auto; width: min(380px, calc(100% - 24px)); max-width: none; height: min(684px, calc(100dvh - var(--accessibility-panel-bottom, 84px) - 24px)); max-height: none; margin: 0; padding: 0; overflow: hidden; border: 1px solid #dce8ff; border-radius: 38px; background: white; color: #172c50; box-shadow: 0 20px 65px #2455a51c; }
+.accessibility-panel[open] { display: flex; flex-direction: column; }
+.accessibility-panel::backdrop { background: #172c5008; }
+.accessibility-header { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; min-height: 88px; padding: 20px 24px; background: linear-gradient(110deg, #2865d9, #3e7bef); color: white; }
+.accessibility-header h2 { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.accessibility-header p { margin-top: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.accessibility-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 12px; }
+.accessibility-close:hover { background: #ffffff20; }
+.accessibility-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px 24px 26px; scrollbar-width: thin; scrollbar-color: #bcd2ff #f7faff; }
+.accessibility-guide-button { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; padding: 10px; border: 1px solid #dce8ff; border-radius: 16px; background: #f4f8ff; color: #245bbf; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.accessibility-guide-button:hover { background: #e8f0ff; border-color: #bcd2ff; }
+.accessibility-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.accessibility-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 100px; padding: 16px 10px 20px; border: 1px solid #f0f3f8; border-radius: 24px; background: white; box-shadow: 0 3px 8px #172c5004; font-size: 11px; line-height: 1.3; font-weight: 800; text-align: center; text-transform: uppercase; }
+.accessibility-tile > svg { color: #929dad; flex: none; }
+.accessibility-tile:hover { border-color: #bcd2ff; background: #f8faff; }
+.accessibility-tile.is-active { border-color: #9bbcfb; background: #f0f5ff; color: #245bbf; }
+.accessibility-tile.is-active > svg { color: #3e7bef; }
+.accessibility-dyslexia-icon { display: grid; place-items: center; height: 23px; font-family: Arial, sans-serif; font-size: 14px; }
+.accessibility-levels { position: absolute; bottom: 8px; display: flex; gap: 4px; }
+.accessibility-levels i { width: 16px; height: 3px; border-radius: 4px; background: #e2e8f0; }
+.accessibility-levels i.filled, .accessibility-active-dot { background: #3e7bef; }
+.accessibility-active-dot { position: absolute; top: 12px; right: 12px; width: 6px; height: 6px; border-radius: 50%; }
+.accessibility-reset { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 58px; margin-top: 32px; padding: 12px; border-radius: 17px; background: var(--accessibility-brand); color: white; box-shadow: 0 10px 20px #3e7bef30; font-size: 12px; letter-spacing: .04em; font-weight: 800; text-transform: uppercase; }
+.accessibility-reset:hover { background: #2e69d9; }
+.accessibility-credit { margin-top: 30px; color: #64748b; font-size: 10px; font-weight: 700; font-style: italic; text-align: center; text-transform: uppercase; }
+
+html[data-a11y-text='1'] { font-size: 112.5%; }
+html[data-a11y-text='2'] { font-size: 125%; }
+html[data-a11y-text='3'] { font-size: 150%; }
+html[data-a11y-spacing='1'] { --a11y-letter-spacing: .04em; --a11y-word-spacing: .08em; }
+html[data-a11y-spacing='2'] { --a11y-letter-spacing: .08em; --a11y-word-spacing: .16em; }
+html[data-a11y-spacing='3'] { --a11y-letter-spacing: .12em; --a11y-word-spacing: .24em; }
+html[data-a11y-spacing]:not([data-a11y-spacing='0']) #app * { letter-spacing: var(--a11y-letter-spacing) !important; word-spacing: var(--a11y-word-spacing) !important; }
+html[data-a11y-line='1'] { --a11y-line-height: 1.75; }
+html[data-a11y-line='2'] { --a11y-line-height: 2; }
+html[data-a11y-line='3'] { --a11y-line-height: 2.5; }
+html[data-a11y-line]:not([data-a11y-line='0']) #app * { line-height: var(--a11y-line-height) !important; }
+html[data-a11y-links='1'] body > :not(.accessibility-tools) a { outline: 2px solid #245bbf !important; outline-offset: 2px; text-decoration: underline !important; text-decoration-thickness: 2px !important; text-underline-offset: 4px; }
+html[data-a11y-dyslexia='1'] #app * { font-family: Arial, Verdana, sans-serif !important; letter-spacing: var(--a11y-letter-spacing, .05em) !important; word-spacing: var(--a11y-word-spacing, .12em) !important; line-height: var(--a11y-line-height, 1.8) !important; }
+html[data-a11y-animation='1'] *, html[data-a11y-animation='1'] *::before, html[data-a11y-animation='1'] *::after { animation-play-state: paused !important; transition: none !important; scroll-behavior: auto !important; }
+html[data-a11y-images='1'] body > :not(.accessibility-tools) :is(img, picture, video, canvas) { visibility: hidden !important; }
+html[data-a11y-images='1'] #app * { background-image: none !important; }
+html[data-a11y-color='1'] { --a11y-color-filter: grayscale(1); }
+html[data-a11y-color='2'] { --a11y-color-filter: saturate(.5); }
+html[data-a11y-color='3'] { --a11y-color-filter: saturate(1.8); }
+html[data-a11y-color]:not([data-a11y-color='0']) .accessibility-tools::before { content: ''; position: fixed; inset: 0; z-index: 80; pointer-events: none; backdrop-filter: var(--a11y-color-filter); }
+html[data-a11y-contrast='1'] #app, html[data-a11y-contrast='1'] #app * { background-color: #111827 !important; color: #fff !important; border-color: #94a3b8 !important; }
+html[data-a11y-contrast='2'] #app, html[data-a11y-contrast='2'] #app * { background-color: #fff !important; color: #111827 !important; border-color: #334155 !important; }
+html[data-a11y-contrast='3'] #app, html[data-a11y-contrast='3'] #app * { background-color: #000 !important; color: #ffeb3b !important; border-color: #ffeb3b !important; }
+html[data-a11y-contrast]:not([data-a11y-contrast='0']) #app * { background-image: none !important; text-shadow: none !important; }
+html[data-a11y-cursor='1'], html[data-a11y-cursor='1'] * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M5 3v36l10-9 8 15 8-4-8-15h15Z' fill='%23172c50' stroke='white' stroke-width='3'/%3E%3C/svg%3E") 5 3, auto !important; }
+@media (max-width: 420px) {
+    .accessibility-panel { right: 12px; border-radius: 30px; }
+    .accessibility-content { padding-right: 20px; padding-left: 20px; }
+    .accessibility-header { padding-right: 20px; padding-left: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .accessibility-tools *, .accessibility-tools *::before, .accessibility-tools *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
