@@ -1,6 +1,15 @@
 <script setup>
 import { ArrowRight, ChevronRight, Compass, Star } from 'lucide-vue-next';
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import ProgressiveImage from '../Shared/ProgressiveImage.vue';
+import SkeletonBox from '../Skeletons/Base/SkeletonBox.vue';
+
+defineProps({
+    isLoading: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 defineEmits(['select']);
 
@@ -72,7 +81,9 @@ const toggleAll = async () => {
 onMounted(() => {
     updatePagination();
     resizeObserver = new ResizeObserver(updatePagination);
-    resizeObserver.observe(carousel.value);
+    if (carousel.value) {
+        resizeObserver.observe(carousel.value);
+    }
     startAutoplay();
 });
 onBeforeUnmount(() => {
@@ -82,8 +93,36 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24" aria-labelledby="partner-trips-heading">
-        <div class="relative isolate overflow-hidden rounded-2xl bg-[#19375f]" @mouseenter="isHovered = true; pauseAutoplay()" @mouseleave="isHovered = false; startAutoplay()" @focusin="hasFocus = true; pauseAutoplay()" @focusout="hasFocus = $event.currentTarget.contains($event.relatedTarget); startAutoplay()">
+    <section
+        class="mx-auto mt-20 max-w-[1180px] sm:mt-24"
+        aria-labelledby="partner-trips-heading"
+        :aria-busy="isLoading"
+    >
+        <!-- Skeleton state -->
+        <div v-if="isLoading" class="relative overflow-hidden rounded-2xl bg-[#19375f] p-6 lg:p-8" aria-hidden="true">
+            <div class="grid grid-cols-1 lg:grid-cols-[44.5%_1fr] gap-6 items-center">
+                <div class="space-y-4 text-white">
+                    <div class="h-7 w-3/4 rounded-lg bg-white/40 skeleton-shimmer"></div>
+                    <div class="space-y-2 pt-1">
+                        <div class="h-4 w-full rounded-md bg-white/30 skeleton-shimmer"></div>
+                        <div class="h-4 w-4/5 rounded-md bg-white/30 skeleton-shimmer"></div>
+                    </div>
+                    <div class="h-12 w-44 rounded-md bg-white/30 skeleton-shimmer mt-4"></div>
+                    <div class="h-9 w-48 rounded-md bg-white/20 skeleton-shimmer mt-3"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    <div v-for="n in 3" :key="n" class="rounded-xl bg-white p-3 space-y-2.5 shadow-sm">
+                        <SkeletonBox height="110px" rounded="rounded-lg" />
+                        <SkeletonBox width="75%" height="13px" rounded="rounded-md" />
+                        <SkeletonBox width="50%" height="10px" rounded="rounded-md" />
+                        <SkeletonBox width="60px" height="14px" rounded="rounded-md" class="pt-1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real content state -->
+        <div v-else class="relative isolate overflow-hidden rounded-2xl bg-[#19375f]" @mouseenter="isHovered = true; pauseAutoplay()" @mouseleave="isHovered = false; startAutoplay()" @focusin="hasFocus = true; pauseAutoplay()" @focusout="hasFocus = $event.currentTarget.contains($event.relatedTarget); startAutoplay()">
             <img :src="trips[0].image" alt="" class="absolute inset-0 -z-20 size-full object-cover" loading="lazy" />
             <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(13,43,88,0.94),rgba(32,52,76,0.82)_48%,rgba(108,117,117,0.83))]"></div>
             <div class="grid lg:grid-cols-[44.5%_minmax(0,1fr)]">
@@ -99,7 +138,9 @@ onBeforeUnmount(() => {
                 <div class="relative min-w-0 py-4 pl-5 pr-16 lg:pl-0 lg:pr-[13%]">
                     <div id="partner-trip-list" ref="carousel" :class="showAll ? 'grid grid-cols-1 gap-3.5 sm:grid-cols-2' : 'flex snap-x snap-mandatory gap-3.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'" aria-label="Pilihan open trip partner" @scroll="updateCurrentPage">
                         <button v-for="trip in trips" :key="trip.id" type="button" class="group flex shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-white text-left text-[#46535c] outline-none transition hover:shadow-lg focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#20a0ff]" :class="showAll ? 'w-full' : 'w-[180px] lg:w-[calc((100%-28px)/3)]'" :aria-label="`Pilih ${trip.name}, ${trip.price}`" @click="$emit('select', trip.destination)">
-                            <div class="aspect-[155/105] w-full overflow-hidden"><img :src="trip.image" :alt="trip.destination" loading="lazy" class="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" /></div>
+                            <div class="aspect-[155/105] w-full overflow-hidden">
+                                <ProgressiveImage :src="trip.image" :alt="trip.destination" aspectRatio="155/105" rounded="rounded-none" imageClass="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" />
+                            </div>
                             <div class="flex min-h-[108px] w-full flex-1 flex-col p-2.5">
                                 <h3 class="text-xs font-extrabold leading-tight">{{ trip.name }}</h3>
                                 <p class="mt-1 text-[8px]">{{ trip.location }} · {{ trip.duration }}</p>

@@ -1,6 +1,14 @@
 <script setup>
 import { ref } from 'vue';
 import DestinationCard from './DestinationCard.vue';
+import DestinationCardSkeleton from '../Skeletons/Cards/DestinationCardSkeleton.vue';
+
+defineProps({
+    isLoading: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const emit = defineEmits(['select']);
 const selectedDestination = ref('');
@@ -19,10 +27,23 @@ const selectDestination = (key) => {
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24" aria-labelledby="destinations-heading">
-        <h2 id="destinations-heading" class="mb-4 px-2 text-xl font-extrabold leading-tight tracking-tight text-[#263142]">Jelajahi keindahan <span class="text-[#20a0ff]">indonesia</span></h2>
-        <div class="grid gap-3.5 md:aspect-[1008/268] md:grid-cols-[284fr_213fr_485fr]">
-            <div class="h-64 md:h-auto"><DestinationCard :destination="destinations.jogja" :selected="selectedDestination === 'jogja'" @select="selectDestination('jogja')" /></div>
+    <section
+        class="mx-auto mt-20 max-w-[1180px] sm:mt-24"
+        aria-labelledby="destinations-heading"
+        :aria-busy="isLoading"
+    >
+        <h2 id="destinations-heading" class="mb-4 px-2 text-xl font-extrabold leading-tight tracking-tight text-[#263142]">
+            Jelajahi keindahan <span class="text-[#20a0ff]">indonesia</span>
+        </h2>
+
+        <!-- Section Skeleton when loading -->
+        <DestinationCardSkeleton v-if="isLoading" variant="section" />
+
+        <!-- Real Destination Grid -->
+        <div v-else class="grid gap-3.5 md:aspect-[1008/268] md:grid-cols-[284fr_213fr_485fr]">
+            <div class="h-64 md:h-auto">
+                <DestinationCard :destination="destinations.jogja" :selected="selectedDestination === 'jogja'" @select="selectDestination('jogja')" />
+            </div>
             <div class="grid grid-cols-2 gap-3 md:grid-cols-1 md:grid-rows-2">
                 <DestinationCard v-for="key in ['bali', 'lombok']" :key="key" :destination="destinations[key]" :selected="selectedDestination === key" @select="selectDestination(key)" />
             </div>

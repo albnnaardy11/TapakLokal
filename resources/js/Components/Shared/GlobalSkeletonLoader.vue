@@ -1,6 +1,6 @@
 <script setup>
 import { router, usePage } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import AccessibilityGuideSkeleton from '../Skeletons/AccessibilityGuideSkeleton.vue';
 import AccountSkeleton from '../Skeletons/AccountSkeleton.vue';
 import BlogSkeleton from '../Skeletons/BlogSkeleton.vue';
@@ -8,26 +8,29 @@ import TripDetailSkeleton from '../Skeletons/TripDetailSkeleton.vue';
 import WelcomeSkeleton from '../Skeletons/WelcomeSkeleton.vue';
 
 const page = usePage();
-// Start with true on initial page load / reload so the skeleton is active during initial mount/hydrate
-const isLoading = ref(true);
+const isSlowNavigation = ref(false);
 const targetPath = ref('');
-let startTimeout = null;
-let finishTimeout = null;
+let thresholdTimer = null;
+let finishTimer = null;
+
+// Threshold before displaying page-level skeleton on slow network (anti-flicker policy)
+const NAVIGATION_THRESHOLD_MS = 250;
+const FADE_OUT_MS = 150;
 
 const currentSkeletonComponent = computed(() => {
-    const path = targetPath.value || (typeof window !== 'undefined' ? window.location.pathname : '');
     const currentComponent = page?.component || '';
+    const path = targetPath.value || (typeof window !== 'undefined' ? window.location.pathname : '');
 
-    if (path.includes('/panduan-aksesibilitas') || currentComponent === 'AccessibilityGuide') {
+    if (currentComponent === 'AccessibilityGuide' || path.startsWith('/panduan-aksesibilitas')) {
         return AccessibilityGuideSkeleton;
     }
-    if (path.includes('/blog') || path.includes('/cerita-perjalanan') || currentComponent === 'Blog' || currentComponent === 'BlogDetail') {
+    if (currentComponent === 'Blog' || currentComponent === 'BlogDetail' || path.startsWith('/blog') || path.startsWith('/cerita-perjalanan')) {
         return BlogSkeleton;
     }
-    if (path.includes('/trip') || currentComponent === 'TripDetail') {
+    if (currentComponent === 'TripDetail' || path.startsWith('/trips') || path.startsWith('/trip')) {
         return TripDetailSkeleton;
     }
-    if (path.includes('/account') || path.includes('/akun') || currentComponent === 'Account') {
+    if (currentComponent === 'Account' || path.startsWith('/account') || path.startsWith('/akun')) {
         return AccountSkeleton;
     }
     return WelcomeSkeleton;
@@ -42,24 +45,34 @@ const handleStart = (event) => {
         targetPath.value = '';
     }
 
-    if (startTimeout) clearTimeout(startTimeout);
-    if (finishTimeout) clearTimeout(finishTimeout);
+    if (thresholdTimer) clearTimeout(thresholdTimer);
+    if (finishTimer) clearTimeout(finishTimer);
 
-    // If navigation takes longer than 30ms (lag / network load), show skeleton
-    startTimeout = setTimeout(() => {
-        isLoading.value = true;
-    }, 30);
+    // Anti-flicker: only show page skeleton if page transition takes longer than threshold
+    thresholdTimer = setTimeout(() => {
+        isSlowNavigation.value = true;
+    }, NAVIGATION_THRESHOLD_MS);
 };
 
 const handleFinish = () => {
-    if (startTimeout) clearTimeout(startTimeout);
-    if (finishTimeout) clearTimeout(finishTimeout);
+    if (thresholdTimer) {
+        clearTimeout(thresholdTimer);
+        thresholdTimer = null;
+    }
+    if (finishTimer) {
+        clearTimeout(finishTimer);
+        finishTimer = null;
+    }
 
-    // Smooth transition when loaded
-    finishTimeout = setTimeout(() => {
-        isLoading.value = false;
+    if (isSlowNavigation.value) {
+        finishTimer = setTimeout(() => {
+            isSlowNavigation.value = false;
+            targetPath.value = '';
+        }, FADE_OUT_MS);
+    } else {
+        isSlowNavigation.value = false;
         targetPath.value = '';
-    }, 150);
+    }
 };
 
 let removeStartListener = null;
@@ -67,19 +80,14 @@ let removeFinishListener = null;
 let removeNavigateListener = null;
 
 onMounted(() => {
-    // Initial page load / reload: show skeleton during hydration then smoothly reveal page
-    finishTimeout = setTimeout(() => {
-        isLoading.value = false;
-    }, 280);
-
     removeStartListener = router.on('start', handleStart);
     removeFinishListener = router.on('finish', handleFinish);
     removeNavigateListener = router.on('navigate', handleFinish);
 });
 
-onUnmounted(() => {
-    if (startTimeout) clearTimeout(startTimeout);
-    if (finishTimeout) clearTimeout(finishTimeout);
+onBeforeUnmount(() => {
+    if (thresholdTimer) clearTimeout(thresholdTimer);
+    if (finishTimer) clearTimeout(finishTimer);
     if (removeStartListener) removeStartListener();
     if (removeFinishListener) removeFinishListener();
     if (removeNavigateListener) removeNavigateListener();
@@ -88,16 +96,16 @@ onUnmounted(() => {
 
 <template>
     <Transition
-        enter-active-class="transition-opacity duration-200 ease-out"
+        enter-active-class="transition-opacity duration-150 ease-out"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
-        leave-active-class="transition-opacity duration-300 ease-in-out"
+        leave-active-class="transition-opacity duration-200 ease-in pointer-events-none"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
     >
         <div
-            v-if="isLoading"
-            class="absolute inset-x-0 top-0 z-[100] min-h-full w-full bg-[#f8fafc] pointer-events-none select-none"
+            v-if="isSlowNavigation"
+            class="fixed inset-0 z-[100] h-screen w-screen overflow-y-auto bg-[#f8fafc] select-none"
             aria-hidden="true"
         >
             <component :is="currentSkeletonComponent" />

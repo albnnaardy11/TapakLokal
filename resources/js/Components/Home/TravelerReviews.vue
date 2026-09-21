@@ -1,6 +1,14 @@
 <script setup>
 import { ArrowLeft, ArrowRight, MapPin, Quote, Star } from 'lucide-vue-next';
 import { ref } from 'vue';
+import ReviewCardSkeleton from '../Skeletons/Cards/ReviewCardSkeleton.vue';
+
+defineProps({
+    isLoading: {
+        type: Boolean,
+        default: false,
+    },
+});
 
 const carousel = ref(null);
 const reviews = [
@@ -23,7 +31,11 @@ const move = (direction) => {
 </script>
 
 <template>
-    <section class="relative isolate mx-auto mt-20 max-w-[1180px] overflow-hidden rounded-3xl border border-[#e1edf9] bg-gradient-to-br from-[#edf7ff] via-[#f8fbff] to-white px-5 py-9 sm:mt-24 sm:p-9" aria-labelledby="traveler-reviews-heading">
+    <section
+        class="relative isolate mx-auto mt-20 max-w-[1180px] overflow-hidden rounded-3xl border border-[#e1edf9] bg-gradient-to-br from-[#edf7ff] via-[#f8fbff] to-white px-5 py-9 sm:mt-24 sm:p-9"
+        aria-labelledby="traveler-reviews-heading"
+        :aria-busy="isLoading"
+    >
         <div class="pointer-events-none absolute -right-12 -top-20 -z-10 size-64 rounded-full bg-sky-100/70 blur-3xl" aria-hidden="true"></div>
         <div class="flex flex-wrap items-end justify-between gap-5">
             <div class="max-w-2xl">
@@ -37,7 +49,13 @@ const move = (direction) => {
             </div>
         </div>
 
-        <div ref="carousel" class="mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="region" aria-label="Contoh ulasan traveler" tabindex="0">
+        <!-- Section Skeleton State -->
+        <div v-if="isLoading" class="mt-7">
+            <ReviewCardSkeleton :count="3" />
+        </div>
+
+        <!-- Real Reviews Content -->
+        <div v-else ref="carousel" class="mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="region" aria-label="Contoh ulasan traveler" tabindex="0">
             <figure v-for="review in reviews" :key="review.name" class="group flex w-[88%] shrink-0 snap-start flex-col rounded-2xl border border-[#e6eef7] bg-white p-6 shadow-[0_3px_12px_rgba(23,75,120,0.03)] transition duration-300 hover:-translate-y-1 hover:border-[#bbdeff] hover:shadow-[0_10px_24px_rgba(23,100,180,0.08)] motion-reduce:transform-none motion-reduce:transition-none sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-40px)/3)]">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-1" aria-label="Rating contoh 5 dari 5"><Star v-for="star in 5" :key="star" class="size-3.5 fill-[#ffbf38] text-[#ffbf38]" aria-hidden="true" /></div>
