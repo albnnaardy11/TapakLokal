@@ -7,8 +7,8 @@ import {
     ArrowRight,
     ArrowUp,
     BookOpen,
+    BookmarkCheck,
     Check,
-    Cloud,
     Compass,
     Contrast,
     ImageOff,
@@ -98,19 +98,19 @@ const resetSettings = () => {
             </section>
 
             <!-- Section 1: Tiga langkah untuk lebih nyaman -->
-            <section id="mulai" aria-labelledby="start-title" class="mt-14 scroll-mt-32 rounded-3xl border border-[#d8eafb] bg-[#f0f6fe] p-6 sm:p-8 lg:p-10">
-                <div class="grid gap-8 lg:grid-cols-[1fr_2.2fr] lg:items-center">
+            <section id="mulai" aria-labelledby="start-title" class="mt-14 scroll-mt-32 rounded-[28px] border border-[#d8eafb] bg-[#edf5fe] p-6 sm:p-8 lg:p-10">
+                <div class="grid gap-8 lg:grid-cols-[1fr_2.4fr] lg:items-center">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#3E7BEF]">MULAI DENGAN MUDAH</p>
-                        <h2 id="start-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#172c50] sm:text-3xl">Tiga langkah untuk<br />lebih nyaman.</h2>
-                        <p class="mt-3 text-xs leading-relaxed text-slate-500 sm:text-sm">Ikuti langkah ini untuk menyesuaikan tampilan sesuai kebutuhanmu.</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">MULAI DENGAN MUDAH</p>
+                        <h2 id="start-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl">Tiga langkah untuk<br />lebih nyaman.</h2>
+                        <p class="mt-3 text-xs leading-relaxed text-[#556987] sm:text-sm">Ikuti langkah ini untuk menyesuaikan tampilan sesuai kebutuhanmu.</p>
                     </div>
-                    <div class="grid gap-4 sm:grid-cols-3">
-                        <div v-for="(step, index) in steps" :key="step.title" class="relative flex flex-col items-center rounded-2xl border border-[#e2eaf4] bg-white p-5 text-center shadow-[0_2px_8px_rgba(23,44,80,0.03)]">
-                            <span class="absolute left-3.5 top-3.5 grid size-6 place-items-center rounded-full bg-[#3E7BEF] text-xs font-extrabold text-white">{{ index + 1 }}</span>
-                            <span class="mt-2 grid size-12 place-items-center rounded-2xl bg-[#edf4ff] text-[#3E7BEF]"><component :is="step.icon" class="size-5" aria-hidden="true" /></span>
-                            <h3 class="mt-3 text-sm font-bold text-[#172c50]">{{ step.title }}</h3>
-                            <p class="mt-1 text-xs leading-relaxed text-slate-500">{{ step.description }}</p>
+                    <div class="grid gap-4 sm:grid-cols-3 sm:gap-5">
+                        <div v-for="(step, index) in steps" :key="step.title" class="relative flex flex-col items-center justify-center rounded-[24px] border border-[#e2eaf4] bg-white p-6 sm:p-7 text-center shadow-[0_2px_12px_rgba(23,44,80,0.03)] min-h-[220px] transition-all duration-200 hover:border-[#b8d2fc] hover:shadow-[0_8px_24px_rgba(37,99,235,0.06)]">
+                            <span class="absolute left-4 top-4 grid size-7 place-items-center rounded-full bg-[#2563eb] text-xs font-extrabold text-white shadow-sm">{{ index + 1 }}</span>
+                            <span class="mt-1 grid size-14 place-items-center rounded-2xl bg-[#edf5fe] text-[#2563eb]"><component :is="step.icon" class="size-7 stroke-[2.2]" aria-hidden="true" /></span>
+                            <h3 class="mt-4 text-base font-bold text-[#111c38]">{{ step.title }}</h3>
+                            <p class="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#556987]">{{ step.description }}</p>
                         </div>
                     </div>
                 </div>
@@ -118,29 +118,20 @@ const resetSettings = () => {
 
             <!-- Section 2: Fitur aksesibilitas (12 cards in 4-column grid) -->
             <section id="fitur" aria-labelledby="features-title" class="mt-16 scroll-mt-32">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#3E7BEF]">SESUAIKAN DENGAN KEBUTUHANMU</p>
-                        <h2 id="features-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#172c50] sm:text-3xl">Fitur aksesibilitas.</h2>
-                        <p class="mt-2 max-w-2xl text-xs leading-relaxed text-slate-500 sm:text-sm">Pilih dan atur tampilan sesuai preferensimu. Semua perubahan bisa dilakukan langsung di panel aksesibilitas tanpa mengubah isi cerita dan informasi perjalanan.</p>
-                    </div>
-                    <button type="button" class="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#3E7BEF] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#2e69d9]" @click="openAccessibilityPanel">
-                        <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                            <circle cx="19" cy="5.5" r="3" fill="currentColor" />
-                            <path d="M8 13l4-3 5.5 2-1.5 6h8l1.5 9M9 17a7.5 7.5 0 1 0 11 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Buka panel aksesibilitas
-                    </button>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">SESUAIKAN DENGAN KEBUTUHANMU</p>
+                    <h2 id="features-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl">Fitur aksesibilitas.</h2>
+                    <p class="mt-2 max-w-2xl text-xs leading-relaxed text-[#556987] sm:text-sm">Pilih dan atur tampilan sesuai preferensimu. Semua perubahan bisa dilakukan langsung di panel aksesibilitas tanpa mengubah isi cerita dan informasi perjalanan.</p>
                 </div>
 
-                <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5">
-                    <article v-for="feature in features" :key="feature.title" class="flex flex-col justify-between rounded-2xl border border-[#e2eaf4] bg-white p-5 shadow-[0_2px_8px_rgba(23,44,80,0.02)] transition-all hover:border-[#bcd2ff] hover:shadow-md">
+                <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5 lg:gap-5">
+                    <article v-for="feature in features" :key="feature.title" class="flex flex-col justify-between rounded-[22px] border border-[#e4edf7] bg-white p-5 sm:p-6 shadow-[0_2px_8px_rgba(23,44,80,0.02)] transition-all duration-200 hover:border-[#b8d2fc] hover:shadow-[0_8px_20px_rgba(37,99,235,0.06)]">
                         <div>
-                            <span class="mb-3.5 grid size-10 place-items-center rounded-xl bg-[#edf4ff] text-[#3E7BEF]"><component :is="feature.icon" class="size-5" aria-hidden="true" /></span>
-                            <h3 class="text-[15px] font-bold text-[#172c50]">{{ feature.title }}</h3>
-                            <p class="mt-1.5 text-xs leading-relaxed text-slate-500">{{ feature.description }}</p>
+                            <span class="mb-4 grid size-11 place-items-center rounded-2xl bg-[#edf5fe] text-[#2563eb]"><component :is="feature.icon" class="size-5" aria-hidden="true" /></span>
+                            <h3 class="text-base font-bold text-[#111c38]">{{ feature.title }}</h3>
+                            <p class="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#556987]">{{ feature.description }}</p>
                         </div>
-                        <div class="mt-4 rounded-lg bg-[#f0f5ff] px-2.5 py-1.5 text-center text-[11px] font-semibold text-[#245bbf]">
+                        <div class="mt-5 rounded-xl bg-[#edf5fe] px-3 py-2 text-center text-xs font-semibold text-[#2563eb]">
                             {{ feature.options }}
                         </div>
                     </article>
@@ -148,34 +139,34 @@ const resetSettings = () => {
             </section>
 
             <!-- Section 3: Tetap mudah, tanpa mouse (1:1 with design reference) -->
-            <section id="keyboard" aria-labelledby="keyboard-title" class="mt-16 scroll-mt-32 overflow-hidden rounded-[28px] border border-[#d8eafb] bg-[#ebf4fd]">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                    <!-- Left: Laptop Image flush to top/bottom/left -->
-                    <div class="relative h-64 sm:h-72 lg:h-[310px] w-full lg:w-[320px] xl:w-[350px] shrink-0 overflow-hidden flex items-center justify-start">
+            <section id="keyboard" aria-labelledby="keyboard-title" class="relative mt-16 scroll-mt-32 overflow-hidden rounded-[28px] border border-[#d8eafb] bg-[#edf5fe]">
+                <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr_390px] xl:grid-cols-[310px_1fr_410px] items-stretch min-h-[320px]">
+                    <!-- Left: Laptop Image full height from top to bottom -->
+                    <div class="relative h-64 sm:h-72 lg:h-full w-full overflow-hidden flex items-center justify-start pointer-events-none select-none">
                         <img
-                            src="/Assets/Images/accessibility/laptop-closeup.webp"
+                            src="/Assets/Images/accessibility/laptop-closeup.jpg"
                             alt="Keyboard navigasi aksesibilitas"
-                            class="h-full w-full object-cover object-left mix-blend-multiply select-none pointer-events-none"
+                            class="h-full w-full object-cover object-left mix-blend-multiply"
                         />
                     </div>
 
-                    <!-- Middle: Title & Description -->
-                    <div class="flex-1 px-6 sm:px-8 lg:px-4 py-6 lg:py-8 max-w-[340px]">
-                        <h2 id="keyboard-title" class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#172c50] leading-[1.16]">
+                    <!-- Middle: Title & Description aligned at the top -->
+                    <div class="flex flex-col justify-start px-6 py-6 sm:px-8 lg:pt-11 lg:pb-6 lg:pl-6 lg:pr-6">
+                        <h2 id="keyboard-title" class="text-3xl sm:text-4xl lg:text-[38px] xl:text-[40px] font-extrabold tracking-tight text-[#111c38] leading-[1.12]">
                             Tetap mudah,<br />tanpa mouse.
                         </h2>
-                        <p class="mt-4 text-xs sm:text-[14px] leading-relaxed text-[#4b5e76]">
+                        <p class="mt-4 max-w-[340px] text-sm sm:text-base lg:text-[15px] leading-relaxed text-[#4b5e76]">
                             Gunakan keyboard untuk membuka dan mengatur panel. Garis fokus menunjukkan kontrol yang sedang dipilih.
                         </p>
                     </div>
 
                     <!-- Right: White Card Container with Shortcuts -->
-                    <div class="p-6 sm:p-8 lg:p-6 lg:pr-8 shrink-0">
-                        <div class="w-full lg:w-[370px] xl:w-[390px] rounded-2xl bg-white p-5 sm:p-6 shadow-sm border border-[#e2eaf4]">
+                    <div class="flex items-center p-6 sm:p-8 lg:p-5 lg:pr-7">
+                        <div class="w-full rounded-[22px] bg-white p-5 sm:p-6 shadow-sm border border-[#e2eaf4]">
                             <dl class="divide-y divide-[#f1f5f9]">
-                                <div v-for="shortcut in shortcuts" :key="shortcut.key" class="flex items-center gap-4 py-2.5 first:pt-0 last:pb-0">
+                                <div v-for="shortcut in shortcuts" :key="shortcut.key" class="flex items-center gap-3.5 py-2.5 first:pt-0 last:pb-0">
                                     <dt class="shrink-0">
-                                        <kbd class="inline-flex items-center justify-center min-w-[76px] rounded-full bg-[#edf4ff] px-3.5 py-1 text-center font-sans text-xs font-bold text-[#172c50]">{{ shortcut.key }}</kbd>
+                                        <kbd class="inline-flex min-w-[76px] items-center justify-center rounded-full bg-[#edf4ff] px-3.5 py-1 text-center font-sans text-xs font-bold text-[#172c50]">{{ shortcut.key }}</kbd>
                                     </dt>
                                     <dd class="text-xs sm:text-[13.5px] font-medium text-[#475569]">{{ shortcut.description }}</dd>
                                 </div>
@@ -185,63 +176,83 @@ const resetSettings = () => {
                 </div>
             </section>
 
-            <!-- Section 4: Pengaturan tetap dalam kendalimu -->
+            <!-- Section 4: Pengaturan tetap dalam kendalimu (Traveloka Style) -->
             <section id="pengaturan" aria-labelledby="settings-title" class="mt-16 scroll-mt-32">
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h2 id="settings-title" class="text-2xl font-extrabold tracking-tight text-[#172c50] sm:text-3xl">Pengaturan tetap dalam kendalimu.</h2>
-                        <p class="mt-1 text-xs text-slate-500 sm:text-sm">Semua pilihan tersimpan otomatis di browser pada perangkat ini.</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">KEMUDAHAN KONTROL</p>
+                        <h2 id="settings-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl">Pengaturan tetap dalam kendalimu.</h2>
+                        <p class="mt-1 text-xs text-[#556987] sm:text-sm">Semua preferensi tersimpan aman di browser perangkat ini untuk kunjungan berikutnya.</p>
                     </div>
-                    <button type="button" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#3E7BEF] transition-colors hover:text-[#2e69d9]" @click="resetSettings">
-                        <RotateCcw class="size-3.5" aria-hidden="true" />
-                        Reset semua pengaturan
-                    </button>
                 </div>
 
                 <div class="mt-6 grid gap-5 md:grid-cols-3">
-                    <article class="flex items-start gap-4 rounded-2xl border border-[#e2eaf4] bg-white p-5 shadow-[0_2px_8px_rgba(23,44,80,0.02)]">
-                        <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#edf4ff] text-[#3E7BEF]"><Cloud class="size-6" aria-hidden="true" /></span>
+                    <article class="group relative flex flex-col justify-between rounded-[24px] border border-[#e2eaf4] bg-white p-6 shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)]">
                         <div>
-                            <h3 class="text-sm font-bold text-[#172c50]">Tersimpan otomatis</h3>
-                            <p class="mt-1 text-xs leading-relaxed text-slate-500">Pilihanmu akan tetap tersimpan, bahkan setelah browser ditutup.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-[#eff6ff] to-[#dbeafe] text-[#2563eb] shadow-sm border border-[#bfdbfe]/50 transition-transform duration-300 group-hover:scale-105">
+                                    <BookmarkCheck class="size-6 stroke-[2.2]" aria-hidden="true" />
+                                </span>
+                                <span class="inline-flex items-center rounded-full bg-[#eff6ff] px-2.5 py-0.5 text-[11px] font-bold text-[#2563eb] border border-[#dbeafe]">
+                                    Otomatis
+                                </span>
+                            </div>
+                            <h3 class="mt-5 text-base font-bold text-[#111c38] group-hover:text-[#2563eb] transition-colors">Tersimpan otomatis</h3>
+                            <p class="mt-2 text-xs sm:text-[13px] leading-relaxed text-[#556987]">Pilihan aksesibilitasmu akan tetap tersimpan aman di browser, bahkan setelah jendela ditutup.</p>
                         </div>
                     </article>
-                    <article class="flex items-start gap-4 rounded-2xl border border-[#e2eaf4] bg-white p-5 shadow-[0_2px_8px_rgba(23,44,80,0.02)]">
-                        <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#edf4ff] text-[#3E7BEF]"><RotateCcw class="size-6" aria-hidden="true" /></span>
+
+                    <article class="group relative flex flex-col justify-between rounded-[24px] border border-[#e2eaf4] bg-white p-6 shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)]">
                         <div>
-                            <h3 class="text-sm font-bold text-[#172c50]">Kembali ke standar</h3>
-                            <p class="mt-1 text-xs leading-relaxed text-slate-500">Buka panel, lalu tekan “Reset semua pengaturan” untuk kembali ke kondisi awal.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-[#eff6ff] to-[#dbeafe] text-[#2563eb] shadow-sm border border-[#bfdbfe]/50 transition-transform duration-300 group-hover:scale-105">
+                                    <RotateCcw class="size-6 stroke-[2.2]" aria-hidden="true" />
+                                </span>
+                                <span class="inline-flex items-center rounded-full bg-[#eff6ff] px-2.5 py-0.5 text-[11px] font-bold text-[#2563eb] border border-[#dbeafe]">
+                                    1 Klik
+                                </span>
+                            </div>
+                            <h3 class="mt-5 text-base font-bold text-[#111c38] group-hover:text-[#2563eb] transition-colors">Kembali ke standar</h3>
+                            <p class="mt-2 text-xs sm:text-[13px] leading-relaxed text-[#556987]">Buka panel, lalu pilih “Reset semua pengaturan” kapan saja untuk kembali ke tampilan awal bawaan.</p>
                         </div>
                     </article>
-                    <article class="flex items-start gap-4 rounded-2xl border border-[#e2eaf4] bg-white p-5 shadow-[0_2px_8px_rgba(23,44,80,0.02)]">
-                        <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#edf4ff] text-[#3E7BEF]"><ArrowUp class="size-6" aria-hidden="true" /></span>
+
+                    <article class="group relative flex flex-col justify-between rounded-[24px] border border-[#e2eaf4] bg-white p-6 shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)]">
                         <div>
-                            <h3 class="text-sm font-bold text-[#172c50]">Kembali ke atas</h3>
-                            <p class="mt-1 text-xs leading-relaxed text-slate-500">Setelah halaman digulir, tombol ini akan muncul di kanan bawah untuk kembali ke bagian atas halaman.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-[#eff6ff] to-[#dbeafe] text-[#2563eb] shadow-sm border border-[#bfdbfe]/50 transition-transform duration-300 group-hover:scale-105">
+                                    <ArrowUp class="size-6 stroke-[2.2]" aria-hidden="true" />
+                                </span>
+                                <span class="inline-flex items-center rounded-full bg-[#eff6ff] px-2.5 py-0.5 text-[11px] font-bold text-[#2563eb] border border-[#dbeafe]">
+                                    Pintasan
+                                </span>
+                            </div>
+                            <h3 class="mt-5 text-base font-bold text-[#111c38] group-hover:text-[#2563eb] transition-colors">Kembali ke atas</h3>
+                            <p class="mt-2 text-xs sm:text-[13px] leading-relaxed text-[#556987]">Setelah halaman digulir, tombol pintas akan otomatis muncul di sudut kanan bawah untuk navigasi cepat.</p>
                         </div>
                     </article>
                 </div>
             </section>
 
             <!-- Section 5: Bottom Banner (Akses Untuk Semua) -->
-            <section aria-labelledby="inclusive-cta-title" class="relative mt-16 overflow-hidden rounded-3xl bg-[#0b3b8c] text-white shadow-xl">
-                <!-- Background image with overlay -->
-                <img src="/Assets/Images/accessibility/inclusive-travel-banner.jpg" alt="" class="absolute inset-0 h-full w-full object-cover object-center opacity-45" />
-                <div class="absolute inset-0 bg-gradient-to-r from-[#072d6e]/95 via-[#0b3b8c]/85 to-transparent"></div>
+            <section aria-labelledby="inclusive-cta-title" class="relative mt-16 overflow-hidden rounded-[28px] bg-[#072454] text-white shadow-xl">
+                <!-- Background image with smooth subtle overlay -->
+                <img src="/Assets/Images/accessibility/inclusive-travel-banner.jpg" alt="" class="absolute inset-0 h-full w-full object-cover object-center opacity-85" />
+                <div class="absolute inset-0 bg-gradient-to-r from-[#041838]/85 via-[#072960]/50 to-transparent"></div>
 
                 <div class="relative z-10 flex flex-col justify-between gap-8 p-8 sm:p-12 lg:flex-row lg:items-center lg:p-14">
-                    <div class="max-w-xl">
-                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">AKSES UNTUK SEMUA</p>
-                        <h2 id="inclusive-cta-title" class="mt-3 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl lg:text-4xl">Perjalanan yang lebih inklusif<br />dimulai dari sini.</h2>
-                        <p class="mt-3 max-w-lg text-xs leading-relaxed text-white/80 sm:text-sm">Tapak Lokal berkomitmen untuk menghadirkan pengalaman menjelajah yang nyaman dan setara untuk semua orang.</p>
-                        <Link href="/" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-xs font-bold text-[#172c50] shadow-md transition-colors hover:bg-slate-100 sm:text-sm">
+                    <div class="max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
+                        <p class="text-xs font-bold uppercase tracking-[0.16em] text-cyan-300">AKSES UNTUK SEMUA</p>
+                        <h2 id="inclusive-cta-title" class="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">Perjalanan yang lebih inklusif<br />dimulai dari sini.</h2>
+                        <p class="mt-3 max-w-lg text-xs leading-relaxed text-white/90 sm:text-sm">Tapak Lokal berkomitmen untuk menghadirkan pengalaman menjelajah yang nyaman dan setara untuk semua orang.</p>
+                        <Link href="/" class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs font-bold text-[#172c50] shadow-lg transition-all hover:bg-slate-100 hover:scale-[1.02] sm:text-sm">
                             Mulai jelajah sekarang <ArrowRight class="size-4" aria-hidden="true" />
                         </Link>
                     </div>
 
                     <div class="hidden text-right lg:block">
-                        <p class="font-serif text-2xl italic text-white/90 drop-shadow-md sm:text-3xl">Lebih Banyak<br />Cerita, Untuk Semua</p>
-                        <svg class="ml-auto mt-2 h-3 w-44 text-cyan-300 opacity-80" viewBox="0 0 180 12" fill="none">
+                        <p class="font-serif text-2xl italic text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] sm:text-3xl">Lebih Banyak<br />Cerita, Untuk Semua</p>
+                        <svg class="ml-auto mt-2 h-3 w-44 text-cyan-300 drop-shadow-sm opacity-90" viewBox="0 0 180 12" fill="none">
                             <path d="M2 9C45 2 135 2 178 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
                         </svg>
                     </div>
