@@ -2,16 +2,14 @@
 import { Head, Link } from '@inertiajs/vue3';
 import {
     ALargeSmall,
-    ArrowDown,
     ArrowLeftRight,
     ArrowRight,
     ArrowUp,
-    BookOpen,
     BookmarkCheck,
-    Check,
     Compass,
     Contrast,
     ImageOff,
+    Keyboard,
     Link2,
     Mouse,
     MoveVertical,
@@ -19,7 +17,6 @@ import {
     PauseCircle,
     RotateCcw,
     ScanLine,
-    Settings2,
     SlidersHorizontal,
     Type,
     Volume2
@@ -79,20 +76,46 @@ const resetSettings = () => {
     <div class="min-h-screen bg-[#f8fafc] font-sans text-[#172c50]">
         <MainNavigation />
         <main class="mx-auto max-w-[1200px] px-5 pb-28 pt-8 sm:px-8 lg:pt-12">
-            <!-- Hero Section (Preserved as requested) -->
-            <section aria-labelledby="guide-title" class="relative overflow-hidden rounded-3xl border border-[#d8eafb] bg-[#edf4ff] p-6 sm:p-10 lg:p-12">
-                <div class="grid gap-8 lg:grid-cols-[1.6fr_1fr] lg:items-center lg:gap-16">
+            <!-- Hero Section (1:1 with Design Mockup) -->
+            <section aria-labelledby="guide-title" class="relative overflow-hidden rounded-[32px] sm:rounded-[40px] border border-[#dce8f8] bg-[#f8fbff] p-8 sm:p-12 lg:p-12 xl:p-14 shadow-[0_4px_24px_rgba(37,99,235,0.03)]">
+                <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-8 xl:gap-12">
+                    <!-- Left Content -->
                     <div>
-                        <span class="inline-flex items-center gap-2 rounded-full border border-[#3E7BEF]/15 bg-white px-3 py-1.5 text-xs font-bold text-[#2e69d9]"><BookOpen class="size-4" aria-hidden="true" />PANDUAN TAPAKLOKAL</span>
-                        <h1 id="guide-title" class="mt-5 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">Jelajah lebih nyaman,<br /><span class="text-[#3E7BEF]">dengan caramu.</span></h1>
-                        <p class="mt-5 max-w-xl text-base leading-7 text-slate-600">Panduan aksesibilitas untuk menyesuaikan tampilan TapakLokal dengan kebutuhanmu. Mulai dari teks yang lebih besar hingga halaman yang lebih tenang.</p>
-                        <a href="#mulai" class="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#3E7BEF] px-5 text-sm font-bold text-white transition-colors hover:bg-[#2e69d9] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3E7BEF]">Mulai dari sini <ArrowDown class="size-4" aria-hidden="true" /></a>
+                        <h1 id="guide-title" class="text-4xl font-extrabold tracking-tight text-[#0f172a] sm:text-5xl lg:text-[54px] leading-[1.08]">
+                            Jelajah lebih nyaman,<br />
+                            <span class="text-[#2563eb]">dengan caramu.</span>
+                        </h1>
+                        <p class="mt-6 max-w-xl text-base leading-relaxed text-[#475569] sm:text-[17px]">
+                            Sesuaikan kenyamanan membaca dan navigasi di TapakLokal. Mulai dari memperbesar teks, mengatur kontras warna, hingga menggunakan bantuan suara dan keyboard.
+                        </p>
+
+                        <!-- Quick navigation & action buttons -->
+                        <div class="mt-8 flex flex-wrap items-center gap-3.5 sm:gap-4">
+                            <a
+                                href="#mulai"
+                                class="inline-flex items-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:bg-[#1d4ed8] hover:shadow-[0_12px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base"
+                            >
+                                Mulai Panduan
+                                <ArrowRight class="size-4 stroke-[2.5]" aria-hidden="true" />
+                            </a>
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 rounded-full border border-[#e2e8f0] bg-white px-6 py-3.5 text-sm font-bold text-[#1e293b] shadow-xs transition-all duration-200 hover:bg-slate-50 hover:border-[#cbd5e1] hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-7 sm:py-4 sm:text-base"
+                                @click="openAccessibilityPanel"
+                            >
+                                <SlidersHorizontal class="size-4 text-[#2563eb] stroke-[2.2]" aria-hidden="true" />
+                                Buka Panel Aksesibilitas
+                            </button>
+                        </div>
                     </div>
-                    <div class="rounded-2xl border border-white bg-white/85 p-6 shadow-[0_12px_32px_rgba(23,75,120,0.06)] sm:p-7">
-                        <span class="grid size-12 place-items-center rounded-2xl bg-[#edf4ff] text-[#3E7BEF]"><Settings2 class="size-6" aria-hidden="true" /></span>
-                        <h2 class="mt-5 text-xl font-bold">Satu panel, banyak pilihan.</h2>
-                        <p class="mt-2 text-sm leading-6 text-slate-500">Atur tampilan tanpa mengubah isi cerita dan informasi perjalanan.</p>
-                        <ul class="mt-5 space-y-3 text-sm font-medium"><li v-for="benefit in ['12 fitur yang bisa dikombinasikan', 'Pilihan tersimpan di browser ini', 'Bisa kembali ke tampilan standar']" :key="benefit" class="flex items-start gap-2"><Check class="mt-0.5 size-4 shrink-0 text-[#3E7BEF]" aria-hidden="true" />{{ benefit }}</li></ul>
+
+                    <!-- Right Graphic -->
+                    <div class="flex items-center justify-center lg:justify-end">
+                        <img
+                            src="/Assets/Images/accessibility/hero.webp"
+                            alt="Ilustrasi Panel Aksesibilitas dan Destinasi TapakLokal"
+                            class="w-full max-w-[540px] h-auto object-contain select-none drop-shadow-xs lg:max-w-[580px] xl:max-w-[620px]"
+                        />
                     </div>
                 </div>
             </section>
