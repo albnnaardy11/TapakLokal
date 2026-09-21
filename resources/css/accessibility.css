@@ -63,6 +63,69 @@ html[data-a11y-contrast='2'] #app, html[data-a11y-contrast='2'] #app * { backgro
 html[data-a11y-contrast='3'] #app, html[data-a11y-contrast='3'] #app * { background-color: #000 !important; color: #ffeb3b !important; border-color: #ffeb3b !important; }
 html[data-a11y-contrast]:not([data-a11y-contrast='0']) #app * { background-image: none !important; text-shadow: none !important; }
 html[data-a11y-cursor='1'], html[data-a11y-cursor='1'] * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M5 3v36l10-9 8 15 8-4-8-15h15Z' fill='%23172c50' stroke='white' stroke-width='3'/%3E%3C/svg%3E") 5 3, auto !important; }
+
+/* Select-to-Speak floating bubble (attached to document/text) */
+.accessibility-speech-bubble {
+    position: absolute;
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    background: #172c50;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 8px 24px rgba(23, 44, 80, 0.28);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transform: translate(-50%, -100%);
+    margin-top: -10px;
+    user-select: none;
+    transition: transform 120ms ease, background-color 150ms ease, box-shadow 150ms ease;
+    animation: a11ySpeechPop 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accessibility-speech-bubble:hover {
+    background: #2865d9;
+    transform: translate(-50%, -100%) scale(1.05);
+}
+.accessibility-speech-bubble.is-speaking {
+    background: #dc2626;
+    border-color: #fca5a5;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+}
+.accessibility-speech-bubble.is-speaking:hover {
+    background: #b91c1c;
+}
+@keyframes a11ySpeechPop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -90%) scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1);
+    }
+}
+
+/* Reading Guide / Ruler */
+.accessibility-reading-ruler {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: 42px;
+    background: rgba(62, 123, 239, 0.08);
+    border-top: 2px solid rgba(62, 123, 239, 0.45);
+    border-bottom: 2px solid rgba(62, 123, 239, 0.45);
+    box-shadow: 0 0 16px rgba(62, 123, 239, 0.12);
+    pointer-events: none;
+    z-index: 85;
+    transform: translateY(-50%);
+    transition: top 30ms linear, opacity 150ms ease;
+}
+
 @media (max-width: 420px) {
     .accessibility-panel { right: 12px; border-radius: 30px; }
     .accessibility-content { padding-right: 20px; padding-left: 20px; }
@@ -71,3 +134,4 @@ html[data-a11y-cursor='1'], html[data-a11y-cursor='1'] * { cursor: url("data:ima
 @media (prefers-reduced-motion: reduce) {
     .accessibility-tools *, .accessibility-tools *::before, .accessibility-tools *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+

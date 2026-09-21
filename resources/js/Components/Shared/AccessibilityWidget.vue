@@ -1,17 +1,28 @@
 <script setup>
-import { ArrowUp, ArrowLeftRight, BookOpen, Contrast, Droplet, ImageOff, Link2, Mouse, PauseCircle, RotateCcw, Settings2, ALargeSmall, MoveVertical, X } from 'lucide-vue-next';
+import { ArrowUp, ArrowLeftRight, BookOpen, Contrast, Droplet, ImageOff, Link2, Mouse, PauseCircle, RotateCcw, ScanLine, Settings2, Square, ALargeSmall, MoveVertical, Volume2, X } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 
 const storageKey = 'tapaklokal-accessibility-v1';
-const defaults = { contrast: 0, spacing: 0, color: 0, text: 0, links: 0, animation: 0, images: 0, dyslexia: 0, cursor: 0, line: 0 };
+const defaults = { contrast: 0, spacing: 0, color: 0, text: 0, links: 0, animation: 0, images: 0, dyslexia: 0, cursor: 0, line: 0, speech: 0, guide: 0 };
 const settings = reactive({ ...defaults });
 const panel = ref(null);
 const trigger = ref(null);
 const isOpen = ref(false);
 const showBackToTop = ref(false);
 const announcement = ref('');
+
+// Select-to-speak state
+const selectedText = ref('');
+const bubblePosition = reactive({ top: 0, left: 0 });
+const showSpeechBubble = ref(false);
+const isSpeaking = ref(false);
+
+// Reading ruler state
+const rulerY = ref(-100);
+const isRulerVisible = ref(false);
+
 const controls = [
     { key: 'contrast', icon: Contrast, labels: ['Kontras standar', 'Kontras gelap', 'Kontras terang', 'Kontras tinggi'] },
     { key: 'spacing', icon: ArrowLeftRight, labels: ['Spasi standar', 'Spasi sedang', 'Spasi lebar', 'Spasi sangat lebar'] },
@@ -23,6 +34,8 @@ const controls = [
     { key: 'dyslexia', labels: ['Ramah disleksia', 'Ramah disleksia aktif'] },
     { key: 'cursor', icon: Mouse, labels: ['Kursor besar', 'Kursor besar aktif'] },
     { key: 'line', icon: MoveVertical, labels: ['Tinggi baris', 'Baris sedang', 'Baris renggang', 'Baris sangat renggang'] },
+    { key: 'speech', icon: Volume2, labels: ['Baca teks', 'Baca teks aktif'], description: 'Baca teks terpilih' },
+    { key: 'guide', icon: ScanLine, labels: ['Garis penuntun', 'Garis penuntun aktif'], description: 'Garis penuntun baca' },
 ];
 
 const applySettings = () => {
@@ -35,29 +48,169 @@ const applySettings = () => {
         // Preferences still work when browser storage is unavailable.
     }
 };
+
+const stopSpeech = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+    isSpeaking.value = false;
+};
+
 const cycle = (control) => {
     settings[control.key] = (settings[control.key] + 1) % control.labels.length;
     announcement.value = `${control.description || control.labels[settings[control.key]]}: ${settings[control.key] ? 'aktif' : 'standar'}`;
+    if (control.key === 'speech' && !settings.speech) {
+        stopSpeech();
+        showSpeechBubble.value = false;
+    }
+    if (control.key === 'guide' && !settings.guide) {
+        isRulerVisible.value = false;
+    }
 };
+
 const reset = () => {
     Object.assign(settings, defaults);
+    stopSpeech();
+    showSpeechBubble.value = false;
+    isRulerVisible.value = false;
     announcement.value = 'Semua pengaturan aksesibilitas telah direset.';
 };
+
 const openPanel = () => {
     panel.value.showModal();
     isOpen.value = true;
 };
+
 const closePanel = () => panel.value.close();
+
 const onClose = () => {
     isOpen.value = false;
     trigger.value?.focus({ preventScroll: true });
 };
+
 const updateScroll = () => { showBackToTop.value = window.scrollY > 300; };
+
 const backToTop = () => {
     window.scrollTo({ top: 0, behavior: settings.animation || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
 };
 
+const updateBubblePosition = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const text = selection.toString().trim();
+    if (!text) return;
+    try {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+            selectedText.value = text;
+            bubblePosition.top = rect.top + window.scrollY;
+            bubblePosition.left = Math.min(
+                (document.documentElement.clientWidth || window.innerWidth) - 75,
+                Math.max(75, rect.left + window.scrollX + rect.width / 2)
+            );
+        }
+    } catch {
+        // Safe fallback
+    }
+};
+
+const handleSelectionEnd = () => {
+    if (!settings.speech) {
+        showSpeechBubble.value = false;
+        return;
+    }
+    setTimeout(() => {
+        const selection = window.getSelection();
+        const text = selection ? selection.toString().trim() : '';
+        if (!text) {
+            if (!isSpeaking.value) {
+                showSpeechBubble.value = false;
+            }
+            return;
+        }
+        updateBubblePosition();
+        showSpeechBubble.value = true;
+        speakText(text);
+    }, 40);
+};
+
+const handleSelectionChange = () => {
+    if (!settings.speech) return;
+    const selection = window.getSelection();
+    const text = selection ? selection.toString().trim() : '';
+    if (!text && !isSpeaking.value) {
+        showSpeechBubble.value = false;
+        lastSpokenText = '';
+    }
+};
+
+let lastSpokenText = '';
+
+const speakText = (text) => {
+    if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) {
+        return;
+    }
+    if (text === lastSpokenText && isSpeaking.value) {
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+    lastSpokenText = text;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'id-ID';
+
+    const voices = window.speechSynthesis.getVoices?.() || [];
+    const idVoice = voices.find(v => v.lang.startsWith('id') || v.lang.includes('ID'));
+    if (idVoice) {
+        utterance.voice = idVoice;
+    }
+
+    utterance.onstart = () => {
+        isSpeaking.value = true;
+        announcement.value = 'Membaca teks: ' + text.slice(0, 40);
+    };
+    utterance.onend = () => {
+        isSpeaking.value = false;
+        announcement.value = 'Selesai membaca teks.';
+    };
+    utterance.onerror = () => {
+        isSpeaking.value = false;
+    };
+
+    window.speechSynthesis.speak(utterance);
+};
+
+const toggleSpeak = () => {
+    if (isSpeaking.value) {
+        stopSpeech();
+        announcement.value = 'Pembacaan suara dihentikan.';
+    } else if (selectedText.value) {
+        speakText(selectedText.value);
+    }
+};
+
+const handlePointerMove = (e) => {
+    if (settings.guide) {
+        rulerY.value = e.clientY;
+        isRulerVisible.value = true;
+    }
+};
+
+const handlePointerLeave = () => {
+    isRulerVisible.value = false;
+};
+
 watch(settings, applySettings);
+watch(() => settings.speech, (newVal) => {
+    if (!newVal) {
+        stopSpeech();
+        showSpeechBubble.value = false;
+        lastSpokenText = '';
+    }
+});
+
 onMounted(() => {
     try {
         const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
@@ -73,9 +226,23 @@ onMounted(() => {
     applySettings();
     updateScroll();
     window.addEventListener('scroll', updateScroll, { passive: true });
+    document.addEventListener('mouseup', handleSelectionEnd, { passive: true });
+    document.addEventListener('keyup', handleSelectionEnd, { passive: true });
+    document.addEventListener('selectionchange', handleSelectionChange, { passive: true });
+    window.addEventListener('resize', updateBubblePosition, { passive: true });
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    document.documentElement.addEventListener('pointerleave', handlePointerLeave, { passive: true });
 });
+
 onBeforeUnmount(() => {
     window.removeEventListener('scroll', updateScroll);
+    document.removeEventListener('mouseup', handleSelectionEnd);
+    document.removeEventListener('keyup', handleSelectionEnd);
+    document.removeEventListener('selectionchange', handleSelectionChange);
+    window.removeEventListener('resize', updateBubblePosition);
+    window.removeEventListener('pointermove', handlePointerMove);
+    document.documentElement.removeEventListener('pointerleave', handlePointerLeave);
+    stopSpeech();
     for (const key of Object.keys(defaults)) {
         delete document.documentElement.dataset[`a11y${key[0].toUpperCase()}${key.slice(1)}`];
     }
@@ -84,6 +251,28 @@ onBeforeUnmount(() => {
 
 <template>
     <Teleport to="body">
+        <!-- Reading Guide Ruler -->
+        <div
+            v-if="settings.guide && isRulerVisible"
+            class="accessibility-reading-ruler"
+            :style="{ top: `${rulerY}px` }"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Automatic Select to Speak floating action & stop button -->
+        <button
+            v-if="settings.speech && showSpeechBubble"
+            type="button"
+            class="accessibility-speech-bubble"
+            :class="{ 'is-speaking': isSpeaking }"
+            :style="{ top: `${bubblePosition.top}px`, left: `${bubblePosition.left}px` }"
+            :aria-label="isSpeaking ? 'Hentikan pembacaan teks' : 'Baca ulang teks terpilih'"
+            @click="toggleSpeak"
+        >
+            <component :is="isSpeaking ? Square : Volume2" :size="15" aria-hidden="true" />
+            <span>{{ isSpeaking ? 'Hentikan Suara' : 'Baca Ulang' }}</span>
+        </button>
+
         <div class="accessibility-tools" :style="{ '--accessibility-panel-bottom': showBackToTop ? '148px' : '84px' }">
             <div class="accessibility-launchers">
                 <button ref="trigger" type="button" class="accessibility-fab" aria-label="Buka pengaturan aksesibilitas" aria-haspopup="dialog" aria-controls="accessibility-panel" :aria-expanded="isOpen" @click="openPanel">
@@ -118,3 +307,4 @@ onBeforeUnmount(() => {
         </div>
     </Teleport>
 </template>
+
