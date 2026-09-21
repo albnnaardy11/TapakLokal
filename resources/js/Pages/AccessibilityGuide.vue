@@ -175,9 +175,9 @@ const resetSettings = () => {
 
                     <!-- Middle: Title & Description -->
                     <div class="flex flex-col justify-start px-6 pt-7 pb-2 sm:px-8 sm:pt-8 sm:pb-4 lg:pt-11 lg:pb-6 lg:pl-6 lg:pr-6">
-                        <h2 id="keyboard-title" class="text-2xl sm:text-3xl md:text-4xl lg:text-[38px] xl:text-[40px] font-extrabold tracking-tight text-[#111c38] leading-[1.12]">
+                        <h2 id="keyboard-title" class="text-2xl sm:text-3xl md:text-4xl lg:text-[38px] xl:text-[40px] font-extrabold tracking-tight text-[#3E7BEF] leading-[1.12]">
                             Tetap mudah,<br />
-                            <span class="text-[#3E7BEF]">tanpa mouse.</span>
+                            tanpa mouse.
                         </h2>
                         <p class="mt-3 sm:mt-4 max-w-[360px] text-xs sm:text-sm lg:text-[15px] leading-relaxed text-[#4b5e76]">
                             Gunakan keyboard untuk membuka dan mengatur panel. Garis fokus menunjukkan kontrol yang sedang dipilih.

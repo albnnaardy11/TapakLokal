@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import AccessibilityWidget from './Components/Shared/AccessibilityWidget.vue';
+import GlobalSkeletonLoader from './Components/Shared/GlobalSkeletonLoader.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'TapakLokal';
 
@@ -17,13 +18,16 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => [h(App, props), h(AccessibilityWidget)] })
+        return createApp({
+            render: () => [
+                h(App, props),
+                h(AccessibilityWidget),
+                h(GlobalSkeletonLoader),
+            ],
+        })
             .use(plugin)
             .use(ZiggyVue)
             .mount(el);
     },
-    progress: {
-        color: '#6366f1',
-        showSpinner: true,
-    },
+    progress: false,
 });
