@@ -14,12 +14,30 @@ import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
 import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
 import { BadgeCheck, ShieldCheck, Star } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const tripFinder = ref(null);
 
 defineProps({
     appName: { type: String, default: 'TapakLokal' },
+});
+
+// Section-level loading states (Level 3 Loading Architecture)
+const tripOptionsLoading = ref(true);
+const partnerTripsLoading = ref(true);
+const destinationsLoading = ref(true);
+const galleryLoading = ref(true);
+const blogsLoading = ref(true);
+const reviewsLoading = ref(true);
+
+onMounted(() => {
+    // Progressive staggered data loading per section
+    setTimeout(() => { tripOptionsLoading.value = false; }, 250);
+    setTimeout(() => { partnerTripsLoading.value = false; }, 380);
+    setTimeout(() => { destinationsLoading.value = false; }, 500);
+    setTimeout(() => { galleryLoading.value = false; }, 620);
+    setTimeout(() => { blogsLoading.value = false; }, 750);
+    setTimeout(() => { reviewsLoading.value = false; }, 900);
 });
 </script>
 
@@ -51,24 +69,24 @@ defineProps({
                 </div>
             </section>
 
-            <TripOptions />
+            <TripOptions :is-loading="tripOptionsLoading" />
             <div class="relative isolate flow-root">
                 <TravelBackdrop />
-                <DestinationExplore @select="tripFinder?.selectDestination($event)" />
-                <PartnerTrips @select="tripFinder?.selectDestination($event)" />
+                <DestinationExplore :is-loading="destinationsLoading" @select="tripFinder?.selectDestination($event)" />
+                <PartnerTrips :is-loading="partnerTripsLoading" @select="tripFinder?.selectDestination($event)" />
             </div>
             <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24">
                 <img src="/Assets/Images/benner/Benner-17an.svg" alt="Promo spesial kemerdekaan TapakLokal" class="w-full rounded-2xl border border-sky-100 shadow-[0_10px_24px_rgba(22,53,102,0.08)]" />
             </section>
-            <DestinationGallery @select="tripFinder?.selectDestination($event)" />
+            <DestinationGallery :is-loading="galleryLoading" @select="tripFinder?.selectDestination($event)" />
             <WhyChooseUs />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />
             <TrustedPartners />
-            <TravelBlog />
+            <TravelBlog :is-loading="blogsLoading" />
             <div class="relative isolate flow-root pb-10 sm:pb-14">
                 <TravelBackdrop variant="stories" />
                 <TravelFaq />
-                <TravelerReviews />
+                <TravelerReviews :is-loading="reviewsLoading" />
             </div>
         </main>
     </div>

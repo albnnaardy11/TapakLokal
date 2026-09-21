@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { ArrowRight, ArrowUpRight, Clock3 } from 'lucide-vue-next';
 import BlogDestinationCta from '../Components/Blog/BlogDestinationCta.vue';
 import BlogDestinations from '../Components/Blog/BlogDestinations.vue';
@@ -8,12 +8,21 @@ import BlogLocalStories from '../Components/Blog/BlogLocalStories.vue';
 import BlogNewsletter from '../Components/Blog/BlogNewsletter.vue';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TravelBlog from '../Components/Home/TravelBlog.vue';
+import BlogCardSkeleton from '../Components/Skeletons/Cards/BlogCardSkeleton.vue';
 import { articles } from '../Components/Home/travelArticles';
 
 const travelBlog = ref(null);
 const featured = articles[0];
 const supportingArticles = articles.slice(1, 3);
 const articleImage = (article, width) => `https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=${width}&q=88`;
+
+const featuredLoading = ref(true);
+const storiesLoading = ref(true);
+
+onMounted(() => {
+    setTimeout(() => { featuredLoading.value = false; }, 300);
+    setTimeout(() => { storiesLoading.value = false; }, 550);
+});
 </script>
 
 <template>
@@ -23,9 +32,13 @@ const articleImage = (article, width) => `https://images.unsplash.com/photo-${ar
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-[#172c50]">
         <MainNavigation />
         <main class="mx-auto max-w-[1440px] px-5 pb-24 pt-8 sm:px-10 lg:px-12 lg:pt-12">
+            <!-- Featured Section (with Skeleton) -->
             <section aria-labelledby="blog-title" class="mx-auto max-w-[1180px]">
                 <h1 id="blog-title" class="sr-only">Cerita Perjalanan</h1>
-                <div class="grid gap-5 lg:grid-cols-[1.65fr_1fr]">
+
+                <BlogCardSkeleton v-if="featuredLoading" layout="featured" />
+
+                <div v-else class="grid gap-5 lg:grid-cols-[1.65fr_1fr]">
                     <article class="group relative isolate overflow-hidden rounded-[24px] bg-[#294541]">
                         <img :src="articleImage(featured, 1400)" alt="Pura Bali di tepi danau dengan pegunungan di kejauhan" fetchpriority="high" class="absolute inset-0 -z-20 size-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105" />
                         <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(9,25,36,0.12)_10%,rgba(9,25,36,0.08)_30%,rgba(9,25,36,0.92)_100%)]" aria-hidden="true"></div>
@@ -64,7 +77,7 @@ const articleImage = (article, width) => `https://images.unsplash.com/photo-${ar
                 </div>
             </section>
             <div id="cerita" class="flow-root scroll-mt-28">
-                <TravelBlog ref="travelBlog" />
+                <TravelBlog ref="travelBlog" :is-loading="storiesLoading" />
             </div>
             <BlogDestinations />
             <BlogDestinationCta />

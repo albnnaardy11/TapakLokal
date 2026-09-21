@@ -21,16 +21,16 @@ const currentSkeletonComponent = computed(() => {
     const currentComponent = page?.component || '';
     const path = targetPath.value || (typeof window !== 'undefined' ? window.location.pathname : '');
 
-    if (currentComponent === 'AccessibilityGuide' || path.startsWith('/panduan-aksesibilitas')) {
+    if (currentComponent === 'AccessibilityGuide' || path.includes('/panduan-aksesibilitas')) {
         return AccessibilityGuideSkeleton;
     }
-    if (currentComponent === 'Blog' || currentComponent === 'BlogDetail' || path.startsWith('/blog') || path.startsWith('/cerita-perjalanan')) {
+    if (currentComponent === 'Blog' || currentComponent === 'BlogDetail' || path.includes('/blog') || path.includes('/cerita-perjalanan')) {
         return BlogSkeleton;
     }
-    if (currentComponent === 'TripDetail' || path.startsWith('/trips') || path.startsWith('/trip')) {
+    if (currentComponent === 'TripDetail' || path.includes('/trips') || path.includes('/trip')) {
         return TripDetailSkeleton;
     }
-    if (currentComponent === 'Account' || path.startsWith('/account') || path.startsWith('/akun')) {
+    if (currentComponent === 'Account' || path.includes('/account') || path.includes('/akun')) {
         return AccountSkeleton;
     }
     return WelcomeSkeleton;
