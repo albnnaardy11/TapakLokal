@@ -1,9 +1,9 @@
 <script setup>
 import { ArrowLeft, ArrowRight, MapPin, Quote, Star } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ReviewCardSkeleton from '../Skeletons/Cards/ReviewCardSkeleton.vue';
 
-defineProps({
+const props = defineProps({ reviews: { type: Array, default: () => [] },
     isLoading: {
         type: Boolean,
         default: false,
@@ -11,12 +11,7 @@ defineProps({
 });
 
 const carousel = ref(null);
-const reviews = [
-    { name: 'Nadia Putri', initials: 'NP', trip: 'Open Trip Bali', color: 'bg-sky-100 text-sky-700', quote: 'Jadwalnya pas, tidak terburu-buru. Paling suka waktu diajak mencoba tempat makan lokal yang belum pernah aku dengar sebelumnya.', highlight: 'Banyak cerita baru' },
-    { name: 'Raka Pratama', initials: 'RP', trip: 'Private Trip Lombok', color: 'bg-teal-100 text-teal-700', quote: 'Liburan keluarga jadi lebih santai. Bisa diskusi rencana perjalanan dulu, jadi aktivitasnya cocok untuk semua anggota keluarga.', highlight: 'Nyaman bersama keluarga' },
-    { name: 'Alya Rahma', initials: 'AR', trip: 'Open Trip Bromo', color: 'bg-violet-100 text-violet-700', quote: 'Berangkat sendiri, pulang bawa teman baru. Pemandunya ramah dan membantu kami menikmati perjalanan dari awal sampai selesai.', highlight: 'Solo trip, teman baru' },
-    { name: 'Dimas Saputra', initials: 'DS', trip: 'Private Trip Raja Ampat', color: 'bg-amber-100 text-amber-700', quote: 'Pemandangannya luar biasa, tapi cerita dari pemandu lokal yang bikin perjalanan ini makin berkesan. Ingin kembali lagi suatu hari.', highlight: 'Lebih dari sekadar liburan' },
-];
+const reviews = computed(() => props.reviews.map(item => ({ id: item.id, name: item.user.name, initials: item.user.name.slice(0, 2).toUpperCase(), trip: item.trip.title, color: 'bg-sky-100 text-sky-700', quote: item.body, highlight: item.rating + '/5' })));
 
 const move = (direction) => {
     const element = carousel.value;
@@ -31,7 +26,7 @@ const move = (direction) => {
 </script>
 
 <template>
-    <section
+    <section v-if="reviews.length"
         class="relative isolate mx-auto mt-20 max-w-[1180px] overflow-hidden rounded-3xl border border-[#e1edf9] bg-gradient-to-br from-[#edf7ff] via-[#f8fbff] to-white px-5 py-9 sm:mt-24 sm:p-9"
         aria-labelledby="traveler-reviews-heading"
         :aria-busy="isLoading"

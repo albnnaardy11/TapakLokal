@@ -1,76 +1,30 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
+use App\Models\ContentPage;
+use App\Models\Faq;
+use App\Models\Partner;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
-Route::get('/blog', function (): Response {
-    return Inertia::render('Blog');
-})->name('blog');
+Route::get('/blog', [\App\Http\Controllers\PublicContentController::class, 'blog'])->name('blog');
+Route::get('/explore/{type}', [\App\Http\Controllers\PublicContentController::class, 'explore'])->name('explore');
 
 Route::get('/blog/{article}', function (string $article): Response {
-    return Inertia::render('BlogDetail', [
-        'articleId' => $article,
-    ]);
+    $content = ContentPage::where('slug', $article)->where('type', 'blog')->where('status', 'published')->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))->first();
+    if ($content) { return Inertia::render('Content', ['content' => $content]); }
+    abort_unless(in_array($article, ['bali', 'islands', 'local'], true), 404);
+    return Inertia::render('BlogDetail', ['articleId' => $article]);
 })->name('blog.show');
 
-Route::get('/panduan-aksesibilitas', function (): Response {
-    return Inertia::render('AccessibilityGuide');
-})->name('accessibility.guide');
+Route::get('/pages/{slug}', function (string $slug): Response {
+    return Inertia::render('Content', ['content' => ContentPage::where('slug', $slug)->where('status', 'published')->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))->firstOrFail()]);
+})->name('content.show');
 
-Route::get('/account', function (): Response {
-    return Inertia::render('Account');
-})->name('account');
+Route::get('/panduan-aksesibilitas', fn (): Response => Inertia::render('AccessibilityGuide'))->name('accessibility.guide');
 
-Route::get('/trips/{tripType}/{trip}', function (string $tripType, string $trip): Response {
-    abort_unless(in_array($tripType, ['open-trip', 'private-trip'], true), 404);
+Route::get('/trips/{tripType}/{trip}', [\App\Http\Controllers\BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
 
-    return Inertia::render('TripDetail', [
-        'tripType' => $tripType,
-        'trip' => $trip,
-    ]);
-})->name('trips.show');
+Route::get('/', [\App\Http\Controllers\PublicContentController::class, 'home'])->name('home');
 
-Route::get('/', function () {
-    $dbConnected = false;
-    $dbError = null;
-    try {
-        DB::connection()->getPdo();
-        $dbConnected = true;
-    } catch (Throwable $e) {
-        $dbError = $e->getMessage();
-    }
-
-    $redisConnected = false;
-    $redisError = null;
-    try {
-        Redis::connection()->ping();
-        $redisConnected = true;
-    } catch (Throwable $e) {
-        $redisError = $e->getMessage();
-    }
-
-    return Inertia::render('Welcome', [
-        'appName' => config('app.name', 'TapakLokal'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-        'dbStatus' => [
-            'connected' => $dbConnected,
-            'driver' => config('database.default'),
-            'database' => config('database.connections.'.config('database.default').'.database'),
-            'host' => config('database.connections.'.config('database.default').'.host'),
-            'port' => config('database.connections.'.config('database.default').'.port'),
-            'error' => $dbError,
-        ],
-        'redisStatus' => [
-            'connected' => $redisConnected,
-            'client' => config('database.redis.client'),
-            'host' => config('database.redis.default.host'),
-            'port' => config('database.redis.default.port'),
-            'error' => $redisError,
-        ],
-    ]);
-});
+require __DIR__.'/platform.php';

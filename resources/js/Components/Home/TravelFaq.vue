@@ -3,25 +3,18 @@ import { ArrowDown, ChevronDown, MessageCircle } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const openQuestions = ref([]);
-const questions = [
-    { id: 'trip-type', question: 'Apa bedanya Open Trip dan Private Trip?', answer: 'Open Trip mempertemukan kamu dengan peserta lain dalam satu jadwal perjalanan. Private Trip ditujukan untuk rombonganmu sendiri, sehingga pengaturan perjalanan dapat dibicarakan dengan partner penyelenggara.' },
-    { id: 'schedule', question: 'Apakah bisa request tanggal?', answer: 'Open Trip mengikuti jadwal keberangkatan yang tersedia. Untuk Private Trip, kamu dapat mendiskusikan tanggal pilihan dengan partner. Ketersediaan jadwal perlu dikonfirmasi sebelum melakukan pemesanan.' },
-    { id: 'included', question: 'Apa saja yang termasuk dalam harga?', answer: 'Fasilitas berbeda untuk setiap paket. Periksa bagian fasilitas termasuk dan tidak termasuk pada rincian trip, terutama transportasi, penginapan, makan, tiket masuk, dan kebutuhan pribadi sebelum memesan.' },
-    { id: 'payment', question: 'Bagaimana sistem pembayaran?', answer: 'Periksa pilihan metode pembayaran, jumlah yang harus dibayar, dan batas waktunya pada rincian pemesanan. Ketentuan pelunasan dapat berbeda antartrip, jadi pastikan kamu memahaminya sebelum melanjutkan pembayaran.' },
-    { id: 'cancellation', question: 'Bagaimana kalau trip dibatalkan?', answer: 'Ketentuan pembatalan, perubahan jadwal, dan pengembalian dana mengikuti kebijakan paket serta partner penyelenggara. Baca ketentuan yang tercantum sebelum memesan dan konfirmasikan penanganannya kepada partner jika terjadi pembatalan.' },
-    { id: 'insurance', question: 'Apakah ada asuransi perjalanan?', answer: 'Asuransi belum tentu termasuk dalam setiap paket. Periksa rincian fasilitas dan tanyakan kepada partner mengenai ketersediaan, cakupan, serta pengecualiannya sebelum berangkat.' },
-];
+const props = defineProps({ questions: { type: Array, default: () => [] } });
 
 const toggleQuestion = (id) => {
     openQuestions.value = openQuestions.value.includes(id) ? openQuestions.value.filter((question) => question !== id) : [...openQuestions.value, id];
 };
 const toggleAll = () => {
-    openQuestions.value = openQuestions.value.length === questions.length ? [] : questions.map((question) => question.id);
+    openQuestions.value = openQuestions.value.length === props.questions.length ? [] : props.questions.map((question) => question.id);
 };
 </script>
 
 <template>
-    <section class="mx-auto mt-20 grid max-w-[1180px] items-stretch gap-5 sm:mt-24 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6" aria-labelledby="faq-heading">
+    <section v-if="questions.length" class="mx-auto mt-20 grid max-w-[1180px] items-stretch gap-5 sm:mt-24 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-6" aria-labelledby="faq-heading">
         <div class="relative isolate flex min-h-[300px] flex-col items-start overflow-hidden rounded-3xl bg-[#123f57] p-7 sm:p-8">
             <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85" alt="Pemandangan pesisir pulau di Indonesia" loading="lazy" class="absolute inset-0 -z-20 size-full object-cover" />
             <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[#082d46]/90 via-[#082d46]/65 to-[#082d46]/20"></div>

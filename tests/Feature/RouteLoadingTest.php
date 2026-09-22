@@ -66,7 +66,7 @@ class RouteLoadingTest extends TestCase
      */
     public function test_account_page_renders_successfully(): void
     {
-        $response = $this->get('/account');
+        $response = $this->actingAs(\App\Models\User::factory()->create())->get('/account');
 
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page
@@ -79,6 +79,7 @@ class RouteLoadingTest extends TestCase
      */
     public function test_open_trip_detail_page_renders_successfully(): void
     {
+        \App\Models\Trip::factory()->create(['type' => 'open-trip', 'slug' => 'pulau-pramuka']);
         $response = $this->get('/trips/open-trip/pulau-pramuka');
 
         $response->assertStatus(200);
@@ -94,6 +95,7 @@ class RouteLoadingTest extends TestCase
      */
     public function test_private_trip_detail_page_renders_successfully(): void
     {
+        \App\Models\Trip::factory()->create(['type' => 'private-trip', 'slug' => 'labuan-bajo']);
         $response = $this->get('/trips/private-trip/labuan-bajo');
 
         $response->assertStatus(200);

@@ -18,7 +18,7 @@ const NAVIGATION_THRESHOLD_MS = 250;
 const FADE_OUT_MS = 150;
 
 const currentSkeletonComponent = computed(() => {
-    const currentComponent = page?.component || '';
+    const currentComponent = targetPath.value ? '' : page?.component || '';
     const path = targetPath.value || (typeof window !== 'undefined' ? window.location.pathname : '');
 
     if (currentComponent === 'AccessibilityGuide' || path.includes('/panduan-aksesibilitas')) {
@@ -37,6 +37,10 @@ const currentSkeletonComponent = computed(() => {
 });
 
 const handleStart = (event) => {
+    const visit = event?.detail?.visit;
+    if (visit?.method !== 'get' || visit?.only?.length || /^\/(account|admin|vendor|bookings|support)(\/|$)/.test(visit?.url?.pathname || '')) {
+        return;
+    }
     try {
         if (event?.detail?.visit?.url) {
             targetPath.value = event.detail.visit.url.pathname || '';

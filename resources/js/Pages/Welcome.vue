@@ -14,31 +14,29 @@ import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
 import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
 import { BadgeCheck, ShieldCheck, Star } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
+import ContentCards from '../Components/Shared/ContentCards.vue';
+import TripCards from '../Components/Shared/TripCards.vue';
 
 const tripFinder = ref(null);
 
-defineProps({
+const props = defineProps({
     appName: { type: String, default: 'TapakLokal' },
+    cmsPartners: { type: Array, default: () => [] },
+    cmsFaqs: { type: Array, default: () => [] },
+    cmsSections: { type: Array, default: () => [] },
+    cmsArticles: { type: Array, default: () => [] },
+    featuredTrips: { type: Array, default: () => [] },
+    travelerReviews: { type: Array, default: () => [] },
 });
+const hero = computed(() => props.cmsSections.find(section => section.slug === 'hero') || props.cmsSections[0]);
 
 // Section-level loading states (Level 3 Loading Architecture)
-const tripOptionsLoading = ref(true);
-const partnerTripsLoading = ref(true);
-const destinationsLoading = ref(true);
-const galleryLoading = ref(true);
-const blogsLoading = ref(true);
-const reviewsLoading = ref(true);
-
-onMounted(() => {
-    // Progressive staggered data loading per section
-    setTimeout(() => { tripOptionsLoading.value = false; }, 250);
-    setTimeout(() => { partnerTripsLoading.value = false; }, 380);
-    setTimeout(() => { destinationsLoading.value = false; }, 500);
-    setTimeout(() => { galleryLoading.value = false; }, 620);
-    setTimeout(() => { blogsLoading.value = false; }, 750);
-    setTimeout(() => { reviewsLoading.value = false; }, 900);
-});
+const tripOptionsLoading = false;
+const partnerTripsLoading = false;
+const destinationsLoading = false;
+const galleryLoading = false;
+const reviewsLoading = false;
 </script>
 
 <template>
@@ -51,11 +49,11 @@ onMounted(() => {
             <div class="pointer-events-none absolute -top-16 left-1/2 -z-10 h-[900px] w-screen -translate-x-1/2 bg-[radial-gradient(ellipse_at_0%_25%,rgba(154,211,255,0.35),transparent_45%),radial-gradient(ellipse_at_100%_45%,rgba(182,228,235,0.32),transparent_40%)]" aria-hidden="true"></div>
             <section class="relative mx-auto max-w-[1180px]">
                 <div class="relative isolate flex min-h-[360px] items-center justify-center overflow-hidden rounded-[24px] bg-[#3d2b20] px-5 py-16 text-center sm:min-h-[470px] sm:px-8 lg:min-h-[500px]">
-                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&amp;fit=crop&amp;w=1800&amp;q=88" alt="Pura di Bali saat senja" class="absolute inset-0 -z-20 size-full object-cover" />
+                    <img :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1800&q=88'" :alt="hero?.title || 'Jelajahi Indonesia'" class="absolute inset-0 -z-20 size-full object-cover" />
                     <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(103,63,29,0.18)_0%,rgba(21,27,29,0.48)_55%,rgba(11,27,34,0.72)_100%)]"></div>
                     <div class="max-w-3xl text-white drop-shadow-lg">
-                        <h1 class="text-4xl font-extrabold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">Jelajahi Indonesia<br />Secara Otentik.</h1>
-                        <p class="mx-auto mt-7 max-w-xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">Destinasi tersembunyi, kuliner jujur, pemandu lokal terverifikasi—<br class="hidden sm:block" />tanpa biaya tersembunyi, langsung berdampak ke komunitas.</p>
+                        <h1 class="text-4xl font-extrabold leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">{{ hero?.title || 'Jelajahi Indonesia Secara Otentik.' }}</h1>
+                        <p class="mx-auto mt-7 max-w-xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">{{ hero?.excerpt || 'Temukan destinasi dan pengalaman bersama komunitas lokal.' }}</p>
                     </div>
                 </div>
                 <TripFinder ref="tripFinder" />
@@ -73,7 +71,7 @@ onMounted(() => {
             <div class="relative isolate flow-root">
                 <TravelBackdrop />
                 <DestinationExplore :is-loading="destinationsLoading" @select="tripFinder?.selectDestination($event)" />
-                <PartnerTrips :is-loading="partnerTripsLoading" @select="tripFinder?.selectDestination($event)" />
+                <section class="mx-auto mt-20 max-w-[1180px]"><h2 class="mb-6 text-2xl font-extrabold text-[#17375f]">Perjalanan bersama mitra lokal</h2><TripCards :trips="featuredTrips" /></section>
             </div>
             <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24">
                 <img src="/Assets/Images/benner/Benner-17an.svg" alt="Promo spesial kemerdekaan TapakLokal" class="w-full rounded-2xl border border-sky-100 shadow-[0_10px_24px_rgba(22,53,102,0.08)]" />
@@ -81,12 +79,12 @@ onMounted(() => {
             <DestinationGallery :is-loading="galleryLoading" @select="tripFinder?.selectDestination($event)" />
             <WhyChooseUs />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />
-            <TrustedPartners />
-            <TravelBlog :is-loading="blogsLoading" />
+            <TrustedPartners :partners="cmsPartners" />
+            <section class="mx-auto mt-20 max-w-[1180px]"><h2 class="mb-6 text-2xl font-extrabold text-[#17375f]">Cerita perjalanan</h2><ContentCards :items="cmsArticles" blog /></section>
             <div class="relative isolate flow-root pb-10 sm:pb-14">
                 <TravelBackdrop variant="stories" />
-                <TravelFaq />
-                <TravelerReviews :is-loading="reviewsLoading" />
+                <TravelFaq :questions="cmsFaqs" />
+                <TravelerReviews :reviews="travelerReviews" />
             </div>
         </main>
     </div>

@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Copy, MapPin, Minus, Navigation, Plus, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
+import LiveTrip from '../Components/TripDetail/LiveTrip.vue';
 import TripFaq from '../Components/TripDetail/TripFaq.vue';
 import TripPanorama from '../Components/TripDetail/TripPanorama.vue';
 import TripReviews from '../Components/TripDetail/TripReviews.vue';
@@ -11,6 +12,9 @@ import TripRecommendations from '../Components/TripDetail/TripRecommendations.vu
 const props = defineProps({
     tripType: { type: String, required: true },
     trip: { type: String, required: true },
+    tripData: Object,
+    bookingKey: String,
+    reviews: Array,
 });
 
 const isPrivateTrip = computed(() => props.tripType === 'private-trip');
@@ -276,9 +280,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
 </script>
 
 <template>
-    <Head :title="detail.title" />
+    <LiveTrip v-if="tripData" :key="tripData.id" :trip="tripData" :booking-key="bookingKey" :reviews="reviews" />
+    <Head v-if="!tripData" :title="detail.title" />
 
-    <div class="min-h-screen overflow-x-hidden bg-[#f6f8fb] text-[#17375f]">
+    <div v-if="!tripData" class="min-h-screen overflow-x-hidden bg-[#f6f8fb] text-[#17375f]">
         <MainNavigation />
 
         <main class="mx-auto max-w-[1220px] px-3 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
