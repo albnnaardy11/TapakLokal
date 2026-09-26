@@ -26,7 +26,6 @@ import {
 } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { route } from 'ziggy-js';
 
 // Active Tab ('trip' | 'souvenir')
 const activeTab = ref('trip');
@@ -69,9 +68,35 @@ onBeforeUnmount(() => {
 const tripLocation = ref('');
 const tripCategory = ref('');
 const tripDate = ref('');
+const tripDateInput = ref(null);
 const adultCount = ref(2);
 const childCount = ref(0);
 const tripLocationInput = ref(null);
+
+const formattedTripDate = computed(() => {
+    if (!tripDate.value) return '';
+    try {
+        const [year, month, day] = tripDate.value.split('-');
+        if (!year || !month || !day) return tripDate.value;
+        const d = new Date(Number(year), Number(month) - 1, Number(day));
+        return d.toLocaleDateString('id-ID', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        });
+    } catch {
+        return tripDate.value;
+    }
+});
+
+const openTripDatePicker = () => {
+    try {
+        tripDateInput.value?.showPicker();
+    } catch {
+        tripDateInput.value?.focus();
+    }
+};
 
 const incrementAdults = () => {
     if (adultCount.value < 50) adultCount.value++;
@@ -100,7 +125,33 @@ const souvenirKeyword = ref('');
 const souvenirLocation = ref('');
 const souvenirCategory = ref('');
 const souvenirDate = ref('');
+const souvenirDateInput = ref(null);
 const souvenirKeywordInput = ref(null);
+
+const formattedSouvenirDate = computed(() => {
+    if (!souvenirDate.value) return '';
+    try {
+        const [year, month, day] = souvenirDate.value.split('-');
+        if (!year || !month || !day) return souvenirDate.value;
+        const d = new Date(Number(year), Number(month) - 1, Number(day));
+        return d.toLocaleDateString('id-ID', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        });
+    } catch {
+        return souvenirDate.value;
+    }
+});
+
+const openSouvenirDatePicker = () => {
+    try {
+        souvenirDateInput.value?.showPicker();
+    } catch {
+        souvenirDateInput.value?.focus();
+    }
+};
 
 const searchMessage = ref('');
 
@@ -203,19 +254,16 @@ const searchSouvenirs = () => {
 </script>
 
 <template>
-    <section
-        class="absolute -bottom-24 sm:-bottom-20 md:-bottom-16 left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-[1140px] -translate-x-1/2 rounded-2xl sm:rounded-3xl border border-[#dce7f4] bg-white p-3.5 sm:p-5 shadow-[0_20px_50px_rgba(17,54,92,0.18)]"
-        aria-label="Pencarian Perjalanan dan Oleh-Oleh"
-    >
-        <!-- Tab Selector: 2 Modes (Trip & Open PO Oleh-Oleh) -->
-        <div class="mb-3.5 flex items-center gap-2 border-b border-slate-100 pb-3">
+    <div class="w-full max-w-[1100px] mx-auto" aria-label="Pencarian Perjalanan dan Oleh-Oleh">
+        <!-- 1. Top Service Tabs (Traveloka Style) -->
+        <div class="flex items-center gap-2 sm:gap-3 border-b-2 border-white/80 pb-3.5 overflow-x-auto no-scrollbar">
             <button
                 type="button"
-                class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all duration-200"
+                class="inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-200"
                 :class="
                     activeTab === 'trip'
-                        ? 'bg-[#1677e8] text-white shadow-[0_4px_12px_rgba(22,119,232,0.30)]'
-                        : 'bg-[#f1f5f9] text-slate-600 hover:bg-[#e2e8f0] hover:text-slate-900'
+                        ? 'bg-white text-slate-900 shadow-md ring-2 ring-white/30'
+                        : 'text-white/85 hover:text-white hover:bg-white/10'
                 "
                 @click="
                     activeTab = 'trip';
@@ -223,17 +271,17 @@ const searchSouvenirs = () => {
                     searchMessage = '';
                 "
             >
-                <Compass class="size-4 shrink-0" />
+                <Compass class="size-4 shrink-0" :class="activeTab === 'trip' ? 'text-[#0088ff]' : 'text-white'" />
                 <span>Trip</span>
             </button>
 
             <button
                 type="button"
-                class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all duration-200"
+                class="inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-200"
                 :class="
                     activeTab === 'souvenir'
-                        ? 'bg-[#1677e8] text-white shadow-[0_4px_12px_rgba(22,119,232,0.30)]'
-                        : 'bg-[#f1f5f9] text-slate-600 hover:bg-[#e2e8f0] hover:text-slate-900'
+                        ? 'bg-white text-slate-900 shadow-md ring-2 ring-white/30'
+                        : 'text-white/85 hover:text-white hover:bg-white/10'
                 "
                 @click="
                     activeTab = 'souvenir';
@@ -241,68 +289,161 @@ const searchSouvenirs = () => {
                     searchMessage = '';
                 "
             >
-                <ShoppingBag class="size-4 shrink-0" />
+                <ShoppingBag class="size-4 shrink-0" :class="activeTab === 'souvenir' ? 'text-[#0088ff]' : 'text-white'" />
                 <span>Open PO Oleh-Oleh</span>
             </button>
         </div>
 
+        <!-- 2. Sub-Category Filter Pills (Traveloka Style) -->
+        <div v-if="activeTab === 'trip'" class="mt-3.5 flex flex-wrap items-center gap-2">
+            <button
+                v-for="opt in tripCategoryOptions"
+                :key="opt.id"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all duration-150"
+                :class="
+                    tripCategory === opt.id
+                        ? 'bg-[#0088ff] text-white shadow-xs'
+                        : 'bg-black/25 text-white/90 hover:bg-black/40 hover:text-white backdrop-blur-md'
+                "
+                @click="tripCategory = opt.id"
+            >
+                <component :is="opt.icon" class="size-3.5 shrink-0" />
+                <span>{{ opt.title }}</span>
+            </button>
+        </div>
+
+        <div v-else class="mt-3.5 flex flex-wrap items-center gap-2">
+            <button
+                v-for="opt in souvenirCategoryOptions"
+                :key="opt.id"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all duration-150"
+                :class="
+                    souvenirCategory === opt.id
+                        ? 'bg-[#0088ff] text-white shadow-xs'
+                        : 'bg-black/25 text-white/90 hover:bg-black/40 hover:text-white backdrop-blur-md'
+                "
+                @click="souvenirCategory = opt.id"
+            >
+                <component :is="opt.icon" class="size-3.5 shrink-0" />
+                <span>{{ opt.title }}</span>
+            </button>
+        </div>
+
+        <!-- 3. Desktop Labels Row (Clean White Text) -->
+        <div
+            v-if="activeTab === 'trip'"
+            class="mt-3.5 hidden md:grid md:grid-cols-[1.5fr_1.2fr_1.2fr_auto] gap-3 px-5 text-xs font-semibold text-white/90 drop-shadow-sm"
+        >
+            <span>Lokasi / Destinasi</span>
+            <span>Tanggal Berangkat</span>
+            <span>Jumlah Tamu</span>
+            <span class="w-12"></span>
+        </div>
+
+        <div
+            v-else
+            class="mt-3.5 hidden md:grid md:grid-cols-[1.4fr_1.2fr_1.2fr_auto] gap-3 px-5 text-xs font-semibold text-white/90 drop-shadow-sm"
+        >
+            <span>Cari Oleh-Oleh</span>
+            <span>Kota / Asal Daerah</span>
+            <span>Batas PO / Tanggal</span>
+            <span class="w-12"></span>
+        </div>
+
+        <!-- 4. Unified Continuous Search Bar -->
         <!-- MODE 1: TRIP SEARCH FORM -->
         <form
             v-if="activeTab === 'trip'"
-            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1.1fr_1.1fr_1fr_auto] lg:items-end"
+            class="mt-1.5 bg-white rounded-2xl md:rounded-full p-1.5 md:p-2 shadow-[0_20px_50px_rgba(0,0,0,0.30)] flex flex-col md:flex-row items-stretch md:items-center"
             @submit.prevent="searchTrips"
         >
             <!-- 1. Lokasi/Destinasi -->
-            <div>
-                <label for="trip-location-input" class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Lokasi/Destinasi
-                </label>
-                <div
-                    class="relative flex h-[46px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition hover:border-slate-300 focus-within:border-[#1677e8] focus-within:ring-2 focus-within:ring-blue-100"
-                >
-                    <MapPin class="size-4 shrink-0 text-slate-400" />
+            <div class="flex-1 flex items-center gap-3 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200">
+                <MapPin class="size-5 shrink-0 text-[#0088ff]" />
+                <div class="w-full min-w-0">
+                    <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Lokasi / Destinasi</span>
                     <input
                         id="trip-location-input"
                         ref="tripLocationInput"
                         v-model="tripLocation"
                         type="text"
-                        placeholder="Contoh: Yogyakarta, Bali Malang"
-                        class="w-full min-w-0 bg-transparent text-xs sm:text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                        placeholder="Contoh: Yogyakarta, Bali, Malang"
+                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
                     />
-                    <button
-                        v-if="tripLocation"
-                        type="button"
-                        class="text-slate-300 hover:text-slate-500"
-                        aria-label="Hapus lokasi"
-                        @click="tripLocation = ''"
-                    >
-                        <X class="size-3.5" />
-                    </button>
                 </div>
+                <button
+                    v-if="tripLocation"
+                    type="button"
+                    class="text-slate-300 hover:text-slate-500"
+                    aria-label="Hapus lokasi"
+                    @click="tripLocation = ''"
+                >
+                    <X class="size-3.5" />
+                </button>
             </div>
 
-            <!-- 2. Kategori (Clean & Simple Dropdown) -->
-            <div class="relative" data-dropdown>
-                <label class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Kategori
-                </label>
+            <!-- 2. Tanggal Berangkat -->
+            <div
+                class="relative flex-1 flex items-center justify-between gap-2 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200 cursor-pointer transition hover:bg-slate-50/70"
+                @click="openTripDatePicker"
+            >
+                <div class="flex items-center gap-3 min-w-0 pointer-events-none">
+                    <CalendarDays class="size-5 shrink-0 text-[#0088ff]" />
+                    <div class="min-w-0">
+                        <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Tanggal Berangkat</span>
+                        <span
+                            class="block truncate text-xs sm:text-sm font-semibold"
+                            :class="tripDate ? 'text-slate-800' : 'text-slate-400 font-normal'"
+                        >
+                            {{ formattedTripDate || 'Pilih tanggal berangkat' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Invisible Native Date Input filling container -->
+                <input
+                    id="trip-date-input"
+                    ref="tripDateInput"
+                    v-model="tripDate"
+                    type="date"
+                    class="absolute inset-0 size-full opacity-0 cursor-pointer [color-scheme:light]"
+                    aria-label="Tanggal Berangkat"
+                    tabindex="-1"
+                />
+
+                <button
+                    v-if="tripDate"
+                    type="button"
+                    class="relative z-10 text-slate-300 hover:text-slate-500 shrink-0 p-1"
+                    aria-label="Hapus tanggal"
+                    @click.stop="tripDate = ''"
+                >
+                    <X class="size-3.5" />
+                </button>
+            </div>
+
+            <!-- 3. Jumlah Tamu (Custom Counter Dropdown) -->
+            <div class="relative flex-1" data-dropdown>
                 <button
                     type="button"
-                    class="flex h-[46px] w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 text-left shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 hover:border-slate-300 hover:bg-slate-50/50 focus:border-[#1677e8] focus:outline-none focus:ring-2 focus:ring-blue-100"
-                    :class="openDropdown === 'tripCategory' ? 'border-[#1677e8] ring-2 ring-blue-100' : ''"
-                    @click="toggleDropdown('tripCategory')"
+                    class="w-full flex items-center justify-between gap-3 px-4 py-2 text-left transition hover:bg-slate-50/70 focus:outline-none"
+                    :class="openDropdown === 'tripGuests' ? 'bg-blue-50/50' : ''"
+                    @click="toggleDropdown('tripGuests')"
                 >
-                    <div class="flex min-w-0 items-center gap-2">
-                        <Footprints class="size-4 shrink-0 text-[#0088ff]" />
-                        <span
-                            class="truncate text-xs sm:text-[13px] font-semibold text-slate-800"
-                        >
-                            {{ selectedTripCategoryLabel }}
-                        </span>
+                    <div class="flex min-w-0 items-center gap-3">
+                        <Users class="size-5 shrink-0 text-[#0088ff]" />
+                        <div class="min-w-0">
+                            <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Jumlah Tamu</span>
+                            <span class="truncate text-xs sm:text-sm font-semibold text-slate-800 block">
+                                {{ selectedGuestsLabel }}
+                            </span>
+                        </div>
                     </div>
                     <ChevronDown
                         class="size-4 shrink-0 text-slate-400 transition-transform duration-200"
-                        :class="openDropdown === 'tripCategory' ? 'rotate-180 text-[#1677e8]' : ''"
+                        :class="openDropdown === 'tripGuests' ? 'rotate-180 text-[#0088ff]' : ''"
                     />
                 </button>
 
@@ -316,108 +457,8 @@ const searchSouvenirs = () => {
                     leave-to-class="transform opacity-0 -translate-y-1 scale-95"
                 >
                     <div
-                        v-if="openDropdown === 'tripCategory'"
-                        class="absolute left-0 top-full z-50 mt-1.5 w-full min-w-[200px] sm:min-w-[220px] rounded-xl border border-slate-200/90 bg-white p-2 shadow-[0_12px_30px_rgba(15,35,70,0.15)] ring-1 ring-black/5"
-                    >
-                        <div class="space-y-1">
-                            <button
-                                v-for="opt in tripCategoryOptions"
-                                :key="opt.id"
-                                type="button"
-                                class="flex w-full items-center justify-between gap-2.5 rounded-lg px-3 py-2 text-left transition-all duration-150"
-                                :class="
-                                    tripCategory === opt.id
-                                        ? 'bg-blue-50 text-[#0088ff] font-semibold'
-                                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium'
-                                "
-                                @click="
-                                    tripCategory = opt.id;
-                                    closeDropdowns();
-                                "
-                            >
-                                <div class="flex items-center gap-2.5">
-                                    <component
-                                        :is="opt.icon"
-                                        class="size-4.5 shrink-0"
-                                        :class="tripCategory === opt.id ? 'text-[#0088ff]' : 'text-slate-400'"
-                                    />
-                                    <span class="text-xs sm:text-[13px]">
-                                        {{ opt.title }}
-                                    </span>
-                                </div>
-                                <Check
-                                    v-if="tripCategory === opt.id"
-                                    class="size-4 shrink-0 text-[#0088ff]"
-                                />
-                            </button>
-                        </div>
-                    </div>
-                </Transition>
-            </div>
-
-            <!-- 3. Tanggal Berangkat -->
-            <div>
-                <label for="trip-date-input" class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Tanggal Berangkat
-                </label>
-                <div
-                    class="relative flex h-[46px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition hover:border-slate-300 focus-within:border-[#1677e8] focus-within:ring-2 focus-within:ring-blue-100"
-                >
-                    <CalendarDays class="size-4 shrink-0 text-slate-400" />
-                    <input
-                        id="trip-date-input"
-                        v-model="tripDate"
-                        type="date"
-                        class="w-full min-w-0 cursor-pointer bg-transparent text-xs sm:text-[13px] text-slate-800 focus:outline-none"
-                        :class="tripDate ? 'text-slate-800 font-medium' : 'text-slate-400'"
-                    />
-                    <button
-                        v-if="tripDate"
-                        type="button"
-                        class="text-slate-300 hover:text-slate-500"
-                        aria-label="Hapus tanggal"
-                        @click="tripDate = ''"
-                    >
-                        <X class="size-3.5" />
-                    </button>
-                </div>
-            </div>
-
-            <!-- 4. Jumlah Tamu / Occupants (Custom Counter Dropdown) -->
-            <div class="relative" data-dropdown>
-                <label class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Jumlah Tamu
-                </label>
-                <button
-                    type="button"
-                    class="flex h-[46px] w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 text-left shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 hover:border-slate-300 hover:bg-slate-50/50 focus:border-[#1677e8] focus:outline-none focus:ring-2 focus:ring-blue-100"
-                    :class="openDropdown === 'tripGuests' ? 'border-[#1677e8] ring-2 ring-blue-100' : ''"
-                    @click="toggleDropdown('tripGuests')"
-                >
-                    <div class="flex min-w-0 items-center gap-2">
-                        <Users class="size-4 shrink-0 text-[#0088ff]" />
-                        <span class="truncate text-xs sm:text-[13px] font-semibold text-slate-800">
-                            {{ selectedGuestsLabel }}
-                        </span>
-                    </div>
-                    <ChevronDown
-                        class="size-4 shrink-0 text-slate-400 transition-transform duration-200"
-                        :class="openDropdown === 'tripGuests' ? 'rotate-180 text-[#1677e8]' : ''"
-                    />
-                </button>
-
-                <!-- Dropdown Menu (Compact & Crisp) -->
-                <Transition
-                    enter-active-class="transition duration-150 ease-out"
-                    enter-from-class="transform opacity-0 -translate-y-1 scale-95"
-                    enter-to-class="transform opacity-100 translate-y-0 scale-100"
-                    leave-active-class="transition duration-100 ease-in"
-                    leave-from-class="transform opacity-100 translate-y-0 scale-100"
-                    leave-to-class="transform opacity-0 -translate-y-1 scale-95"
-                >
-                    <div
                         v-if="openDropdown === 'tripGuests'"
-                        class="absolute right-0 top-full z-50 mt-1.5 w-[240px] sm:w-[250px] rounded-xl border border-slate-200/90 bg-white p-3 shadow-[0_12px_30px_rgba(15,35,70,0.15)] ring-1 ring-black/5"
+                        class="absolute right-0 top-full z-50 mt-2 w-[240px] sm:w-[250px] rounded-xl border border-slate-200/90 bg-white p-3 shadow-[0_15px_40px_rgba(15,35,70,0.20)] ring-1 ring-black/5"
                     >
                         <div class="space-y-2.5">
                             <!-- Row 1: Adult -->
@@ -497,194 +538,132 @@ const searchSouvenirs = () => {
                 </Transition>
             </div>
 
-            <!-- 5. Tombol Submit -->
-            <button
-                type="submit"
-                class="flex h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-[#0c57c4] px-6 text-xs sm:text-sm font-bold text-white shadow-[0_4px_14px_rgba(12,87,196,0.30)] transition-all duration-200 hover:bg-[#0947a5] hover:shadow-[0_6px_18px_rgba(12,87,196,0.40)] active:scale-[0.98] sm:col-span-2 lg:col-span-1 lg:min-w-[140px]"
-            >
-                <span>Cari Sekarang</span>
-            </button>
+            <!-- 4. Tombol Search (Traveloka Style Orange Button) -->
+            <div class="p-1 md:p-0">
+                <button
+                    type="submit"
+                    class="w-full md:w-auto h-11 md:h-12 px-6 md:px-5 rounded-xl md:rounded-full bg-[#ff5e1f] hover:bg-[#e64e10] text-white flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(255,94,31,0.40)] transition-all duration-200 active:scale-95 shrink-0"
+                    aria-label="Cari Sekarang"
+                >
+                    <Search class="size-5 stroke-[2.5]" />
+                    <span class="md:hidden text-sm font-bold">Cari Sekarang</span>
+                </button>
+            </div>
         </form>
 
         <!-- MODE 2: OPEN PO OLEH-OLEH SEARCH FORM -->
         <form
             v-else
-            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1.1fr_1.1fr_1fr_auto] lg:items-end"
+            class="mt-1.5 bg-white rounded-2xl md:rounded-full p-1.5 md:p-2 shadow-[0_20px_50px_rgba(0,0,0,0.30)] flex flex-col md:flex-row items-stretch md:items-center"
             @submit.prevent="searchSouvenirs"
         >
             <!-- 1. Nama Oleh-Oleh / Produk -->
-            <div>
-                <label for="souvenir-name-input" class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Cari Oleh-Oleh
-                </label>
-                <div
-                    class="relative flex h-[46px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition hover:border-slate-300 focus-within:border-[#1677e8] focus-within:ring-2 focus-within:ring-blue-100"
-                >
-                    <ShoppingBag class="size-4 shrink-0 text-slate-400" />
+            <div class="flex-1 flex items-center gap-3 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200">
+                <ShoppingBag class="size-5 shrink-0 text-[#0088ff]" />
+                <div class="w-full min-w-0">
+                    <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Cari Oleh-Oleh</span>
                     <input
                         id="souvenir-name-input"
                         ref="souvenirKeywordInput"
                         v-model="souvenirKeyword"
                         type="text"
                         placeholder="Contoh: Bakpia, Pie Susu, Strudel"
-                        class="w-full min-w-0 bg-transparent text-xs sm:text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
                     />
-                    <button
-                        v-if="souvenirKeyword"
-                        type="button"
-                        class="text-slate-300 hover:text-slate-500"
-                        aria-label="Hapus kata kunci"
-                        @click="souvenirKeyword = ''"
-                    >
-                        <X class="size-3.5" />
-                    </button>
                 </div>
+                <button
+                    v-if="souvenirKeyword"
+                    type="button"
+                    class="text-slate-300 hover:text-slate-500"
+                    aria-label="Hapus kata kunci"
+                    @click="souvenirKeyword = ''"
+                >
+                    <X class="size-3.5" />
+                </button>
             </div>
 
             <!-- 2. Kota / Asal Daerah -->
-            <div>
-                <label for="souvenir-location-input" class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Kota / Asal Daerah
-                </label>
-                <div
-                    class="relative flex h-[46px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition hover:border-slate-300 focus-within:border-[#1677e8] focus-within:ring-2 focus-within:ring-blue-100"
-                >
-                    <MapPin class="size-4 shrink-0 text-slate-400" />
+            <div class="flex-1 flex items-center gap-3 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200">
+                <MapPin class="size-5 shrink-0 text-[#0088ff]" />
+                <div class="w-full min-w-0">
+                    <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Kota / Asal Daerah</span>
                     <input
                         id="souvenir-location-input"
                         v-model="souvenirLocation"
                         type="text"
                         placeholder="Contoh: Yogyakarta, Bali, Bandung"
-                        class="w-full min-w-0 bg-transparent text-xs sm:text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
                     />
-                    <button
-                        v-if="souvenirLocation"
-                        type="button"
-                        class="text-slate-300 hover:text-slate-500"
-                        aria-label="Hapus asal daerah"
-                        @click="souvenirLocation = ''"
-                    >
-                        <X class="size-3.5" />
-                    </button>
                 </div>
+                <button
+                    v-if="souvenirLocation"
+                    type="button"
+                    class="text-slate-300 hover:text-slate-500"
+                    aria-label="Hapus asal daerah"
+                    @click="souvenirLocation = ''"
+                >
+                    <X class="size-3.5" />
+                </button>
             </div>
 
-            <!-- 3. Kategori Produk (Clean & Simple Dropdown) -->
-            <div class="relative" data-dropdown>
-                <label class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Kategori Produk
-                </label>
-                <button
-                    type="button"
-                    class="flex h-[46px] w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 text-left shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-150 hover:border-slate-300 hover:bg-slate-50/50 focus:border-[#1677e8] focus:outline-none focus:ring-2 focus:ring-blue-100"
-                    :class="openDropdown === 'souvenirCategory' ? 'border-[#1677e8] ring-2 ring-blue-100' : ''"
-                    @click="toggleDropdown('souvenirCategory')"
-                >
-                    <div class="flex min-w-0 items-center gap-2">
-                        <Tag class="size-4 shrink-0 text-[#0088ff]" />
+            <!-- 3. Batas PO / Tanggal -->
+            <div
+                class="relative flex-1 flex items-center justify-between gap-2 px-4 py-2 cursor-pointer transition hover:bg-slate-50/70"
+                @click="openSouvenirDatePicker"
+            >
+                <div class="flex items-center gap-3 min-w-0 pointer-events-none">
+                    <CalendarDays class="size-5 shrink-0 text-[#0088ff]" />
+                    <div class="min-w-0">
+                        <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Batas PO / Tanggal</span>
                         <span
-                            class="truncate text-xs sm:text-[13px] font-semibold text-slate-800"
+                            class="block truncate text-xs sm:text-sm font-semibold"
+                            :class="souvenirDate ? 'text-slate-800' : 'text-slate-400 font-normal'"
                         >
-                            {{ selectedSouvenirCategoryLabel }}
+                            {{ formattedSouvenirDate || 'Pilih batas tanggal' }}
                         </span>
                     </div>
-                    <ChevronDown
-                        class="size-4 shrink-0 text-slate-400 transition-transform duration-200"
-                        :class="openDropdown === 'souvenirCategory' ? 'rotate-180 text-[#1677e8]' : ''"
-                    />
-                </button>
-
-                <!-- Dropdown Menu (Compact & Clean) -->
-                <Transition
-                    enter-active-class="transition duration-150 ease-out"
-                    enter-from-class="transform opacity-0 -translate-y-1 scale-95"
-                    enter-to-class="transform opacity-100 translate-y-0 scale-100"
-                    leave-active-class="transition duration-100 ease-in"
-                    leave-from-class="transform opacity-100 translate-y-0 scale-100"
-                    leave-to-class="transform opacity-0 -translate-y-1 scale-95"
-                >
-                    <div
-                        v-if="openDropdown === 'souvenirCategory'"
-                        class="absolute left-0 top-full z-50 mt-1.5 w-full min-w-[200px] sm:min-w-[220px] rounded-xl border border-slate-200/90 bg-white p-2 shadow-[0_12px_30px_rgba(15,35,70,0.15)] ring-1 ring-black/5"
-                    >
-                        <div class="space-y-1">
-                            <button
-                                v-for="opt in souvenirCategoryOptions"
-                                :key="opt.id"
-                                type="button"
-                                class="flex w-full items-center justify-between gap-2.5 rounded-lg px-3 py-2 text-left transition-all duration-150"
-                                :class="
-                                    souvenirCategory === opt.id
-                                        ? 'bg-blue-50 text-[#0088ff] font-semibold'
-                                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium'
-                                "
-                                @click="
-                                    souvenirCategory = opt.id;
-                                    closeDropdowns();
-                                "
-                            >
-                                <div class="flex items-center gap-2.5">
-                                    <component
-                                        :is="opt.icon"
-                                        class="size-4.5 shrink-0"
-                                        :class="souvenirCategory === opt.id ? 'text-[#0088ff]' : 'text-slate-400'"
-                                    />
-                                    <span class="text-xs sm:text-[13px]">
-                                        {{ opt.title }}
-                                    </span>
-                                </div>
-                                <Check
-                                    v-if="souvenirCategory === opt.id"
-                                    class="size-4 shrink-0 text-[#0088ff]"
-                                />
-                            </button>
-                        </div>
-                    </div>
-                </Transition>
-            </div>
-
-            <!-- 4. Batas PO / Pengiriman -->
-            <div>
-                <label for="souvenir-date-input" class="mb-1.5 block text-xs font-bold text-slate-800">
-                    Batas PO / Tanggal
-                </label>
-                <div
-                    class="relative flex h-[46px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition hover:border-slate-300 focus-within:border-[#1677e8] focus-within:ring-2 focus-within:ring-blue-100"
-                >
-                    <CalendarDays class="size-4 shrink-0 text-slate-400" />
-                    <input
-                        id="souvenir-date-input"
-                        v-model="souvenirDate"
-                        type="date"
-                        class="w-full min-w-0 cursor-pointer bg-transparent text-xs sm:text-[13px] text-slate-800 focus:outline-none"
-                        :class="souvenirDate ? 'text-slate-800 font-medium' : 'text-slate-400'"
-                    />
-                    <button
-                        v-if="souvenirDate"
-                        type="button"
-                        class="text-slate-300 hover:text-slate-500"
-                        aria-label="Hapus batas tanggal"
-                        @click="souvenirDate = ''"
-                    >
-                        <X class="size-3.5" />
-                    </button>
                 </div>
+
+                <!-- Invisible Native Date Input filling container -->
+                <input
+                    id="souvenir-date-input"
+                    ref="souvenirDateInput"
+                    v-model="souvenirDate"
+                    type="date"
+                    class="absolute inset-0 size-full opacity-0 cursor-pointer [color-scheme:light]"
+                    aria-label="Batas PO atau Tanggal"
+                    tabindex="-1"
+                />
+
+                <button
+                    v-if="souvenirDate"
+                    type="button"
+                    class="relative z-10 text-slate-300 hover:text-slate-500 shrink-0 p-1"
+                    aria-label="Hapus batas tanggal"
+                    @click.stop="souvenirDate = ''"
+                >
+                    <X class="size-3.5" />
+                </button>
             </div>
 
-            <!-- 5. Tombol Submit -->
-            <button
-                type="submit"
-                class="flex h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-[#0c57c4] px-6 text-xs sm:text-sm font-bold text-white shadow-[0_4px_14px_rgba(12,87,196,0.30)] transition-all duration-200 hover:bg-[#0947a5] hover:shadow-[0_6px_18px_rgba(12,87,196,0.40)] active:scale-[0.98] sm:col-span-2 lg:col-span-1 lg:min-w-[140px]"
-            >
-                <span>Cari Sekarang</span>
-            </button>
+            <!-- 4. Tombol Search -->
+            <div class="p-1 md:p-0">
+                <button
+                    type="submit"
+                    class="w-full md:w-auto h-11 md:h-12 px-6 md:px-5 rounded-xl md:rounded-full bg-[#ff5e1f] hover:bg-[#e64e10] text-white flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(255,94,31,0.40)] transition-all duration-200 active:scale-95 shrink-0"
+                    aria-label="Cari Sekarang"
+                >
+                    <Search class="size-5 stroke-[2.5]" />
+                    <span class="md:hidden text-sm font-bold">Cari Sekarang</span>
+                </button>
+            </div>
         </form>
 
         <p
             v-if="searchMessage"
-            class="mt-2.5 rounded-lg bg-[#edf3ff] px-3.5 py-2 text-xs font-medium text-[#2868df]"
+            class="mt-3 rounded-xl bg-white/90 backdrop-blur px-4 py-2 text-xs font-medium text-[#1677e8] shadow-sm"
         >
             {{ searchMessage }}
         </p>
-    </section>
+    </div>
 </template>
