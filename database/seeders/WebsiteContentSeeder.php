@@ -60,7 +60,7 @@ class WebsiteContentSeeder extends Seeder
                 ['homepage', 'hero', 'Jelajahi Indonesia Secara Otentik.', 'Temukan destinasi dan pengalaman bersama komunitas lokal.', $image('1537996194471-e657df975ab4')],
                 ['homepage', 'promo-merdeka', 'Merdeka Explore', 'Promo spesial kemerdekaan TapakLokal.', '/Assets/Images/benner/Benner-17an.svg'],
             ];
-            foreach ([['Yogyakarta', '1584810359583-96fc3448beaa'], ['Bali', '1537996194471-e657df975ab4'], ['Lombok', '1518548419970-58e3b4079ab2'], ['Kepulauan Seribu', '1516690561799-46d8f74f9abf'], ['Jawa Barat', '1501179691627-eeaa65ea017c'], ['Pulau Komodo', '1518548419970-58e3b4079ab2'], ['Raja Ampat', '1516690561799-46d8f74f9abf']] as [$name, $photo]) {
+            foreach ([['Yogyakarta', '1584810359583-96fc3448beaa'], ['Bali', '1537996194471-e657df975ab4'], ['Lombok', '1518548419970-58e3b4079ab2'], ['Kepulauan Seribu', '1516690561799-46d8f74f9abf'], ['Jawa Barat', '1501179691627-eeaa65ea017c'], ['Raja Ampat', '1516690561799-46d8f74f9abf'], ['Pulau Komodo', '1518548419970-58e3b4079ab2']] as [$name, $photo]) {
                 $pages[] = ['destination', 'destinasi-'.Str::slug($name), $name, 'Jelajahi keindahan '.$name.' bersama masyarakat dan pemandu lokal.', $image($photo)];
             }
             foreach ([['Pulau Pramuka', '1516690561799-46d8f74f9abf'], ['Pulau Pari', '1518548419970-58e3b4079ab2'], ['Pulau Tidung', '1546026423-cc4642628d2b'], ['Pulau Harapan', '1501179691627-eeaa65ea017c'], ['Pulau Kelapa', '1537996194471-e657df975ab4']] as [$name, $photo]) {

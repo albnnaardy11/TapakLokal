@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
 
 <template>
     <section
-        class="mx-auto mt-20 max-w-[1180px] sm:mt-24"
+        class="mx-auto mt-10 sm:mt-12 lg:mt-14 max-w-[1180px]"
         aria-labelledby="partner-trips-heading"
         :aria-busy="isLoading"
     >

@@ -17,6 +17,7 @@ const cards = computed(() =>
         ...item,
         name: item.title,
         image: item.image_url,
+        trip_count: item.trip_count ?? item.trips_count,
     }))
 );
 
@@ -52,9 +53,9 @@ const open = (item) => router.visit(route('content.show', item.slug));
             </Link>
         </div>
 
-        <!-- 1:1 Bento Grid Layout (1 Large Tall Card Left + 3 Columns x 2 Rows Right) -->
-        <div v-if="cards.length" class="grid grid-cols-1 md:grid-cols-[280fr_720fr] lg:grid-cols-[285fr_725fr] gap-3.5 sm:gap-4">
-            <!-- 1. Left Large Tall Card (Spans full height of the 2 rows) -->
+        <!-- 1:1 Asymmetric Bento Grid Layout (1 Large Tall Card Left + 2 Asymmetric Rows Right) -->
+        <div v-if="cards.length" class="grid grid-cols-1 md:grid-cols-[1.2fr_3.2fr] lg:grid-cols-[1.25fr_3.35fr] gap-3.5 sm:gap-4">
+            <!-- 1. Left Large Tall Card (Spans full combined height) -->
             <div class="h-72 sm:h-80 md:h-full">
                 <DestinationCard
                     :destination="cards[0]"
@@ -63,14 +64,28 @@ const open = (item) => router.visit(route('content.show', item.slug));
                 />
             </div>
 
-            <!-- 2. Right Grid (Strictly 3 Columns x 2 Rows = 6 Equal Cards) -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 grid-rows-2 gap-3.5 sm:gap-4">
-                <div
-                    v-for="item in cards.slice(1, 7)"
-                    :key="item.id || item.slug || item.name"
-                    class="aspect-[16/10] w-full"
-                >
-                    <DestinationCard :destination="item" class="size-full" @select="open(item)" />
+            <!-- 2. Right Side: 2 Asymmetric Rows matching reference image 1:1 -->
+            <div class="flex flex-col gap-3.5 sm:gap-4 justify-between h-full">
+                <!-- Row 1 (3 Cards: regular, wide center, regular) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1fr_1.35fr_1.05fr] gap-3.5 sm:gap-4 h-40 sm:h-44 md:h-44 lg:h-[185px]">
+                    <DestinationCard
+                        v-for="item in cards.slice(1, 4)"
+                        :key="item.id || item.slug || item.name"
+                        :destination="item"
+                        class="size-full"
+                        @select="open(item)"
+                    />
+                </div>
+
+                <!-- Row 2 (3 Cards: wide left, compact center, wide right) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1.25fr_0.95fr_1.2fr] gap-3.5 sm:gap-4 h-40 sm:h-44 md:h-44 lg:h-[185px]">
+                    <DestinationCard
+                        v-for="item in cards.slice(4, 7)"
+                        :key="item.id || item.slug || item.name"
+                        :destination="item"
+                        class="size-full"
+                        @select="open(item)"
+                    />
                 </div>
             </div>
         </div>
