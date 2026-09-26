@@ -160,34 +160,22 @@ onBeforeUnmount(() => observer?.disconnect());
                         />
                     </div>
 
-                    <!-- Card Body: Compact, Balanced, No Empty Space -->
-                    <div class="flex flex-1 flex-col justify-between p-4 sm:p-4.5">
-                        <div>
-                            <!-- Date & Reading Time -->
-                            <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400">
-                                <span>{{ formatPublishedDate(article.published_at) }}</span>
-                                <span class="text-slate-300">•</span>
-                                <span class="inline-flex items-center gap-1">
-                                    <Clock3 class="size-3 text-slate-400" />
-                                    {{ article.metadata?.readTime || '4 mnt baca' }}
-                                </span>
-                            </div>
-
-                            <!-- Title: 2 lines clamp, crisp typography -->
-                            <h3 class="mt-2 text-sm font-bold leading-snug text-[#172c50] transition-colors duration-200 group-hover:text-[#0175ea] line-clamp-2 min-h-[38px] sm:min-h-[42px]">
-                                {{ article.title }}
-                            </h3>
+                    <!-- Card Body: Clean & Consistent with Site Design System -->
+                    <div class="flex flex-1 flex-col p-4 sm:p-4.5">
+                        <!-- Date & Reading Time -->
+                        <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400">
+                            <span>{{ formatPublishedDate(article.published_at) }}</span>
+                            <span class="text-slate-300">•</span>
+                            <span class="inline-flex items-center gap-1">
+                                <Clock3 class="size-3 text-slate-400" />
+                                {{ article.metadata?.readTime || '4 mnt baca' }}
+                            </span>
                         </div>
 
-                        <!-- Card Footer: Traveloka-style Action CTA -->
-                        <div class="mt-3.5 pt-3 border-t border-slate-100">
-                            <div
-                                class="flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#f0f7ff] py-2 px-3 text-xs font-bold text-[#0175ea] border border-sky-100/60 transition-all duration-300 group-hover:bg-[#0175ea] group-hover:text-white group-hover:border-[#0175ea] group-hover:shadow-[0_4px_14px_rgba(1,117,234,0.25)]"
-                            >
-                                <span>Baca Artikel</span>
-                                <ArrowRight class="size-3.5 transition-transform duration-300 ease-out group-hover:translate-x-1.5" />
-                            </div>
-                        </div>
+                        <!-- Title: 2 lines clamp, crisp typography -->
+                        <h3 class="mt-2 text-sm font-bold leading-snug text-[#172c50] transition-colors duration-200 group-hover:text-[#0175ea] line-clamp-2">
+                            {{ article.title }}
+                        </h3>
                     </div>
                 </Link>
             </article>

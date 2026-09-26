@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowDown, ChevronDown, MessageCircle } from 'lucide-vue-next';
+import { ChevronDown, MessageCircle } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const openQuestions = ref([]);
@@ -7,9 +7,6 @@ const props = defineProps({ questions: { type: Array, default: () => [] } });
 
 const toggleQuestion = (id) => {
     openQuestions.value = openQuestions.value.includes(id) ? openQuestions.value.filter((question) => question !== id) : [...openQuestions.value, id];
-};
-const toggleAll = () => {
-    openQuestions.value = openQuestions.value.length === props.questions.length ? [] : props.questions.map((question) => question.id);
 };
 </script>
 
@@ -21,7 +18,6 @@ const toggleAll = () => {
             <span class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur-sm"><MessageCircle class="size-3.5" aria-hidden="true" />SEPUTAR PERJALANAN</span>
             <h2 id="faq-heading" class="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-white">Masih ada<br />pertanyaan?</h2>
             <p class="mt-3 max-w-[260px] text-sm leading-6 text-white/85">Kenali cara kerja trip sebelum berangkat. Temukan jawaban untuk rencana perjalananmu di sini.</p>
-            <button type="button" class="group mt-6 inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-xs font-bold text-[#0875d2] shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-sky-50 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white motion-reduce:transform-none motion-reduce:transition-none" aria-controls="faq-questions" :aria-expanded="openQuestions.length === questions.length" @click="toggleAll">{{ openQuestions.length === questions.length ? 'Tutup semua jawaban' : 'Lihat semua jawaban' }}<ArrowDown class="size-4 transition-transform duration-300 motion-reduce:transition-none" :class="{ 'rotate-180': openQuestions.length === questions.length }" aria-hidden="true" /></button>
         </div>
 
         <div id="faq-questions" class="overflow-hidden rounded-3xl border border-[#e2edfa] bg-white px-5 shadow-[0_4px_20px_rgba(23,75,120,0.04)] sm:px-6">
