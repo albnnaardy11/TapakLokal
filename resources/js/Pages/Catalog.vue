@@ -6,10 +6,16 @@ import TripFinder from '../Components/Home/TripFinder.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
 import FlashSale from '../Components/Home/FlashSale.vue';
+import PopularTripPartners from '../Components/Home/PopularTripPartners.vue';
+import PopularPayments from '../Components/Home/PopularPayments.vue';
+import TapakWalletBanner from '../Components/Home/TapakWalletBanner.vue';
+import TripCatalogFaq from '../Components/Home/TripCatalogFaq.vue';
 
 const props = defineProps({
     trips: { type: Object, default: () => ({ data: [] }) },
     filters: { type: Object, default: () => ({}) },
+    cmsDestinations: { type: Array, default: () => [] },
+    cmsFaqs: { type: Array, default: () => [] },
 });
 
 const filters = reactive({
@@ -31,7 +37,7 @@ const heroTitle = computed(() => {
 </script>
 
 <template>
-    <Head title="Jelajahi Trip - TapakLokal" />
+    <Head title="Cari & Jelajahi Trip - TapakLokal" />
 
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-slate-900">
         <!-- Main Navigation with transparent hero integration at top -->
@@ -49,27 +55,40 @@ const heroTitle = computed(() => {
 
             <!-- Centered Hero Content Container (Tight & Proportional) -->
             <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-4 sm:px-6 sm:pt-36 sm:pb-5 lg:px-0 lg:pt-36 lg:pb-6 flex flex-col items-center justify-center">
-                <!-- Hero Title (Elevated with balanced proportional spacing above search) -->
+                <!-- Hero Title -->
                 <div class="max-w-3xl text-center text-white drop-shadow-md mb-8 sm:mb-10 lg:mb-11">
                     <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
                         {{ heroTitle }}
                     </h1>
                 </div>
 
-                <!-- Integrated Search Component (without top service tabs) -->
+                <!-- Integrated Search Component -->
                 <TripFinder :show-service-tabs="false" :initial-category="filters.type" class="w-full" />
             </div>
         </section>
 
         <!-- Main Content Area with uniform 1180px width -->
-        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-12 pt-4 sm:px-6 sm:pt-6 sm:pb-14 lg:px-0">
+        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-14 pt-4 sm:px-6 sm:pt-6 sm:pb-18 lg:px-0">
             <!-- Section Open Trip / Private Trip Directly Under Hero -->
             <TripOptions class="!mt-0" />
 
             <!-- Flash Sale Section -->
             <FlashSale class="!mt-12 sm:!mt-16" />
+
+            <!-- Popular Trip Partner Logos Section (1:1 with Airline Reference Layout) -->
+            <PopularTripPartners class="!mt-14 sm:!mt-18" />
+
+            <!-- Popular Payments Section (1:1 with Reference Layout) -->
+            <PopularPayments class="!mt-14 sm:!mt-18" />
+
+            <!-- TapakWallet Explanatory Banner (1:1 with Reference Layout) -->
+            <TapakWalletBanner class="!mt-6 sm:!mt-8" />
+
+            <!-- FAQ Section: Teknis Open/Private Trip & Pembayaran (1:1 Homepage Style) -->
+            <TripCatalogFaq :questions="cmsFaqs" class="!mt-14 sm:!mt-18" />
         </main>
 
         <MainFooter />
     </div>
 </template>
+

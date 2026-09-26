@@ -10,6 +10,7 @@ use App\Models\Trip;
 use App\Models\VirtualTour;
 use App\Services\AuditService;
 use App\Services\BookingService;
+use App\Services\PublicContentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,10 @@ use Inertia\Response;
 
 class BookingController extends Controller
 {
+    public function __construct(
+        protected PublicContentService $content
+    ) {}
+
     public function catalog(Request $request): Response
     {
         $filters = $request->validate([
@@ -34,9 +39,17 @@ class BookingController extends Controller
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
-        return Inertia::render('Catalog', ['trips' => $trips, 'filters' => $filters]);
+        $homepageData = $this->content->homepage();
+
+        return Inertia::render('Catalog', [
+            'trips' => $trips,
+            'filters' => $filters,
+            'cmsDestinations' => $homepageData['cmsDestinations'] ?? [],
+            'featuredTrips' => $homepageData['featuredTrips'] ?? [],
+            'cmsFaqs' => $homepageData['cmsFaqs'] ?? [],
+        ]);
     }
 
     public function detail(string $tripType, string $trip): Response
