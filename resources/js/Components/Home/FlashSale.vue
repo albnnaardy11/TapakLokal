@@ -277,87 +277,90 @@ onBeforeUnmount(() => {
                 >
                     <div
                         ref="carousel"
-                        class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        class="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                         @scroll="updateCurrentPage"
                     >
-                        <article
+                        <div
                             v-for="trip in tripProducts"
                             :key="trip.id"
-                            class="group relative flex h-[330px] w-[235px] shrink-0 snap-start flex-col justify-between rounded-[18px] bg-white shadow-[0_8px_20px_rgba(15,45,95,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_28px_rgba(15,45,95,0.25)]"
-                            :class="{ 'ml-3': trip.id === tripProducts[0].id }"
+                            class="shrink-0 snap-start pl-2.5 pr-0.5 pt-1 pb-1"
                         >
-                            <!-- 1:1 Red Bookmark Ribbon with Fold Triangle (100% Unclipped) -->
-                            <div class="absolute top-4 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
-                                <div class="relative flex h-[24px] min-w-[50px] items-center justify-center rounded-r-[8px] bg-[#e52335] px-2.5">
-                                    <span class="text-[12px] font-black tracking-tight text-white leading-none">
-                                        {{ trip.discount }}
-                                    </span>
-                                    <!-- Ribbon Fold Triangle Underneath Left Edge -->
-                                    <span class="absolute -bottom-[8px] left-0 size-0 border-t-[8px] border-t-[#8f121d] border-l-[8px] border-l-transparent"></span>
-                                </div>
-                            </div>
-
-                            <!-- Trip Card Image -->
-                            <div class="relative h-[155px] w-full overflow-hidden rounded-t-[18px] bg-slate-100">
-                                <img
-                                    :src="trip.image"
-                                    :alt="trip.title"
-                                    loading="lazy"
-                                    class="size-full object-cover transition duration-500 group-hover:scale-105"
-                                />
-                            </div>
-
-                            <!-- Trip Card Content -->
-                            <div class="flex flex-1 flex-col justify-between p-3.5 text-slate-700">
-                                <div>
-                                    <!-- Duration & Slots Left -->
-                                    <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500">
-                                        <div class="flex items-center gap-1">
-                                            <Clock class="size-3 text-slate-400" />
-                                            <span>{{ trip.duration }}</span>
-                                        </div>
-                                        <span class="rounded bg-rose-50 px-1.5 py-0.5 font-bold text-rose-600">
-                                            {{ trip.slotsLeft }}
+                            <article
+                                class="group relative flex h-[330px] w-[235px] flex-col justify-between rounded-[18px] bg-white shadow-[0_8px_20px_rgba(15,45,95,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_28px_rgba(15,45,95,0.25)]"
+                            >
+                                <!-- 1:1 Red Bookmark Ribbon with Fold Triangle (100% Guaranteed Unclipped) -->
+                                <div class="absolute top-4 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
+                                    <div class="relative flex h-[24px] min-w-[50px] items-center justify-center rounded-r-[8px] bg-[#e52335] px-2.5">
+                                        <span class="text-[12px] font-black tracking-tight text-white leading-none">
+                                            {{ trip.discount }}
                                         </span>
-                                    </div>
-
-                                    <!-- Trip Title -->
-                                    <h3 class="mt-1.5 line-clamp-2 text-[13px] font-bold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors">
-                                        {{ trip.title }}
-                                    </h3>
-                                </div>
-
-                                <!-- Pricing & Booking Button -->
-                                <div class="mt-2.5 border-t border-slate-100 pt-2.5">
-                                    <div class="flex items-baseline justify-between">
-                                        <span class="text-[10px] font-medium text-slate-400">Harga Flash Sale</span>
-                                        <div class="flex items-center gap-1 text-[10px] text-amber-500">
-                                            <Star class="size-3 fill-amber-400 text-amber-400" />
-                                            <span class="font-bold text-slate-700">{{ trip.rating }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-0.5 flex items-center justify-between gap-1">
-                                        <div>
-                                            <p class="text-sm font-extrabold leading-none text-[#ef3037]">
-                                                {{ trip.price }}
-                                            </p>
-                                            <p class="mt-0.5 text-[10px] text-slate-400 line-through">
-                                                {{ trip.originalPrice }}
-                                            </p>
-                                        </div>
-
-                                        <Link
-                                            :href="getTripUrl(trip)"
-                                            class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
-                                        >
-                                            <span>Pesan</span>
-                                            <ArrowRight class="size-3" />
-                                        </Link>
+                                        <!-- Ribbon Fold Triangle Underneath Left Edge -->
+                                        <span class="absolute -bottom-[8px] left-0 size-0 border-t-[8px] border-t-[#8f121d] border-l-[8px] border-l-transparent"></span>
                                     </div>
                                 </div>
-                            </div>
-                        </article>
+
+                                <!-- Trip Card Image -->
+                                <div class="relative h-[155px] w-full overflow-hidden rounded-t-[18px] bg-slate-100">
+                                    <img
+                                        :src="trip.image"
+                                        :alt="trip.title"
+                                        loading="lazy"
+                                        class="size-full object-cover transition duration-500 group-hover:scale-105"
+                                    />
+                                </div>
+
+                                <!-- Trip Card Content -->
+                                <div class="flex flex-1 flex-col justify-between p-3.5 text-slate-700">
+                                    <div>
+                                        <!-- Duration & Slots Left -->
+                                        <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500">
+                                            <div class="flex items-center gap-1">
+                                                <Clock class="size-3 text-slate-400" />
+                                                <span>{{ trip.duration }}</span>
+                                            </div>
+                                            <span class="rounded bg-rose-50 px-1.5 py-0.5 font-bold text-rose-600">
+                                                {{ trip.slotsLeft }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Trip Title -->
+                                        <h3 class="mt-1.5 line-clamp-2 text-[13px] font-bold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors">
+                                            {{ trip.title }}
+                                        </h3>
+                                    </div>
+
+                                    <!-- Pricing & Booking Button -->
+                                    <div class="mt-2.5 border-t border-slate-100 pt-2.5">
+                                        <div class="flex items-baseline justify-between">
+                                            <span class="text-[10px] font-medium text-slate-400">Harga Flash Sale</span>
+                                            <div class="flex items-center gap-1 text-[10px] text-amber-500">
+                                                <Star class="size-3 fill-amber-400 text-amber-400" />
+                                                <span class="font-bold text-slate-700">{{ trip.rating }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-0.5 flex items-center justify-between gap-1">
+                                            <div>
+                                                <p class="text-sm font-extrabold leading-none text-[#ef3037]">
+                                                    {{ trip.price }}
+                                                </p>
+                                                <p class="mt-0.5 text-[10px] text-slate-400 line-through">
+                                                    {{ trip.originalPrice }}
+                                                </p>
+                                            </div>
+
+                                            <Link
+                                                :href="getTripUrl(trip)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
+                                            >
+                                                <span>Pesan</span>
+                                                <ArrowRight class="size-3" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
                     </div>
 
                     <!-- Carousel Dots & Navigation Controls (Bottom Right) -->
