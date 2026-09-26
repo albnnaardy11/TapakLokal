@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+    <g transform="translate(0, 4)">
+        <path d="M12 28L20 4L28 28H23L20 18L17 28H12Z" fill="#1e1b4b"/>
+        <path d="M15 15L20 0L25 15H15Z" fill="#4338ca"/>
+        <text x="36" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="900" letter-spacing="1" fill="#1e1b4b">ALL</text>
+        <text x="36" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" letter-spacing="1.5" fill="#475569">ACCOR·LIVE LIMITLESS</text>
+    </g>
+</svg>

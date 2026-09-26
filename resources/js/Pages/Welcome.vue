@@ -50,34 +50,35 @@ const reviewsLoading = false;
     <Head :title="appName" />
 
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-slate-900">
-        <MainNavigation />
+        <!-- Main Navigation with transparent hero integration at top -->
+        <MainNavigation :transparent-on-top="true" />
 
-        <main class="relative isolate mx-auto max-w-[1440px] px-4 pb-28 pt-3 sm:px-8 sm:pt-4 lg:px-10 lg:pt-5">
-            <div class="pointer-events-none absolute -top-16 left-1/2 -z-10 h-[900px] w-screen -translate-x-1/2 bg-[radial-gradient(ellipse_at_0%_25%,rgba(154,211,255,0.35),transparent_45%),radial-gradient(ellipse_at_100%_45%,rgba(182,228,235,0.32),transparent_40%)]" aria-hidden="true"></div>
-            <section class="relative z-20 mx-auto max-w-[1240px]">
-                <div class="relative flex flex-col items-center justify-center rounded-[24px] sm:rounded-[32px] px-4 pt-10 pb-14 sm:px-8 sm:pt-14 sm:pb-18 lg:px-10 lg:pt-16 lg:pb-20 shadow-[0_20px_60px_rgba(10,25,50,0.18)]">
-                    <!-- Background Image & Gradient Overlay Layer (Clipped to rounded corners) -->
-                    <div class="absolute inset-0 -z-10 overflow-hidden rounded-[24px] sm:rounded-[32px] bg-[#0c1f38]">
-                        <img
-                            :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1800&q=88'"
-                            :alt="hero?.title || 'Jelajahi Indonesia'"
-                            class="size-full object-cover object-center brightness-[0.85]"
-                        />
-                        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,25,48,0.55)_0%,rgba(14,35,66,0.65)_50%,rgba(10,22,40,0.85)_100%)]"></div>
-                    </div>
+        <!-- Full-Width Edge-to-Edge Hero Section -->
+        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white">
+            <!-- Full Width Background Image -->
+            <img
+                :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88'"
+                :alt="hero?.title || 'Jelajahi Indonesia'"
+                class="absolute inset-0 z-0 size-full object-cover object-center brightness-[0.88] transition-opacity duration-500"
+                @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80'; }"
+            />
+            <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(8,24,50,0.45)_0%,rgba(12,32,62,0.30)_40%,rgba(10,22,40,0.82)_100%)] pointer-events-none"></div>
 
-                    <!-- Hero Title -->
-                    <div class="max-w-3xl text-center text-white drop-shadow-md mb-6 sm:mb-8">
-                        <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[32px]">
-                            {{ hero?.title || 'Jelajahi Indonesia Secara Otentik.' }}
-                        </h1>
-                    </div>
-
-                    <!-- Integrated Search Component -->
-                    <TripFinder ref="tripFinder" class="w-full" />
+            <!-- Centered Hero Content Container -->
+            <div class="relative z-10 mx-auto max-w-[1240px] px-4 pt-28 pb-5 sm:px-8 sm:pt-32 sm:pb-6 lg:px-10 lg:pt-34 lg:pb-7 flex flex-col items-center justify-center">
+                <!-- Hero Title -->
+                <div class="max-w-3xl text-center text-white drop-shadow-md mb-4 sm:mb-5">
+                    <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
+                        {{ hero?.title || 'Jelajahi Indonesia Secara Otentik.' }}
+                    </h1>
                 </div>
-            </section>
 
+                <!-- Integrated Search Component -->
+                <TripFinder ref="tripFinder" :partners="cmsPartners" class="w-full" />
+            </div>
+        </section>
+
+        <main class="relative isolate mx-auto max-w-[1440px] px-4 pb-28 pt-8 sm:px-8 sm:pt-10 lg:px-10">
             <TripOptions :is-loading="tripOptionsLoading" />
             <div class="relative isolate flow-root">
                 <TravelBackdrop />

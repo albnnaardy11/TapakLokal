@@ -27,6 +27,60 @@ import {
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 
+const props = defineProps({
+    partners: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const defaultPartners = [
+    { id: 'p1', name: 'Millennium Hotels', image_url: '/Assets/Images/partners/partner-1.svg' },
+    { id: 'p2', name: 'Accor', image_url: '/Assets/Images/partners/partner-2.svg' },
+    { id: 'p3', name: 'Archipelago', image_url: '/Assets/Images/partners/partner-3.svg' },
+    { id: 'p4', name: 'IHG Hotels', image_url: '/Assets/Images/partners/partner-4.svg' },
+    { id: 'p5', name: 'The Ascott', image_url: '/Assets/Images/partners/partner-5.svg' },
+];
+
+const displayPartners = computed(() => {
+    const list = Array.isArray(props.partners)
+        ? props.partners
+        : (props.partners ? Object.values(props.partners) : []);
+    const valid = list.filter(item => item && (item.image_url || item.name));
+    return valid.length > 0 ? valid : defaultPartners;
+});
+
+// Rotating Partners Slide (Cycle: 2 -> 4 -> 3 -> 1 logos every 3.5s)
+const currentSlide = ref(0);
+let partnerTimer = null;
+const patternCounts = [2, 4, 3, 1];
+
+const partnerSlides = computed(() => {
+    const list = displayPartners.value;
+    if (!list || list.length === 0) return [];
+    if (list.length === 1) return [list];
+
+    const slides = [];
+    let currentIndex = 0;
+
+    for (const count of patternCounts) {
+        const targetCount = Math.min(count, list.length);
+        const slideItems = [];
+        for (let i = 0; i < targetCount; i++) {
+            slideItems.push(list[(currentIndex + i) % list.length]);
+        }
+        slides.push(slideItems);
+        currentIndex = (currentIndex + targetCount) % list.length;
+    }
+
+    return slides;
+});
+
+const activeSlideLogos = computed(() => {
+    if (partnerSlides.value.length === 0) return [];
+    return partnerSlides.value[currentSlide.value % partnerSlides.value.length];
+});
+
 // Active Tab ('trip' | 'souvenir')
 const activeTab = ref('trip');
 
@@ -57,11 +111,22 @@ const handleKeyDown = (e) => {
 onMounted(() => {
     document.addEventListener('click', handleDocumentClick);
     document.addEventListener('keydown', handleKeyDown);
+
+    // Rotate partner logos every 3.5 seconds (3 - 4 detik)
+    partnerTimer = setInterval(() => {
+        if (partnerSlides.value.length > 1) {
+            currentSlide.value = (currentSlide.value + 1) % partnerSlides.value.length;
+        }
+    }, 3500);
 });
 
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleDocumentClick);
     document.removeEventListener('keydown', handleKeyDown);
+
+    if (partnerTimer) {
+        clearInterval(partnerTimer);
+    }
 });
 
 // Trip Form States
@@ -665,5 +730,67 @@ const searchSouvenirs = () => {
         >
             {{ searchMessage }}
         </p>
+
+        <!-- 5. Trusted By / Dipercayai Oleh Bar (Compact Fit Content, Dynamic 2 -> 4 -> 3 -> 1 Logos) -->
+        <div v-if="displayPartners.length > 0" class="mt-5 flex justify-center w-full">
+            <div
+                class="inline-flex items-center justify-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl bg-white/95 px-4 sm:px-6 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md transition-all duration-500 ease-out"
+            >
+                <!-- Label (rapat dengan logo) -->
+                <span class="text-xs sm:text-[13px] font-bold italic tracking-wide text-[#0064d2] shrink-0 whitespace-nowrap">
+                    Dipercayai oleh:
+                </span>
+
+                <!-- Animated Rotating Logos -->
+                <div class="relative flex items-center justify-center min-h-[28px] overflow-hidden">
+                    <Transition name="partner-slide" mode="out-in">
+                        <div
+                            :key="currentSlide"
+                            class="inline-flex items-center justify-center gap-3 sm:gap-5"
+                        >
+                            <a
+                                v-for="partner in activeSlideLogos"
+                                :key="partner.id || partner.name"
+                                :href="partner.website_url || undefined"
+                                :target="partner.website_url ? '_blank' : undefined"
+                                :rel="partner.website_url ? 'noopener noreferrer' : undefined"
+                                class="group flex items-center justify-center transition-all duration-200 hover:scale-105 shrink-0"
+                                :class="partner.website_url ? 'cursor-pointer' : 'cursor-default'"
+                                :title="partner.name"
+                            >
+                                <img
+                                    v-if="partner.image_url"
+                                    :src="partner.image_url"
+                                    :alt="partner.name"
+                                    class="h-5 sm:h-6 max-h-6 max-w-[80px] sm:max-w-[105px] object-contain opacity-85 contrast-125 transition duration-200 group-hover:opacity-100"
+                                    loading="lazy"
+                                />
+                                <span
+                                    v-else
+                                    class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 group-hover:text-[#0064d2] whitespace-nowrap"
+                                >
+                                    {{ partner.name }}
+                                </span>
+                            </a>
+                        </div>
+                    </Transition>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
+
+<style scoped>
+.partner-slide-enter-active,
+.partner-slide-leave-active {
+    transition: all 0.4s ease-in-out;
+}
+.partner-slide-enter-from {
+    opacity: 0;
+    transform: translateY(6px);
+}
+.partner-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+</style>

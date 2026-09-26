@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
+    <g transform="translate(0, 4)">
+        <!-- Red stylized bars -->
+        <rect x="0" y="2" width="4" height="28" fill="#e11d48" rx="1"/>
+        <rect x="8" y="0" width="4" height="32" fill="#e11d48" rx="1"/>
+        <rect x="16" y="5" width="4" height="22" fill="#e11d48" rx="1"/>
+        <rect x="24" y="0" width="4" height="32" fill="#e11d48" rx="1"/>
+        <rect x="32" y="2" width="4" height="28" fill="#e11d48" rx="1"/>
+        <!-- Text -->
+        <text x="46" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" letter-spacing="2.5" fill="#1e293b">MILLENNIUM</text>
+        <text x="46" y="29" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="600" letter-spacing="2" fill="#64748b">HOTELS AND RESORTS</text>
+    </g>
+</svg>
