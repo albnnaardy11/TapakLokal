@@ -15,6 +15,7 @@ import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
 import { computed, ref } from 'vue';
 import ContentCards from '../Components/Shared/ContentCards.vue';
 import TripCards from '../Components/Shared/TripCards.vue';
+import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const tripFinder = ref(null);
 
@@ -115,5 +116,7 @@ const reviewsLoading = false;
                 <TravelerReviews :reviews="[...(Array.isArray(travelerReviews) ? travelerReviews : Object.values(travelerReviews || {})), ...(Array.isArray(cmsTestimonials) ? cmsTestimonials : Object.values(cmsTestimonials || {}))]" />
             </div>
         </main>
+
+        <MainFooter />
     </div>
 </template>

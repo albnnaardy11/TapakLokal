@@ -3,6 +3,7 @@ import { computed, reactive } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TripFinder from '../Components/Home/TripFinder.vue';
+import MainFooter from '../Components/Shared/MainFooter.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
 
 const props = defineProps({
@@ -64,5 +65,7 @@ const heroTitle = computed(() => {
             <!-- Section Open Trip / Private Trip Directly Under Hero -->
             <TripOptions class="!mt-0" />
         </main>
+
+        <MainFooter />
     </div>
 </template>
