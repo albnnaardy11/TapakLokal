@@ -50,7 +50,7 @@ class VendorIsolationTest extends TestCase
     public function test_unverified_vendor_trips_are_hidden_from_search_and_detail(): void
     {
         $trip = Trip::factory()->for(Vendor::factory()->state(['status' => 'suspended']))->create();
-        $this->get('/jelajah')->assertInertia(fn (Assert $page) => $page->has('trips.data', 0));
+        $this->get('/cari-trip')->assertInertia(fn (Assert $page) => $page->has('trips.data', 0));
         $this->get('/trips/'.$trip->type.'/'.$trip->slug)->assertNotFound();
         $this->actingAs(User::factory()->create())->post('/bookings', ['trip_id' => $trip->id, 'participants' => 1, 'contact_name' => 'Traveler', 'contact_phone' => '08123456789', 'idempotency_key' => (string) Str::uuid()])->assertSessionHasErrors('trip_id');
         $this->assertDatabaseCount('bookings', 0);

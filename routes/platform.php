@@ -31,7 +31,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', fn (string $token) => Inertia::render('Auth/Login', ['mode' => 'reset', 'token' => $token, 'email' => request('email')]))->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
 });
-Route::get('/jelajah', [BookingController::class, 'catalog'])->name('catalog');
+Route::get('/cari-trip', [BookingController::class, 'catalog'])->name('catalog');
+Route::redirect('/jelajah', '/cari-trip');
 Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
 Route::get('/virtual-tours/{tour}/image', [VirtualTourController::class, 'image'])->whereNumber('tour')->name('tours.image');
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'webhook'])->middleware('throttle:120,1')->name('payments.webhook');

@@ -181,7 +181,7 @@ const getTripUrl = (trip) => {
     } catch {
         // Fallback
     }
-    return typeof route === 'function' ? route('catalog', { type: trip.type }) : '/jelajah';
+    return typeof route === 'function' ? route('catalog', { type: trip.type }) : '/cari-trip';
 };
 
 onMounted(() => {
@@ -258,7 +258,7 @@ onBeforeUnmount(() => {
                     <!-- CTA Link (Directly below description) -->
                     <div class="mt-5">
                         <Link
-                            :href="typeof route === 'function' ? route('catalog') : '/jelajah'"
+                            :href="typeof route === 'function' ? route('catalog') : '/cari-trip'"
                             class="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-xs font-bold text-[#175a9f] shadow-md transition duration-200 hover:bg-[#e9f1ff] active:scale-95 sm:text-sm"
                         >
                             <span>Lihat Semua Promo Trip</span>

@@ -48,7 +48,7 @@ const selectLocale = (loc) => {
 
 const navItems = [
     { label: 'Beranda', href: '/', description: 'Kembali ke halaman utama' },
-    { label: 'Cari Trip', href: typeof route === 'function' ? route('catalog') : '/catalog', description: 'Open trip dan private trip pilihan' },
+    { label: 'Cari Trip', href: typeof route === 'function' ? route('catalog') : '/cari-trip', description: 'Open trip dan private trip pilihan' },
     { label: 'Destinasi', href: typeof route === 'function' ? route('explore', 'destination') : '/explore/destination', description: 'Temukan inspirasi perjalanan di Indonesia' },
     { label: 'Kuliner Lokal', href: typeof route === 'function' ? route('explore', 'culinary') : '/explore/culinary', description: 'Produk lokal pilihan dari berbagai daerah' },
     { label: 'Promo', href: typeof route === 'function' ? route('account.section', 'vouchers') : '/account/vouchers', description: 'Penawaran perjalanan dan produk pilihan' },
@@ -67,7 +67,7 @@ const selectNavigation = (item) => {
     notify(`${item.label} dipilih — ${item.description}`);
 };
 
-const submitGlobalSearch = () => router.get(typeof route === 'function' ? route('catalog') : '/catalog', { q: globalSearch.value.trim() });
+const submitGlobalSearch = () => router.get(typeof route === 'function' ? route('catalog') : '/cari-trip', { q: globalSearch.value.trim() });
 const openAuthModal = (mode) => {
     const target = currentPage.props.auth?.user
         ? (typeof route === 'function' ? route('account') : '/account')
