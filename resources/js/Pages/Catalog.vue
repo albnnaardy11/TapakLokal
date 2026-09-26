@@ -5,6 +5,7 @@ import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TripFinder from '../Components/Home/TripFinder.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
+import FlashSale from '../Components/Home/FlashSale.vue';
 
 const props = defineProps({
     trips: { type: Object, default: () => ({ data: [] }) },
@@ -64,6 +65,9 @@ const heroTitle = computed(() => {
         <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-12 pt-4 sm:px-6 sm:pt-6 sm:pb-14 lg:px-0">
             <!-- Section Open Trip / Private Trip Directly Under Hero -->
             <TripOptions class="!mt-0" />
+
+            <!-- Flash Sale Section -->
+            <FlashSale class="!mt-12 sm:!mt-16" />
         </main>
 
         <MainFooter />

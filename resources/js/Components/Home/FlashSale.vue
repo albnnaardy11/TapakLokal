@@ -1,106 +1,401 @@
 <script setup>
-import { ArrowRight, ChevronRight, MapPin, ShoppingCart } from 'lucide-vue-next';
+import { ArrowRight, ChevronLeft, ChevronRight, Clock, Star } from 'lucide-vue-next';
+import { Link } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const carousel = ref(null);
 const currentPage = ref(0);
-const addedProduct = ref(null);
-let autoplayTimer;
+let autoplayTimer = null;
+let countdownTimer = null;
 
-const products = [
-    { id: 1, name: 'Kopi Arabika Gayo', location: 'Aceh Tengah', price: 'Rp 60.000', originalPrice: 'Rp 75.000', discount: '20%', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=640&q=85' },
-    { id: 2, name: 'Rendang Kemasan', location: 'Payakumbuh', price: 'Rp 48.000', originalPrice: 'Rp 60.000', discount: '20%', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=640&q=85' },
-    { id: 3, name: 'Keripik Pisang Cokelat', location: 'Lampung', price: 'Rp 30.000', originalPrice: 'Rp 38.000', discount: '21%', image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=640&q=85' },
-    { id: 4, name: 'Madu Hutan Sumbawa', location: 'Sumbawa', price: 'Rp 85.000', originalPrice: 'Rp 105.000', discount: '19%', image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=640&q=85' },
-    { id: 5, name: 'Sambal Roa Asli', location: 'Manado', price: 'Rp 42.000', originalPrice: 'Rp 52.000', discount: '19%', image: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=640&q=85' },
-];
+// Countdown timer state (hours, minutes, seconds)
+const timeLeft = ref({
+    hours: 11,
+    minutes: 42,
+    seconds: 35,
+});
 
-const pageCount = 3;
-const pagePositions = computed(() => Array.from({ length: pageCount }, (_, index) => index));
+const formatTwoDigits = (num) => String(num).padStart(2, '0');
 
-const moveToPage = (page) => {
-    if (! carousel.value) {
-        return;
+const tickCountdown = () => {
+    if (timeLeft.value.seconds > 0) {
+        timeLeft.value.seconds--;
+    } else {
+        timeLeft.value.seconds = 59;
+        if (timeLeft.value.minutes > 0) {
+            timeLeft.value.minutes--;
+        } else {
+            timeLeft.value.minutes = 59;
+            if (timeLeft.value.hours > 0) {
+                timeLeft.value.hours--;
+            } else {
+                // reset to 12 hours for continuous promo demo
+                timeLeft.value.hours = 12;
+            }
+        }
     }
-
-    const maximumScroll = carousel.value.scrollWidth - carousel.value.clientWidth;
-    currentPage.value = page;
-    carousel.value.scrollTo({ left: (maximumScroll / (pageCount - 1)) * page, behavior: document.documentElement.dataset.a11yAnimation === '1' || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
 };
 
-const nextPage = () => moveToPage((currentPage.value + 1) % pageCount);
+const tripProducts = [
+    {
+        id: 1,
+        title: 'Open Trip Bromo Sunrise & Savana',
+        category: 'Open Trip',
+        location: 'Malang, Jawa Timur',
+        duration: '3H 2M',
+        slotsLeft: 'Sisa 3 Kursi',
+        price: 'Rp 350.000',
+        originalPrice: 'Rp 550.000',
+        discount: '36%',
+        rating: '4.9',
+        type: 'open-trip',
+        slug: 'open-trip-bromo',
+        image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=640&q=85',
+    },
+    {
+        id: 2,
+        title: 'Open Trip Labuan Bajo & Komodo',
+        category: 'Open Trip',
+        location: 'Labuan Bajo, NTT',
+        duration: '3H 2M',
+        slotsLeft: 'Sisa 2 Kursi',
+        price: 'Rp 1.850.000',
+        originalPrice: 'Rp 2.450.000',
+        discount: '25%',
+        rating: '4.95',
+        type: 'open-trip',
+        slug: 'open-trip-pulau-komodo',
+        image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=640&q=85',
+    },
+    {
+        id: 3,
+        title: 'Private Trip Nusa Penida & Snorkeling',
+        category: 'Private Trip',
+        location: 'Nusa Penida, Bali',
+        duration: '2H 1M',
+        slotsLeft: 'Promo Eksklusif',
+        price: 'Rp 650.000',
+        originalPrice: 'Rp 950.000',
+        discount: '32%',
+        rating: '4.85',
+        type: 'private-trip',
+        slug: 'private-trip-nusa-penida',
+        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=640&q=85',
+    },
+    {
+        id: 4,
+        title: 'Open Trip Dieng Golden Sunrise',
+        category: 'Open Trip',
+        location: 'Wonosobo, Jawa Tengah',
+        duration: '2H 1M',
+        slotsLeft: 'Sisa 4 Kursi',
+        price: 'Rp 420.000',
+        originalPrice: 'Rp 600.000',
+        discount: '30%',
+        rating: '4.8',
+        type: 'open-trip',
+        slug: 'open-trip-bromo',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=640&q=85',
+    },
+    {
+        id: 5,
+        title: 'Open Trip Derawan & Maratua Island',
+        category: 'Open Trip',
+        location: 'Berau, Kalimantan Timur',
+        duration: '4H 3M',
+        slotsLeft: 'Sisa 2 Kursi',
+        price: 'Rp 2.100.000',
+        originalPrice: 'Rp 2.800.000',
+        discount: '25%',
+        rating: '4.9',
+        type: 'open-trip',
+        slug: 'open-raja-ampat',
+        image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=640&q=85',
+    },
+    {
+        id: 6,
+        title: 'Private Trip Pahawang Snorkeling',
+        category: 'Private Trip',
+        location: 'Pesawaran, Lampung',
+        duration: '2H 1M',
+        slotsLeft: 'Sisa 5 Kursi',
+        price: 'Rp 490.000',
+        originalPrice: 'Rp 700.000',
+        discount: '30%',
+        rating: '4.85',
+        type: 'private-trip',
+        slug: 'open-trip-bromo',
+        image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=640&q=85',
+    },
+];
+
+const pageCount = computed(() => {
+    // 6 items total, each page scrolls by 2-3 items
+    return 3;
+});
+const pagePositions = computed(() => Array.from({ length: pageCount.value }, (_, index) => index));
+
+const moveToPage = (page) => {
+    if (!carousel.value) return;
+    const maxScroll = carousel.value.scrollWidth - carousel.value.clientWidth;
+    if (maxScroll <= 0) return;
+    currentPage.value = page;
+    carousel.value.scrollTo({
+        left: (maxScroll / (pageCount.value - 1)) * page,
+        behavior: 'smooth',
+    });
+};
+
+const nextPage = () => moveToPage((currentPage.value + 1) % pageCount.value);
+const prevPage = () => moveToPage((currentPage.value - 1 + pageCount.value) % pageCount.value);
 
 const updateCurrentPage = () => {
-    if (! carousel.value) {
+    if (!carousel.value) return;
+    const maxScroll = carousel.value.scrollWidth - carousel.value.clientWidth;
+    if (maxScroll <= 0) {
+        currentPage.value = 0;
         return;
     }
-
-    const maximumScroll = carousel.value.scrollWidth - carousel.value.clientWidth;
-    currentPage.value = maximumScroll ? Math.round((carousel.value.scrollLeft / maximumScroll) * (pageCount - 1)) : 0;
+    currentPage.value = Math.round((carousel.value.scrollLeft / maxScroll) * (pageCount.value - 1));
 };
 
 const startAutoplay = () => {
-    window.clearInterval(autoplayTimer);
+    stopAutoplay();
     autoplayTimer = window.setInterval(() => {
-        if (document.documentElement.dataset.a11yAnimation !== '1' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            nextPage();
-        }
+        nextPage();
     }, 4500);
 };
 
-const pauseAutoplay = () => window.clearInterval(autoplayTimer);
-
-const addToCart = (product) => {
-    addedProduct.value = product.id;
-    window.setTimeout(() => {
-        if (addedProduct.value === product.id) {
-            addedProduct.value = null;
-        }
-    }, 1800);
+const stopAutoplay = () => {
+    if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = null;
+    }
 };
 
-onMounted(startAutoplay);
-onBeforeUnmount(() => window.clearInterval(autoplayTimer));
+const getTripUrl = (trip) => {
+    try {
+        if (typeof route === 'function') {
+            return route('trips.show', { tripType: trip.type, trip: trip.slug });
+        }
+    } catch {
+        // Fallback
+    }
+    return typeof route === 'function' ? route('catalog', { type: trip.type }) : '/jelajah';
+};
+
+onMounted(() => {
+    startAutoplay();
+    countdownTimer = window.setInterval(tickCountdown, 1000);
+});
+
+onBeforeUnmount(() => {
+    stopAutoplay();
+    if (countdownTimer) {
+        window.clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+});
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24">
+    <section class="mx-auto mt-16 max-w-[1180px] sm:mt-20">
         <div class="relative isolate overflow-hidden rounded-[24px] bg-[#2b70d1] shadow-[0_12px_28px_rgba(22,53,102,0.16)]">
-            <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1800&q=80" alt="Produk kuliner lokal" class="absolute inset-0 -z-20 size-full object-cover opacity-45" />
-            <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(22,88,187,0.96)_0%,rgba(38,107,204,0.9)_31%,rgba(91,154,232,0.56)_64%,rgba(171,207,248,0.32)_100%)]"></div>
-            <div class="relative grid lg:grid-cols-[360px_minmax(0,1fr)]">
-                <div class="px-7 py-9 text-white sm:px-10 lg:py-11">
-                    <div class="flex items-center gap-3 text-lg font-extrabold">
-                        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-white/15 shadow-sm">
-                            <svg viewBox="0 0 64 88" class="h-6 w-4" aria-hidden="true">
-                            <defs>
-                                <radialGradient id="flash-sale-lightning-fill" cx="48%" cy="48%" r="58%">
-                                    <stop offset="0%" stop-color="#d8f5ff" />
-                                    <stop offset="35%" stop-color="#8fd5ff" />
-                                    <stop offset="100%" stop-color="#2575d4" />
-                                </radialGradient>
-                            </defs>
-                                <path d="M39.5 3 6.5 51.2a5.2 5.2 0 0 0 4.3 8.1h17.5l-2.7 23.2c-.6 5.2 6.1 7.2 8.3 2.5l25.2-48.8a5.2 5.2 0 0 0-4.7-7.6H37.3l4.1-20.1C42.4 3.7 42.2 1.3 39.5 3Z" fill="url(#flash-sale-lightning-fill)" stroke="#16a9f4" stroke-linejoin="round" stroke-width="3.8" />
-                            </svg>
-                        </span>
-                        FLASH SALE
+            <!-- Background Scenery Image (Breathtaking Indonesian Nature Landscape) -->
+            <img
+                src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1920&q=85"
+                alt="Pemandangan Eksotis Trip Indonesia"
+                class="absolute inset-0 -z-20 size-full object-cover opacity-50"
+            />
+            <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(22,88,187,0.96)_0%,rgba(38,107,204,0.90)_33%,rgba(91,154,232,0.52)_66%,rgba(171,207,248,0.28)_100%)]"></div>
+
+            <div class="relative grid lg:grid-cols-[380px_minmax(0,1fr)]">
+                <!-- Left Banner: Flash Sale Badge, Countdown Timer, Title & CTA -->
+                <div class="flex flex-col justify-between px-7 py-8 text-white sm:px-10 sm:py-10">
+                    <div>
+                        <!-- Original Flash Lightning Icon Badge -->
+                        <div class="flex items-center gap-3 text-lg font-extrabold tracking-wide text-white">
+                            <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-white/15 shadow-sm">
+                                <svg viewBox="0 0 64 88" class="h-6 w-4" aria-hidden="true">
+                                    <defs>
+                                        <radialGradient id="flash-sale-lightning-fill" cx="48%" cy="48%" r="58%">
+                                            <stop offset="0%" stop-color="#d8f5ff" />
+                                            <stop offset="35%" stop-color="#8fd5ff" />
+                                            <stop offset="100%" stop-color="#2575d4" />
+                                        </radialGradient>
+                                    </defs>
+                                    <path
+                                        d="M39.5 3 6.5 51.2a5.2 5.2 0 0 0 4.3 8.1h17.5l-2.7 23.2c-.6 5.2 6.1 7.2 8.3 2.5l25.2-48.8a5.2 5.2 0 0 0-4.7-7.6H37.3l4.1-20.1C42.4 3.7 42.2 1.3 39.5 3Z"
+                                        fill="url(#flash-sale-lightning-fill)"
+                                        stroke="#16a9f4"
+                                        stroke-linejoin="round"
+                                        stroke-width="3.8"
+                                    />
+                                </svg>
+                            </span>
+                            FLASH SALE TRIP
+                        </div>
+
+                        <!-- Live Countdown Timer -->
+                        <div class="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/20">
+                            <span class="text-white/90">Berakhir dalam:</span>
+                            <div class="flex items-center gap-1 font-mono text-xs font-bold text-white">
+                                <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.hours) }}</span>
+                                <span>:</span>
+                                <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.minutes) }}</span>
+                                <span>:</span>
+                                <span class="rounded bg-[#ef3037] px-1.5 py-0.5 text-white shadow-sm">{{ formatTwoDigits(timeLeft.seconds) }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Headline & Description -->
+                        <h2 class="mt-5 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
+                            Paket Trip Pilihan Harga Spesial!
+                        </h2>
+                        <p class="mt-3 text-sm leading-relaxed text-white/90">
+                            Diskon liburan terbatas hingga 36% untuk Open Trip dan Private Trip pilihan dengan kuota promo terbatas.
+                        </p>
                     </div>
-                    <h2 class="mt-5 text-2xl font-extrabold leading-tight">Oleh-Oleh & Kuliner Khas Daerah</h2>
-                    <p class="mt-4 max-w-xs text-base leading-relaxed text-white/90">Produk lokal pilihan dengan harga spesial hanya untuk waktu terbatas.</p>
-                    <button type="button" class="mt-8 inline-flex items-center gap-3 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#175a9f] transition hover:bg-[#e9f1ff]">Lihat Semua <ArrowRight class="size-4" /></button>
+
+                    <!-- CTA Link -->
+                    <div class="mt-8 pt-2">
+                        <Link
+                            :href="typeof route === 'function' ? route('catalog') : '/jelajah'"
+                            class="inline-flex items-center gap-2.5 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#175a9f] shadow-md transition duration-200 hover:bg-[#e9f1ff] active:scale-95"
+                        >
+                            <span>Lihat Semua Promo Trip</span>
+                            <ArrowRight class="size-4" />
+                        </Link>
+                    </div>
                 </div>
 
-                <div class="relative min-w-0 bg-white/[0.03] px-5 pb-14 pt-5 sm:px-7" @mouseenter="pauseAutoplay" @mouseleave="startAutoplay">
-                    <div ref="carousel" class="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" @scroll="updateCurrentPage">
-                        <article v-for="product in products" :key="product.id" class="relative h-[290px] w-[220px] shrink-0 snap-start rounded-[14px] bg-white shadow-[0_8px_18px_rgba(14,53,108,0.18)]">
-                            <div class="relative h-[150px] overflow-hidden rounded-t-[14px] bg-[#dcdcdc]">
-                                <img :src="product.image" :alt="product.name" class="size-full object-cover transition duration-500 hover:scale-105" />
+                <!-- Right Column: Interactive Trip Cards Carousel -->
+                <div
+                    class="relative min-w-0 bg-white/[0.04] px-5 pb-14 pt-6 sm:px-7"
+                    @mouseenter="stopAutoplay"
+                    @mouseleave="startAutoplay"
+                >
+                    <div
+                        ref="carousel"
+                        class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        @scroll="updateCurrentPage"
+                    >
+                        <article
+                            v-for="trip in tripProducts"
+                            :key="trip.id"
+                            class="group relative flex h-[330px] w-[235px] shrink-0 snap-start flex-col justify-between rounded-[18px] bg-white shadow-[0_8px_20px_rgba(15,45,95,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_28px_rgba(15,45,95,0.25)]"
+                            :class="{ 'ml-3': trip.id === tripProducts[0].id }"
+                        >
+                            <!-- 1:1 Red Bookmark Ribbon with Fold Triangle (100% Unclipped) -->
+                            <div class="absolute top-4 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
+                                <div class="relative flex h-[24px] min-w-[50px] items-center justify-center rounded-r-[8px] bg-[#e52335] px-2.5">
+                                    <span class="text-[12px] font-black tracking-tight text-white leading-none">
+                                        {{ trip.discount }}
+                                    </span>
+                                    <!-- Ribbon Fold Triangle Underneath Left Edge -->
+                                    <span class="absolute -bottom-[8px] left-0 size-0 border-t-[8px] border-t-[#8f121d] border-l-[8px] border-l-transparent"></span>
+                                </div>
                             </div>
-                            <div class="rounded-b-[14px] p-3 text-slate-700"><p class="flex items-center gap-1 text-[9px] font-medium"><MapPin class="size-3.5 fill-[#20a0f5] text-white" />Toko: {{ product.location }}</p><p class="mt-0.5 text-[7px] font-medium leading-tight text-slate-600">Estimasi Tiba: 3 Hari Setelah<br />PO Ditutup</p><h3 class="mt-1.5 line-clamp-2 text-[13px] font-medium leading-tight">{{ product.name }}</h3><p class="mt-0.5 text-sm font-extrabold leading-tight text-[#ef3037]">Pesan: {{ product.price }}</p><div class="mt-3 flex items-end justify-between gap-1"><p class="text-xs leading-tight text-slate-700">Harga Normal:<br /><span class="text-slate-400 line-through">{{ product.originalPrice }}</span></p><button type="button" class="inline-flex items-center gap-1 rounded-full bg-[#21a0ef] px-2.5 py-1.5 text-[10px] font-medium text-white transition hover:bg-[#168bd4]" @click="addToCart(product)"><ShoppingCart class="size-3" />{{ addedProduct === product.id ? 'Ditambahkan' : 'Keranjang' }}</button></div></div>
+
+                            <!-- Trip Card Image -->
+                            <div class="relative h-[155px] w-full overflow-hidden rounded-t-[18px] bg-slate-100">
+                                <img
+                                    :src="trip.image"
+                                    :alt="trip.title"
+                                    loading="lazy"
+                                    class="size-full object-cover transition duration-500 group-hover:scale-105"
+                                />
+                            </div>
+
+                            <!-- Trip Card Content -->
+                            <div class="flex flex-1 flex-col justify-between p-3.5 text-slate-700">
+                                <div>
+                                    <!-- Duration & Slots Left -->
+                                    <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500">
+                                        <div class="flex items-center gap-1">
+                                            <Clock class="size-3 text-slate-400" />
+                                            <span>{{ trip.duration }}</span>
+                                        </div>
+                                        <span class="rounded bg-rose-50 px-1.5 py-0.5 font-bold text-rose-600">
+                                            {{ trip.slotsLeft }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Trip Title -->
+                                    <h3 class="mt-1.5 line-clamp-2 text-[13px] font-bold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors">
+                                        {{ trip.title }}
+                                    </h3>
+                                </div>
+
+                                <!-- Pricing & Booking Button -->
+                                <div class="mt-2.5 border-t border-slate-100 pt-2.5">
+                                    <div class="flex items-baseline justify-between">
+                                        <span class="text-[10px] font-medium text-slate-400">Harga Flash Sale</span>
+                                        <div class="flex items-center gap-1 text-[10px] text-amber-500">
+                                            <Star class="size-3 fill-amber-400 text-amber-400" />
+                                            <span class="font-bold text-slate-700">{{ trip.rating }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-0.5 flex items-center justify-between gap-1">
+                                        <div>
+                                            <p class="text-sm font-extrabold leading-none text-[#ef3037]">
+                                                {{ trip.price }}
+                                            </p>
+                                            <p class="mt-0.5 text-[10px] text-slate-400 line-through">
+                                                {{ trip.originalPrice }}
+                                            </p>
+                                        </div>
+
+                                        <Link
+                                            :href="getTripUrl(trip)"
+                                            class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
+                                        >
+                                            <span>Pesan</span>
+                                            <ArrowRight class="size-3" />
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
                         </article>
                     </div>
 
-                    <div class="absolute bottom-4 right-5 z-10 flex items-center gap-3 sm:right-7"><div class="flex items-center gap-1.5" aria-label="Halaman produk"><button v-for="page in pagePositions" :key="page" type="button" class="h-2 rounded-full transition-all" :class="currentPage === page ? 'w-6 bg-white' : 'w-2 bg-white/45 hover:bg-white/75'" :aria-label="`Tampilkan halaman ${page + 1}`" :aria-current="currentPage === page" @click="moveToPage(page)"></button></div><button type="button" class="grid size-8 place-items-center rounded-full border border-white/60 text-white transition hover:bg-white hover:text-[#1761bf]" aria-label="Produk berikutnya" @click="nextPage"><ChevronRight class="size-4" /></button></div>
+                    <!-- Carousel Dots & Navigation Controls (Bottom Right) -->
+                    <div class="absolute bottom-4 right-5 z-10 flex items-center gap-3 sm:right-7">
+                        <!-- Dots indicator -->
+                        <div class="flex items-center gap-1.5" aria-label="Halaman carousel trip">
+                            <button
+                                v-for="page in pagePositions"
+                                :key="page"
+                                type="button"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="currentPage === page ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'"
+                                :aria-label="`Tampilkan halaman promo ${page + 1}`"
+                                :aria-current="currentPage === page"
+                                @click="moveToPage(page)"
+                            ></button>
+                        </div>
+
+                        <!-- Prev / Next Navigation Buttons -->
+                        <div class="flex items-center gap-1.5">
+                            <button
+                                type="button"
+                                class="grid size-8 place-items-center rounded-full border border-white/50 bg-black/15 text-white backdrop-blur-sm transition hover:bg-white hover:text-[#175da8]"
+                                aria-label="Promo trip sebelumnya"
+                                @click="prevPage"
+                            >
+                                <ChevronLeft class="size-4" />
+                            </button>
+                            <button
+                                type="button"
+                                class="grid size-8 place-items-center rounded-full border border-white/50 bg-black/15 text-white backdrop-blur-sm transition hover:bg-white hover:text-[#175da8]"
+                                aria-label="Promo trip berikutnya"
+                                @click="nextPage"
+                            >
+                                <ChevronRight class="size-4" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
