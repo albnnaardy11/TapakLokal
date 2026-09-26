@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Review extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReviewFactory> */
+    /** @use HasFactory<ReviewFactory> */
     use HasFactory;
 
     protected $fillable = ['user_id', 'booking_id', 'trip_id', 'rating', 'body', 'vendor_response', 'status'];
@@ -17,19 +19,18 @@ class Review extends Model
         return ['rating' => 'integer'];
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function trip(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function trip(): BelongsTo
     {
         return $this->belongsTo(Trip::class);
     }
 
-    public function booking(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
     }
-
 }

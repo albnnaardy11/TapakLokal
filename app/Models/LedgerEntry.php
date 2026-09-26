@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\LedgerEntryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LedgerEntry extends Model
 {
-    /** @use HasFactory<\Database\Factories\LedgerEntryFactory> */
+    /** @use HasFactory<LedgerEntryFactory> */
     use HasFactory;
 
     protected $fillable = ['booking_id', 'reference', 'account', 'amount', 'description'];
@@ -17,9 +19,8 @@ class LedgerEntry extends Model
         return ['amount' => 'integer'];
     }
 
-    public function booking(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function booking(): BelongsTo
     {
         return $this->belongsTo(Booking::class);
     }
-
 }

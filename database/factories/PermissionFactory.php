@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Permission;
@@ -12,4 +13,3 @@ class PermissionFactory extends Factory
         return ['name' => fake()->unique()->slug(2)];
     }
 }
-

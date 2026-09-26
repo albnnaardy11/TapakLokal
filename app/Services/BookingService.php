@@ -1,7 +1,15 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\{Booking, Payment, Payout, Promotion, RewardEntry, Trip, User, Vendor};
+use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\Payout;
+use App\Models\Promotion;
+use App\Models\RewardEntry;
+use App\Models\Trip;
+use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -21,6 +29,7 @@ class BookingService
                 if ($existing->trip_id !== (int) $data['trip_id'] || $existing->participants !== (int) $data['participants'] || $existing->contact_name !== $data['contact_name'] || $existing->contact_phone !== $data['contact_phone'] || ($code ?? '') !== strtoupper($data['promotion_code'] ?? '')) {
                     throw ValidationException::withMessages(['idempotency_key' => 'Kunci pemesanan sudah digunakan untuk pesanan berbeda.']);
                 }
+
                 return $existing;
             }
             $trip = Trip::lockForUpdate()->findOrFail($data['trip_id']);
@@ -31,7 +40,9 @@ class BookingService
             if ($trip->capacity - $trip->reserved_seats < $data['participants']) {
                 throw ValidationException::withMessages(['participants' => 'Kuota perjalanan tidak mencukupi.']);
             }
-            $subtotal = $trip->price * $data['participants'];
+            $vendorAmount = $trip->price * $data['participants'];
+            $subtotal = $trip->selling_price * $data['participants'];
+            $markup = $subtotal - $vendorAmount;
             $discount = 0;
             $promotion = null;
             if (! empty($data['promotion_code'])) {
@@ -40,22 +51,26 @@ class BookingService
                     throw ValidationException::withMessages(['promotion_code' => 'Voucher tidak berlaku atau kuota habis.']);
                 }
                 $discount = $promotion->type === 'percent' ? intdiv($subtotal * $promotion->value, 100) : $promotion->value;
-                $discount = min($discount, $promotion->maximum_discount ?? $subtotal, $subtotal - 1);
+                $discount = min($discount, $promotion->maximum_discount ?? $subtotal, $markup);
+                if ($discount < 1) {
+                    throw ValidationException::withMessages(['promotion_code' => 'Voucher belum dapat digunakan untuk trip ini.']);
+                }
                 $promotion->increment('used_count');
             }
             $total = $subtotal - $discount;
-            $fee = intdiv($total * max(0, min(10000, (int) config('platform.commission_bps'))), 10000);
+            $fee = $markup - $discount;
             $booking = Booking::create([
                 ...collect($data)->only(['participants', 'contact_name', 'contact_phone', 'idempotency_key'])->all(),
                 'user_id' => $user->id, 'trip_id' => $trip->id, 'vendor_id' => $trip->vendor_id,
                 'promotion_id' => $promotion?->id, 'reference' => 'TL-'.Str::upper((string) Str::ulid()),
                 'subtotal' => $subtotal, 'discount' => $discount, 'total' => $total,
-                'platform_fee' => $fee, 'vendor_amount' => $total - $fee,
+                'platform_fee' => $fee, 'vendor_amount' => $vendorAmount,
                 'status' => 'awaiting_payment', 'expires_at' => now()->addMinutes(30),
             ]);
             $trip->increment('reserved_seats', $booking->participants);
             Payment::create(['booking_id' => $booking->id, 'reference' => $booking->reference, 'amount' => $total, 'status' => 'pending']);
             $this->audit->record('booking.created', $booking, ['total' => $total], $user->id);
+
             return $booking;
         });
     }
@@ -71,7 +86,9 @@ class BookingService
                 'confirmed' => ['ongoing'],
                 'ongoing' => ['completed'],
             ];
-            if ($booking->status === $target) { return $booking; }
+            if ($booking->status === $target) {
+                return $booking;
+            }
             if ($target === 'expired' && $booking->expires_at->isFuture()) {
                 throw ValidationException::withMessages(['status' => 'Batas waktu pembayaran belum berakhir.']);
             }
@@ -88,13 +105,16 @@ class BookingService
             $booking->update(['status' => $target]);
             if (in_array($target, ['cancelled', 'expired'], true)) {
                 $trip->decrement('reserved_seats', $booking->participants);
-                if ($booking->promotion_id) { Promotion::whereKey($booking->promotion_id)->decrement('used_count'); }
+                if ($booking->promotion_id) {
+                    Promotion::whereKey($booking->promotion_id)->decrement('used_count');
+                }
             }
             if ($target === 'completed') {
                 Payout::firstOrCreate(['booking_id' => $booking->id], ['vendor_id' => $booking->vendor_id, 'amount' => $booking->vendor_amount, 'status' => 'eligible']);
                 RewardEntry::firstOrCreate(['reference' => 'booking:'.$booking->id], ['user_id' => $booking->user_id, 'booking_id' => $booking->id, 'points' => intdiv($booking->total, 10000), 'description' => 'Perjalanan selesai '.$booking->reference]);
             }
             $this->audit->record('booking.'.$target, $booking, ['before' => $before, 'after' => $target]);
+
             return $booking;
         });
     }

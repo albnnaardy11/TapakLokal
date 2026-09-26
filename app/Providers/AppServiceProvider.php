@@ -2,6 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\ContentPage;
+use App\Models\Faq;
+use App\Models\Partner;
+use App\Models\User;
+use App\Observers\PublicContentObserver;
+use App\Services\AccessService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,12 +29,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        foreach ([\App\Models\ContentPage::class, \App\Models\Faq::class, \App\Models\Partner::class] as $model) {
-            $model::observe(\App\Observers\PublicContentObserver::class);
+        foreach ([ContentPage::class, Faq::class, Partner::class] as $model) {
+            $model::observe(PublicContentObserver::class);
         }
-        foreach (collect((new \App\Services\AccessService)->rolePermissions())->flatten()->unique() as $permission) {
-            \Illuminate\Support\Facades\Gate::define($permission, fn (\App\Models\User $user) => $user->hasPermission($permission));
+        foreach (collect((new AccessService)->rolePermissions())->flatten()->unique() as $permission) {
+            Gate::define($permission, fn (User $user) => $user->hasPermission($permission));
         }
-        \Illuminate\Support\Facades\RateLimiter::for('login', fn (\Illuminate\Http\Request $request) => \Illuminate\Cache\RateLimiting\Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip()));
+        RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip()));
     }
 }

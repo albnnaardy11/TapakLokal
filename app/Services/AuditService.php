@@ -31,6 +31,7 @@ class AuditService
                 $values[$key] = $this->redact($value);
             }
         }
+
         return $values;
     }
 }

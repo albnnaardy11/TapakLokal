@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\CampaignFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
-    /** @use HasFactory<\Database\Factories\CampaignFactory> */
+    /** @use HasFactory<CampaignFactory> */
     use HasFactory;
 
     protected $fillable = ['name', 'type', 'description', 'starts_at', 'ends_at', 'status'];
@@ -16,5 +17,4 @@ class Campaign extends Model
     {
         return ['starts_at' => 'date', 'ends_at' => 'date'];
     }
-
 }

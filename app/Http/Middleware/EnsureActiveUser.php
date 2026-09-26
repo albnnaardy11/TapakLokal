@@ -17,7 +17,11 @@ class EnsureActiveUser
             $request->session()->regenerateToken();
             abort(403, 'Akun dinonaktifkan. Hubungi dukungan Tapak Lokal.');
         }
+
+        if ($request->user()?->must_change_password && ! $request->routeIs('password.change', 'account.password', 'logout')) {
+            return redirect()->route('password.change');
+        }
+
         return $next($request);
     }
 }
-

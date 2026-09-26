@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Database\Factories\ContentPageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ContentPage extends Model
 {
-    /** @use HasFactory<\Database\Factories\ContentPageFactory> */
+    /** @use HasFactory<ContentPageFactory> */
     use HasFactory;
 
-    protected $fillable = ['type', 'title', 'slug', 'excerpt', 'body', 'image_url', 'status', 'published_at', 'position'];
+    use SoftDeletes;
+
+    protected $fillable = ['type', 'title', 'slug', 'excerpt', 'body', 'image_url', 'status', 'published_at', 'position', 'metadata', 'category'];
 
     protected function casts(): array
     {
-        return ['published_at' => 'datetime', 'position' => 'integer'];
+        return ['metadata' => 'array', 'published_at' => 'datetime', 'position' => 'integer'];
     }
-
 }

@@ -1,0 +1,1180 @@
+{
+  "trips": [
+    {
+      "id": "komodo",
+      "name": "Open Trip pulau komodo",
+      "destination": "Pulau Komodo",
+      "location": "Malang",
+      "duration": "3 hari 2 malam",
+      "price": "Rp350.000",
+      "image": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=640&q=85"
+    },
+    {
+      "id": "bromo",
+      "name": "Open Trip Bromo",
+      "destination": "Bromo",
+      "location": "Malang",
+      "duration": "3 hari 2 malam",
+      "price": "Rp350.000",
+      "image": "https://images.unsplash.com/photo-1501179691627-eeaa65ea017c?auto=format&fit=crop&w=640&q=85"
+    },
+    {
+      "id": "raja-ampat",
+      "name": "Open Raja Ampat",
+      "destination": "Raja Ampat",
+      "location": "Papua",
+      "duration": "6 hari 5 malam",
+      "price": "Rp15.000.000",
+      "image": "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=640&q=85"
+    },
+    {
+      "id": "bali",
+      "name": "Open Trip Bali",
+      "destination": "Bali",
+      "location": "Bali",
+      "duration": "3 hari 2 malam",
+      "price": "Rp350.000",
+      "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=640&q=85"
+    }
+  ],
+  "details": {
+    "open-trip": {
+      "detail": {
+        "title": "Open Trip Tur Pulau Pramuka",
+        "startPoint": "start Dermaga Kaliadem",
+        "duration": "2H1M",
+        "subtitle": "Nikmati keindahan pulau-pulau eksotis di Kepulauan Seribu, mulai dari snorkeling, jelajah pulau, hingga bersantai di pantai pasir putih.",
+        "location": "Kepulauan Seribu, DKI Jakarta",
+        "coordinates": "-5.7454,106.5834",
+        "price": "Rp 450.000",
+        "originalPrice": "Rp 550.000",
+        "label": "Open Trip",
+        "date": "Setiap Sabtu · Minggu",
+        "images": [
+          "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+          "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85",
+          "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85",
+          "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85"
+        ]
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1470165518243-ff5f2f6f9f37?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1505881502353-a1986add3762?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1559825481-12a05cc00344?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1498623116890-37e912163d5d?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?auto=format&fit=crop&w=1200&q=85"
+      ],
+      "highlights": [
+        {
+          "title": "Snorkeling Pulau Semak Daun",
+          "time": "Hari 1 · 09.30",
+          "location": "Kepulauan Seribu",
+          "description": "Nikmati perairan jernih dan terumbu karang di spot snorkeling yang ramah untuk pemula.",
+          "images": [
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Compass"
+        },
+        {
+          "title": "Island hopping Pulau Pramuka",
+          "time": "Hari 1 · 12.30",
+          "location": "Pulau Pramuka",
+          "description": "Jelajahi pulau dan sudut pantai pilihan bersama pemandu lokal yang mengenal rute perjalanan.",
+          "images": [
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "MapPin"
+        },
+        {
+          "title": "Sunset & waktu bebas",
+          "time": "Hari 1 · 17.00",
+          "location": "Tepi pantai",
+          "description": "Nikmati sore santai untuk foto, menikmati suasana pantai, atau beristirahat sebelum makan malam.",
+          "images": [
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88"
+          ],
+          "icon": "Camera"
+        },
+        {
+          "title": "Makan siang tepi pantai",
+          "time": "Hari 2 · 12.00",
+          "location": "Pulau Pramuka",
+          "description": "Istirahat dengan makan siang dan waktu santai sebelum kembali menuju titik kumpul.",
+          "images": [
+            "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88"
+          ],
+          "icon": "Utensils"
+        },
+        {
+          "title": "Jelajah mangrove",
+          "time": "Hari 2 · 14.00",
+          "location": "Pulau Pramuka",
+          "description": "Kenali sisi lain pulau melalui rute mangrove singkat bersama pemandu lokal.",
+          "images": [
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "MapPin"
+        },
+        {
+          "title": "Dokumentasi akhir trip",
+          "time": "Hari 2 · 15.30",
+          "location": "Dermaga Kaliadem",
+          "description": "Sesi foto singkat untuk menutup perjalanan sebelum kembali ke Jakarta.",
+          "images": [
+            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Camera"
+        }
+      ],
+      "destinations": [
+        {
+          "name": "Dermaga Kaliadem",
+          "subtitle": "Titik kumpul",
+          "time": "Hari 1 · 06.30",
+          "activity": "Registrasi dan keberangkatan",
+          "note": "Tunjukkan e-ticket saat registrasi.",
+          "coordinates": "-6.1049,106.8819",
+          "image": "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88"
+        },
+        {
+          "name": "Pulau Pramuka",
+          "subtitle": "Pulau utama",
+          "time": "Hari 1 · 09.00",
+          "activity": "Jelajah pulau dan makan siang",
+          "note": "Simpan uang tunai untuk kebutuhan pribadi.",
+          "coordinates": "-5.7454,106.5834",
+          "image": "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1400&q=88"
+        },
+        {
+          "name": "Pulau Semak Daun",
+          "subtitle": "Spot snorkeling",
+          "time": "Hari 1 · 11.30",
+          "activity": "Snorkeling dan dokumentasi",
+          "note": "Ikuti instruksi pemandu sebelum masuk air.",
+          "coordinates": "-5.7022,106.5756",
+          "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=85"
+        },
+        {
+          "name": "Spot sunset",
+          "subtitle": "Tepi pantai",
+          "time": "Hari 1 · 17.00",
+          "activity": "Waktu bebas dan foto",
+          "note": "Tetap bersama rombongan saat menjelang malam.",
+          "coordinates": "-5.7490,106.5804",
+          "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=900&q=85"
+        }
+      ],
+      "itineraryDays": [
+        {
+          "day": "Hari ke 1",
+          "meals": "Lunch · Dinner",
+          "activities": [
+            "Kumpul di Dermaga Kaliadem pukul 06.30",
+            "Registrasi peserta dan briefing singkat",
+            "Penyeberangan menuju Pulau Pramuka",
+            "Check-in homestay dan makan siang",
+            "Jelajah pulau dan aktivitas snorkeling",
+            "Waktu bebas untuk menikmati sunset",
+            "Makan malam"
+          ]
+        },
+        {
+          "day": "Hari ke 2",
+          "meals": "Breakfast",
+          "activities": [
+            "Sarapan di homestay",
+            "Waktu bebas dan persiapan pulang",
+            "Check-out homestay",
+            "Penyeberangan kembali ke Dermaga Kaliadem",
+            "Tiba di Jakarta dan trip selesai"
+          ]
+        }
+      ],
+      "facilityDetails": [
+        {
+          "category": "Transportasi",
+          "title": "Penyeberangan kapal pulang-pergi",
+          "note": "Dermaga Kaliadem menuju Kepulauan Seribu."
+        },
+        {
+          "category": "Transportasi",
+          "title": "Transportasi lokal sesuai rute",
+          "note": "Untuk perpindahan yang tercantum pada itinerary."
+        },
+        {
+          "category": "Akomodasi",
+          "title": "Homestay selama 1 malam",
+          "note": "Kamar dan fasilitas dasar sesuai paket."
+        },
+        {
+          "category": "Makan",
+          "title": "Makan 3 kali",
+          "note": "Makan siang, makan malam, dan sarapan."
+        },
+        {
+          "category": "Makan",
+          "title": "Air mineral selama perjalanan",
+          "note": "Tersedia pada aktivitas utama."
+        },
+        {
+          "category": "Aktivitas",
+          "title": "Kapal hopping island & snorkeling",
+          "note": "Termasuk perjalanan menuju spot aktivitas."
+        },
+        {
+          "category": "Aktivitas",
+          "title": "Alat snorkeling",
+          "note": "Masker, snorkel, dan pelampung tersedia."
+        },
+        {
+          "category": "Layanan",
+          "title": "Guide lokal dan P3K",
+          "note": "Pendampingan dan perlengkapan pertolongan pertama."
+        },
+        {
+          "category": "Layanan",
+          "title": "Dokumentasi eksklusif",
+          "note": "Dokumentasi pilihan selama trip berlangsung."
+        }
+      ],
+      "packingItems": [
+        "Pakaian ganti dan baju renang",
+        "Tabir surya dan obat pribadi",
+        "Handuk pribadi",
+        "Uang tunai untuk kebutuhan pribadi"
+      ],
+      "facilities": [
+        {
+          "label": "Homestay",
+          "icon": "BedDouble"
+        },
+        {
+          "label": "Makan 3x",
+          "icon": "Utensils"
+        },
+        {
+          "label": "Snorkeling",
+          "icon": "Compass"
+        },
+        {
+          "label": "Dokumentasi",
+          "icon": "Camera"
+        },
+        {
+          "label": "P3K",
+          "icon": "ShieldCheck"
+        },
+        {
+          "label": "Guide lokal",
+          "icon": "Users"
+        }
+      ],
+      "includes": [
+        "Transportasi pulang-pergi sesuai titik kumpul",
+        "Akomodasi dan makan sesuai program",
+        "Tiket aktivitas dan perlengkapan snorkeling",
+        "Dokumentasi perjalanan",
+        "Pemandu lokal berpengalaman"
+      ],
+      "excludes": [
+        "Transportasi menuju meeting point",
+        "Pengeluaran pribadi",
+        "Makan di luar program",
+        "Tiket aktivitas opsional",
+        "Asuransi perjalanan pribadi"
+      ]
+    },
+    "private-trip": {
+      "detail": {
+        "title": "Private Trip Labuan Bajo",
+        "startPoint": "start Pelabuhan Labuan Bajo",
+        "duration": "3H2M",
+        "subtitle": "Susun perjalanan privat bersama orang terdekatmu untuk menikmati pulau, laut, dan matahari terbenam Labuan Bajo dengan ritme yang kamu pilih sendiri.",
+        "location": "Labuan Bajo, Nusa Tenggara Timur",
+        "coordinates": "-8.4964,119.8877",
+        "price": "Rp 2.850.000",
+        "originalPrice": "Rp 3.250.000",
+        "label": "Private Trip",
+        "date": "Pilih tanggal keberangkatanmu",
+        "images": [
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+          "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85",
+          "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85",
+          "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85"
+        ]
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+        "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1470165518243-ff5f2f6f9f37?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1505881502353-a1986add3762?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1559825481-12a05cc00344?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1540202404-a2f29016b523?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1498623116890-37e912163d5d?auto=format&fit=crop&w=1200&q=85",
+        "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?auto=format&fit=crop&w=1200&q=85"
+      ],
+      "highlights": [
+        {
+          "title": "Sailing di perairan Komodo",
+          "time": "Hari 1 · 09.00",
+          "location": "Labuan Bajo",
+          "description": "Mulai perjalanan privat dengan kapal pilihan dan nikmati rute laut yang disesuaikan untuk rombonganmu.",
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Compass"
+        },
+        {
+          "title": "Snorkeling di spot pilihan",
+          "time": "Hari 2 · 08.00",
+          "location": "Perairan Komodo",
+          "description": "Jelajahi titik snorkeling dengan air jernih dan pendamping lokal yang memahami kondisi perairan.",
+          "images": [
+            "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Camera"
+        },
+        {
+          "title": "Sunset di atas kapal",
+          "time": "Hari 2 · 17.30",
+          "location": "Pulau Kalong",
+          "description": "Tutup hari dengan panorama senja dan waktu santai bersama rombongan sebelum kembali berlayar.",
+          "images": [
+            "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88"
+          ],
+          "icon": "Star"
+        },
+        {
+          "title": "Trekking pulau pilihan",
+          "time": "Hari 3 · 06.00",
+          "location": "Pulau Padar",
+          "description": "Mulai pagi dengan trekking ringan menuju titik pandang favorit dan nikmati lanskap kepulauan dari ketinggian.",
+          "images": [
+            "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "MapPin"
+        },
+        {
+          "title": "Makan siang di kapal",
+          "time": "Hari 3 · 12.00",
+          "location": "Perairan Komodo",
+          "description": "Waktu istirahat dengan makan siang yang disiapkan di kapal sebelum aktivitas berikutnya.",
+          "images": [
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88",
+            "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Utensils"
+        },
+        {
+          "title": "Dokumentasi perjalanan",
+          "time": "Hari 3 · 15.00",
+          "location": "Labuan Bajo",
+          "description": "Simpan momen terbaik rombongan dengan sesi dokumentasi santai di penghujung perjalanan.",
+          "images": [
+            "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85",
+            "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85"
+          ],
+          "icon": "Camera"
+        }
+      ],
+      "destinations": [
+        {
+          "name": "Pelabuhan Labuan Bajo",
+          "subtitle": "Titik awal perjalanan",
+          "time": "Hari 1 · 08.30",
+          "activity": "Briefing dan naik kapal",
+          "note": "Datang 30 menit sebelum keberangkatan.",
+          "coordinates": "-8.4964,119.8877",
+          "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=88"
+        },
+        {
+          "name": "Pulau Kelor",
+          "subtitle": "Spot trekking ringan",
+          "time": "Hari 1 · 10.00",
+          "activity": "Trekking dan foto panorama",
+          "note": "Gunakan alas kaki yang tidak licin.",
+          "coordinates": "-8.5403,119.5736",
+          "image": "https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=900&q=85"
+        },
+        {
+          "name": "Pink Beach",
+          "subtitle": "Pantai dan snorkeling",
+          "time": "Hari 2 · 09.00",
+          "activity": "Snorkeling dan waktu bebas",
+          "note": "Bawa perlengkapan ganti setelah aktivitas laut.",
+          "coordinates": "-8.6398,119.5583",
+          "image": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=900&q=85"
+        },
+        {
+          "name": "Pulau Kalong",
+          "subtitle": "Titik sunset",
+          "time": "Hari 2 · 17.30",
+          "activity": "Menikmati sunset di kapal",
+          "note": "Siapkan kamera sebelum matahari terbenam.",
+          "coordinates": "-8.4453,119.5725",
+          "image": "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=900&q=85"
+        }
+      ],
+      "itineraryDays": [
+        {
+          "day": "Hari ke 1",
+          "meals": "Lunch · Dinner",
+          "activities": [
+            "Kumpul di Pelabuhan Labuan Bajo pukul 08.00",
+            "Briefing keselamatan dan naik kapal",
+            "Sailing menuju Pulau Kelor",
+            "Trekking ringan dan waktu foto",
+            "Makan siang di kapal",
+            "Check-in kabin atau homestay",
+            "Waktu bebas dan menikmati sunset",
+            "Makan malam"
+          ]
+        },
+        {
+          "day": "Hari ke 2",
+          "meals": "Breakfast · Lunch · Dinner",
+          "activities": [
+            "Sarapan di kapal",
+            "Snorkeling di spot pilihan perairan Komodo",
+            "Makan siang dan waktu istirahat",
+            "Eksplorasi pantai atau pulau sesuai rute",
+            "Kembali ke kapal",
+            "Waktu bebas",
+            "Makan malam"
+          ]
+        },
+        {
+          "day": "Hari ke 3",
+          "meals": "Breakfast",
+          "activities": [
+            "Sarapan",
+            "Dokumentasi akhir perjalanan",
+            "Check-out kabin atau homestay",
+            "Sailing kembali menuju Labuan Bajo",
+            "Tiba di pelabuhan dan trip selesai"
+          ]
+        }
+      ],
+      "facilityDetails": [
+        {
+          "category": "Transportasi",
+          "title": "Kapal privat selama perjalanan",
+          "note": "Sesuai rute dan jumlah peserta yang dipilih."
+        },
+        {
+          "category": "Transportasi",
+          "title": "Penjemputan dari hotel area Labuan Bajo",
+          "note": "Untuk lokasi yang tercakup dalam area layanan."
+        },
+        {
+          "category": "Akomodasi",
+          "title": "Kabin kapal atau homestay",
+          "note": "Sesuai pilihan paket perjalanan."
+        },
+        {
+          "category": "Makan",
+          "title": "Makan sesuai itinerary",
+          "note": "Sarapan, makan siang, dan makan malam sesuai program."
+        },
+        {
+          "category": "Aktivitas",
+          "title": "Tiket aktivitas utama",
+          "note": "Termasuk aktivitas yang tercantum pada itinerary."
+        },
+        {
+          "category": "Aktivitas",
+          "title": "Alat snorkeling",
+          "note": "Masker, snorkel, dan pelampung tersedia."
+        },
+        {
+          "category": "Layanan",
+          "title": "Pemandu lokal berpengalaman",
+          "note": "Mendampingi rombongan selama aktivitas utama."
+        },
+        {
+          "category": "Layanan",
+          "title": "Dokumentasi perjalanan",
+          "note": "Dokumentasi dasar untuk momen pilihan trip."
+        }
+      ],
+      "packingItems": [
+        "Pakaian ganti dan baju renang",
+        "Tabir surya dan obat pribadi",
+        "Alas kaki yang tidak licin",
+        "Kamera atau ponsel tahan air"
+      ],
+      "facilities": [
+        {
+          "label": "Homestay",
+          "icon": "BedDouble"
+        },
+        {
+          "label": "Makan 3x",
+          "icon": "Utensils"
+        },
+        {
+          "label": "Snorkeling",
+          "icon": "Compass"
+        },
+        {
+          "label": "Dokumentasi",
+          "icon": "Camera"
+        },
+        {
+          "label": "P3K",
+          "icon": "ShieldCheck"
+        },
+        {
+          "label": "Guide lokal",
+          "icon": "Users"
+        }
+      ],
+      "includes": [
+        "Transportasi pulang-pergi sesuai titik kumpul",
+        "Akomodasi dan makan sesuai program",
+        "Tiket aktivitas dan perlengkapan snorkeling",
+        "Dokumentasi perjalanan",
+        "Pemandu lokal berpengalaman"
+      ],
+      "excludes": [
+        "Transportasi menuju meeting point",
+        "Pengeluaran pribadi",
+        "Makan di luar program",
+        "Tiket aktivitas opsional",
+        "Asuransi perjalanan pribadi"
+      ]
+    }
+  },
+  "articles": [
+    {
+      "id": "bali",
+      "category": "Inspirasi Destinasi",
+      "title": "Menikmati sisi tenang Bali, jauh dari keramaian",
+      "image": "1537996194471-e657df975ab4",
+      "excerpt": "Dari suasana pura hingga pesisir yang menenangkan, temukan ide untuk perjalanan yang lebih santai dan otentik di Pulau Dewata.",
+      "body": "Sisakan waktu untuk menikmati satu daerah tanpa terburu-buru berpindah tempat. Berjalan di sekitar penginapan, mencoba warung setempat, dan berbincang dengan pemandu lokal bisa menjadi bagian paling berkesan dari perjalanan. Saat mengunjungi pura, ikuti petunjuk berpakaian dan hormati area yang khusus digunakan untuk ibadah.",
+      "date": "12 Sep 2026",
+      "readTime": "5 menit baca",
+      "views": "2.4k dibaca",
+      "location": "Bedugul & Sidemen, Bali",
+      "heroCaption": "Pura Ulun Danu Beratan di kala pagi yang tenang dengan kabut pegunungan Bedugul",
+      "author": {
+        "name": "Wayan Artha Kusuma",
+        "role": "Local Guide & Storyteller Bali",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+        "bio": "Lahir dan besar di Karangasem. Aktif mendampingi pelancong yang ingin merasakan kehidupan desa dan keindahan alam Bali tanpa terburu-buru.",
+        "badge": "Pemandu Terverifikasi",
+        "storiesCount": 18
+      },
+      "quickFacts": {
+        "bestTime": "Mei – Oktober (Musim Kering)",
+        "budget": "Rp 350.000 – 600.000 / hari",
+        "duration": "3 – 5 Hari Rekomendasi",
+        "access": "Mobil sewa / Sepeda motor lokal",
+        "language": "Bahasa Indonesia & Bali"
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=88"
+      ],
+      "tags": [
+        "Wisata Tenang",
+        "Budaya Bali",
+        "Inspirasi Perjalanan",
+        "Ekowisata",
+        "Kuliner Lokal"
+      ],
+      "reactions": {
+        "helpful": 142,
+        "inspiring": 98,
+        "wantToGo": 215
+      },
+      "sections": [
+        {
+          "id": "ritme-pelan",
+          "heading": "Menemukan Ritme yang Lebih Pelan di Pedalaman",
+          "content": [
+            "Sering kali kita terbiasa dengan jadwal liburan yang padat: berpindah dari satu pantai populer ke kafe hits dalam hitungan jam. Namun di Bali bagian timur dan dataran tinggi Bedugul, waktu seolah berjalan lebih bersahabat. Udara sejuk pegunungan dan gemericik air irigasi subak menghadirkan ketenangan yang jarang dijumpai di kawasan pesisir selatan.",
+            "Memilih tinggal beberapa hari di desa seperti Sidemen atau Munduk memberikan pengalaman berbeda. Pagi hari diawali dengan aroma dupa canang sari segar dan sapaan ramah warga yang berangkat ke ladang. Tidak ada klakson jalanan, hanya suara burung dan hamparan perbukitan hijau yang memanjakan mata."
+          ],
+          "quote": {
+            "text": "Perjalanan terbaik bukanlah tentang berapa banyak tempat yang kamu foto, melainkan seberapa dalam kamu terhubung dengan tanah dan orang-orang yang kamu temui.",
+            "author": "I Made Sujana, Tetua Desa Sidemen"
+          },
+          "image": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1000&q=85",
+          "imageCaption": "Hamparan terasering sawah berundak dengan latar perbukitan di kawasan Sidemen"
+        },
+        {
+          "id": "etika-budaya",
+          "heading": "Menghormati Tradisi dan Tata Krama di Area Pura",
+          "content": [
+            "Kunjungan ke situs budaya dan pura suci menuntut kesadaran kita sebagai tamu. Mengenakan kain kamen dan selendang (senteng) bukan sekadar formalitas, melainkan wujud penghormatan tulus terhadap kesucian tempat peribadatan masyarakat Hindu Bali.",
+            "Hindari melintas di depan orang yang sedang khusyuk sembahyang atau berdiri lebih tinggi dari pemangku yang memimpin upacara. Tanyakan selalu kepada pemandu lokal mengenai area mana saja yang terbuka untuk wisatawan dan area mana yang khusus untuk ritual."
+          ],
+          "proTip": {
+            "title": "Tips Praktis TapakLokal",
+            "items": [
+              "Siapkan kain kamen sendiri untuk kenyamanan ekstra dan mengurangi limbah plastik penyewaan sekali pakai.",
+              "Kunjungi pura danau di pagi hari sebelum pukul 08.00 WIB untuk mendapatkan kabut mistis dan ketenangan maksimal.",
+              "Gunakan alas kaki yang mudah dilepas karena beberapa pelataran mengharuskan berjalan tanpa alas."
+            ]
+          }
+        },
+        {
+          "id": "kuliner-otentik",
+          "heading": "Mencicipi Kuliner Rumahan yang Jujur",
+          "content": [
+            "Jauh dari restoran megah, kehangatan rasa Bali paling terasa di warung-warung sederhana milik keluarga. Nasi campur Bali dengan olahan base genep tradisional, lawar sayur nangka muda, dan sambal matah dengan minyak kelapa asli menghadirkan kelezatan yang tulus.",
+            "Duduk di bale bambu sembari berbincang dengan pemilik warung tentang asal rempah-rempah yang dipanen dari kebun belakang seringkali melahirkan cerita yang jauh lebih berharga daripada panduan buku manapun."
+          ],
+          "spots": [
+            {
+              "name": "Pura Ulun Danu Beratan",
+              "location": "Candikuning, Baturiti, Tabanan",
+              "hours": "07.00 – 19.00 WITA",
+              "ticket": "Rp 40.000 / orang",
+              "note": "Paling bagus difoto saat kabut pagi menyentuh permukaan danau."
+            },
+            {
+              "name": "Teras Sawah Sidemen",
+              "location": "Karangasem, Bali Timur",
+              "hours": "Buka 24 Jam",
+              "ticket": "Gratis (Donasi Kebersihan Desa)",
+              "note": "Jalur trekking santai ramah keluarga dengan pemandangan Gunung Agung."
+            }
+          ]
+        }
+      ],
+      "relatedTrip": {
+        "title": "Private Trip Jelajah Bali Timur & Danau Bedugul",
+        "slug": "bali-timur-bedugul",
+        "type": "private-trip",
+        "duration": "3H2M",
+        "price": "Rp 1.850.000",
+        "originalPrice": "Rp 2.200.000",
+        "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=84",
+        "rating": 4.9,
+        "reviewsCount": 312,
+        "badge": "Favorit Traveler"
+      },
+      "initialComments": [
+        {
+          "id": 1,
+          "name": "Anindya Putri",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80",
+          "role": "Solo Traveler",
+          "date": "2 hari yang lalu",
+          "rating": 5,
+          "content": "Artikel yang sangat menyejukkan! Minggu lalu saya mencoba menginap di Sidemen sesuai rekomendasi artikel ini dan suasananya benar-benar menyembuhkan penat kerjaan di Jakarta.",
+          "likes": 19
+        },
+        {
+          "id": 2,
+          "name": "Budi Darmawan",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80",
+          "role": "Traveler Keluarga",
+          "date": "4 hari yang lalu",
+          "rating": 5,
+          "content": "Sangat setuju soal etika di pura. Pemandu lokal dari TapakLokal kemarin sangat detail menjelaskan makna canang dan tata krama berpakaian.",
+          "likes": 12
+        }
+      ]
+    },
+    {
+      "id": "islands",
+      "category": "Tips Perjalanan",
+      "title": "Pertama kali island hopping? Mulai dari sini",
+      "image": "1516690561799-46d8f74f9abf",
+      "excerpt": "Persiapan sederhana agar perjalanan antarpulau terasa lebih nyaman, aman, dan berkesan bersama operator lokal.",
+      "body": "Pilih rute yang memberi cukup waktu untuk beristirahat. Konfirmasikan titik temu, fasilitas kapal, serta perlengkapan keselamatan kepada operator sebelum berangkat. Siapkan tas tahan air untuk barang penting, botol minum, dan pakaian ganti. Jadwal perjalanan laut dapat berubah mengikuti cuaca; beri ruang fleksibel dalam rencanamu.",
+      "date": "10 Sep 2026",
+      "readTime": "4 menit baca",
+      "views": "1.9k dibaca",
+      "location": "Kepulauan Seribu & Labuan Bajo",
+      "heroCaption": "Perjalanan laut melintasi pulau karang dengan air toska jernih di perairan tropis",
+      "author": {
+        "name": "Rian Hidayat",
+        "role": "Trip Leader & Marine Enthusiast",
+        "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+        "bio": "Berpengalaman memandu lebih dari 200 trip kepulauan di Indonesia. Senang membagikan tips keselamatan laut dan dokumentasi pulau terluar.",
+        "badge": "Kapten Terverifikasi",
+        "storiesCount": 24
+      },
+      "quickFacts": {
+        "bestTime": "April – Oktober (Ombak Tenang)",
+        "budget": "Rp 450.000 – 1.200.000 / paket",
+        "duration": "2H1M – 3H2M",
+        "access": "Speedboat / Kapal Kayu Tradisional",
+        "language": "Bahasa Indonesia"
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=1200&q=88"
+      ],
+      "tags": [
+        "Island Hopping",
+        "Laut Indonesia",
+        "Open Trip",
+        "Tips Bahari",
+        "Snorkeling"
+      ],
+      "reactions": {
+        "helpful": 189,
+        "inspiring": 110,
+        "wantToGo": 320
+      },
+      "sections": [
+        {
+          "id": "persiapan-tas",
+          "heading": "Dry Bag dan Perlengkapan Wajib yang Tidak Boleh Tertinggal",
+          "content": [
+            "Air laut dan cipratan ombak adalah kawan setia saat berlayar antarpulau. Membawa dry bag berkapasitas 10–20 liter adalah investasi terbaik untuk menjaga smartphone, dompet, dan kamera tetap aman sepanjang perjalanan.",
+            "Gunakan pakaian berbahan cepat kering (quick-dry) dan selalu siapkan jaket angin ringan. Angin laut di sore hari bisa terasa menusuk setelah seharian terpapar sinar matahari dan berenang di laut lepas."
+          ],
+          "quote": {
+            "text": "Laut selalu menghargai mereka yang datang dengan persiapan matang dan kerendahan hati.",
+            "author": "Kapten Rustam, Pelaut Pulau Pramuka"
+          },
+          "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=85",
+          "imageCaption": "Persiapan menaiki kapal tradisional bersama pemandu lokal di dermaga"
+        },
+        {
+          "id": "keselamatan-kapal",
+          "heading": "Etika dan Keselamatan di Atas Kapal",
+          "content": [
+            "Sebelum kapal bertolak dari dermaga, pastikan kamu mengetahui lokasi pelampung (life jacket) dan kenakan saat melewati perairan berarus. Dengarkan aba-aba kapten dan anak buah kapal yang paling memahami karasteristik pasang surut air laut.",
+            "Jangan membuang sampah apapun ke laut, termasuk puntung rokok atau sisa makanan kemasan. Simpan di kantong sampah pribadi hingga kapal kembali bersandar di pelabuhan utama."
+          ],
+          "proTip": {
+            "title": "Checklist Sebelum Naik Kapal",
+            "items": [
+              "Minum obat antimabuk 30 menit sebelum kapal lepas tali jika rentan mabuk laut.",
+              "Simpan dokumen penting dalam kantong ziplock ganda di dalam tas tahan air.",
+              "Bawa botol minum isi ulang untuk mengurangi sampah botol plastik sekali pakai."
+            ]
+          }
+        }
+      ],
+      "relatedTrip": {
+        "title": "Open Trip Tur Pulau Pramuka & Semak Daun",
+        "slug": "pulau-pramuka",
+        "type": "open-trip",
+        "duration": "2H1M",
+        "price": "Rp 450.000",
+        "originalPrice": "Rp 550.000",
+        "image": "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=800&q=84",
+        "rating": 4.9,
+        "reviewsCount": 428,
+        "badge": "Best Seller"
+      },
+      "initialComments": [
+        {
+          "id": 1,
+          "name": "Dimas Satrio",
+          "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+          "role": "Penjelajah Bahari",
+          "date": "1 hari yang lalu",
+          "rating": 5,
+          "content": "Tips dry bag beneran penyelamat! Waktu trip ke Semak Daun kemarin sempat ombak kencang tapi kamera dan HP aman total.",
+          "likes": 8
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "category": "Cerita Lokal",
+      "title": "Liburan lebih berarti dengan mendukung usaha lokal",
+      "image": "1518548419970-58e3b4079ab2",
+      "excerpt": "Pilihan kecil dalam perjalananmu bisa memberi dampak nyata bagi kesejahteraan masyarakat di destinasi.",
+      "body": "Cobalah makan di warung milik warga, menggunakan jasa pemandu setempat, dan membeli kerajinan langsung dari pembuatnya. Tanyakan cerita di balik produk yang kamu temui. Selalu minta izin sebelum memotret orang dan hormati kebiasaan komunitas yang kamu kunjungi.",
+      "date": "7 Sep 2026",
+      "readTime": "4 menit baca",
+      "views": "1.6k dibaca",
+      "location": "Flores, NTT & Desa Sade, Lombok",
+      "heroCaption": "Ibu penenun kain tradisional Flores dengan motif khas warisan leluhur",
+      "author": {
+        "name": "Siti Nurhaliza",
+        "role": "Community Development Specialist",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
+        "bio": "Fokus mendampingi UMKM desa wisata dan pengrajin lokal agar dapat terhubung dengan traveler secara berdaya dan adil.",
+        "badge": "Pegiat Komunitas",
+        "storiesCount": 15
+      },
+      "quickFacts": {
+        "bestTime": "Sepanjang Tahun",
+        "budget": "Rp 200.000 – 500.000 untuk belanja UMKM",
+        "duration": "Fleksibel",
+        "access": "Jelajah jalan kaki di desa wisata",
+        "language": "Bahasa Daerah & Indonesia"
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=88"
+      ],
+      "tags": [
+        "UMKM Lokal",
+        "Kain Tenun",
+        "Ekonomi Desa",
+        "Wisata Berkelanjutan",
+        "Cerita Warga"
+      ],
+      "reactions": {
+        "helpful": 210,
+        "inspiring": 180,
+        "wantToGo": 165
+      },
+      "sections": [
+        {
+          "id": "kekuatan-pilihan",
+          "heading": "Uang Belanja yang Berputar Langsung di Meja Warga",
+          "content": [
+            "Saat kita memilih bersantap di warung makan warga lokal atau membeli buah tangan langsung dari sang perajin, rupiah yang kita keluarkan langsung berdampak pada pendidikan anak-anak mereka dan keberlanjutan tradisi leluhur.",
+            "Kain tenun ikat misalnya, membutuhkan waktu pengerjaan berbulan-bulan dengan pewarna alami dari akar mengkudu dan daun nila. Membeli dengan harga pantas tanpa menawar secara berlebihan adalah bentuk apresiasi tertinggi terhadap karya seni mereka."
+          ],
+          "quote": {
+            "text": "Setiap lembar benang yang ditenun adalah doa dan ingatan tentang tanah kelahiran kami.",
+            "author": "Mama Maria, Penenun Desa Sikka Flores"
+          },
+          "image": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1000&q=85",
+          "imageCaption": "Proses pemintalan benang dan pewarnaan alami di pekarangan rumah adat"
+        }
+      ],
+      "relatedTrip": {
+        "title": "Private Trip Budaya & Alam Labuan Bajo - Flores",
+        "slug": "labuan-bajo",
+        "type": "private-trip",
+        "duration": "3H2M",
+        "price": "Rp 2.850.000",
+        "originalPrice": "Rp 3.250.000",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=84",
+        "rating": 4.9,
+        "reviewsCount": 189,
+        "badge": "Pengalaman Autentik"
+      },
+      "initialComments": [
+        {
+          "id": 1,
+          "name": "Kartika Sari",
+          "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80",
+          "role": "Travel Blogger",
+          "date": "3 hari yang lalu",
+          "rating": 5,
+          "content": "Sangat menyentuh. Penting bagi kita traveler modern untuk tidak sekadar selfie, tapi juga paham sejarah di balik tiap kerajinan yang dibeli.",
+          "likes": 15
+        }
+      ]
+    },
+    {
+      "id": "packing",
+      "category": "Panduan Liburan",
+      "title": "Packing ringan untuk liburan singkat ke pantai",
+      "image": "1501179691627-eeaa65ea017c",
+      "excerpt": "Bawa yang kamu perlukan dan sisakan ruang untuk cerita baru tanpa repot membawa koper besar.",
+      "body": "Mulai dari kebutuhan utama: dokumen perjalanan, obat pribadi, pakaian nyaman, dan perlengkapan mandi seperlunya. Gunakan tas kecil untuk kegiatan harian dan simpan barang elektronik dalam pelindung tahan air. Periksa fasilitas penginapan sebelum membawa handuk atau perlengkapan tambahan.",
+      "date": "4 Sep 2026",
+      "readTime": "3 menit baca",
+      "views": "2.1k dibaca",
+      "location": "Tips & Hacks Traveler",
+      "heroCaption": "Penyusunan barang bawaan ransel pantai yang efisien dan fungsional",
+      "author": {
+        "name": "Reza Pratama",
+        "role": "Ultralight Traveler & Outdoor Gear Reviewer",
+        "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80",
+        "bio": "Penggemar ransel 25 liter untuk perjalanan seminggu. Mengajarkan seni traveling ringkas tanpa mengorbankan kenyamanan.",
+        "badge": "Spesialis Packing",
+        "storiesCount": 12
+      },
+      "quickFacts": {
+        "bestTime": "Kapan Saja",
+        "budget": "Hemat & Praktis",
+        "duration": "2 – 4 Hari Trip",
+        "access": "Cabin Backpack 30L",
+        "language": "Bahasa Indonesia"
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1501179691627-eeaa65ea017c?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1200&q=88"
+      ],
+      "tags": [
+        "Tips Packing",
+        "Liburan Pantai",
+        "Minimalis",
+        "Gear Guide",
+        "Short Trip"
+      ],
+      "reactions": {
+        "helpful": 245,
+        "inspiring": 87,
+        "wantToGo": 130
+      },
+      "sections": [
+        {
+          "id": "aturan-tiga-pakaian",
+          "heading": "Metode 3 Set Pakaian: Cukup dan Ringkas",
+          "content": [
+            "Untuk trip 2–3 hari ke pulau, aturan emasnya adalah membawa 1 set pakaian yang sedang dipakai, 1 set pakaian ganti berenang/aktivitas, dan 1 set pakaian santai untuk istirahat malam hari.",
+            "Pilih bahan katun ringan atau linen yang menyerap keringat dengan baik serta mudah kering saat diangin-anginkan di penginapan."
+          ],
+          "proTip": {
+            "title": "Checklist Cepat Ransel Pantai",
+            "items": [
+              "Sunscreen ramah terumbu karang (reef-safe) SPF 50+",
+              "Kacamata hitam terpolarisasi dan topi pelindung",
+              "Sandal gunung tahan air dengan grip yang kuat"
+            ]
+          }
+        }
+      ],
+      "relatedTrip": {
+        "title": "Open Trip Tur Pulau Pramuka & Semak Daun",
+        "slug": "pulau-pramuka",
+        "type": "open-trip",
+        "duration": "2H1M",
+        "price": "Rp 450.000",
+        "originalPrice": "Rp 550.000",
+        "image": "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=800&q=84",
+        "rating": 4.9,
+        "reviewsCount": 428,
+        "badge": "Best Seller"
+      },
+      "initialComments": [
+        {
+          "id": 1,
+          "name": "Fahri Alamsyah",
+          "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=120&q=80",
+          "role": "Weekend Traveler",
+          "date": "5 hari yang lalu",
+          "rating": 5,
+          "content": "Panduan ini mengubah cara saya packing! Biasanya bawa koper gede, kemarin cuma bawa ransel 28L dan jauh lebih bebas jalan ke mana-mana.",
+          "likes": 11
+        }
+      ]
+    },
+    {
+      "id": "snorkeling",
+      "category": "Wisata Alam",
+      "title": "Menikmati keindahan laut dengan lebih bertanggung jawab",
+      "image": "1546026423-cc4642628d2b",
+      "excerpt": "Kenali kebiasaan sederhana untuk menjaga terumbu karang dan satwa laut tetap lestari saat snorkeling.",
+      "body": "Dengarkan pengarahan pemandu sebelum masuk ke air dan gunakan perlengkapan yang sesuai. Nikmati terumbu karang dari jarak aman tanpa menyentuh atau menginjaknya. Hindari memberi makan satwa laut, bawa kembali sampahmu, dan pilih kegiatan yang sesuai kemampuan berenangmu.",
+      "date": "2 Sep 2026",
+      "readTime": "4 menit baca",
+      "views": "1.7k dibaca",
+      "location": "Taman Nasional Komodo & Kepulauan Seribu",
+      "heroCaption": "Keanekaragaman hayati terumbu karang dan ikan koral di perairan laut jernih",
+      "author": {
+        "name": "Dr. Gede Mahardika",
+        "role": "Marine Biologist & Dive Master",
+        "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
+        "bio": "Meneliti konservasi terumbu karang selama 12 tahun. Berkomitmen mengedukasi wisatawan tentang pentingnya menjaga ekosistem laut.",
+        "badge": "Peneliti Konservasi",
+        "storiesCount": 9
+      },
+      "quickFacts": {
+        "bestTime": "Pagi Hari (08.00 – 11.00)",
+        "budget": "Sewa Alat Rp 50.000 – 100.000",
+        "duration": "2 – 3 Jam Sesi",
+        "access": "Kapal sewa lokal",
+        "language": "Bahasa Indonesia"
+      },
+      "gallery": [
+        "https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1200&q=88",
+        "https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=1200&q=88"
+      ],
+      "tags": [
+        "Wisata Bahari",
+        "Snorkeling",
+        "Konservasi Laut",
+        "Terumbu Karang",
+        "Ekowisata"
+      ],
+      "reactions": {
+        "helpful": 310,
+        "inspiring": 195,
+        "wantToGo": 280
+      },
+      "sections": [
+        {
+          "id": "karang-hidup",
+          "heading": "Jangan Pernah Menginjak Karang, Mereka Makhluk Hidup",
+          "content": [
+            "Banyak pemula yang tidak menyadari bahwa terumbu karang adalah koloni hewan laut hidup yang membutuhkan waktu puluhan hingga ratusan tahun untuk tumbuh hanya beberapa sentimeter. Menginjaknya dengan kaki katak (fin) dapat mematahkan struktur dan mematikan koloni tersebut.",
+            "Jika merasa lelah di tengah laut, rilekskan tubuh dalam posisi telentang (floating) dengan bantuan jaket pelampung, alih-alih mencari pijakan karang."
+          ],
+          "proTip": {
+            "title": "Etika Snorkeling Bertanggung Jawab",
+            "items": [
+              "Gunakan tabir surya non-nano zinc oxide (bebas Oxybenzone & Octinoxate).",
+              "Jangan memberi makan roti atau nasi ke ikan karena mengubah perilaku alami mereka.",
+              "Pertahankan jarak minimal 1 meter dari satwa laut seperti penyu dan pari."
+            ]
+          }
+        }
+      ],
+      "relatedTrip": {
+        "title": "Private Trip Labuan Bajo",
+        "slug": "labuan-bajo",
+        "type": "private-trip",
+        "duration": "3H2M",
+        "price": "Rp 2.850.000",
+        "originalPrice": "Rp 3.250.000",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=84",
+        "rating": 4.9,
+        "reviewsCount": 189,
+        "badge": "Wisata Bahari Terbaik"
+      },
+      "initialComments": [
+        {
+          "id": 1,
+          "name": "Sarah Wijaya",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
+          "role": "Snorkeler Pemula",
+          "date": "1 minggu yang lalu",
+          "rating": 5,
+          "content": "Penjelasan yang sangat penting! Banyak yang belum tahu kalau terumbu karang itu hewan hidup yang rapuh. Wajib dibaca sebelum berangkat snorkeling.",
+          "likes": 24
+        }
+      ]
+    }
+  ],
+  "partners": [
+    {
+      "name": "Badan Gizi Nasional",
+      "image": "https://placehold.co/360x128/f5f7fb/183a65?text=Badan+Gizi+Nasional"
+    },
+    {
+      "name": "BPJS Kesehatan",
+      "image": "https://placehold.co/360x128/f5f7fb/159c59?text=BPJS+Kesehatan"
+    },
+    {
+      "name": "Epson",
+      "image": "https://placehold.co/360x128/f5f7fb/151515?text=EPSON"
+    },
+    {
+      "name": "Koperasi Desa Merah Putih",
+      "image": "https://placehold.co/360x128/f5f7fb/ce2437?text=KOP+DES"
+    },
+    {
+      "name": "Grab",
+      "image": "https://placehold.co/360x128/f5f7fb/00b14f?text=Grab"
+    },
+    {
+      "name": "Pertamina",
+      "image": "https://placehold.co/360x128/f5f7fb/242424?text=PERTAMINA"
+    }
+  ],
+  "faqs": [
+    {
+      "id": "trip-type",
+      "question": "Apa bedanya Open Trip dan Private Trip?",
+      "answer": "Open Trip mempertemukan kamu dengan peserta lain dalam satu jadwal perjalanan. Private Trip ditujukan untuk rombonganmu sendiri, sehingga pengaturan perjalanan dapat dibicarakan dengan partner penyelenggara."
+    },
+    {
+      "id": "schedule",
+      "question": "Apakah bisa request tanggal?",
+      "answer": "Open Trip mengikuti jadwal keberangkatan yang tersedia. Untuk Private Trip, kamu dapat mendiskusikan tanggal pilihan dengan partner. Ketersediaan jadwal perlu dikonfirmasi sebelum melakukan pemesanan."
+    },
+    {
+      "id": "included",
+      "question": "Apa saja yang termasuk dalam harga?",
+      "answer": "Fasilitas berbeda untuk setiap paket. Periksa bagian fasilitas termasuk dan tidak termasuk pada rincian trip, terutama transportasi, penginapan, makan, tiket masuk, dan kebutuhan pribadi sebelum memesan."
+    },
+    {
+      "id": "payment",
+      "question": "Bagaimana sistem pembayaran?",
+      "answer": "Periksa pilihan metode pembayaran, jumlah yang harus dibayar, dan batas waktunya pada rincian pemesanan. Ketentuan pelunasan dapat berbeda antartrip, jadi pastikan kamu memahaminya sebelum melanjutkan pembayaran."
+    },
+    {
+      "id": "cancellation",
+      "question": "Bagaimana kalau trip dibatalkan?",
+      "answer": "Ketentuan pembatalan, perubahan jadwal, dan pengembalian dana mengikuti kebijakan paket serta partner penyelenggara. Baca ketentuan yang tercantum sebelum memesan dan konfirmasikan penanganannya kepada partner jika terjadi pembatalan."
+    },
+    {
+      "id": "insurance",
+      "question": "Apakah ada asuransi perjalanan?",
+      "answer": "Asuransi belum tentu termasuk dalam setiap paket. Periksa rincian fasilitas dan tanyakan kepada partner mengenai ketersediaan, cakupan, serta pengecualiannya sebelum berangkat."
+    }
+  ],
+  "reviews": [
+    {
+      "name": "Nadia Putri",
+      "initials": "NP",
+      "trip": "Open Trip Bali",
+      "color": "bg-sky-100 text-sky-700",
+      "quote": "Jadwalnya pas, tidak terburu-buru. Paling suka waktu diajak mencoba tempat makan lokal yang belum pernah aku dengar sebelumnya.",
+      "highlight": "Banyak cerita baru"
+    },
+    {
+      "name": "Raka Pratama",
+      "initials": "RP",
+      "trip": "Private Trip Lombok",
+      "color": "bg-teal-100 text-teal-700",
+      "quote": "Liburan keluarga jadi lebih santai. Bisa diskusi rencana perjalanan dulu, jadi aktivitasnya cocok untuk semua anggota keluarga.",
+      "highlight": "Nyaman bersama keluarga"
+    },
+    {
+      "name": "Alya Rahma",
+      "initials": "AR",
+      "trip": "Open Trip Bromo",
+      "color": "bg-violet-100 text-violet-700",
+      "quote": "Berangkat sendiri, pulang bawa teman baru. Pemandunya ramah dan membantu kami menikmati perjalanan dari awal sampai selesai.",
+      "highlight": "Solo trip, teman baru"
+    },
+    {
+      "name": "Dimas Saputra",
+      "initials": "DS",
+      "trip": "Private Trip Raja Ampat",
+      "color": "bg-amber-100 text-amber-700",
+      "quote": "Pemandangannya luar biasa, tapi cerita dari pemandu lokal yang bikin perjalanan ini makin berkesan. Ingin kembali lagi suatu hari.",
+      "highlight": "Lebih dari sekadar liburan"
+    }
+  ]
+}

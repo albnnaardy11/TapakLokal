@@ -1,11 +1,19 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\{Booking, LedgerEntry, Payment, Payout, Refund, Trip};
+use App\Models\Booking;
+use App\Models\LedgerEntry;
+use App\Models\Payment;
+use App\Models\Payout;
+use App\Models\Promotion;
+use App\Models\Refund;
+use App\Models\RewardEntry;
+use App\Models\Trip;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Validation\ValidationException;
 
 class FinanceService
@@ -32,14 +40,16 @@ class FinanceService
             if ($booking->status !== 'awaiting_payment' || $booking->expires_at->isPast()) {
                 throw ValidationException::withMessages(['payment' => 'Pesanan tidak dapat dibayar.']);
             }
-            if ($payment->checkout_url) { return $payment->checkout_url; }
+            if ($payment->checkout_url) {
+                return $payment->checkout_url;
+            }
             $base = config('platform.midtrans_production') ? 'https://app.midtrans.com' : 'https://app.sandbox.midtrans.com';
             try {
                 $response = Http::withBasicAuth(config('platform.midtrans_server_key'), '')->acceptJson()->connectTimeout(5)->timeout(15)->post($base.'/snap/v1/transactions', [
-                'transaction_details' => ['order_id' => $payment->reference, 'gross_amount' => $payment->amount],
-                'customer_details' => ['first_name' => $booking->contact_name, 'phone' => $booking->contact_phone],
-                'expiry' => ['start_time' => $booking->created_at->format('Y-m-d H:i:s O'), 'unit' => 'minutes', 'duration' => 30],
-                'callbacks' => ['finish' => route('bookings.show', $booking)],
+                    'transaction_details' => ['order_id' => $payment->reference, 'gross_amount' => $payment->amount],
+                    'customer_details' => ['first_name' => $booking->contact_name, 'phone' => $booking->contact_phone],
+                    'expiry' => ['start_time' => $booking->created_at->format('Y-m-d H:i:s O'), 'unit' => 'minutes', 'duration' => 30],
+                    'callbacks' => ['finish' => route('bookings.show', $booking)],
                 ]);
             } catch (ConnectionException $exception) {
                 report($exception);
@@ -55,11 +65,13 @@ class FinanceService
             $eligible = DB::transaction(function () use ($booking, $payment, $url): bool {
                 $current = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
                 Payment::whereKey($payment->id)->update(['checkout_url' => $url]);
+
                 return $current->status === 'awaiting_payment' && $current->expires_at->isFuture();
             });
             if (! $eligible) {
                 throw ValidationException::withMessages(['payment' => 'Status pesanan sudah berubah. Muat ulang detail pesanan.']);
             }
+
             return $url;
         } finally {
             $lock->release();
@@ -86,11 +98,13 @@ class FinanceService
                     $booking->update(['status' => 'expired']);
                     $trip->decrement('reserved_seats', $booking->participants);
                     if ($booking->promotion_id) {
-                        \App\Models\Promotion::whereKey($booking->promotion_id)->decrement('used_count');
+                        Promotion::whereKey($booking->promotion_id)->decrement('used_count');
                     }
                 }
                 $payment->update(['status' => $late ? 'reconciliation_required' : 'paid', 'paid_at' => now(), 'provider_reference' => $data['transaction_id']]);
-                if (! $late) { $booking->update(['status' => 'paid']); }
+                if (! $late) {
+                    $booking->update(['status' => 'paid']);
+                }
                 $this->entry($booking, 'receipt:cash', 'gateway_cash', $booking->total, 'Pembayaran diterima gateway');
                 $this->entry($booking, 'receipt:escrow', 'customer_liability', -$booking->total, 'Dana menunggu penyelesaian layanan');
                 $this->audit->record('payment.'.$payment->status, $payment, ['amount' => $payment->amount]);
@@ -100,19 +114,24 @@ class FinanceService
                 if ($payout && in_array($payout->status, ['processing', 'paid'], true)) {
                     $payment->update(['status' => 'reconciliation_required']);
                     $this->audit->record('payment.refund_reconciliation_required', $payment);
+
                     return;
                 }
                 $payment->update(['status' => 'refunded']);
                 $wasReserved = ! in_array($booking->status, ['cancelled', 'expired', 'refunded'], true);
                 $booking->update(['status' => 'refunded']);
-                if ($wasReserved) { $trip->decrement('reserved_seats', $booking->participants); }
+                if ($wasReserved) {
+                    $trip->decrement('reserved_seats', $booking->participants);
+                }
                 Refund::updateOrCreate(['booking_id' => $booking->id], ['user_id' => $booking->user_id, 'amount' => $booking->total, 'reason' => 'Refund terkonfirmasi gateway', 'status' => 'paid']);
-                if ($payout) { $payout->update(['status' => 'reversed']); }
+                if ($payout) {
+                    $payout->update(['status' => 'reversed']);
+                }
                 $this->entry($booking, 'refund:cash', 'gateway_cash', -$booking->total, 'Refund terkonfirmasi');
                 $this->entry($booking, 'refund:escrow', 'customer_liability', $booking->total, 'Kewajiban dikembalikan');
-                $earned = \App\Models\RewardEntry::where('reference', 'booking:'.$booking->id)->first();
+                $earned = RewardEntry::where('reference', 'booking:'.$booking->id)->first();
                 if ($earned) {
-                    \App\Models\RewardEntry::firstOrCreate(['reference' => 'refund:'.$booking->id], ['user_id' => $booking->user_id, 'booking_id' => $booking->id, 'points' => -$earned->points, 'description' => 'Pembalikan poin refund']);
+                    RewardEntry::firstOrCreate(['reference' => 'refund:'.$booking->id], ['user_id' => $booking->user_id, 'booking_id' => $booking->id, 'points' => -$earned->points, 'description' => 'Pembalikan poin refund']);
                 }
                 $this->audit->record('payment.refunded', $payment);
             }
@@ -125,7 +144,9 @@ class FinanceService
                 if ($booking->status === 'awaiting_payment') {
                     $booking->update(['status' => 'expired']);
                     $trip->decrement('reserved_seats', $booking->participants);
-                    if ($booking->promotion_id) { \App\Models\Promotion::whereKey($booking->promotion_id)->decrement('used_count'); }
+                    if ($booking->promotion_id) {
+                        Promotion::whereKey($booking->promotion_id)->decrement('used_count');
+                    }
                 }
             }
         });

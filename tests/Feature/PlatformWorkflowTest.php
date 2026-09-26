@@ -2,9 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\{Booking, LedgerEntry, Payment, Promotion, Trip, User};
-use App\Services\{BookingService, FinanceService};
+use App\Models\Booking;
+use App\Models\LedgerEntry;
+use App\Models\Payment;
+use App\Models\Promotion;
+use App\Models\Trip;
+use App\Models\User;
+use App\Services\BookingService;
+use App\Services\FinanceService;
 use Illuminate\Support\Str;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 class PlatformWorkflowTest extends TestCase
@@ -17,7 +24,7 @@ class PlatformWorkflowTest extends TestCase
     public function test_booking_uses_server_price_and_duplicate_requests_reserve_seats_once(): void
     {
         $this->freezeTime();
-        config(['platform.commission_bps' => 1000]);
+        config(['platform.markup_bps' => 1000]);
         $trip = Trip::factory()->create(['price' => 250000]);
         $payload = [...$this->payload($trip), 'total' => 1, 'status' => 'paid'];
         $this->actingAs(User::factory()->create());
@@ -25,9 +32,9 @@ class PlatformWorkflowTest extends TestCase
         $booking = Booking::firstOrFail();
         $this->post('/bookings', $payload)->assertRedirect('/bookings/'.$booking->id);
         $this->assertDatabaseCount('bookings', 1);
-        $this->assertDatabaseHas('bookings', ['id' => $booking->id, 'total' => 500000, 'platform_fee' => 50000, 'vendor_amount' => 450000, 'status' => 'awaiting_payment']);
+        $this->assertDatabaseHas('bookings', ['id' => $booking->id, 'total' => 550000, 'platform_fee' => 50000, 'vendor_amount' => 500000, 'status' => 'awaiting_payment']);
         $this->assertDatabaseHas('trips', ['id' => $trip->id, 'reserved_seats' => 2]);
-        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'amount' => 500000, 'status' => 'pending']);
+        $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'amount' => 550000, 'status' => 'pending']);
     }
 
     public function test_reusing_a_booking_key_with_different_input_is_rejected(): void
@@ -37,6 +44,16 @@ class PlatformWorkflowTest extends TestCase
         $this->actingAs(User::factory()->create())->post('/bookings', $payload)->assertRedirect();
         $this->post('/bookings', [...$payload, 'participants' => 3])->assertSessionHasErrors('idempotency_key');
         $this->assertDatabaseHas('trips', ['id' => $trip->id, 'reserved_seats' => 2]);
+    }
+
+    public function test_large_voucher_never_reduces_vendor_base_price(): void
+    {
+        config(['platform.markup_bps' => 1000]);
+        Promotion::factory()->create(['code' => 'BESAR', 'type' => 'fixed', 'value' => 500000, 'minimum_amount' => 0, 'maximum_discount' => 500000, 'status' => 'published']);
+        $trip = Trip::factory()->create(['price' => 250000]);
+        $this->actingAs(User::factory()->create())->post('/bookings', [...$this->payload($trip), 'promotion_code' => 'BESAR'])->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertDatabaseHas('bookings', ['subtotal' => 550000, 'discount' => 50000, 'total' => 500000, 'vendor_amount' => 500000, 'platform_fee' => 0]);
+        $this->get('/trips/'.$trip->type.'/'.$trip->slug)->assertInertia(fn (AssertableInertia $page) => $page->where('tripData.selling_price', 275000));
     }
 
     public function test_insufficient_capacity_has_no_booking_or_payment_side_effects(): void
@@ -51,11 +68,13 @@ class PlatformWorkflowTest extends TestCase
     public function test_cancel_releases_seats_and_promotion_once(): void
     {
         $this->freezeTime();
+        config(['platform.markup_bps' => 1000]);
         $promotion = Promotion::factory()->create(['code' => 'HEMAT', 'type' => 'percent', 'value' => 10, 'minimum_amount' => 0, 'maximum_discount' => 50000, 'status' => 'published']);
         $trip = Trip::factory()->create();
         $this->actingAs(User::factory()->create())->post('/bookings', [...$this->payload($trip), 'promotion_code' => 'hemat'])->assertRedirect();
         $booking = Booking::firstOrFail();
-        $this->assertSame(950000, $booking->total);
+        $this->assertSame(1050000, $booking->total);
+        $this->assertSame(1000000, $booking->vendor_amount);
         $this->post('/bookings/'.$booking->id.'/cancel')->assertRedirect();
         $this->post('/bookings/'.$booking->id.'/cancel')->assertRedirect();
         $this->assertDatabaseHas('trips', ['id' => $trip->id, 'reserved_seats' => 0]);

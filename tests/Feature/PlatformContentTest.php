@@ -2,7 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\{ContentPage, User};
+use App\Models\ContentPage;
+use App\Models\User;
 use App\Services\AccessService;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -43,5 +44,12 @@ class PlatformContentTest extends TestCase
         app(AccessService::class)->grant($user, 'content_admin');
         $page = ContentPage::factory()->create(['type' => 'page']);
         $this->actingAs($user)->get('/admin/modules/blog/'.$page->id)->assertNotFound();
+    }
+
+    public function test_homepage_destinations_come_from_published_cms_records(): void
+    {
+        ContentPage::factory()->create(['type' => 'destination', 'status' => 'published', 'published_at' => now()->subDay(), 'title' => 'Curug Cidaun']);
+        ContentPage::factory()->create(['type' => 'destination', 'status' => 'draft']);
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->has('cmsDestinations', 1)->where('cmsDestinations.0.title', 'Curug Cidaun'));
     }
 }

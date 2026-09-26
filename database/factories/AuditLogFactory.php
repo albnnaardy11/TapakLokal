@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\AuditLog;
@@ -12,4 +13,3 @@ class AuditLogFactory extends Factory
         return ['action' => 'test.recorded', 'entity_type' => 'User', 'changes' => []];
     }
 }
-

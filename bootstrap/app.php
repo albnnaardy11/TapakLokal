@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,9 +15,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: ['payments/midtrans/notification']);
+        $middleware->redirectGuestsTo(fn (Request $request) => match (true) {
+            $request->is('admin*') => route('admin.login'),
+            $request->is('vendor*') => route('vendor.login'),
+            default => route('login'),
+        });
         $middleware->web(append: [
             HandleInertiaRequests::class,
-            \App\Http\Middleware\EnsureActiveUser::class,
+            EnsureActiveUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

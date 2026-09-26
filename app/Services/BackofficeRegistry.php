@@ -20,17 +20,18 @@ class BackofficeRegistry
             'label' => $label, 'group' => $group, 'model' => $model, 'permission' => $permission,
             'columns' => $columns, 'fields' => $fields, 'search' => $columns[0], ...$extra,
         ];
-        $content = ['title' => $text('Judul'), 'slug' => $text('Slug'), 'excerpt' => $text('Ringkasan', false), 'body' => $area('Isi / deskripsi'), 'image_url' => $url('URL gambar'), 'status' => $status, 'published_at' => ['label' => 'Jadwal publikasi', 'type' => 'datetime-local', 'required' => false], 'position' => $number('Urutan')];
+        $content = ['title' => $text('Judul'), 'slug' => $text('Slug'), 'excerpt' => $text('Ringkasan', false), 'body' => $area('Isi / deskripsi'), 'image_url' => $url('URL gambar'), 'status' => $status, 'published_at' => ['label' => 'Jadwal publikasi', 'type' => 'datetime-local', 'required' => false], 'position' => $number('Urutan'), 'category' => $text('Kategori', false), 'metadata' => ['label' => 'Detail halaman', 'type' => 'structured', 'required' => false]];
         $modules = [];
-        foreach (['homepage' => 'Homepage', 'blog' => 'Blog & Cerita', 'destination' => 'Destinasi', 'hidden-gem' => 'Hidden Gems', 'culinary' => 'Kuliner', 'souvenir' => 'Oleh-oleh', 'page' => 'Halaman Statis'] as $key => $label) {
+        foreach (['homepage' => 'Homepage', 'blog' => 'Blog & Cerita', 'destination' => 'Destinasi', 'hidden-gem' => 'Hidden Gems', 'culinary' => 'Kuliner', 'souvenir' => 'Oleh-oleh', 'page' => 'Halaman Statis', 'testimonial' => 'Testimoni Contoh'] as $key => $label) {
             $modules[$key] = $module($label, 'Content & CMS', Models\ContentPage::class, 'content', ['title', 'slug', 'status', 'published_at', 'position'], $content, ['scope' => ['type', $key]]);
         }
+
         return $modules + [
             'faqs' => $module('FAQ', 'Content & CMS', Models\Faq::class, 'content', ['question', 'category', 'status', 'position'], ['category' => $text('Kategori'), 'question' => $text('Pertanyaan'), 'answer' => $area('Jawaban'), 'status' => $status, 'position' => $number('Urutan')]),
             'partners' => $module('Kerja Sama & Partner', 'Content & CMS', Models\Partner::class, 'content', ['name', 'website_url', 'status', 'position'], ['name' => $text('Nama partner'), 'image_url' => $url('URL logo', true), 'website_url' => $url('Website'), 'status' => $status, 'position' => $number('Urutan')]),
             'media' => $module('Media Library', 'Content & CMS', Models\MediaAsset::class, 'content', ['name', 'mime_type', 'size', 'visibility']),
             'vendors' => $module('Vendor & Verifikasi', 'Operations', Models\Vendor::class, 'operations', ['name', 'city', 'status', 'email'], [], ['actions' => ['verify', 'reject', 'suspend'], 'detail' => ['phone', 'description', 'document_id', 'verification_note']]),
-            'trips' => $module('Trip & Moderasi', 'Operations', Models\Trip::class, 'operations', ['title', 'destination', 'departure_date', 'price', 'status'], [], ['actions' => ['publish', 'reject', 'archive'], 'detail' => ['description', 'itinerary', 'meeting_point', 'capacity', 'reserved_seats', 'vendor_id']]),
+            'trips' => $module('Trip & Moderasi', 'Operations', Models\Trip::class, 'operations', ['title', 'destination', 'departure_date', 'price', 'status'], ['title' => $text('Judul'), 'slug' => $text('Slug'), 'type' => $select('Jenis', ['open-trip', 'private-trip', 'open-po']), 'destination' => $text('Destinasi'), 'description' => $area('Deskripsi'), 'itinerary' => $area('Itinerary'), 'meeting_point' => $text('Titik kumpul'), 'image_url' => $url('URL foto'), 'departure_date' => $date('Keberangkatan'), 'end_date' => $date('Selesai'), 'capacity' => $number('Kuota'), 'price' => $number('Harga dasar vendor'), 'experience' => ['label' => 'Galeri & detail perjalanan', 'type' => 'structured', 'required' => false], 'status' => $status], ['create' => false, 'actions' => ['publish', 'reject', 'archive'], 'detail' => ['description', 'itinerary', 'meeting_point', 'capacity', 'reserved_seats', 'vendor_id']]),
             'bookings' => $module('Pemesanan', 'Operations', Models\Booking::class, 'operations', ['reference', 'contact_name', 'participants', 'total', 'status'], [], ['actions' => ['confirm', 'start', 'complete', 'cancel'], 'detail' => ['trip_id', 'vendor_id', 'contact_phone', 'expires_at']]),
             'support' => $module('Pusat Bantuan & Chat', 'Operations', Models\SupportTicket::class, 'operations', ['subject', 'category', 'priority', 'status'], ['status' => $select('Status', ['open', 'in_progress', 'resolved', 'closed']), 'priority' => $select('Prioritas', ['normal', 'high', 'urgent'])], ['create' => false]),
             'reviews' => $module('Rating & Ulasan', 'Operations', Models\Review::class, 'operations', ['body', 'rating', 'status'], ['status' => $select('Moderasi', ['published', 'hidden'])], ['create' => false]),
@@ -42,8 +43,8 @@ class BackofficeRegistry
             'campaigns' => $module('Campaign & Challenges', 'Growth', Models\Campaign::class, 'growth', ['name', 'type', 'starts_at', 'ends_at', 'status'], ['name' => $text('Nama campaign'), 'type' => $select('Jenis', ['campaign', 'challenge', 'mission']), 'description' => $area('Deskripsi & ketentuan'), 'starts_at' => $date('Mulai'), 'ends_at' => $date('Berakhir'), 'status' => $status]),
             'affiliates' => $module('Affiliate', 'Growth', Models\Affiliate::class, 'growth', ['code', 'user_id', 'commission_bps', 'status'], ['user_id' => $number('ID pengguna'), 'code' => $text('Kode referral'), 'commission_bps' => $number('Komisi basis points (100 = 1%)'), 'status' => $select('Status', ['pending', 'active', 'suspended'])]),
             'rewards' => $module('Ledger Points', 'Growth', Models\RewardEntry::class, 'growth', ['reference', 'user_id', 'points', 'description']),
-            'audit' => $module('Audit Log', 'System', Models\AuditLog::class, 'system', ['action', 'entity_type', 'entity_id', 'user_id', 'created_at']),
-            'settings' => $module('Pengaturan Platform', 'System', Models\PlatformSetting::class, 'system', ['key', 'value'], ['key' => $select('Pengaturan', ['support_email', 'support_phone', 'platform_name']), 'value' => $text('Nilai')]),
+            'audit' => $module('Audit Log', 'System', Models\AuditLog::class, 'system', ['action', 'entity_type', 'entity_id', 'user_id', 'created_at'], [], ['detail' => ['changes']]),
+            'settings' => $module('Pengaturan Platform', 'System', Models\PlatformSetting::class, 'system', ['key', 'value'], ['key' => $select('Pengaturan', ['markup_percent', 'markup_bps', 'platform_name', 'support_email', 'support_phone']), 'value' => $text('Nilai (misal markup_percent: 10 untuk 10%, 15 untuk 15%)')]),
         ];
     }
 
@@ -53,22 +54,40 @@ class BackofficeRegistry
         return $this->modules()[$module] ?? abort(404);
     }
 
+    public function url(string $module): string
+    {
+        return route('admin.panel.resources.index', ['panel' => (new AdminPanelService)->forModule($module, $this), 'module' => $module]);
+    }
+
     /** @return array<int, array<string, string>> */
     public function navigation(Models\User $user): array
     {
+        $panels = new AdminPanelService;
+        $panel = request()->attributes->get('admin_panel') ?? $panels->home($user);
         $items = [];
+        if (($panel === 'content' || $panel === 'super') && $user->hasPermission('content.view')) {
+            $items[] = ['key' => 'virtual-tours', 'label' => 'Panorama 360°', 'group' => 'Content & CMS', 'url' => route('admin.tours.index')];
+        }
         foreach ($this->modules() as $key => $module) {
-            if ($user->hasPermission($module['permission'].'.view')) {
-                $items[] = ['key' => $key, 'label' => $module['label'], 'group' => $module['group'], 'url' => route('admin.resources.index', $key)];
+            $modulePanel = $panels->forModule($key, $this);
+            $canView = $user->hasPermission($module['permission'].'.view');
+            if ($canView && ($panel === 'super' || $modulePanel === $panel)) {
+                $targetPanel = $panel === 'super' ? 'super' : $modulePanel;
+                $items[] = [
+                    'key' => $key,
+                    'label' => $module['label'],
+                    'group' => $module['group'],
+                    'url' => route('admin.panel.resources.index', ['panel' => $targetPanel, 'module' => $key]),
+                ];
             }
         }
-        if ($user->hasPermission('users.view')) {
+        if ($panel === 'super' && $user->hasPermission('users.view')) {
             $items[] = ['key' => 'users', 'label' => 'Pengguna & Admin', 'group' => 'System', 'url' => route('admin.access.users')];
         }
-        if ($user->hasPermission('roles.view')) {
+        if ($panel === 'super' && $user->hasPermission('roles.view')) {
             $items[] = ['key' => 'roles', 'label' => 'Roles & Permissions', 'group' => 'System', 'url' => route('admin.access.roles')];
         }
+
         return $items;
     }
 }
-

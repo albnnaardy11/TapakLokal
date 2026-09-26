@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\PlatformSetting;
@@ -12,4 +13,3 @@ class PlatformSettingFactory extends Factory
         return ['key' => fake()->unique()->slug(), 'value' => fake()->word()];
     }
 }
-

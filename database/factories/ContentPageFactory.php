@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\ContentPage;
@@ -12,4 +13,3 @@ class ContentPageFactory extends Factory
         return ['type' => 'blog', 'title' => fake()->sentence(3), 'slug' => fake()->unique()->slug(), 'body' => fake()->paragraphs(3, true), 'status' => 'draft', 'position' => 0];
     }
 }
-

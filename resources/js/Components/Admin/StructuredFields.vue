@@ -1,0 +1,12 @@
+<script setup>
+const model = defineModel();
+defineProps({ disabled: Boolean });
+const labels = { title: 'Judul', name: 'Nama', description: 'Deskripsi', body: 'Isi', content: 'Paragraf', image: 'Foto', images: 'Foto', gallery: 'Galeri', highlights: 'Highlight', destinations: 'Destinasi', itineraryDays: 'Jadwal harian', activities: 'Kegiatan', facilities: 'Fasilitas', facilityDetails: 'Detail fasilitas', packingItems: 'Perlengkapan', includes: 'Termasuk', excludes: 'Tidak termasuk', detail: 'Ringkasan', coordinates: 'Koordinat', sections: 'Bagian artikel', author: 'Penulis', quote: 'Kutipan', category: 'Kategori', heading: 'Judul bagian', location: 'Lokasi', time: 'Waktu', day: 'Hari', meals: 'Makan', note: 'Catatan', subtitle: 'Ringkasan', highlight: 'Sorotan' };
+function remove(index) { model.value = model.value.filter((_, key) => key !== index); }
+function append() {
+    const first = model.value[0];
+    const empty = value => Array.isArray(value) ? [] : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, empty(item)])) : typeof value === 'number' ? 0 : '';
+    model.value.push(first ? empty(first) : '');
+}
+</script>
+<template><div v-if="model && typeof model === 'object'" class="grid gap-3 rounded-lg border border-slate-100 p-3"><div v-for="(value, key) in model" :key="key" class="min-w-0"><details v-if="value && typeof value === 'object'"><summary class="cursor-pointer py-2 text-xs font-semibold">{{ Array.isArray(model) ? 'Item ' + (Number(key) + 1) : labels[key] || key }}</summary><StructuredFields v-model="model[key]" :disabled="disabled" /></details><label v-else class="grid gap-1 text-xs">{{ Array.isArray(model) ? 'Item ' + (Number(key) + 1) : labels[key] || key }}<textarea v-if="typeof value === 'string'" v-model="model[key]" :disabled="disabled" rows="2" class="panel-input" /><input v-else-if="typeof value === 'boolean'" v-model="model[key]" type="checkbox" :disabled="disabled" /><input v-else v-model="model[key]" class="panel-input" :disabled="disabled" :type="typeof value === 'number' ? 'number' : 'text'" /></label><button v-if="Array.isArray(model) && !disabled" type="button" class="mt-1 text-xs text-rose-600" @click="remove(key)">Hapus item</button></div><button v-if="Array.isArray(model) && !disabled" type="button" class="panel-secondary" @click="append">Tambah item</button></div><p v-else class="text-xs font-normal text-slate-400">Belum ada detail tambahan.</p></template>

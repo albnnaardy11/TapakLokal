@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Faq;
@@ -12,4 +13,3 @@ class FaqFactory extends Factory
         return ['category' => 'Umum', 'question' => fake()->sentence().'?', 'answer' => fake()->paragraph(), 'status' => 'draft', 'position' => 0];
     }
 }
-

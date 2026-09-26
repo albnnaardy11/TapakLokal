@@ -1,5 +1,5 @@
 <script setup>
-import { articles } from './travelArticles';
+import { route } from 'ziggy-js';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Compass, MapPinned, Utensils, X } from 'lucide-vue-next';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -7,13 +7,15 @@ import BlogCardSkeleton from '../Skeletons/Cards/BlogCardSkeleton.vue';
 import ProgressiveImage from '../Shared/ProgressiveImage.vue';
 import EmptyState from '../Shared/EmptyState.vue';
 
-defineProps({
+const props = defineProps({
+    items: { type: Array, default: () => [] },
     isLoading: {
         type: Boolean,
         default: false,
     },
 });
 
+const articles = computed(() => props.items);
 const currentPage = usePage();
 const isBlogPage = computed(() => currentPage.component === 'Blog');
 
@@ -32,7 +34,7 @@ const categories = [
     { label: 'Wisata Alam', icon: Compass },
 ];
 const articleDates = { bali: '12 Sep 2026', islands: '10 Sep 2026', local: '7 Sep 2026', packing: '4 Sep 2026', snorkeling: '2 Sep 2026' };
-const filteredArticles = computed(() => activeCategory.value === 'Semua' ? articles : articles.filter((article) => article.category === activeCategory.value));
+const filteredArticles = computed(() => activeCategory.value === 'Semua' ? articles.value : articles.value.filter((article) => article.category === activeCategory.value));
 let observer;
 
 const syncPage = () => {
@@ -109,10 +111,10 @@ onBeforeUnmount(() => observer?.disconnect());
         <!-- Real Articles Content -->
         <div v-else ref="carousel" :class="isBlogPage ? 'mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'" @scroll="syncPage">
             <article v-for="article in filteredArticles" :key="article.id" class="group flex flex-col overflow-hidden rounded-2xl border border-[#e1eaf3] bg-white shadow-[0_3px_12px_rgba(23,75,120,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[#b8dafa] hover:shadow-[0_8px_20px_rgba(23,75,120,0.08)] motion-reduce:transition-none" :class="isBlogPage ? 'min-w-0' : 'w-[85%] shrink-0 snap-start sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-60px)/4)]'">
-                <Link :href="route('blog.show', { article: article.id })" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#3E7BEF]" :aria-label="`Baca ${article.title}`">
+                <Link :href="route('blog.show', { article: article.slug })" class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#3E7BEF]" :aria-label="`Baca ${article.title}`">
                     <div class="relative aspect-[4/3] w-full overflow-hidden bg-sky-100">
                         <ProgressiveImage
-                            :src="`https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=640&q=85`"
+                            :src="article.image_url"
                             :alt="article.category"
                             aspectRatio="4/3"
                             rounded="rounded-none"
@@ -121,7 +123,7 @@ onBeforeUnmount(() => observer?.disconnect());
                         <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-[#2e69d9] shadow-sm z-10">{{ article.category }}</span>
                     </div>
                     <div class="flex flex-1 flex-col p-5">
-                        <span class="flex items-center justify-between gap-3 text-xs text-slate-500"><span>{{ articleDates[article.id] }}</span><span class="inline-flex items-center gap-1.5"><Clock3 class="size-3.5" aria-hidden="true" />4 menit baca</span></span>
+                        <span class="flex items-center justify-between gap-3 text-xs text-slate-500"><span>{{ article.published_at?.slice(0,10) || '' }}</span><span class="inline-flex items-center gap-1.5"><Clock3 class="size-3.5" aria-hidden="true" />4 menit baca</span></span>
                         <h3 class="mt-3 text-base font-bold leading-snug text-[#172c50] transition-colors group-hover:text-[#3E7BEF]">{{ article.title }}</h3>
                         <p class="mt-2 text-sm leading-6 text-slate-500">{{ article.excerpt }}</p>
                         <span class="mt-auto flex justify-start pt-6"><span class="inline-flex items-center gap-2 text-xs font-bold text-[#3E7BEF] transition-colors duration-200 hover:text-[#2e69d9]">Baca cerita <ArrowRight class="size-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" /></span></span>

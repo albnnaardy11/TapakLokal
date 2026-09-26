@@ -13,6 +13,7 @@ class AccessService
     public function rolePermissions(): array
     {
         $all = ['admin.access', 'dashboard.view', 'content.view', 'content.manage', 'content.publish', 'operations.view', 'operations.manage', 'vendor.verify', 'finance.view', 'refund.approve', 'payout.approve', 'growth.view', 'growth.manage', 'system.view', 'system.manage', 'users.view', 'users.manage', 'roles.view', 'roles.manage', 'vendor.access'];
+
         return [
             'super_admin' => $all,
             'content_admin' => ['admin.access', 'dashboard.view', 'content.view', 'content.manage', 'content.publish'],

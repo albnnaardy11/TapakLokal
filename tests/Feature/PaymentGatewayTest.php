@@ -3,10 +3,18 @@
 namespace Tests\Feature;
 
 use App\Jobs\ReconcilePayment;
-use App\Models\{Booking, Payment, Trip, User};
-use App\Services\{BookingService, FinanceService};
-use Illuminate\Support\Facades\{Cache, DB, Http, Queue};
+use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\Trip;
+use App\Models\User;
+use App\Services\BookingService;
+use App\Services\FinanceService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class PaymentGatewayTest extends TestCase
@@ -15,6 +23,7 @@ class PaymentGatewayTest extends TestCase
     {
         $this->freezeTime();
         config(['platform.midtrans_server_key' => 'test-secret', 'platform.midtrans_production' => false]);
+
         return app(BookingService::class)->create(User::factory()->create(), ['trip_id' => Trip::factory()->create()->id, 'participants' => 1, 'contact_name' => 'Traveler', 'contact_phone' => '08123456789', 'idempotency_key' => (string) Str::uuid()]);
     }
 
@@ -26,6 +35,7 @@ class PaymentGatewayTest extends TestCase
         Http::fake(['https://app.sandbox.midtrans.com/snap/v1/transactions' => function ($request) use ($transactionLevel, $booking) {
             $this->assertSame($transactionLevel, DB::transactionLevel());
             $this->assertSame($booking->reference, $request['transaction_details']['order_id']);
+
             return Http::response(['redirect_url' => 'https://app.sandbox.midtrans.com/snap/test-checkout']);
         }]);
         $finance = app(FinanceService::class);
@@ -93,7 +103,7 @@ class PaymentGatewayTest extends TestCase
         Http::fake(['https://api.sandbox.midtrans.com/v2/'.$booking->reference.'/status' => Http::response(['order_id' => $booking->reference, 'transaction_status' => 'settlement', 'transaction_id' => 'wrong-amount', 'gross_amount' => '1.00'])]);
         $job = (new ReconcilePayment($booking->reference))->withFakeQueueInteractions();
         $job->handle(app(FinanceService::class));
-        $job->assertFailedWith(\Illuminate\Validation\ValidationException::class);
+        $job->assertFailedWith(ValidationException::class);
         $this->assertDatabaseHas('payments', ['booking_id' => $booking->id, 'status' => 'pending']);
         $this->assertDatabaseCount('ledger_entries', 0);
         Http::assertSentCount(1);

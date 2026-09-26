@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\AdminPanelService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,15 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => $request->user()->loadMissing('roles.permissions')->roles->flatMap->permissions->pluck('name')->unique()->values(),
             ] : ['user' => null, 'permissions' => []],
             'flash' => ['success' => fn () => $request->session()->get('success'), 'error' => fn () => $request->session()->get('error')],
+            'adminPanel' => function () use ($request): ?array {
+                $key = $request->attributes->get('admin_panel');
+                if (! $key || ! $request->user()) {
+                    return null;
+                }
+                $panels = app(AdminPanelService::class);
+
+                return ['key' => $key, ...$panels->definitions()[$key], 'url' => route('admin.panel.dashboard', ['panel' => $key]), 'available' => $panels->available($request->user())];
+            },
         ];
     }
 }

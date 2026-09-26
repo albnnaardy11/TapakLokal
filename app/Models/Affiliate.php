@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\AffiliateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Affiliate extends Model
 {
-    /** @use HasFactory<\Database\Factories\AffiliateFactory> */
+    /** @use HasFactory<AffiliateFactory> */
     use HasFactory;
 
     protected $fillable = ['user_id', 'code', 'commission_bps', 'status'];
@@ -17,9 +19,8 @@ class Affiliate extends Model
         return ['commission_bps' => 'integer'];
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
 }

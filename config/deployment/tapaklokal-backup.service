@@ -1,0 +1,17 @@
+[Unit]
+Description=TapakLokal daily database and media backup
+After=postgresql.service
+
+[Service]
+Type=oneshot
+# Buat /var/backups/tapaklokal milik www-data; konfigurasi koneksi berikut mode 0600 milik www-data.
+User=www-data
+Group=www-data
+Environment=PGSERVICE=tapaklokal
+Environment=PGSERVICEFILE=/etc/tapaklokal/pg_service.conf
+Environment=PGPASSFILE=/etc/tapaklokal/pgpass
+ExecStart=/bin/bash /var/www/tapaklokal/current/config/deployment/backup.sh
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+UMask=0077

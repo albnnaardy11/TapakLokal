@@ -1,0 +1,9 @@
+<script setup>
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
+const form = useForm({ current_password: '', password: '', password_confirmation: '' });
+</script>
+<template>
+    <Head title="Ganti kata sandi awal" />
+    <main class="grid min-h-screen place-items-center bg-[#f6f8fc] px-5 py-12"><form class="panel-surface w-full max-w-md p-7" @submit.prevent="form.put(route('account.password'), { onFinish: () => form.reset() })"><p class="text-xs font-bold uppercase tracking-widest text-blue-600">TAPAKLOKAL · AKSES TIM</p><h1 class="mt-4 text-2xl font-bold text-[#17345e]">Buat kata sandi pribadi.</h1><p class="mt-3 text-sm leading-6 text-slate-500">Akun ini menggunakan kata sandi awal. Ganti sebelum membuka panel kerja.</p><label class="mt-6 block text-xs font-semibold">Kata sandi awal<input v-model="form.current_password" type="password" autocomplete="current-password" required class="panel-input mt-2" /></label><label class="mt-4 block text-xs font-semibold">Kata sandi baru<input v-model="form.password" type="password" autocomplete="new-password" minlength="10" required class="panel-input mt-2" /></label><p class="mt-2 text-xs text-slate-500">Minimal 10 karakter, berisi huruf dan angka.</p><label class="mt-4 block text-xs font-semibold">Konfirmasi kata sandi baru<input v-model="form.password_confirmation" type="password" autocomplete="new-password" required class="panel-input mt-2" /></label><p v-for="(error, key) in form.errors" :key="key" role="alert" class="mt-3 text-xs text-rose-600">{{ error }}</p><button class="panel-primary mt-6 w-full" :disabled="form.processing">Simpan dan lanjutkan</button><Link :href="route('logout')" method="post" as="button" class="mt-4 w-full text-xs text-slate-500">Keluar</Link></form></main>
+</template>

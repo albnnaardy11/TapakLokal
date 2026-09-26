@@ -11,7 +11,7 @@ const props = defineProps({ reviews: { type: Array, default: () => [] },
 });
 
 const carousel = ref(null);
-const reviews = computed(() => props.reviews.map(item => ({ id: item.id, name: item.user.name, initials: item.user.name.slice(0, 2).toUpperCase(), trip: item.trip.title, color: 'bg-sky-100 text-sky-700', quote: item.body, highlight: item.rating + '/5' })));
+const reviews = computed(() => props.reviews.map(item => ({ id: item.id, name: item.user.name, initials: item.user.name.slice(0, 2).toUpperCase(), trip: item.trip.title, color: 'bg-sky-100 text-sky-700', quote: item.body, rating: item.rating, demo: item.demo, highlight: item.highlight || item.rating + '/5' })));
 
 const move = (direction) => {
     const element = carousel.value;
@@ -53,7 +53,7 @@ const move = (direction) => {
         <div v-else ref="carousel" class="mt-7 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="region" aria-label="Contoh ulasan traveler" tabindex="0">
             <figure v-for="review in reviews" :key="review.name" class="group flex w-[88%] shrink-0 snap-start flex-col rounded-2xl border border-[#e6eef7] bg-white p-6 shadow-[0_3px_12px_rgba(23,75,120,0.03)] transition duration-300 hover:-translate-y-1 hover:border-[#bbdeff] hover:shadow-[0_10px_24px_rgba(23,100,180,0.08)] motion-reduce:transform-none motion-reduce:transition-none sm:w-[calc((100%-20px)/2)] lg:w-[calc((100%-40px)/3)]">
                 <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-1" aria-label="Rating contoh 5 dari 5"><Star v-for="star in 5" :key="star" class="size-3.5 fill-[#ffbf38] text-[#ffbf38]" aria-hidden="true" /></div>
+                    <div class="flex items-center gap-1" :aria-label="`Rating ${review.rating} dari 5`"><Star v-for="star in review.rating" :key="star" class="size-3.5 fill-[#ffbf38] text-[#ffbf38]" aria-hidden="true" /></div>
                     <Quote class="size-7 fill-sky-50 text-[#bddfff]" :stroke-width="1.5" aria-hidden="true" />
                 </div>
                 <blockquote class="mt-4 flex-1">
@@ -66,6 +66,6 @@ const move = (direction) => {
                 </figcaption>
             </figure>
         </div>
-        <p class="mt-2 text-[10px] text-slate-400">Pratinjau desain · Nama, rating, dan ulasan di atas adalah contoh.</p>
+        <p v-if="reviews.some(review => review.demo)" class="mt-2 text-[10px] text-slate-400">Pratinjau desain · Nama, rating, dan ulasan di atas adalah contoh.</p>
     </section>
 </template>

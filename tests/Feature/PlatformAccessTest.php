@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\{MediaAsset, Role, User, Vendor};
+use App\Models\MediaAsset;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Vendor;
 use App\Services\AccessService;
+use App\Services\AdminPanelService;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -14,8 +18,15 @@ class PlatformAccessTest extends TestCase
     public function test_guests_are_redirected_to_login(): void
     {
         $this->get('/account')->assertRedirect('/login');
-        $this->get('/admin')->assertRedirect('/login');
-        $this->get('/vendor')->assertRedirect('/login');
+        $this->get('/admin')->assertRedirect('/admin/login');
+        $this->get('/vendor')->assertRedirect('/vendor/login');
+    }
+
+    public function test_dedicated_login_pages_render_successfully(): void
+    {
+        $this->get('/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/Login'));
+        $this->get('/admin/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/AdminLogin'));
+        $this->get('/vendor/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/VendorLogin'));
     }
 
     public static function adminPermissions(): array
@@ -36,7 +47,8 @@ class PlatformAccessTest extends TestCase
         app(AccessService::class)->grant($user, $role);
         $this->assertTrue($user->can($allowed));
         $this->assertFalse($user->can($denied));
-        $this->actingAs($user)->get('/admin')->assertInertia(fn (Assert $page) => $page->component('Admin/Dashboard'));
+        $this->actingAs($user)->get('/admin')->assertRedirect();
+        $this->get('/admin/'.app(AdminPanelService::class)->home($user))->assertInertia(fn (Assert $page) => $page->component('Admin/Dashboard'));
     }
 
     public function test_traveler_cannot_enter_admin_or_vendor_panels(): void

@@ -1,0 +1,15 @@
+[Unit]
+Description=TapakLokal scheduled jobs
+After=network-online.target postgresql.service redis-server.service
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/tapaklokal/current
+ExecStart=/usr/bin/php8.4 artisan schedule:run --no-interaction
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+UMask=0027

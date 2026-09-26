@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Role;
@@ -12,4 +13,3 @@ class RoleFactory extends Factory
         return ['name' => fake()->unique()->slug(2), 'label' => fake()->words(2, true)];
     }
 }
-

@@ -1,12 +1,25 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\{Booking, Favorite, Payment, Promotion, Review, RewardEntry, SupportMessage, SupportTicket, TravelerProfile, Trip};
+use App\Models\Booking;
+use App\Models\Favorite;
+use App\Models\Payment;
+use App\Models\Promotion;
+use App\Models\Review;
+use App\Models\RewardEntry;
+use App\Models\SupportTicket;
+use App\Models\TravelerProfile;
+use App\Models\Trip;
 use App\Services\AuditService;
-use Illuminate\Http\{RedirectResponse, Request};
-use Illuminate\Support\Facades\{DB, Hash};
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Inertia\{Inertia, Response};
+use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TravelerController extends Controller
 {
@@ -32,6 +45,7 @@ class TravelerController extends Controller
             'support', 'chat' => SupportTicket::where('user_id', $user->id),
             default => null,
         };
+
         return Inertia::render('Account', [
             'liveData' => true, 'sectionKey' => $section, 'sectionLabel' => self::SECTIONS[$section],
             'records' => $query?->orderByDesc('id')->paginate(10)->withQueryString(),
@@ -45,22 +59,36 @@ class TravelerController extends Controller
         $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'phone' => ['nullable', 'string', 'max:30'], 'city' => ['nullable', 'string', 'max:100']]);
         $request->user()->update($data);
         $audit->record('profile.updated', $request->user());
+
         return back()->with('success', 'Profil berhasil disimpan.');
     }
 
-    public function password(Request $request): RedirectResponse
+    public function password(Request $request, AuditService $audit): RedirectResponse
     {
-        $data = $request->validate(['current_password' => ['required', 'current_password'], 'password' => ['required', 'confirmed', 'different:current_password', \Illuminate\Validation\Rules\Password::min(10)->letters()->numbers()]]);
-        $request->user()->update(['password' => $data['password']]);
+        $data = $request->validate(['current_password' => ['required', 'current_password'], 'password' => ['required', 'confirmed', 'different:current_password', Password::min(10)->letters()->numbers()]]);
+        $required = $request->user()->must_change_password;
+        $request->user()->forceFill(['password' => $data['password'], 'must_change_password' => false, 'remember_token' => Str::random(60)])->save();
         $request->session()->regenerate();
+        $audit->record('user.password_changed', $request->user(), ['initial_password_replaced' => $required]);
+        if ($required) {
+            return to_route($request->user()->hasPermission('admin.access') ? 'admin.dashboard' : 'account')->with('success', 'Kata sandi baru tersimpan.');
+        }
+
         return back()->with('success', 'Kata sandi berhasil diubah.');
     }
 
     public function traveler(Request $request, ?TravelerProfile $traveler = null): RedirectResponse
     {
-        if ($traveler) { abort_unless($traveler->user_id === $request->user()->id, 404); }
+        if ($traveler) {
+            abort_unless($traveler->user_id === $request->user()->id, 404);
+        }
         $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'birth_date' => ['nullable', 'date', 'before_or_equal:today'], 'phone' => ['nullable', 'string', 'max:30'], 'emergency_contact' => ['nullable', 'string', 'max:255']]);
-        if ($traveler) { $traveler->update($data); } else { TravelerProfile::create([...$data, 'user_id' => $request->user()->id]); }
+        if ($traveler) {
+            $traveler->update($data);
+        } else {
+            TravelerProfile::create([...$data, 'user_id' => $request->user()->id]);
+        }
+
         return back()->with('success', 'Data wisatawan tersimpan.');
     }
 
@@ -68,6 +96,7 @@ class TravelerController extends Controller
     {
         abort_unless($traveler->user_id === $request->user()->id, 404);
         $traveler->delete();
+
         return back()->with('success', 'Wisatawan dihapus.');
     }
 
@@ -75,6 +104,7 @@ class TravelerController extends Controller
     {
         abort_unless($trip->status === 'published' && $trip->vendor->status === 'verified', 404);
         Favorite::firstOrCreate(['user_id' => $request->user()->id, 'trip_id' => $trip->id]);
+
         return back()->with('success', 'Trip ditambahkan ke favorit.');
     }
 
@@ -82,6 +112,7 @@ class TravelerController extends Controller
     {
         abort_unless($favorite->user_id === $request->user()->id, 404);
         $favorite->delete();
+
         return back()->with('success', 'Favorit dihapus.');
     }
 
@@ -93,6 +124,7 @@ class TravelerController extends Controller
             abort_if(Review::where('booking_id', $booking->id)->exists(), 422, 'Pesanan sudah diulas.');
             Review::create([...$data, 'user_id' => $request->user()->id, 'trip_id' => $booking->trip_id, 'status' => 'published']);
         });
+
         return back()->with('success', 'Terima kasih, ulasan berhasil dikirim.');
     }
 
@@ -103,8 +135,10 @@ class TravelerController extends Controller
         $ticket = DB::transaction(function () use ($request, $data, $booking) {
             $ticket = SupportTicket::create(['user_id' => $request->user()->id, 'booking_id' => $booking?->id, 'vendor_id' => $data['category'] === 'vendor' ? $booking?->vendor_id : null, 'subject' => $data['subject'], 'category' => $data['category']]);
             $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
+
             return $ticket;
         });
+
         return to_route('support.show', $ticket);
     }
 
@@ -117,6 +151,7 @@ class TravelerController extends Controller
     public function conversation(Request $request, SupportTicket $ticket): Response
     {
         $this->authorizeTicket($request, $ticket);
+
         return Inertia::render('Conversation', ['ticket' => $ticket, 'messages' => $ticket->messages()->with('user:id,name')->latest('id')->paginate(30)]);
     }
 
@@ -130,6 +165,7 @@ class TravelerController extends Controller
         abort_if($ticket->status === 'closed', 422, 'Percakapan sudah ditutup.');
         $data = $request->validate(['body' => ['required', 'string', 'max:5000']]);
         $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
+
         return back()->with('success', 'Pesan terkirim.');
     }
 }

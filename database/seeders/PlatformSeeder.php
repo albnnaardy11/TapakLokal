@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\PlatformSetting;
@@ -11,6 +12,8 @@ class PlatformSeeder extends Seeder
     {
         (new AccessService)->seed();
         PlatformSetting::firstOrCreate(['key' => 'platform_name'], ['value' => 'Tapak Lokal']);
+        if (! app()->environment('testing')) {
+            PlatformSetting::firstOrCreate(['key' => 'markup_percent'], ['value' => '10']);
+        }
     }
 }
-

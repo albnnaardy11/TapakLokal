@@ -1,0 +1,22 @@
+[Unit]
+Description=TapakLokal durable payment and application queue
+After=network-online.target postgresql.service redis-server.service
+Wants=network-online.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/tapaklokal/current
+ExecStart=/usr/bin/php8.4 artisan queue:work database --queue=default --sleep=2 --tries=6 --timeout=60 --max-time=3600 --memory=256
+Restart=always
+RestartSec=5
+TimeoutStopSec=90
+KillSignal=SIGTERM
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

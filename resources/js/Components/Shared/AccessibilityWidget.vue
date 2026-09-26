@@ -1,8 +1,15 @@
 <script setup>
 import { ArrowUp, ArrowLeftRight, BookOpen, Contrast, Droplet, ImageOff, Link2, Mouse, PauseCircle, RotateCcw, ScanLine, Settings2, Square, ALargeSmall, MoveVertical, Volume2, X } from 'lucide-vue-next';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+
+const page = usePage();
+const isBackoffice = computed(() => {
+    const url = page.url || '';
+    const component = page.component || '';
+    return url.startsWith('/admin') || url.startsWith('/vendor') || component.startsWith('Admin/') || component.startsWith('Vendor/');
+});
 
 const storageKey = 'tapaklokal-accessibility-v1';
 const defaults = { contrast: 0, spacing: 0, color: 0, text: 0, links: 0, animation: 0, images: 0, dyslexia: 0, cursor: 0, line: 0, speech: 0, guide: 0 };
@@ -250,7 +257,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <Teleport to="body">
+    <Teleport v-if="!isBackoffice" to="body">
         <!-- Reading Guide Ruler -->
         <div
             v-if="settings.guide && isRulerVisible"

@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Campaign;
@@ -12,4 +13,3 @@ class CampaignFactory extends Factory
         return ['name' => fake()->sentence(3), 'type' => 'campaign', 'description' => fake()->paragraph(), 'starts_at' => today(), 'ends_at' => today()->addMonth(), 'status' => 'draft'];
     }
 }
-

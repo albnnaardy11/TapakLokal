@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\RewardEntryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RewardEntry extends Model
 {
-    /** @use HasFactory<\Database\Factories\RewardEntryFactory> */
+    /** @use HasFactory<RewardEntryFactory> */
     use HasFactory;
 
     protected $fillable = ['user_id', 'booking_id', 'reference', 'points', 'description'];
@@ -17,9 +19,8 @@ class RewardEntry extends Model
         return ['points' => 'integer'];
     }
 
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
 }

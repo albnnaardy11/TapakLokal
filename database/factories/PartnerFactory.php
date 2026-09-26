@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Models\Partner;
@@ -12,4 +13,3 @@ class PartnerFactory extends Factory
         return ['name' => fake()->company(), 'image_url' => 'https://example.com/logo.png', 'status' => 'draft', 'position' => 0];
     }
 }
-
