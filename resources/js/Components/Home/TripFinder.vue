@@ -319,7 +319,7 @@ const searchSouvenirs = () => {
 </script>
 
 <template>
-    <div class="w-full max-w-[1100px] mx-auto" aria-label="Pencarian Perjalanan dan Oleh-Oleh">
+    <div class="w-full max-w-[1180px] mx-auto" aria-label="Pencarian Perjalanan dan Oleh-Oleh">
         <!-- 1. Top Service Tabs (Traveloka Style) -->
         <div class="flex items-center gap-2 sm:gap-3 border-b-2 border-white/80 pb-3.5 overflow-x-auto no-scrollbar">
             <button

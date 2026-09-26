@@ -88,7 +88,7 @@ const openAuthModal = (mode) => {
                     : 'bg-white/95 backdrop-blur-md text-slate-900 shadow-[0_4px_15px_rgba(15,44,92,0.08)]'
             "
         >
-            <div class="mx-auto flex h-[58px] max-w-[1180px] items-center px-5 sm:px-8">
+            <div class="mx-auto flex h-[58px] max-w-[1180px] items-center px-4 sm:px-6 lg:px-0">
                 <!-- Logo -->
                 <Link href="/" class="shrink-0 text-left" aria-label="TapakLokal beranda" @click="selectNavigation(navItems[0])">
                     <span
@@ -219,7 +219,7 @@ const openAuthModal = (mode) => {
                         : 'bg-[#3E7BEF] shadow-sm'
                 "
             >
-                <div class="mx-auto flex h-11 max-w-[1180px] items-center px-5 sm:px-8">
+                <div class="mx-auto flex h-11 max-w-[1180px] items-center px-4 sm:px-6 lg:px-0">
                     <div class="flex h-full items-center gap-1">
                         <component
                             :is="item.href ? Link : 'button'"
