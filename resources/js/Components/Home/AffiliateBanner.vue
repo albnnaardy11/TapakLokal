@@ -11,52 +11,71 @@ defineProps({
 </script>
 
 <template>
-    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24" aria-labelledby="affiliate-banner-heading">
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0c2f66] via-[#0759bf] to-[#078cff] p-7 sm:p-10 lg:p-12 shadow-[0_16px_44px_rgba(7,100,200,0.18)]">
-            <!-- Decorative Background Glows -->
-            <div class="pointer-events-none absolute -left-20 -top-20 size-80 rounded-full bg-blue-400/20 blur-3xl" aria-hidden="true"></div>
-            <div class="pointer-events-none absolute -right-20 -bottom-20 size-96 rounded-full bg-sky-300/20 blur-3xl" aria-hidden="true"></div>
+    <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24 px-4 sm:px-6 lg:px-0" aria-labelledby="affiliate-banner-heading">
+        <!-- Container dengan Traveloka Signature Mesh Gradient & Luxury Glass Border -->
+        <div class="traveloka-gradient relative overflow-hidden rounded-3xl border border-white/20 border-t-white/40 p-7 sm:p-10 lg:p-12 shadow-[0_20px_50px_rgba(1,117,234,0.25)]">
+            <!-- Travel Vector Contour Lines (Tekstur Gelombang Kontur Khas Traveloka) -->
+            <svg
+                class="pointer-events-none absolute inset-0 size-full stroke-white/[0.08] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]"
+                viewBox="0 0 1180 380"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+            >
+                <path d="M-80 90C160 40 320 220 580 150C840 80 1020 260 1260 180" stroke-width="1.8" stroke-dasharray="6 6" />
+                <path d="M-60 170C200 110 380 310 640 230C900 150 1080 340 1280 270" stroke-width="1.5" />
+                <path d="M-40 250C220 200 440 360 700 300C960 240 1120 380 1300 330" stroke-width="1.2" stroke-dasharray="4 4" />
+                <circle cx="580" cy="150" r="4" fill="white" fill-opacity="0.2" />
+                <circle cx="640" cy="230" r="5" fill="white" fill-opacity="0.25" />
+                <circle cx="1020" cy="260" r="3.5" fill="white" fill-opacity="0.2" />
+            </svg>
+
+            <!-- Multi-Point Ambient Lighting (Ciri Khas Depth Visual Platform Traveloka) -->
+            <div class="pointer-events-none absolute -left-20 -top-20 size-80 rounded-full bg-white/15 blur-3xl" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute right-10 bottom-0 size-96 rounded-full bg-[#00d2ff]/25 blur-3xl" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute -left-10 -bottom-16 size-72 rounded-full bg-amber-400/15 blur-3xl" aria-hidden="true"></div>
 
             <div class="relative z-10 grid items-center gap-8 lg:grid-cols-12 lg:gap-10">
                 <!-- Kolom Kiri: Teks & Aksi -->
                 <div class="lg:col-span-7">
-                    <!-- Judul Utama (Sesuai gambar referensi) -->
+                    <!-- Judul Utama -->
                     <h2
                         id="affiliate-banner-heading"
-                        class="text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-[34px]"
+                        class="text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-[35px]"
                     >
                         Gabung Jadi Affiliate: Bagikan Keindahan Indonesia, Dapatkan Komisi Menarik
                     </h2>
 
                     <!-- Deskripsi Pelengkap -->
-                    <p class="mt-3.5 max-w-xl text-xs sm:text-sm leading-relaxed text-blue-100/90">
+                    <p class="mt-3.5 max-w-xl text-xs sm:text-sm leading-relaxed text-blue-50/95">
                         Ajak teman, keluarga, dan pengikutmu menjelajahi destinasi otentik bersama TapakLokal. Raih komisi hingga 10% untuk setiap pemesanan trip yang berhasil.
                     </p>
 
                     <!-- Poin Keunggulan Ringkas -->
-                    <div class="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-white/90">
-                        <span class="inline-flex items-center gap-1.5">
-                            <CheckCircle2 class="size-4 text-emerald-300 shrink-0" />
+                    <div class="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-white/95">
+                        <span class="inline-flex items-center gap-1.5 drop-shadow-sm">
+                            <CheckCircle2 class="size-4 text-[#4ade80] shrink-0" />
                             Pendaftaran Gratis
                         </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <CheckCircle2 class="size-4 text-emerald-300 shrink-0" />
+                        <span class="inline-flex items-center gap-1.5 drop-shadow-sm">
+                            <CheckCircle2 class="size-4 text-[#4ade80] shrink-0" />
                             Komisi s.d 10%
                         </span>
-                        <span class="inline-flex items-center gap-1.5">
-                            <CheckCircle2 class="size-4 text-emerald-300 shrink-0" />
+                        <span class="inline-flex items-center gap-1.5 drop-shadow-sm">
+                            <CheckCircle2 class="size-4 text-[#4ade80] shrink-0" />
                             Pencairan Otomatis
                         </span>
                     </div>
 
-                    <!-- Tombol Pelajari Lebih Lanjut -->
+                    <!-- Tombol Pelajari Lebih Lanjut (Traveloka Clean Button Style) -->
                     <div class="mt-7">
                         <Link
                             :href="linkHref"
-                            class="group inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-[#0c2f66] shadow-md transition duration-200 hover:bg-sky-50 hover:shadow-lg active:scale-95"
+                            class="group inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-[#0256af] shadow-[0_8px_20px_rgba(2,30,85,0.22)] transition-all duration-200 hover:bg-[#f0f7ff] hover:shadow-[0_12px_28px_rgba(2,30,85,0.28)] hover:scale-[1.01] active:scale-95"
                         >
                             <span>Pelajari Lebih Lanjut</span>
-                            <ArrowRight class="size-4 text-[#078cff] transition-transform duration-200 group-hover:translate-x-1" />
+                            <ArrowRight class="size-4 text-[#0175ea] transition-transform duration-200 group-hover:translate-x-1" />
                         </Link>
                     </div>
                 </div>
@@ -65,7 +84,7 @@ defineProps({
                 <div class="flex justify-center lg:col-span-5 lg:justify-end">
                     <div class="relative w-full max-w-[420px] transition-transform duration-300 hover:scale-[1.02]">
                         <!-- Tablet Frame Outer Bezel -->
-                        <div class="relative overflow-hidden rounded-[26px] border-[6px] border-[#0f172a] bg-[#0f172a] shadow-[0_20px_40px_rgba(0,0,0,0.35)]">
+                        <div class="relative overflow-hidden rounded-[26px] border-[6px] border-[#0a1122] bg-[#0a1122] shadow-[0_25px_50px_-12px_rgba(0,12,38,0.55)]">
                             <!-- Camera Notch / Dot -->
                             <div class="absolute top-2 left-1/2 -translate-x-1/2 z-20 size-1.5 rounded-full bg-slate-700"></div>
 
@@ -74,7 +93,7 @@ defineProps({
                                 <!-- App Header Inside Tablet -->
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
                                     <div class="flex items-center gap-2">
-                                        <div class="flex size-6 items-center justify-center rounded-lg bg-[#078cff] text-[10px] font-bold text-white">
+                                        <div class="flex size-6 items-center justify-center rounded-lg bg-[#0175ea] text-[10px] font-bold text-white shadow-xs">
                                             TL
                                         </div>
                                         <span class="text-xs font-bold text-slate-800">TapakLokal Affiliate</span>
@@ -84,8 +103,8 @@ defineProps({
                                     </span>
                                 </div>
 
-                                <!-- Commission Summary Card -->
-                                <div class="mt-2.5 rounded-xl bg-gradient-to-br from-[#0c2f66] to-[#078cff] p-3 text-white shadow-sm">
+                                <!-- Commission Summary Card (Traveloka-style Card) -->
+                                <div class="mt-2.5 rounded-xl bg-gradient-to-br from-[#02438e] via-[#016bd8] to-[#018cf2] p-3 text-white shadow-sm">
                                     <div class="flex items-center justify-between text-[10px] text-blue-100">
                                         <span class="inline-flex items-center gap-1">
                                             <Wallet class="size-3" /> Total Penghasilan
@@ -94,7 +113,7 @@ defineProps({
                                             <TrendingUp class="size-2.5" /> +24% bln ini
                                         </span>
                                     </div>
-                                    <div class="mt-1 text-base font-extrabold sm:text-lg">
+                                    <div class="mt-1 text-base font-extrabold sm:text-lg tracking-tight">
                                         Rp 4.850.000
                                     </div>
                                     <div class="mt-1 flex items-center justify-between text-[9px] text-sky-100/90 pt-1 border-t border-white/15">
@@ -107,7 +126,7 @@ defineProps({
                                 <div class="mt-3">
                                     <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500 mb-1.5">
                                         <span>Trip Populer Dibagikan</span>
-                                        <span class="text-[9px] text-[#078cff]">Lihat Semua</span>
+                                        <span class="text-[9px] text-[#0175ea] font-medium">Lihat Semua</span>
                                     </div>
 
                                     <!-- Trip Item 1 -->
@@ -120,10 +139,10 @@ defineProps({
                                             />
                                             <div class="min-w-0">
                                                 <div class="truncate text-[10px] font-bold text-slate-800">Open Trip Komodo</div>
-                                                <div class="text-[9px] text-emerald-600 font-medium">Komisi: Rp 120.000 / pax</div>
+                                                <div class="text-[9px] text-emerald-600 font-semibold">Komisi: Rp 120.000 / pax</div>
                                             </div>
                                         </div>
-                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#078cff]">
+                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0175ea]">
                                             <Share2 class="size-2.5" />
                                             <span>Bagikan</span>
                                         </button>
@@ -139,10 +158,10 @@ defineProps({
                                             />
                                             <div class="min-w-0">
                                                 <div class="truncate text-[10px] font-bold text-slate-800">Bromo Sunrise Tour</div>
-                                                <div class="text-[9px] text-emerald-600 font-medium">Komisi: Rp 85.000 / pax</div>
+                                                <div class="text-[9px] text-emerald-600 font-semibold">Komisi: Rp 85.000 / pax</div>
                                             </div>
                                         </div>
-                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#078cff]">
+                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0175ea]">
                                             <Share2 class="size-2.5" />
                                             <span>Bagikan</span>
                                         </button>
@@ -156,3 +175,14 @@ defineProps({
         </div>
     </section>
 </template>
+
+<style scoped>
+.traveloka-gradient {
+    /* Traveloka Premium Multi-Stop Oceanic Mesh */
+    background:
+        radial-gradient(110% 110% at 92% 95%, rgba(0, 210, 255, 0.35) 0%, transparent 55%),
+        radial-gradient(85% 85% at 10% 12%, rgba(255, 255, 255, 0.14) 0%, transparent 45%),
+        radial-gradient(70% 70% at 4% 96%, rgba(245, 158, 11, 0.16) 0%, transparent 40%),
+        linear-gradient(130deg, #022353 0%, #03418f 28%, #016ad7 62%, #0087f0 100%);
+}
+</style>
