@@ -52,18 +52,29 @@ const open = (item) => router.visit(route('content.show', item.slug));
             </Link>
         </div>
 
-        <!-- Bento Grid -->
-        <div v-if="cards.length" class="grid gap-3.5 md:aspect-[1008/268] md:grid-cols-[284fr_213fr_485fr]">
-            <div class="h-64 md:h-auto">
-                <DestinationCard :destination="cards[0]" @select="open(cards[0])" />
+        <!-- 1:1 Bento Grid Layout (1 Large Tall Card Left + 3 Columns x 2 Rows Right) -->
+        <div v-if="cards.length" class="grid grid-cols-1 md:grid-cols-[280fr_720fr] lg:grid-cols-[285fr_725fr] gap-3.5 sm:gap-4">
+            <!-- 1. Left Large Tall Card (Spans full height of the 2 rows) -->
+            <div class="h-72 sm:h-80 md:h-full">
+                <DestinationCard
+                    :destination="cards[0]"
+                    class="size-full min-h-[280px] md:min-h-full"
+                    @select="open(cards[0])"
+                />
             </div>
-            <div class="grid grid-cols-2 gap-3 md:grid-cols-1 md:grid-rows-2">
-                <DestinationCard v-for="item in cards.slice(1, 3)" :key="item.id" :destination="item" @select="open(item)" />
-            </div>
-            <div class="grid grid-cols-2 gap-3.5">
-                <DestinationCard v-for="item in cards.slice(3, 7)" :key="item.id" :destination="item" @select="open(item)" />
+
+            <!-- 2. Right Grid (Strictly 3 Columns x 2 Rows = 6 Equal Cards) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 grid-rows-2 gap-3.5 sm:gap-4">
+                <div
+                    v-for="item in cards.slice(1, 7)"
+                    :key="item.id || item.slug || item.name"
+                    class="aspect-[16/10] w-full"
+                >
+                    <DestinationCard :destination="item" class="size-full" @select="open(item)" />
+                </div>
             </div>
         </div>
+
         <p v-else class="panel-surface p-8 text-sm text-slate-500">
             Belum ada destinasi yang diterbitkan.
         </p>
