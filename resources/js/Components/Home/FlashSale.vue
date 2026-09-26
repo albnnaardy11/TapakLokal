@@ -209,98 +209,96 @@ onBeforeUnmount(() => {
             />
             <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(22,88,187,0.96)_0%,rgba(38,107,204,0.90)_33%,rgba(91,154,232,0.52)_66%,rgba(171,207,248,0.28)_100%)]"></div>
 
-            <div class="relative grid lg:grid-cols-[380px_minmax(0,1fr)]">
+            <div class="relative grid lg:grid-cols-[335px_minmax(0,1fr)]">
                 <!-- Left Banner: Flash Sale Badge, Countdown Timer, Title & CTA -->
-                <div class="flex flex-col justify-between px-7 py-8 text-white sm:px-10 sm:py-10">
-                    <div>
-                        <!-- Original Flash Lightning Icon Badge -->
-                        <div class="flex items-center gap-3 text-lg font-extrabold tracking-wide text-white">
-                            <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-white/15 shadow-sm">
-                                <svg viewBox="0 0 64 88" class="h-6 w-4" aria-hidden="true">
-                                    <defs>
-                                        <radialGradient id="flash-sale-lightning-fill" cx="48%" cy="48%" r="58%">
-                                            <stop offset="0%" stop-color="#d8f5ff" />
-                                            <stop offset="35%" stop-color="#8fd5ff" />
-                                            <stop offset="100%" stop-color="#2575d4" />
-                                        </radialGradient>
-                                    </defs>
-                                    <path
-                                        d="M39.5 3 6.5 51.2a5.2 5.2 0 0 0 4.3 8.1h17.5l-2.7 23.2c-.6 5.2 6.1 7.2 8.3 2.5l25.2-48.8a5.2 5.2 0 0 0-4.7-7.6H37.3l4.1-20.1C42.4 3.7 42.2 1.3 39.5 3Z"
-                                        fill="url(#flash-sale-lightning-fill)"
-                                        stroke="#16a9f4"
-                                        stroke-linejoin="round"
-                                        stroke-width="3.8"
-                                    />
-                                </svg>
-                            </span>
-                            FLASH SALE TRIP
-                        </div>
-
-                        <!-- Live Countdown Timer -->
-                        <div class="mt-4 inline-flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/20">
-                            <span class="text-white/90">Berakhir dalam:</span>
-                            <div class="flex items-center gap-1 font-mono text-xs font-bold text-white">
-                                <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.hours) }}</span>
-                                <span>:</span>
-                                <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.minutes) }}</span>
-                                <span>:</span>
-                                <span class="rounded bg-[#ef3037] px-1.5 py-0.5 text-white shadow-sm">{{ formatTwoDigits(timeLeft.seconds) }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Headline & Description -->
-                        <h2 class="mt-5 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">
-                            Paket Trip Pilihan Harga Spesial!
-                        </h2>
-                        <p class="mt-3 text-sm leading-relaxed text-white/90">
-                            Diskon liburan terbatas hingga 36% untuk Open Trip dan Private Trip pilihan dengan kuota promo terbatas.
-                        </p>
+                <div class="flex flex-col justify-center px-6 py-7 text-white sm:px-8 sm:py-8">
+                    <!-- Original Flash Lightning Icon Badge -->
+                    <div class="flex items-center gap-2.5 text-base font-extrabold tracking-wide text-white sm:text-lg">
+                        <span class="grid size-7.5 shrink-0 place-items-center rounded-lg bg-white/15 shadow-sm">
+                            <svg viewBox="0 0 64 88" class="h-5 w-3.5" aria-hidden="true">
+                                <defs>
+                                    <radialGradient id="flash-sale-lightning-fill" cx="48%" cy="48%" r="58%">
+                                        <stop offset="0%" stop-color="#d8f5ff" />
+                                        <stop offset="35%" stop-color="#8fd5ff" />
+                                        <stop offset="100%" stop-color="#2575d4" />
+                                    </radialGradient>
+                                </defs>
+                                <path
+                                    d="M39.5 3 6.5 51.2a5.2 5.2 0 0 0 4.3 8.1h17.5l-2.7 23.2c-.6 5.2 6.1 7.2 8.3 2.5l25.2-48.8a5.2 5.2 0 0 0-4.7-7.6H37.3l4.1-20.1C42.4 3.7 42.2 1.3 39.5 3Z"
+                                    fill="url(#flash-sale-lightning-fill)"
+                                    stroke="#16a9f4"
+                                    stroke-linejoin="round"
+                                    stroke-width="3.8"
+                                />
+                            </svg>
+                        </span>
+                        FLASH SALE TRIP
                     </div>
 
-                    <!-- CTA Link -->
-                    <div class="mt-8 pt-2">
+                    <!-- Live Countdown Timer -->
+                    <div class="mt-3.5 inline-flex w-fit items-center gap-2 rounded-xl bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md border border-white/20">
+                        <span class="text-white/90">Berakhir dalam:</span>
+                        <div class="flex items-center gap-1 font-mono text-xs font-bold text-white">
+                            <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.hours) }}</span>
+                            <span>:</span>
+                            <span class="rounded bg-white/25 px-1.5 py-0.5">{{ formatTwoDigits(timeLeft.minutes) }}</span>
+                            <span>:</span>
+                            <span class="rounded bg-[#ef3037] px-1.5 py-0.5 text-white shadow-sm">{{ formatTwoDigits(timeLeft.seconds) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Headline & Description -->
+                    <h2 class="mt-4 text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">
+                        Paket Trip Pilihan Harga Spesial!
+                    </h2>
+                    <p class="mt-2.5 text-xs leading-relaxed text-white/90 sm:text-sm">
+                        Diskon liburan terbatas hingga 36% untuk Open Trip dan Private Trip pilihan dengan kuota promo terbatas.
+                    </p>
+
+                    <!-- CTA Link (Directly below description) -->
+                    <div class="mt-5">
                         <Link
                             :href="typeof route === 'function' ? route('catalog') : '/jelajah'"
-                            class="inline-flex items-center gap-2.5 rounded-lg bg-white px-5 py-3 text-sm font-bold text-[#175a9f] shadow-md transition duration-200 hover:bg-[#e9f1ff] active:scale-95"
+                            class="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-xs font-bold text-[#175a9f] shadow-md transition duration-200 hover:bg-[#e9f1ff] active:scale-95 sm:text-sm"
                         >
                             <span>Lihat Semua Promo Trip</span>
-                            <ArrowRight class="size-4" />
+                            <ArrowRight class="size-3.5 sm:size-4" />
                         </Link>
                     </div>
                 </div>
 
-                <!-- Right Column: Interactive Trip Cards Carousel -->
+                <!-- Right Column: Interactive Trip Cards Carousel (Fits 3 Full Cards) -->
                 <div
-                    class="relative min-w-0 bg-white/[0.04] px-5 pb-14 pt-6 sm:px-7"
+                    class="relative min-w-0 bg-white/[0.04] px-3 pb-13 pt-5 sm:px-5 sm:pb-14"
                     @mouseenter="stopAutoplay"
                     @mouseleave="startAutoplay"
                 >
                     <div
                         ref="carousel"
-                        class="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        class="flex snap-x snap-mandatory gap-2.5 overflow-x-auto scroll-smooth pb-3 pt-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                         @scroll="updateCurrentPage"
                     >
                         <div
                             v-for="trip in tripProducts"
                             :key="trip.id"
-                            class="shrink-0 snap-start pl-2.5 pr-0.5 pt-1 pb-1"
+                            class="shrink-0 snap-start pl-2 pr-0.5 pt-1 pb-1"
                         >
                             <article
-                                class="group relative flex h-[330px] w-[235px] flex-col justify-between rounded-[18px] bg-white shadow-[0_8px_20px_rgba(15,45,95,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_28px_rgba(15,45,95,0.25)]"
+                                class="group relative flex h-[315px] w-[212px] flex-col justify-between rounded-[16px] bg-white shadow-[0_6px_18px_rgba(15,45,95,0.16)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(15,45,95,0.22)]"
                             >
                                 <!-- 1:1 Red Bookmark Ribbon with Fold Triangle (100% Guaranteed Unclipped) -->
-                                <div class="absolute top-4 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
-                                    <div class="relative flex h-[24px] min-w-[50px] items-center justify-center rounded-r-[8px] bg-[#e52335] px-2.5">
-                                        <span class="text-[12px] font-black tracking-tight text-white leading-none">
+                                <div class="absolute top-3.5 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
+                                    <div class="relative flex h-[22px] min-w-[46px] items-center justify-center rounded-r-[7px] bg-[#e52335] px-2">
+                                        <span class="text-[11px] font-black tracking-tight text-white leading-none">
                                             {{ trip.discount }}
                                         </span>
                                         <!-- Ribbon Fold Triangle Underneath Left Edge -->
-                                        <span class="absolute -bottom-[8px] left-0 size-0 border-t-[8px] border-t-[#8f121d] border-l-[8px] border-l-transparent"></span>
+                                        <span class="absolute -bottom-[7px] left-0 size-0 border-t-[7px] border-t-[#8f121d] border-l-[7px] border-l-transparent"></span>
                                     </div>
                                 </div>
 
                                 <!-- Trip Card Image -->
-                                <div class="relative h-[155px] w-full overflow-hidden rounded-t-[18px] bg-slate-100">
+                                <div class="relative h-[142px] w-full overflow-hidden rounded-t-[16px] bg-slate-100">
                                     <img
                                         :src="trip.image"
                                         :alt="trip.title"
@@ -310,10 +308,10 @@ onBeforeUnmount(() => {
                                 </div>
 
                                 <!-- Trip Card Content -->
-                                <div class="flex flex-1 flex-col justify-between p-3.5 text-slate-700">
+                                <div class="flex flex-1 flex-col justify-between p-3 text-slate-700">
                                     <div>
                                         <!-- Duration & Slots Left -->
-                                        <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500">
+                                        <div class="flex items-center justify-between text-[9.5px] font-semibold text-slate-500">
                                             <div class="flex items-center gap-1">
                                                 <Clock class="size-3 text-slate-400" />
                                                 <span>{{ trip.duration }}</span>
@@ -324,37 +322,37 @@ onBeforeUnmount(() => {
                                         </div>
 
                                         <!-- Trip Title -->
-                                        <h3 class="mt-1.5 line-clamp-2 text-[13px] font-bold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors">
+                                        <h3 class="mt-1 line-clamp-2 text-[12px] font-bold leading-snug text-slate-900 group-hover:text-blue-600 transition-colors">
                                             {{ trip.title }}
                                         </h3>
                                     </div>
 
                                     <!-- Pricing & Booking Button -->
-                                    <div class="mt-2.5 border-t border-slate-100 pt-2.5">
+                                    <div class="mt-2 border-t border-slate-100 pt-2">
                                         <div class="flex items-baseline justify-between">
-                                            <span class="text-[10px] font-medium text-slate-400">Harga Flash Sale</span>
-                                            <div class="flex items-center gap-1 text-[10px] text-amber-500">
-                                                <Star class="size-3 fill-amber-400 text-amber-400" />
+                                            <span class="text-[9.5px] font-medium text-slate-400">Harga Flash Sale</span>
+                                            <div class="flex items-center gap-1 text-[9.5px] text-amber-500">
+                                                <Star class="size-2.5 fill-amber-400 text-amber-400" />
                                                 <span class="font-bold text-slate-700">{{ trip.rating }}</span>
                                             </div>
                                         </div>
 
                                         <div class="mt-0.5 flex items-center justify-between gap-1">
                                             <div>
-                                                <p class="text-sm font-extrabold leading-none text-[#ef3037]">
+                                                <p class="text-[13px] font-extrabold leading-none text-[#ef3037]">
                                                     {{ trip.price }}
                                                 </p>
-                                                <p class="mt-0.5 text-[10px] text-slate-400 line-through">
+                                                <p class="mt-0.5 text-[9.5px] text-slate-400 line-through">
                                                     {{ trip.originalPrice }}
                                                 </p>
                                             </div>
 
                                             <Link
                                                 :href="getTripUrl(trip)"
-                                                class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
+                                                class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
                                             >
                                                 <span>Pesan</span>
-                                                <ArrowRight class="size-3" />
+                                                <ArrowRight class="size-2.5" />
                                             </Link>
                                         </div>
                                     </div>
