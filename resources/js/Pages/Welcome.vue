@@ -7,6 +7,7 @@ import PartnerTrips from '../Components/Home/PartnerTrips.vue';
 import DestinationGallery from '../Components/Home/DestinationGallery.vue';
 import BookingSteps from '../Components/Home/BookingSteps.vue';
 import TrustedPartners from '../Components/Home/TrustedPartners.vue';
+import AffiliateBanner from '../Components/Home/AffiliateBanner.vue';
 import TravelBlog from '../Components/Home/TravelBlog.vue';
 import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
@@ -106,6 +107,7 @@ const reviewsLoading = false;
             <DestinationGallery :tours="virtualTours" />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />
             <TrustedPartners :partners="cmsPartners" />
+            <AffiliateBanner />
             <TravelBlog :items="cmsArticles" />
             <div class="relative isolate flow-root pb-10 sm:pb-14">
                 <TravelBackdrop variant="stories" />
