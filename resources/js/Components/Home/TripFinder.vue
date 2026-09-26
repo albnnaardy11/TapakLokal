@@ -32,6 +32,14 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    showServiceTabs: {
+        type: Boolean,
+        default: true,
+    },
+    initialCategory: {
+        type: String,
+        default: '',
+    },
 });
 
 const defaultPartners = [
@@ -131,7 +139,7 @@ onBeforeUnmount(() => {
 
 // Trip Form States
 const tripLocation = ref('');
-const tripCategory = ref('');
+const tripCategory = ref(props.initialCategory || '');
 const tripDate = ref('');
 const tripDateInput = ref(null);
 const adultCount = ref(2);
@@ -321,7 +329,7 @@ const searchSouvenirs = () => {
 <template>
     <div class="w-full max-w-[1180px] mx-auto" aria-label="Pencarian Perjalanan dan Oleh-Oleh">
         <!-- 1. Top Service Tabs (Traveloka Style) -->
-        <div class="flex items-center gap-2 sm:gap-3 border-b-2 border-white/80 pb-3.5 overflow-x-auto no-scrollbar">
+        <div v-if="showServiceTabs" class="flex items-center gap-2 sm:gap-3 border-b-2 border-white/80 pb-3.5 overflow-x-auto no-scrollbar">
             <button
                 type="button"
                 class="inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs sm:text-sm font-bold transition-all duration-200"
@@ -360,7 +368,7 @@ const searchSouvenirs = () => {
         </div>
 
         <!-- 2. Sub-Category Filter Pills (Traveloka Style) -->
-        <div v-if="activeTab === 'trip'" class="mt-3.5 flex flex-wrap items-center gap-2">
+        <div v-if="activeTab === 'trip'" class="flex flex-wrap items-center gap-2" :class="showServiceTabs ? 'mt-3.5' : ''">
             <button
                 v-for="opt in tripCategoryOptions"
                 :key="opt.id"
@@ -732,7 +740,7 @@ const searchSouvenirs = () => {
         </p>
 
         <!-- 5. Trusted By / Dipercayai Oleh Bar (Compact Fit Content, Dynamic 2 -> 4 -> 3 -> 1 Logos) -->
-        <div v-if="displayPartners.length > 0" class="mt-5 flex justify-center w-full">
+        <div v-if="displayPartners.length > 0" class="mt-6 sm:mt-8 flex justify-center w-full">
             <div
                 class="inline-flex items-center justify-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl bg-white/95 px-4 sm:px-6 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md transition-all duration-500 ease-out"
             >
