@@ -34,8 +34,7 @@ const move = (direction) => {
         <div class="pointer-events-none absolute -right-12 -top-20 -z-10 size-64 rounded-full bg-sky-100/70 blur-3xl" aria-hidden="true"></div>
         <div class="flex flex-wrap items-end justify-between gap-5">
             <div class="max-w-2xl">
-                <span class="text-[10px] font-bold tracking-[0.12em] text-[#078cff]">CERITA SELEPAS PERJALANAN</span>
-                <h2 id="traveler-reviews-heading" class="mt-2 text-2xl font-extrabold leading-tight tracking-tight text-[#172c50] sm:text-3xl">Pulang membawa kenangan.<br class="hidden sm:block" /><span class="text-[#078cff]">Berbagi cerita di sini.</span></h2>
+                <h2 id="traveler-reviews-heading" class="text-2xl font-extrabold leading-tight tracking-tight text-[#172c50] sm:text-3xl">Pulang membawa kenangan.<br class="hidden sm:block" /><span class="text-[#078cff]">Berbagi cerita di sini.</span></h2>
                 <p class="mt-3 text-sm leading-6 text-slate-500">Sudut pandang traveler tentang destinasi, teman baru, dan pengalaman lokal.</p>
             </div>
             <div class="flex items-center gap-2">
@@ -66,6 +65,5 @@ const move = (direction) => {
                 </figcaption>
             </figure>
         </div>
-        <p v-if="reviews.some(review => review.demo)" class="mt-2 text-[10px] text-slate-400">Pratinjau desain · Nama, rating, dan ulasan di atas adalah contoh.</p>
     </section>
 </template>

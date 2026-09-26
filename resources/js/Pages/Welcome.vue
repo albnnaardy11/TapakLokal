@@ -80,7 +80,7 @@ const reviewsLoading = false;
         </section>
 
         <!-- Main Content Area with uniform 1180px width -->
-        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-8 sm:px-6 sm:pt-10 lg:px-0 lg:pt-12">
+        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-10 pt-8 sm:px-6 sm:pt-10 sm:pb-14 lg:px-0 lg:pt-12">
             <!-- Promo Banner Directly Below Hero -->
             <section class="w-full mb-12 sm:mb-16">
                 <Link
@@ -110,7 +110,7 @@ const reviewsLoading = false;
             <TrustedPartners :partners="cmsPartners" />
             <AffiliateBanner />
             <TravelBlog :items="cmsArticles" />
-            <div class="relative isolate flow-root pb-10 sm:pb-14">
+            <div class="relative isolate flow-root">
                 <TravelBackdrop variant="stories" />
                 <TravelFaq :questions="cmsFaqs" />
                 <TravelerReviews :reviews="[...(Array.isArray(travelerReviews) ? travelerReviews : Object.values(travelerReviews || {})), ...(Array.isArray(cmsTestimonials) ? cmsTestimonials : Object.values(cmsTestimonials || {}))]" />

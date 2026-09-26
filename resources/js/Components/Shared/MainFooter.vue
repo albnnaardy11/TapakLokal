@@ -2,10 +2,21 @@
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { Mail, CheckCircle, Handshake } from 'lucide-vue-next';
+import { Mail, CheckCircle, Handshake, Wallet } from 'lucide-vue-next';
 
 const email = ref('');
 const isSubscribed = ref(false);
+const failedPaymentLogos = ref({});
+
+const paymentPartners = [
+    { id: 'wallet', name: 'Tapak Lokal Wallet', isWallet: true },
+    { id: 'gopay', name: 'GoPay', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/GoPay%20logo.svg' },
+    { id: 'ovo', name: 'OVO', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20ovo%20purple.svg' },
+    { id: 'indomaret', name: 'Indomaret', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Indomaret.svg' },
+    { id: 'alfamart', name: 'Alfamart', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Alfamart%20logo.svg' },
+    { id: 'mandiri', name: 'Mandiri', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bank%20Mandiri%20logo%202016.svg' },
+    { id: 'bca', name: 'BCA', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bank%20Central%20Asia.svg' },
+];
 
 const handleSubscribe = () => {
     if (!email.value || !email.value.includes('@')) return;
@@ -92,29 +103,50 @@ function safeRoute(name, params) {
                             </Link>
                         </div>
 
-                        <!-- Payment Partners -->
+                        <!-- Payment Partners (7 Metode Pembayaran Sesuai Account Settings) -->
                         <div class="mt-7">
                             <h4 class="text-xs font-bold text-white tracking-wide">Payment Partners</h4>
-                            <div class="mt-3 flex flex-wrap items-center gap-2">
-                                <!-- Mastercard -->
-                                <div class="flex h-7 w-11 items-center justify-center rounded bg-white shadow-xs" title="Mastercard">
-                                    <div class="flex items-center -space-x-1.5">
-                                        <div class="size-3.5 rounded-full bg-[#eb001b]"></div>
-                                        <div class="size-3.5 rounded-full bg-[#f79e1b] opacity-80"></div>
+                            <div class="mt-3 flex flex-wrap items-center gap-2 max-w-[280px]">
+                                <div
+                                    v-for="partner in paymentPartners"
+                                    :key="partner.id"
+                                    class="flex h-7 w-[52px] items-center justify-center rounded bg-white px-1.5 py-0.5 shadow-xs transition hover:scale-105"
+                                    :title="partner.name"
+                                >
+                                    <!-- Tapak Lokal Wallet -->
+                                    <div v-if="partner.isWallet" class="flex items-center gap-1">
+                                        <Wallet class="size-3 text-[#0194f3]" />
+                                        <span class="text-[8.5px] font-black text-[#032454] leading-none">Wallet</span>
                                     </div>
+
+                                    <!-- Brand Logo Image with Error Fallback -->
+                                    <img
+                                        v-else-if="partner.logo && !failedPaymentLogos[partner.id]"
+                                        :src="partner.logo"
+                                        :alt="partner.name"
+                                        class="max-h-4.5 max-w-full object-contain"
+                                        loading="lazy"
+                                        @error="failedPaymentLogos[partner.id] = true"
+                                    />
+
+                                    <!-- Fallback Brand Text -->
+                                    <span v-else class="text-[8.5px] font-black uppercase tracking-tight text-[#032454]">
+                                        {{ partner.name }}
+                                    </span>
                                 </div>
-                                <!-- VISA -->
-                                <div class="flex h-7 w-11 items-center justify-center rounded bg-white shadow-xs" title="VISA">
-                                    <span class="text-[11px] font-black italic tracking-tighter text-[#1a1f71]">VISA</span>
-                                </div>
-                                <!-- PayPal -->
-                                <div class="flex h-7 w-11 items-center justify-center rounded bg-white shadow-xs" title="PayPal">
-                                    <span class="text-[11px] font-black italic text-[#003087]">Pay<span class="text-[#0079c1]">Pal</span></span>
-                                </div>
-                                <!-- QRIS / BCA -->
-                                <div class="flex h-7 w-11 items-center justify-center rounded bg-white shadow-xs" title="QRIS / Bank Transfer">
-                                    <span class="text-[9px] font-black tracking-tight text-[#005fb8]">QRIS</span>
-                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Support by Section -->
+                        <div class="mt-7 w-full max-w-[280px]">
+                            <p class="text-xs font-medium text-slate-300 text-center mb-2.5">Support by:</p>
+                            <div class="overflow-hidden rounded-2xl bg-white p-2.5 sm:p-3 shadow-xs transition hover:shadow-md">
+                                <img
+                                    src="/Assets/Images/suport/logo.webp"
+                                    alt="Support by Infra Competition, Jagoan Hosting, Komdigi, Maspion IT, Garuda Spark, Ngalup.co"
+                                    class="w-full h-auto object-contain"
+                                    loading="lazy"
+                                />
                             </div>
                         </div>
                     </div>

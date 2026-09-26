@@ -61,7 +61,7 @@ const heroTitle = computed(() => {
         </section>
 
         <!-- Main Content Area with uniform 1180px width -->
-        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-0">
+        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-12 pt-4 sm:px-6 sm:pt-6 sm:pb-14 lg:px-0">
             <!-- Section Open Trip / Private Trip Directly Under Hero -->
             <TripOptions class="!mt-0" />
         </main>
