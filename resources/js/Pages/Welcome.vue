@@ -5,7 +5,6 @@ import TripFinder from '../Components/Home/TripFinder.vue';
 import DestinationExplore from '../Components/Home/DestinationExplore.vue';
 import PartnerTrips from '../Components/Home/PartnerTrips.vue';
 import DestinationGallery from '../Components/Home/DestinationGallery.vue';
-import WhyChooseUs from '../Components/Home/WhyChooseUs.vue';
 import BookingSteps from '../Components/Home/BookingSteps.vue';
 import TrustedPartners from '../Components/Home/TrustedPartners.vue';
 import TravelBlog from '../Components/Home/TravelBlog.vue';
@@ -105,7 +104,6 @@ const reviewsLoading = false;
                 <PartnerTrips :items="featuredTrips" />
             </div>
             <DestinationGallery :tours="virtualTours" />
-            <WhyChooseUs />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />
             <TrustedPartners :partners="cmsPartners" />
             <TravelBlog :items="cmsArticles" />

@@ -1087,28 +1087,24 @@
   ],
   "partners": [
     {
-      "name": "Badan Gizi Nasional",
-      "image": "https://placehold.co/360x128/f5f7fb/183a65?text=Badan+Gizi+Nasional"
+      "name": "Millennium Hotels and Resorts",
+      "image": "/Assets/Images/partners/partner-1.svg"
     },
     {
-      "name": "BPJS Kesehatan",
-      "image": "https://placehold.co/360x128/f5f7fb/159c59?text=BPJS+Kesehatan"
+      "name": "ALL - Accor Live Limitless",
+      "image": "/Assets/Images/partners/partner-2.svg"
     },
     {
-      "name": "Epson",
-      "image": "https://placehold.co/360x128/f5f7fb/151515?text=EPSON"
+      "name": "Archipelago",
+      "image": "/Assets/Images/partners/partner-3.svg"
     },
     {
-      "name": "Koperasi Desa Merah Putih",
-      "image": "https://placehold.co/360x128/f5f7fb/ce2437?text=KOP+DES"
+      "name": "IHG Hotels & Resorts",
+      "image": "/Assets/Images/partners/partner-4.svg"
     },
     {
-      "name": "Grab",
-      "image": "https://placehold.co/360x128/f5f7fb/00b14f?text=Grab"
-    },
-    {
-      "name": "Pertamina",
-      "image": "https://placehold.co/360x128/f5f7fb/242424?text=PERTAMINA"
+      "name": "Ascott The Residence",
+      "image": "/Assets/Images/partners/partner-5.svg"
     }
   ],
   "faqs": [
