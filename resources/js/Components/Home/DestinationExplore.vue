@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { ArrowRight, Compass } from 'lucide-vue-next';
+import { ArrowRight } from 'lucide-vue-next';
 import DestinationCard from './DestinationCard.vue';
 
 const props = defineProps({
@@ -25,15 +25,9 @@ const open = (item) => router.visit(route('content.show', item.slug));
 
 <template>
     <section class="mx-auto mt-0 max-w-[1180px]" aria-labelledby="destinations-heading">
-        <!-- Header with Badge, Icon, Subtitle, and Link -->
+        <!-- Header with Title, Subtitle, and Link -->
         <div class="mb-5 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 px-1">
             <div>
-                <!-- Category Pill Badge -->
-                <div class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 border border-sky-100 px-3 py-1 text-[11px] sm:text-xs font-bold text-[#0088ff] mb-2 shadow-xs">
-                    <Compass class="size-3.5 text-[#0088ff]" />
-                    <span>Destinasi Pilihan</span>
-                </div>
-
                 <!-- Main Heading with Accent Color -->
                 <h2
                     id="destinations-heading"
