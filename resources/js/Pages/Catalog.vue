@@ -35,8 +35,8 @@ const heroTitle = computed(() => {
         <!-- Main Navigation with transparent hero integration at top -->
         <MainNavigation :transparent-on-top="true" />
 
-        <!-- Full-Width Edge-to-Edge Hero Section (Exact Height & Proportions Matched with Homepage) -->
-        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white min-h-[520px] sm:min-h-[540px] lg:min-h-[560px]">
+        <!-- Full-Width Edge-to-Edge Hero Section (Clean & Proportional) -->
+        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white">
             <!-- Full Width Background Image -->
             <img
                 src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=88"
@@ -45,10 +45,10 @@ const heroTitle = computed(() => {
             />
             <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(8,24,50,0.45)_0%,rgba(12,32,62,0.30)_40%,rgba(10,22,40,0.82)_100%)] pointer-events-none"></div>
 
-            <!-- Centered Hero Content Container (Proportional Spacing) -->
-            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-7 sm:px-6 sm:pt-36 sm:pb-8 lg:px-0 lg:pt-40 lg:pb-10 flex flex-col items-center justify-center">
+            <!-- Centered Hero Content Container (Tight & Proportional) -->
+            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-4 sm:px-6 sm:pt-36 sm:pb-5 lg:px-0 lg:pt-36 lg:pb-6 flex flex-col items-center justify-center">
                 <!-- Hero Title (Elevated with balanced proportional spacing above search) -->
-                <div class="max-w-3xl text-center text-white drop-shadow-md mb-10 sm:mb-12 lg:mb-14">
+                <div class="max-w-3xl text-center text-white drop-shadow-md mb-8 sm:mb-10 lg:mb-11">
                     <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
                         {{ heroTitle }}
                     </h1>
@@ -60,7 +60,7 @@ const heroTitle = computed(() => {
         </section>
 
         <!-- Main Content Area with uniform 1180px width -->
-        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-8 sm:px-6 sm:pt-10 lg:px-0">
+        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-0">
             <!-- Section Open Trip / Private Trip Directly Under Hero -->
             <TripOptions class="!mt-0" />
         </main>

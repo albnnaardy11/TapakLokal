@@ -54,7 +54,7 @@ const reviewsLoading = false;
         <MainNavigation :transparent-on-top="true" />
 
         <!-- Full-Width Edge-to-Edge Hero Section -->
-        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white min-h-[520px] sm:min-h-[540px] lg:min-h-[560px]">
+        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white">
             <!-- Full Width Background Image -->
             <img
                 :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88'"
@@ -65,7 +65,7 @@ const reviewsLoading = false;
             <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(8,24,50,0.45)_0%,rgba(12,32,62,0.30)_40%,rgba(10,22,40,0.82)_100%)] pointer-events-none"></div>
 
             <!-- Centered Hero Content Container -->
-            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-7 sm:px-6 sm:pt-36 sm:pb-8 lg:px-0 lg:pt-40 lg:pb-10 flex flex-col items-center justify-center">
+            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-4 sm:px-6 sm:pt-36 sm:pb-5 lg:px-0 lg:pt-36 lg:pb-6 flex flex-col items-center justify-center">
                 <!-- Hero Title -->
                 <div class="max-w-3xl text-center text-white drop-shadow-md mb-4 sm:mb-5">
                     <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
@@ -79,7 +79,7 @@ const reviewsLoading = false;
         </section>
 
         <!-- Main Content Area with uniform 1180px width -->
-        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-6 sm:px-6 sm:pt-8 lg:px-0">
+        <main class="relative isolate mx-auto max-w-[1180px] px-4 pb-28 pt-8 sm:px-6 sm:pt-10 lg:px-0 lg:pt-12">
             <!-- Promo Banner Directly Below Hero -->
             <section class="w-full mb-12 sm:mb-16">
                 <Link

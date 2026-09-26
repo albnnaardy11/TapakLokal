@@ -232,8 +232,8 @@ const searchMessage = ref('');
 const tripCategoryOptions = [
     {
         id: '',
-        title: 'Semua Kategori',
-        icon: Compass,
+        title: 'All',
+        icon: null,
     },
     {
         id: 'open-trip',
@@ -256,8 +256,8 @@ const selectedTripCategoryLabel = computed(() => {
 const souvenirCategoryOptions = [
     {
         id: '',
-        title: 'Semua Kategori',
-        icon: Sparkles,
+        title: 'All',
+        icon: null,
     },
     {
         id: 'makanan',
@@ -283,7 +283,7 @@ const souvenirCategoryOptions = [
 
 const selectedSouvenirCategoryLabel = computed(() => {
     const found = souvenirCategoryOptions.find((o) => o.id === souvenirCategory.value);
-    return found && found.id ? found.title : 'Semua Kategori';
+    return found && found.id ? found.title : 'All';
 });
 
 const selectDestination = (name) => {
@@ -381,7 +381,7 @@ const searchSouvenirs = () => {
                 "
                 @click="tripCategory = opt.id"
             >
-                <component :is="opt.icon" class="size-3.5 shrink-0" />
+                <component :is="opt.icon" v-if="opt.icon" class="size-3.5 shrink-0" />
                 <span>{{ opt.title }}</span>
             </button>
         </div>
@@ -399,7 +399,7 @@ const searchSouvenirs = () => {
                 "
                 @click="souvenirCategory = opt.id"
             >
-                <component :is="opt.icon" class="size-3.5 shrink-0" />
+                <component :is="opt.icon" v-if="opt.icon" class="size-3.5 shrink-0" />
                 <span>{{ opt.title }}</span>
             </button>
         </div>
@@ -740,7 +740,7 @@ const searchSouvenirs = () => {
         </p>
 
         <!-- 5. Trusted By / Dipercayai Oleh Bar (Compact Fit Content, Dynamic 2 -> 4 -> 3 -> 1 Logos) -->
-        <div v-if="displayPartners.length > 0" class="mt-6 sm:mt-8 flex justify-center w-full">
+        <div v-if="displayPartners.length > 0" class="mt-4 sm:mt-5 flex justify-center w-full">
             <div
                 class="inline-flex items-center justify-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl bg-white/95 px-4 sm:px-6 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md transition-all duration-500 ease-out"
             >
