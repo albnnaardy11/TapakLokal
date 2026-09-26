@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import { ArrowRight, TrendingUp, Share2, Wallet, CheckCircle2 } from 'lucide-vue-next';
+import { ArrowRight, TrendingUp, Share2, Wallet, CheckCircle2, Sparkles } from 'lucide-vue-next';
 
 defineProps({
     linkHref: {
@@ -14,9 +14,9 @@ defineProps({
     <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24 px-4 sm:px-6 lg:px-0" aria-labelledby="affiliate-banner-heading">
         <!-- Container dengan Traveloka Signature Mesh Gradient & Luxury Glass Border -->
         <div class="traveloka-gradient relative overflow-hidden rounded-3xl border border-white/20 border-t-white/40 p-7 sm:p-10 lg:p-12 shadow-[0_20px_50px_rgba(1,117,234,0.25)]">
-            <!-- Travel Vector Contour Lines (Tekstur Gelombang Kontur Khas Traveloka) -->
+            <!-- Travel Vector Contour Lines (Tekstur Gelombang Kontur & Flight Path) -->
             <svg
-                class="pointer-events-none absolute inset-0 size-full stroke-white/[0.08] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]"
+                class="pointer-events-none absolute inset-0 size-full stroke-white/[0.09] [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]"
                 viewBox="0 0 1180 380"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -26,9 +26,22 @@ defineProps({
                 <path d="M-80 90C160 40 320 220 580 150C840 80 1020 260 1260 180" stroke-width="1.8" stroke-dasharray="6 6" />
                 <path d="M-60 170C200 110 380 310 640 230C900 150 1080 340 1280 270" stroke-width="1.5" />
                 <path d="M-40 250C220 200 440 360 700 300C960 240 1120 380 1300 330" stroke-width="1.2" stroke-dasharray="4 4" />
-                <circle cx="580" cy="150" r="4" fill="white" fill-opacity="0.2" />
-                <circle cx="640" cy="230" r="5" fill="white" fill-opacity="0.25" />
-                <circle cx="1020" cy="260" r="3.5" fill="white" fill-opacity="0.2" />
+                
+                <!-- Destination Waypoint Dots -->
+                <circle cx="580" cy="150" r="4.5" fill="white" fill-opacity="0.35" />
+                <circle cx="640" cy="230" r="5" fill="white" fill-opacity="0.3" />
+                <circle cx="1020" cy="260" r="4" fill="white" fill-opacity="0.25" />
+            </svg>
+
+            <!-- Decorative Twinkle Stars / Sparkles di Background -->
+            <svg class="pointer-events-none absolute top-8 left-1/3 size-6 text-white/30 animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z"/>
+            </svg>
+            <svg class="pointer-events-none absolute bottom-12 left-1/4 size-4 text-white/20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z"/>
+            </svg>
+            <svg class="pointer-events-none absolute top-12 right-12 size-5 text-cyan-200/35 animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z"/>
             </svg>
 
             <!-- Multi-Point Ambient Lighting (Ciri Khas Depth Visual Platform Traveloka) -->
@@ -80,9 +93,31 @@ defineProps({
                     </div>
                 </div>
 
-                <!-- Kolom Kanan: Mockup Tablet / iPad Showcase -->
+                <!-- Kolom Kanan: Mockup Tablet / iPad Showcase dengan Floating Badges -->
                 <div class="flex justify-center lg:col-span-5 lg:justify-end">
                     <div class="relative w-full max-w-[420px] transition-transform duration-300 hover:scale-[1.02]">
+                        <!-- Floating Badge 1: Notifikasi Pencairan Komisi (Kiri Atas) -->
+                        <div class="pointer-events-none absolute -top-3.5 -left-4 z-20 hidden sm:flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/95 px-3 py-2 shadow-[0_12px_24px_rgba(0,30,80,0.2)] backdrop-blur-md">
+                            <div class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-xs">
+                                <CheckCircle2 class="size-4" />
+                            </div>
+                            <div class="pr-1 text-left">
+                                <p class="text-[10px] font-extrabold text-slate-800 leading-none">Komisi Baru!</p>
+                                <p class="mt-1 text-[9px] font-bold text-emerald-600 leading-none">+Rp 250.000 Masuk</p>
+                            </div>
+                        </div>
+
+                        <!-- Floating Badge 2: Link Referral (Kanan Bawah) -->
+                        <div class="pointer-events-none absolute -bottom-3 -right-3 z-20 hidden sm:flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/95 px-3 py-2 shadow-[0_12px_24px_rgba(0,30,80,0.2)] backdrop-blur-md">
+                            <div class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#0175ea] text-white shadow-xs">
+                                <Share2 class="size-3.5 text-white" />
+                            </div>
+                            <div class="pr-1 text-left">
+                                <p class="text-[10px] font-extrabold text-slate-800 leading-none">Link Referral</p>
+                                <p class="mt-1 text-[9px] font-bold text-[#0175ea] leading-none">Siap Dibagikan</p>
+                            </div>
+                        </div>
+
                         <!-- Tablet Frame Outer Bezel -->
                         <div class="relative overflow-hidden rounded-[26px] border-[6px] border-[#0a1122] bg-[#0a1122] shadow-[0_25px_50px_-12px_rgba(0,12,38,0.55)]">
                             <!-- Camera Notch / Dot -->

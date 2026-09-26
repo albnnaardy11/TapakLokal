@@ -31,7 +31,7 @@ class PublicContentService
             'cmsPartners' => Partner::where('status', 'published')->orderBy('position')->orderBy('id')->limit(30)->get(['id', 'name', 'image_url', 'website_url'])->toArray(),
             'cmsFaqs' => Faq::where('status', 'published')->orderBy('position')->orderBy('id')->limit(30)->get(['id', 'question', 'answer'])->toArray(),
             'cmsSections' => $this->published('homepage')->orderBy('position')->orderBy('id')->limit(10)->get(['id', 'title', 'slug', 'excerpt', 'image_url'])->toArray(),
-            'cmsArticles' => $this->published('blog')->orderBy('position')->orderBy('id')->limit(6)->get(['id', 'title', 'slug', 'category', 'excerpt', 'image_url', 'published_at'])->toArray(),
+            'cmsArticles' => $this->published('blog')->orderBy('position')->orderBy('id')->limit(6)->get(['id', 'title', 'slug', 'category', 'excerpt', 'image_url', 'metadata', 'published_at'])->toArray(),
             'cmsDestinations' => $this->published('destination')->orderBy('position')->orderBy('id')->limit(7)->get(['id', 'title', 'slug', 'excerpt', 'image_url'])->toArray(),
             'cmsTestimonials' => $this->published('testimonial')->orderBy('position')->orderBy('id')->limit(8)->get()->map(fn ($page) => ['id' => 'cms-'.$page->id, 'user' => ['name' => $page->title], 'trip' => ['title' => $page->excerpt], 'body' => $page->body, 'rating' => 5, 'highlight' => $page->metadata['highlight'] ?? '', 'demo' => true])->values()->all(),
             'virtualTours' => VirtualTour::visible()->where('placement', 'homepage')->orderBy('position')->orderBy('id')->limit(12)->get()->map(fn ($tour) => $tour->presentation())->values()->all(),
