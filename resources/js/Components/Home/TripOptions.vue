@@ -35,7 +35,7 @@ const tripOptions = [
 
 <template>
     <section
-        class="mx-auto mt-28 max-w-[1180px] sm:mt-32 lg:mt-36"
+        class="mx-auto mt-8 max-w-[1180px] sm:mt-12 lg:mt-14"
         aria-labelledby="trip-options-heading"
         :aria-busy="isLoading"
     >

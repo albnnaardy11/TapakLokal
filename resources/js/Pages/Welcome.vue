@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import TripFinder from '../Components/Home/TripFinder.vue';
 import TripOptions from '../Components/Home/TripOptions.vue';
@@ -47,7 +47,9 @@ const reviewsLoading = false;
 </script>
 
 <template>
-    <Head :title="appName" />
+    <Head :title="appName">
+        <link rel="preload" as="image" href="/Assets/Images/benner/Benner-17an.svg" type="image/svg+xml" fetchpriority="high" />
+    </Head>
 
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-slate-900">
         <!-- Main Navigation with transparent hero integration at top -->
@@ -65,7 +67,7 @@ const reviewsLoading = false;
             <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(8,24,50,0.45)_0%,rgba(12,32,62,0.30)_40%,rgba(10,22,40,0.82)_100%)] pointer-events-none"></div>
 
             <!-- Centered Hero Content Container -->
-            <div class="relative z-10 mx-auto max-w-[1240px] px-4 pt-28 pb-5 sm:px-8 sm:pt-32 sm:pb-6 lg:px-10 lg:pt-34 lg:pb-7 flex flex-col items-center justify-center">
+            <div class="relative z-10 mx-auto max-w-[1240px] px-4 pt-36 pb-5 sm:px-8 sm:pt-40 sm:pb-6 lg:px-10 lg:pt-44 lg:pb-7 flex flex-col items-center justify-center">
                 <!-- Hero Title -->
                 <div class="max-w-3xl text-center text-white drop-shadow-md mb-4 sm:mb-5">
                     <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
@@ -78,16 +80,32 @@ const reviewsLoading = false;
             </div>
         </section>
 
-        <main class="relative isolate mx-auto max-w-[1440px] px-4 pb-28 pt-8 sm:px-8 sm:pt-10 lg:px-10">
+        <!-- Promo Banner Directly Below Hero -->
+        <section class="mx-auto mt-6 max-w-[1180px] px-4 sm:mt-8 sm:px-8 lg:px-10">
+            <Link
+                href="/account/vouchers"
+                class="block overflow-hidden rounded-2xl border border-sky-100 bg-[#0088ff] shadow-[0_10px_24px_rgba(22,53,102,0.08)] transition-transform duration-200 hover:scale-[1.008]"
+            >
+                <img
+                    src="/Assets/Images/benner/Benner-17an.svg"
+                    alt="Promo spesial kemerdekaan TapakLokal"
+                    width="1531"
+                    height="351"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="sync"
+                    class="w-full h-auto aspect-[1531/351] object-cover block"
+                />
+            </Link>
+        </section>
+
+        <main class="relative isolate mx-auto max-w-[1440px] px-4 pb-28 pt-4 sm:px-8 sm:pt-6 lg:px-10">
             <TripOptions :is-loading="tripOptionsLoading" />
             <div class="relative isolate flow-root">
                 <TravelBackdrop />
                 <DestinationExplore :destinations="cmsDestinations" />
                 <PartnerTrips :items="featuredTrips" />
             </div>
-            <section class="mx-auto mt-20 max-w-[1180px] sm:mt-24">
-                <img src="/Assets/Images/benner/Benner-17an.svg" alt="Promo spesial kemerdekaan TapakLokal" class="w-full rounded-2xl border border-sky-100 shadow-[0_10px_24px_rgba(22,53,102,0.08)]" />
-            </section>
             <DestinationGallery :tours="virtualTours" />
             <WhyChooseUs />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />

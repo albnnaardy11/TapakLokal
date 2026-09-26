@@ -21,7 +21,7 @@ const notification = ref('');
 
 const isScrolled = ref(false);
 const handleScroll = () => {
-    isScrolled.value = window.scrollY > 30;
+    isScrolled.value = window.scrollY > 180;
 };
 
 onMounted(() => {
@@ -79,12 +79,12 @@ const openAuthModal = (mode) => {
 </script>
 
 <template>
-    <div :class="transparentOnTop && !isScrolled ? 'h-0' : 'h-[58px] lg:h-[102px]'">
+    <div :class="transparentOnTop ? 'h-0' : 'h-[58px] lg:h-[102px]'">
         <header
-            class="fixed inset-x-0 top-0 z-40 transition-all duration-300"
+            class="fixed inset-x-0 top-0 z-40 transition-all duration-500 ease-in-out"
             :class="
                 isTransparent
-                    ? 'bg-transparent text-white'
+                    ? 'bg-white/0 text-white shadow-none'
                     : 'bg-white/95 backdrop-blur-md text-slate-900 shadow-[0_4px_15px_rgba(15,44,92,0.08)]'
             "
         >
@@ -92,29 +92,29 @@ const openAuthModal = (mode) => {
                 <!-- Logo -->
                 <Link href="/" class="shrink-0 text-left" aria-label="TapakLokal beranda" @click="selectNavigation(navItems[0])">
                     <span
-                        class="text-[15px] font-extrabold tracking-[-0.07em] transition-colors"
+                        class="text-[15px] font-extrabold tracking-[-0.07em] transition-colors duration-500"
                         :class="isTransparent ? 'text-white' : 'text-slate-900'"
                     >
-                        tapa<span :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'">k</span>lokal
+                        tapa<span :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" class="transition-colors duration-500">k</span>lokal
                     </span>
                 </Link>
 
                 <!-- Desktop Right Nav -->
                 <div
-                    class="ml-auto hidden items-center gap-1 text-[11px] font-semibold transition-colors xl:flex"
+                    class="ml-auto hidden items-center gap-1 text-[11px] font-semibold transition-colors duration-500 xl:flex"
                     :class="isTransparent ? 'text-white/90' : 'text-slate-700'"
                 >
                     <!-- Locale Selector -->
                     <div class="relative">
                         <button
-                            class="flex h-8 items-center gap-1.5 rounded-lg px-2 transition"
-                            :class="isTransparent ? 'hover:bg-white/10 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
+                            class="flex h-8 items-center gap-1.5 rounded-lg px-2 transition-all duration-300"
+                            :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
                             @click="openPopover = openPopover === 'locale' ? null : 'locale'"
                         >
                             <FlagIcon :country="selectedLocale.flag" custom-class="h-3.5 w-5" />
                             <span>{{ selectedLocale.short }}</span>
                             <ChevronDown
-                                class="size-3 transition-transform duration-150"
+                                class="size-3 transition-all duration-300"
                                 :class="[
                                     isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]',
                                     { 'rotate-180': openPopover === 'locale' }
@@ -136,41 +136,41 @@ const openAuthModal = (mode) => {
                         </div>
                     </div>
 
-                    <span class="mx-1 h-5 w-px" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
+                    <span class="mx-1 h-5 w-px transition-colors duration-500" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
 
                     <button
-                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition"
-                        :class="isTransparent ? 'hover:bg-white/10 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
+                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
+                        :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
                         @click="router.visit(typeof route === 'function' ? route('account.section', 'vouchers') : '/account/vouchers')"
                     >
-                        <Bell class="size-3.5" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                        <Bell class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
                         Promo
                     </button>
 
                     <button
-                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition"
-                        :class="isTransparent ? 'hover:bg-white/10 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
+                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
+                        :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
                         @click="router.visit(typeof route === 'function' ? route(currentPage.props.auth?.permissions?.includes('admin.access') ? 'admin.dashboard' : currentPage.props.auth?.permissions?.includes('vendor.access') ? 'vendor.dashboard' : 'account.section', currentPage.props.auth?.permissions?.includes('admin.access') || currentPage.props.auth?.permissions?.includes('vendor.access') ? {} : 'support') : '/account')"
                     >
-                        <ShoppingBag class="size-3.5" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                        <ShoppingBag class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
                         Bisnis
-                        <ChevronDown class="size-3" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                        <ChevronDown class="size-3 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
                     </button>
 
                     <button
-                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition"
-                        :class="isTransparent ? 'hover:bg-white/10 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
+                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
+                        :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
                         @click="router.visit(typeof route === 'function' ? route('account.section', 'support') : '/account/support')"
                     >
-                        <CircleHelp class="size-3.5" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                        <CircleHelp class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
                         Bantuan
                     </button>
 
-                    <span class="mx-1 h-5 w-px" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
+                    <span class="mx-1 h-5 w-px transition-colors duration-500" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
 
                     <button
                         type="button"
-                        class="ml-2 rounded-lg px-3 py-2 text-xs font-bold transition"
+                        class="ml-2 rounded-lg px-3 py-2 text-xs font-bold transition-all duration-300"
                         :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
                         @click="openAuthModal('login')"
                     >
@@ -180,7 +180,7 @@ const openAuthModal = (mode) => {
                     <button
                         v-if="!currentPage.props.auth?.user"
                         type="button"
-                        class="rounded-lg px-3 py-2 text-xs font-bold text-white shadow-sm transition"
+                        class="rounded-lg px-3 py-2 text-xs font-bold text-white shadow-sm transition-all duration-300"
                         :class="isTransparent ? 'bg-[#0088ff] hover:bg-[#0074e0]' : 'bg-[#3E7BEF] hover:bg-[#2e69d9]'"
                         @click="openAuthModal('register')"
                     >
@@ -191,7 +191,7 @@ const openAuthModal = (mode) => {
                 <!-- Mobile Header Right -->
                 <button
                     type="button"
-                    class="ml-auto mr-2 min-h-9 rounded-lg px-2.5 text-xs font-bold transition xl:hidden"
+                    class="ml-auto mr-2 min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 xl:hidden"
                     :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'"
                     @click="openAuthModal('login')"
                 >
@@ -199,7 +199,7 @@ const openAuthModal = (mode) => {
                 </button>
 
                 <button
-                    class="rounded-lg p-2 transition xl:hidden"
+                    class="rounded-lg p-2 transition-all duration-300 xl:hidden"
                     :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
                     :aria-expanded="isMobileMenuOpen"
                     aria-label="Buka menu"
@@ -212,11 +212,11 @@ const openAuthModal = (mode) => {
 
             <!-- Secondary Nav Row (Desktop) -->
             <nav
-                class="hidden lg:block transition-all duration-300"
+                class="hidden lg:block transition-all duration-500 ease-in-out"
                 :class="
                     isTransparent
-                        ? 'bg-transparent'
-                        : 'bg-[#3E7BEF]'
+                        ? 'bg-[#3E7BEF]/0'
+                        : 'bg-[#3E7BEF] shadow-sm'
                 "
             >
                 <div class="mx-auto flex h-11 max-w-[1180px] items-center px-5 sm:px-8">
@@ -227,7 +227,7 @@ const openAuthModal = (mode) => {
                             :aria-current="activeNav === item.label ? 'page' : undefined"
                             v-for="item in navItems"
                             :key="item.label"
-                            class="relative flex h-8 items-center rounded-lg px-3 text-sm font-semibold transition-all duration-150"
+                            class="relative flex h-8 items-center rounded-lg px-3 text-sm font-semibold transition-all duration-200"
                             :class="
                                 isTransparent
                                     ? [
@@ -248,16 +248,16 @@ const openAuthModal = (mode) => {
 
                     <form class="ml-auto w-52" @submit.prevent="submitGlobalSearch">
                         <label
-                            class="flex h-7 items-center gap-1.5 rounded-full px-3 shadow-sm transition-all"
+                            class="flex h-7 items-center gap-1.5 rounded-full px-3 shadow-sm transition-all duration-500"
                             :class="isTransparent ? 'bg-white/15 text-white placeholder:text-white/70 ring-1 ring-white/25 hover:bg-white/25 focus-within:bg-white/30 focus-within:ring-white/50' : 'bg-white text-slate-400'"
                         >
                             <input
                                 v-model="globalSearch"
-                                class="min-w-0 flex-1 bg-transparent text-xs outline-none"
+                                class="min-w-0 flex-1 bg-transparent text-xs outline-none transition-colors duration-500"
                                 :class="isTransparent ? 'text-white placeholder:text-white/75' : 'text-slate-700 placeholder:text-slate-400'"
                                 placeholder="Cari destinasi atau trip"
                             />
-                            <Search class="size-3.5" :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'" />
+                            <Search class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'" />
                         </label>
                     </form>
                 </div>
