@@ -41,6 +41,7 @@ import {
     X,
     Zap,
 } from 'lucide-vue-next';
+import CatalogPromoSection from './CatalogPromoSection.vue';
 
 const props = defineProps({
     trips: {
@@ -1885,5 +1886,8 @@ const listingSectionTitle = computed(() => {
 
             </main>
         </div>
+
+        <!-- Explore Promos & Discount Coupons Section (Traveloka Inspired) -->
+        <CatalogPromoSection />
     </section>
 </template>
