@@ -45,6 +45,7 @@ Route::redirect('/help-center', '/bantuan');
 Route::redirect('/help', '/bantuan');
 
 Route::get('/pilihan-trip/{type}', [BookingController::class, 'tripType'])->whereIn('type', ['open-trip', 'private-trip'])->name('trips.category');
+Route::get('/mitra/{partner}', [BookingController::class, 'partner'])->name('partners.show');
 Route::redirect('/open-trip', '/pilihan-trip/open-trip');
 Route::redirect('/private-trip', '/pilihan-trip/private-trip');
 

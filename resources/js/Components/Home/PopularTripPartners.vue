@@ -521,12 +521,11 @@ const formatPrice = (value) => {
 
         <!-- 1:1 Flat Clean Logos Grid with Real Transparent .webp Vendor Logos -->
         <div class="mt-9 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-y-7 gap-x-4 sm:gap-x-6 min-h-[140px]">
-            <button
+            <Link
                 v-for="partner in filteredPartners"
                 :key="partner.id"
-                type="button"
-                class="group flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 hover:bg-slate-100/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0088ff] text-center animate-in fade-in zoom-in-95 duration-200 cursor-pointer"
-                @click="openVendorProfile(partner)"
+                :href="route('partners.show', { partner: partner.id })"
+                class="group flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 hover:bg-slate-100/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF] text-center animate-in fade-in zoom-in-95 duration-200 cursor-pointer"
             >
                 <!-- Clean Logo Emblem Graphic Container with Optical Balance -->
                 <div class="h-10 sm:h-12 w-full flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
@@ -539,10 +538,10 @@ const formatPrice = (value) => {
                 </div>
 
                 <!-- Brand Name Below Logo -->
-                <span class="mt-2 text-xs sm:text-[13px] font-medium text-slate-700 tracking-tight transition-colors group-hover:text-[#0088ff]">
+                <span class="mt-2 text-xs sm:text-[13px] font-medium text-slate-700 tracking-tight transition-colors group-hover:text-[#3E7BEF]">
                     {{ partner.name }}
                 </span>
-            </button>
+            </Link>
         </div>
 
         <!-- Interactive Modal: Vendor Profile & Destination List -->

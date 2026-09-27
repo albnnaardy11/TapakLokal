@@ -7,6 +7,7 @@ import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const props = defineProps({
     type: { type: String, default: 'open-trip' },
+    partner: { type: Object, default: () => null },
     filters: { type: Object, default: () => ({}) },
     cmsDestinations: { type: Array, default: () => [] },
     cmsFaqs: { type: Array, default: () => [] },
@@ -22,6 +23,9 @@ const filters = reactive({
 const isOpenTrip = computed(() => filters.type === 'open-trip');
 
 const pageTitle = computed(() => {
+    if (props.partner?.name) {
+        return `Pilihan Paket Trip ${props.partner.name} - TapakLokal`;
+    }
     if (isOpenTrip.value) {
         return 'Pilihan Paket Open Trip Hemat & Seru - TapakLokal';
     }
@@ -38,7 +42,7 @@ const pageTitle = computed(() => {
             <MainNavigation :transparent-on-top="false" />
 
             <!-- Daylight Sky Hero & Flight/Trip Style Multi-Field Search Bar (1:1 Reference Layout) -->
-            <CatalogSearchHero :initial-filters="filters" />
+            <CatalogSearchHero :initial-filters="filters" :partner="partner" />
         </div>
 
         <!-- Main Footer -->
