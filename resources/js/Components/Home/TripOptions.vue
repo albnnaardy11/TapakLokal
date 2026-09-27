@@ -84,7 +84,7 @@ const tripOptions = [
                     </span>
                     <h3 class="text-xl font-extrabold">{{ trip.title }}</h3>
                     <p class="mt-1.5 text-sm leading-relaxed text-white/85">{{ trip.description }}</p>
-                    <Link :href="route('catalog', { type: trip.id })" class="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[#1769aa] transition hover:bg-[#e9f1ff] focus:outline-none focus:ring-4 focus:ring-white/40">{{ trip.action }} <ArrowRight class="size-4" /></Link>
+                    <Link :href="route('trips.category', { type: trip.id })" class="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[#1769aa] transition hover:bg-[#e9f1ff] focus:outline-none focus:ring-4 focus:ring-white/40">{{ trip.action }} <ArrowRight class="size-4" /></Link>
                 </div>
             </article>
         </div>

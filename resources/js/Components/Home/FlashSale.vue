@@ -1,6 +1,7 @@
 <script setup>
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Star } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const carousel = ref(null);
@@ -49,7 +50,7 @@ const tripProducts = [
         discount: '36%',
         rating: '4.9',
         type: 'open-trip',
-        slug: 'open-trip-bromo',
+        slug: 'bromo',
         image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=640&q=85',
     },
     {
@@ -64,29 +65,29 @@ const tripProducts = [
         discount: '25%',
         rating: '4.95',
         type: 'open-trip',
-        slug: 'open-trip-pulau-komodo',
+        slug: 'komodo',
         image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=640&q=85',
     },
     {
         id: 3,
-        title: 'Private Trip Nusa Penida & Snorkeling',
+        title: 'Private Trip Labuan Bajo Eksklusif',
         category: 'Private Trip',
-        location: 'Nusa Penida, Bali',
-        duration: '2H 1M',
+        location: 'Labuan Bajo, NTT',
+        duration: '3H 2M',
         slotsLeft: 'Promo Eksklusif',
-        price: 'Rp 650.000',
-        originalPrice: 'Rp 950.000',
-        discount: '32%',
-        rating: '4.85',
+        price: 'Rp 3.250.000',
+        originalPrice: 'Rp 4.500.000',
+        discount: '28%',
+        rating: '4.98',
         type: 'private-trip',
-        slug: 'private-trip-nusa-penida',
-        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=640&q=85',
+        slug: 'labuan-bajo',
+        image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=640&q=85',
     },
     {
         id: 4,
-        title: 'Open Trip Dieng Golden Sunrise',
+        title: 'Open Trip Bali Snorkeling & Culture',
         category: 'Open Trip',
-        location: 'Wonosobo, Jawa Tengah',
+        location: 'Bali',
         duration: '2H 1M',
         slotsLeft: 'Sisa 4 Kursi',
         price: 'Rp 420.000',
@@ -94,14 +95,14 @@ const tripProducts = [
         discount: '30%',
         rating: '4.8',
         type: 'open-trip',
-        slug: 'open-trip-bromo',
-        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=640&q=85',
+        slug: 'bali',
+        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=640&q=85',
     },
     {
         id: 5,
-        title: 'Open Trip Derawan & Maratua Island',
+        title: 'Open Raja Ampat Adventure',
         category: 'Open Trip',
-        location: 'Berau, Kalimantan Timur',
+        location: 'Raja Ampat, Papua Barat',
         duration: '4H 3M',
         slotsLeft: 'Sisa 2 Kursi',
         price: 'Rp 2.100.000',
@@ -109,23 +110,23 @@ const tripProducts = [
         discount: '25%',
         rating: '4.9',
         type: 'open-trip',
-        slug: 'open-raja-ampat',
+        slug: 'raja-ampat',
         image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=640&q=85',
     },
     {
         id: 6,
-        title: 'Private Trip Pahawang Snorkeling',
-        category: 'Private Trip',
-        location: 'Pesawaran, Lampung',
+        title: 'Open Trip Tur Pulau Pramuka',
+        category: 'Open Trip',
+        location: 'Kepulauan Seribu, Jakarta',
         duration: '2H 1M',
         slotsLeft: 'Sisa 5 Kursi',
-        price: 'Rp 490.000',
-        originalPrice: 'Rp 700.000',
-        discount: '30%',
+        price: 'Rp 450.000',
+        originalPrice: 'Rp 550.000',
+        discount: '18%',
         rating: '4.85',
-        type: 'private-trip',
-        slug: 'open-trip-bromo',
-        image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=640&q=85',
+        type: 'open-trip',
+        slug: 'pulau-pramuka',
+        image: 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=640&q=85',
     },
 ];
 
@@ -181,7 +182,7 @@ const getTripUrl = (trip) => {
     } catch {
         // Fallback
     }
-    return typeof route === 'function' ? route('catalog', { type: trip.type }) : '/cari-trip';
+    return `/trips/${trip.type}/${trip.slug}`;
 };
 
 onMounted(() => {
@@ -283,8 +284,10 @@ onBeforeUnmount(() => {
                             :key="trip.id"
                             class="shrink-0 snap-start pl-2 pr-0.5 pt-1 pb-1"
                         >
-                            <article
-                                class="group relative flex h-[315px] w-[212px] flex-col justify-between rounded-[16px] bg-white shadow-[0_6px_18px_rgba(15,45,95,0.16)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(15,45,95,0.22)]"
+                            <Link
+                                :href="getTripUrl(trip)"
+                                class="group relative flex h-[315px] w-[212px] flex-col justify-between rounded-[16px] bg-white shadow-[0_6px_18px_rgba(15,45,95,0.16)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(15,45,95,0.22)] focus:outline-none focus:ring-2 focus:ring-blue-400 block cursor-pointer"
+                                :aria-label="`Buka detail ${trip.title}`"
                             >
                                 <!-- 1:1 Red Bookmark Ribbon with Fold Triangle (100% Guaranteed Unclipped) -->
                                 <div class="absolute top-3.5 -left-2 z-20 flex items-center pointer-events-none drop-shadow-md">
@@ -347,17 +350,16 @@ onBeforeUnmount(() => {
                                                 </p>
                                             </div>
 
-                                            <Link
-                                                :href="getTripUrl(trip)"
-                                                class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm transition hover:bg-[#125ca7] active:scale-95"
+                                            <span
+                                                class="inline-flex items-center gap-1 rounded-full bg-[#1875d1] px-2.5 py-1 text-[10px] font-bold text-white shadow-sm transition group-hover:bg-[#125ca7] active:scale-95"
                                             >
                                                 <span>Pesan</span>
                                                 <ArrowRight class="size-2.5" />
-                                            </Link>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                            </article>
+                            </Link>
                         </div>
                     </div>
 

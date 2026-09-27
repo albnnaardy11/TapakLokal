@@ -44,6 +44,10 @@ Route::get('/bantuan/{category}/{slug}', [HelpCenterController::class, 'article'
 Route::redirect('/help-center', '/bantuan');
 Route::redirect('/help', '/bantuan');
 
+Route::get('/pilihan-trip/{type}', [BookingController::class, 'tripType'])->whereIn('type', ['open-trip', 'private-trip'])->name('trips.category');
+Route::redirect('/open-trip', '/pilihan-trip/open-trip');
+Route::redirect('/private-trip', '/pilihan-trip/private-trip');
+
 Route::get('/trips/{tripType}/{trip}', [BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
 
 Route::get('/', [PublicContentController::class, 'home'])->name('home');

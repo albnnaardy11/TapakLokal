@@ -52,6 +52,37 @@ class BookingController extends Controller
         ]);
     }
 
+    public function tripType(Request $request, string $type): Response
+    {
+        abort_unless(in_array($type, ['open-trip', 'private-trip']), 404);
+
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'guests' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+        $filters['type'] = $type;
+
+        $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+            ->where('type', $type)
+            ->where('departure_date', '>=', today()->toDateString())
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
+            ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
+            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
+            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+
+        $homepageData = $this->content->homepage();
+
+        return Inertia::render('TripCategory', [
+            'type' => $type,
+            'trips' => $trips,
+            'filters' => $filters,
+            'cmsDestinations' => $homepageData['cmsDestinations'] ?? [],
+            'featuredTrips' => $homepageData['featuredTrips'] ?? [],
+            'cmsFaqs' => $homepageData['cmsFaqs'] ?? [],
+        ]);
+    }
+
     public function detail(string $tripType, string $trip): Response
     {
         $record = Trip::with('vendor:id,name')->where('type', $tripType)->where('slug', $trip)->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))->firstOrFail();
