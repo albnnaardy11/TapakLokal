@@ -1,7 +1,23 @@
 <script setup>
-import { Bell, ChevronDown, CircleHelp, Menu, Search, ShoppingBag, UsersRound, X } from 'lucide-vue-next';
+import {
+    BadgePercent,
+    Bell,
+    Briefcase,
+    Building2,
+    ChevronDown,
+    ChevronRight,
+    CircleHelp,
+    Handshake,
+    Menu,
+    Search,
+    ShoppingBag,
+    Store,
+    UsersRound,
+    X,
+} from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 
 import FlagIcon from './FlagIcon.vue';
 
@@ -162,15 +178,60 @@ const openAuthModal = (mode) => {
                         Promo
                     </button>
 
-                    <button
-                        class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
-                        :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
-                        @click="router.visit(typeof route === 'function' ? route(currentPage.props.auth?.permissions?.includes('admin.access') ? 'admin.dashboard' : currentPage.props.auth?.permissions?.includes('vendor.access') ? 'vendor.dashboard' : 'account.section', currentPage.props.auth?.permissions?.includes('admin.access') || currentPage.props.auth?.permissions?.includes('vendor.access') ? {} : 'support') : '/account')"
-                    >
-                        <ShoppingBag class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
-                        Bisnis
-                        <ChevronDown class="size-3 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
-                    </button>
+                    <!-- Bisnis Dropdown Popover (Mitra Vendor & Corporate B2B) -->
+                    <div class="relative">
+                        <button
+                            type="button"
+                            class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300 cursor-pointer"
+                            :class="[
+                                isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700',
+                                openPopover === 'business' ? (isTransparent ? 'bg-white/20' : 'bg-[#edf3ff] text-[#3E7BEF]') : ''
+                            ]"
+                            @click="openPopover = openPopover === 'business' ? null : 'business'"
+                        >
+                            <Briefcase class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                            <span>Bisnis</span>
+                            <ChevronDown
+                                class="size-3 transition-transform duration-300"
+                                :class="[
+                                    isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]',
+                                    { 'rotate-180': openPopover === 'business' }
+                                ]"
+                            />
+                        </button>
+
+                        <div
+                            v-if="openPopover === 'business'"
+                            class="absolute right-0 top-full z-50 mt-2 w-52 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-[0_12px_32px_rgba(15,44,92,0.12)] text-slate-700"
+                        >
+                            <Link
+                                :href="route('business.partner')"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                                @click="openPopover = null"
+                            >
+                                <Handshake class="size-5 shrink-0 text-slate-800 transition group-hover:text-[#0066d6]" />
+                                <span>Partnership</span>
+                            </Link>
+
+                            <Link
+                                :href="route('business.corporate')"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                                @click="openPopover = null"
+                            >
+                                <Briefcase class="size-5 shrink-0 text-slate-800 transition group-hover:text-[#0066d6]" />
+                                <span>For Corporates</span>
+                            </Link>
+
+                            <Link
+                                :href="route('business.affiliate')"
+                                class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 transition hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                                @click="openPopover = null"
+                            >
+                                <BadgePercent class="size-5 shrink-0 text-slate-800 transition group-hover:text-[#0066d6]" />
+                                <span>Affiliate</span>
+                            </Link>
+                        </div>
+                    </div>
 
                     <button
                         class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
@@ -298,6 +359,37 @@ const openAuthModal = (mode) => {
                     >
                         {{ item.label }}
                     </component>
+                </div>
+
+                <!-- Bisnis Section in Mobile Drawer -->
+                <div class="mt-3 border-t border-slate-100 pt-3">
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Bisnis</p>
+                    <div class="space-y-1">
+                        <Link
+                            :href="route('business.partner')"
+                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            @click="isMobileMenuOpen = false"
+                        >
+                            <Handshake class="size-4 text-slate-700" />
+                            <span>Partnership</span>
+                        </Link>
+                        <Link
+                            :href="route('business.corporate')"
+                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            @click="isMobileMenuOpen = false"
+                        >
+                            <Briefcase class="size-4 text-slate-700" />
+                            <span>For Corporates</span>
+                        </Link>
+                        <Link
+                            :href="route('business.affiliate')"
+                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            @click="isMobileMenuOpen = false"
+                        >
+                            <BadgePercent class="size-4 text-slate-700" />
+                            <span>Affiliate</span>
+                        </Link>
+                    </div>
                 </div>
                 <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
                     <span class="text-xs font-medium text-slate-500">Bahasa & Mata Uang</span>

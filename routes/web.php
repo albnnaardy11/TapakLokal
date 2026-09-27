@@ -50,6 +50,13 @@ Route::redirect('/open-trip', '/pilihan-trip/open-trip');
 Route::redirect('/private-trip', '/pilihan-trip/private-trip');
 
 Route::get('/trips/{tripType}/{trip}', [BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
+Route::get('/bisnis/mitra-vendor', fn (): Response => Inertia::render('BusinessPartner'))->name('business.partner');
+Route::get('/bisnis/corporate', fn (): Response => Inertia::render('BusinessCorporate'))->name('business.corporate');
+Route::get('/bisnis/affiliate', fn (): Response => Inertia::render('BusinessAffiliate'))->name('business.affiliate');
+Route::redirect('/mitra-vendor', '/bisnis/mitra-vendor');
+Route::redirect('/corporate', '/bisnis/corporate');
+Route::redirect('/affiliate', '/bisnis/affiliate');
+Route::redirect('/affiliator', '/bisnis/affiliate');
 
 Route::get('/', [PublicContentController::class, 'home'])->name('home');
 

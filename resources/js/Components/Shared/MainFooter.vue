@@ -264,7 +264,7 @@ function safeRoute(name, params) {
                         <h4 class="text-sm font-bold text-white">Others</h4>
                         <ul class="mt-3.5 space-y-2 text-xs text-[#9eb6d7]">
                             <li>
-                                <Link :href="safeRoute('account.section', 'referrals')" class="transition hover:text-white">Tapak Lokal Afiliator</Link>
+                                <Link :href="safeRoute('business.affiliate')" class="transition hover:text-white">Tapak Lokal Afiliator</Link>
                             </li>
                             <li>
                                 <Link :href="safeRoute('blog')" class="transition hover:text-white">Blog & Cerita Perjalanan</Link>
