@@ -459,6 +459,19 @@ const safeRoute = (name, params) => {
         return '#';
     }
 };
+// Quick Search Tags
+const quickTags = [
+    { label: '#CaraRefund', query: 'refund' },
+    { label: '#KuotaOpenTrip', query: 'kuota' },
+    { label: '#PO_OlehOleh', query: 'oleh-oleh' },
+    { label: '#TitikKumpul', query: 'titik kumpul' },
+    { label: '#TapakWallet', query: 'tapakwallet' },
+    { label: '#LaporPungli', query: 'pungli' },
+];
+
+const setQuickTag = (tagQuery) => {
+    searchQuery.value = tagQuery;
+};
 </script>
 
 <template>
@@ -474,60 +487,80 @@ const safeRoute = (name, params) => {
             <!-- Main Navigation on Top (Transparent integration) -->
             <MainNavigation :transparent-on-top="true" />
 
-            <!-- HERO HEADER: 1:1 with Traveloka Vibrant Sky-Blue Help Center Header -->
-            <section
-                class="relative w-full overflow-hidden bg-gradient-to-b from-[#0084f3] via-[#018af7] to-[#0170d4] text-white pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 shadow-inner"
-                aria-labelledby="help-hero-title"
-            >
-                <!-- Subtle Background Geo/Cloud Accents -->
-                <div class="absolute -right-20 -top-20 size-80 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-                <div class="absolute -left-20 bottom-0 size-72 rounded-full bg-sky-300/15 blur-2xl pointer-events-none"></div>
+            <!-- Full-Width Edge-to-Edge Hero Section (Compact 1:1 with Homepage Hero Height) -->
+            <section class="relative w-full overflow-hidden bg-[#0a2347] text-white" aria-labelledby="help-hero-title">
+                <!-- Full Width Background Image -->
+                <img
+                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=88"
+                    alt="Pusat Bantuan TapakLokal"
+                    class="absolute inset-0 z-0 size-full object-cover object-center brightness-[0.82] transition-opacity duration-500"
+                />
+                <!-- Rich Brand Blue Gradient Overlay matching Navbar #3E7BEF / #0088ff -->
+                <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(10,35,71,0.60)_0%,rgba(62,123,239,0.40)_45%,rgba(3,36,84,0.90)_100%)] pointer-events-none"></div>
+                <div class="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,rgba(0,136,255,0.25)_0%,transparent_75%)] pointer-events-none"></div>
 
-                <div class="relative z-10 mx-auto max-w-[840px] text-center">
-                    <!-- Title matching Traveloka Style -->
-                    <h1
-                        id="help-hero-title"
-                        class="text-2xl sm:text-3xl md:text-[38px] font-black tracking-tight text-white drop-shadow-xs leading-tight"
-                    >
-                        TapakLokal Help Center
-                    </h1>
-
-                    <!-- Subtitle -->
-                    <p class="mt-2 text-sm sm:text-base md:text-lg font-medium text-white/90">
-                        Find your answers here
-                    </p>
+                <!-- Centered Hero Content Container (Compact Padding matching Welcome.vue) -->
+                <div class="relative z-10 mx-auto w-full max-w-[1180px] px-4 pt-28 pb-5 sm:px-6 sm:pt-32 sm:pb-6 lg:px-0 lg:pt-36 lg:pb-7 flex flex-col items-center justify-center">
+                    <!-- Hero Title -->
+                    <div class="max-w-3xl text-center text-white drop-shadow-md mb-4 sm:mb-5">
+                        <h1
+                            id="help-hero-title"
+                            class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]"
+                        >
+                            TapakLokal Help Center
+                        </h1>
+                        <p class="mt-1.5 text-xs sm:text-sm font-medium text-white/90">
+                            Find your answers here
+                        </p>
+                    </div>
 
                     <!-- Large White Search Bar (1:1 Traveloka Reference Design) -->
-                    <div class="mt-6 sm:mt-8 relative max-w-2xl mx-auto">
+                    <div class="w-full max-w-2xl mx-auto">
                         <div class="relative flex items-center">
-                            <Search class="pointer-events-none absolute left-4 sm:left-5 size-5 sm:size-5.5 text-slate-400" />
+                            <Search class="pointer-events-none absolute left-4 sm:left-5 size-4.5 sm:size-5 text-slate-400" />
                             <input
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Type your topic here (e.g. refund, kuota open trip, oleh-oleh)..."
-                                class="h-12 sm:h-14 w-full rounded-full border-0 bg-white pl-12 sm:pl-14 pr-12 text-xs sm:text-sm md:text-[15px] font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-300/50 shadow-[0_8px_24px_rgba(0,40,90,0.18)] transition-all"
+                                class="h-11 sm:h-12.5 w-full rounded-full border-0 bg-white pl-11 sm:pl-13 pr-11 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-sky-300/60 shadow-[0_8px_24px_rgba(0,35,80,0.25)] transition-all"
                             />
                             <button
                                 v-if="searchQuery"
                                 type="button"
-                                class="absolute right-4 grid size-7 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer"
+                                class="absolute right-3.5 grid size-6 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer"
                                 aria-label="Bersihkan pencarian"
                                 @click="searchQuery = ''"
                             >
-                                <X class="size-4" />
+                                <X class="size-3.5" />
+                            </button>
+                        </div>
+
+                        <!-- Clickable Quick Search Chips -->
+                        <div class="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                            <span class="text-[10px] sm:text-[11px] font-bold text-white/85 hidden sm:inline">Pencarian Populer:</span>
+                            <button
+                                v-for="tag in quickTags"
+                                :key="tag.label"
+                                type="button"
+                                class="rounded-full bg-white/15 backdrop-blur-md px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-white hover:bg-white/30 border border-white/20 transition-all cursor-pointer shadow-xs active:scale-95"
+                                @click="setQuickTag(tag.query)"
+                            >
+                                {{ tag.label }}
                             </button>
                         </div>
 
                         <!-- Active Search Status Pill -->
-                        <div v-if="searchQuery" class="mt-3 flex items-center justify-center gap-2 text-xs text-white/90">
-                            <span>Menampilkan {{ filteredArticles.length }} hasil untuk "<strong>{{ searchQuery }}</strong>"</span>
-                            <button
-                                type="button"
-                                class="underline font-bold hover:text-white cursor-pointer ml-1"
-                                @click="searchQuery = ''"
-                            >
-                                Reset
-                            </button>
+                        <div v-if="searchQuery" class="mt-2 flex items-center justify-center gap-2 text-xs text-white/95">
+                            <span class="bg-black/40 backdrop-blur-md px-3 py-0.5 rounded-full border border-white/20 text-[11px]">
+                                Menampilkan {{ filteredArticles.length }} hasil untuk "<strong>{{ searchQuery }}</strong>"
+                                <button
+                                    type="button"
+                                    class="underline font-bold hover:text-white cursor-pointer ml-1.5 text-sky-200"
+                                    @click="searchQuery = ''"
+                                >
+                                    Reset
+                                </button>
+                            </span>
                         </div>
                     </div>
                 </div>
