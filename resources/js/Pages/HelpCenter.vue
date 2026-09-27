@@ -499,17 +499,17 @@ const setQuickTag = (tagQuery) => {
                 <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(10,35,71,0.60)_0%,rgba(62,123,239,0.40)_45%,rgba(3,36,84,0.90)_100%)] pointer-events-none"></div>
                 <div class="absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,rgba(0,136,255,0.25)_0%,transparent_75%)] pointer-events-none"></div>
 
-                <!-- Centered Hero Content Container (Compact Padding matching Welcome.vue) -->
-                <div class="relative z-10 mx-auto w-full max-w-[1180px] px-4 pt-28 pb-5 sm:px-6 sm:pt-32 sm:pb-6 lg:px-0 lg:pt-36 lg:pb-7 flex flex-col items-center justify-center">
+                <!-- Centered Hero Content Container (Balanced Height & Proportions) -->
+                <div class="relative z-10 mx-auto w-full max-w-[1180px] px-4 pt-32 pb-8 sm:px-6 sm:pt-36 sm:pb-10 lg:px-0 lg:pt-40 lg:pb-12 flex flex-col items-center justify-center">
                     <!-- Hero Title -->
-                    <div class="max-w-3xl text-center text-white drop-shadow-md mb-4 sm:mb-5">
+                    <div class="max-w-3xl text-center text-white drop-shadow-md mb-5 sm:mb-6">
                         <h1
                             id="help-hero-title"
-                            class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]"
+                            class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[36px]"
                         >
                             TapakLokal Help Center
                         </h1>
-                        <p class="mt-1.5 text-xs sm:text-sm font-medium text-white/90">
+                        <p class="mt-2 text-xs sm:text-sm md:text-[15px] font-medium text-white/90">
                             Find your answers here
                         </p>
                     </div>
@@ -517,32 +517,32 @@ const setQuickTag = (tagQuery) => {
                     <!-- Large White Search Bar (1:1 Traveloka Reference Design) -->
                     <div class="w-full max-w-2xl mx-auto">
                         <div class="relative flex items-center">
-                            <Search class="pointer-events-none absolute left-4 sm:left-5 size-4.5 sm:size-5 text-slate-400" />
+                            <Search class="pointer-events-none absolute left-4 sm:left-5 size-5 text-slate-400" />
                             <input
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Type your topic here (e.g. refund, kuota open trip, oleh-oleh)..."
-                                class="h-11 sm:h-12.5 w-full rounded-full border-0 bg-white pl-11 sm:pl-13 pr-11 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-sky-300/60 shadow-[0_8px_24px_rgba(0,35,80,0.25)] transition-all"
+                                class="h-12 sm:h-13.5 w-full rounded-full border-0 bg-white pl-12 sm:pl-14 pr-12 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-300/60 shadow-[0_10px_28px_rgba(0,35,80,0.28)] transition-all"
                             />
                             <button
                                 v-if="searchQuery"
                                 type="button"
-                                class="absolute right-3.5 grid size-6 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer"
+                                class="absolute right-3.5 grid size-7 place-items-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer"
                                 aria-label="Bersihkan pencarian"
                                 @click="searchQuery = ''"
                             >
-                                <X class="size-3.5" />
+                                <X class="size-4" />
                             </button>
                         </div>
 
                         <!-- Clickable Quick Search Chips -->
-                        <div class="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-                            <span class="text-[10px] sm:text-[11px] font-bold text-white/85 hidden sm:inline">Pencarian Populer:</span>
+                        <div class="mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                            <span class="text-[11px] font-bold text-white/85 hidden sm:inline">Pencarian Populer:</span>
                             <button
                                 v-for="tag in quickTags"
                                 :key="tag.label"
                                 type="button"
-                                class="rounded-full bg-white/15 backdrop-blur-md px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-white hover:bg-white/30 border border-white/20 transition-all cursor-pointer shadow-xs active:scale-95"
+                                class="rounded-full bg-white/15 backdrop-blur-md px-2.5 py-0.5 text-[11px] font-semibold text-white hover:bg-white/30 border border-white/20 transition-all cursor-pointer shadow-xs active:scale-95"
                                 @click="setQuickTag(tag.query)"
                             >
                                 {{ tag.label }}
@@ -550,7 +550,7 @@ const setQuickTag = (tagQuery) => {
                         </div>
 
                         <!-- Active Search Status Pill -->
-                        <div v-if="searchQuery" class="mt-2 flex items-center justify-center gap-2 text-xs text-white/95">
+                        <div v-if="searchQuery" class="mt-2.5 flex items-center justify-center gap-2 text-xs text-white/95">
                             <span class="bg-black/40 backdrop-blur-md px-3 py-0.5 rounded-full border border-white/20 text-[11px]">
                                 Menampilkan {{ filteredArticles.length }} hasil untuk "<strong>{{ searchQuery }}</strong>"
                                 <button
