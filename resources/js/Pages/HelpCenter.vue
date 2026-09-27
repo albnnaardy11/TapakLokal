@@ -3,6 +3,8 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
+    Info,
+    CreditCard,
     Search,
     ChevronRight,
     Compass,
@@ -36,11 +38,20 @@ import MainFooter from '../Components/Shared/MainFooter.vue';
 // Search Query
 const searchQuery = ref('');
 
-// Active Product Filter: 'all' | 'open-trip' | 'private-trip' | 'culinary-po' | 'wallet' | 'profile' | 'anti-pungli' | 'partners'
+// Active Product Filter: 'all' | 'general' | 'open-trip' | 'private-trip' | 'culinary-po' | 'payment' | 'wallet' | 'profile' | 'anti-pungli' | 'partners'
 const activeProduct = ref('all');
 
 // Product Categories (Explore by Product) - 1:1 with Traveloka Circular Icon Grid Style
 const productCategories = [
+    {
+        id: 'general',
+        name: 'Informasi Umum',
+        shortName: 'Informasi Umum',
+        icon: Info,
+        colorClass: 'bg-cyan-50 text-cyan-600 border-cyan-100 group-hover:bg-cyan-600 group-hover:text-white',
+        activeClass: 'bg-cyan-600 text-white ring-4 ring-cyan-100 shadow-md',
+        badge: 'Panduan Dasar',
+    },
     {
         id: 'open-trip',
         name: 'Open Trip',
@@ -67,6 +78,15 @@ const productCategories = [
         colorClass: 'bg-amber-50 text-amber-600 border-amber-100 group-hover:bg-amber-500 group-hover:text-white',
         activeClass: 'bg-amber-500 text-white ring-4 ring-amber-100 shadow-md',
         badge: 'Kuliner Daerah',
+    },
+    {
+        id: 'payment',
+        name: 'Metode Pembayaran',
+        shortName: 'Metode Pembayaran',
+        icon: CreditCard,
+        colorClass: 'bg-violet-50 text-violet-600 border-violet-100 group-hover:bg-violet-600 group-hover:text-white',
+        activeClass: 'bg-violet-600 text-white ring-4 ring-violet-100 shadow-md',
+        badge: 'QRIS & Transfer',
     },
     {
         id: 'wallet',
@@ -115,8 +135,72 @@ const productCategories = [
     },
 ];
 
-// Rich Help Articles Database tailored specifically to TapakLokal 3 Products + Platform
+// Rich Help Articles Database tailored specifically to TapakLokal
 const articles = [
+    // 0. INFORMASI UMUM (GENERAL INFORMATION)
+    {
+        id: 'general-about-platform',
+        category: 'general',
+        categoryLabel: 'Informasi Umum',
+        title: 'Apa itu platform TapakLokal dan apa saja layanan utamanya?',
+        summary: 'Platform all-in-one penjelajahan wisata alam lokal terkurasi (Open & Private Trip) dan titip beli oleh-oleh khas UMKM.',
+        content: `
+**TapakLokal** adalah platform digital ekosistem pariwisata lokal nomor 1 di Indonesia yang menghubungkan wisatawan dengan pemandu wisata lokal berlisensi dan pelaku UMKM daerah.
+
+**3 Layanan Utama TapakLokal:**
+1. **Open Trip**: Perjalanan alam gabungan ekonomis & ramah solo traveler dengan jadwal rutin ke destinasi eksotis Indonesia.
+2. **Private Trip**: Paket liburan privat eksklusif untuk keluarga, rombongan teman, atau instansi dengan armada terstandar dan jadwal fleksibel.
+3. **Open PO Oleh-Oleh & Kuliner Khas**: Layanan jastip resmi produk UMKM khas daerah langsung dari pengrajin & produsen terpercaya saat Anda berwisata.
+
+**Standar Keamanan TapakLokal:**
+- **Harga All-In Transparan**: Bebas dari pungutan liar (pungli) dan biaya tersembunyi.
+- **Pemandu Berlisensi Resmi**: Semua mitra tour leader dan guide telah terdaftar dan memiliki lisensi HPI / sertifikasi BNSP.
+- **Proteksi Asuransi Resmi**: Setiap tiket perjalanan otomatis dilindungi oleh asuransi keselamatan jiwa.
+        `,
+        isPopular: true,
+        tags: ['informasi umum', 'tapaklokal', 'tentang', 'layanan', 'keunggulan', 'panduan'],
+    },
+    {
+        id: 'general-how-to-book',
+        category: 'general',
+        categoryLabel: 'Informasi Umum',
+        title: 'Bagaimana cara melakukan pemesanan trip dan mendapatkan E-Tiket di TapakLokal?',
+        summary: 'Panduan langkah mudah mulai dari memilih destinasi, tanggal, pengisian data manifest KTP, hingga konfirmasi e-tiket instan.',
+        content: `
+Proses pemesanan di TapakLokal dirancang sangat praktis dan aman:
+
+1. **Pilih Destinasi & Kategori Trip**:
+   Cari paket Open Trip atau Private Trip yang Anda inginkan melalui menu pencarian atau halaman katalog.
+2. **Tentukan Tanggal & Jumlah Peserta**:
+   Pilih tanggal keberangkatan yang tersedia dan tentukan titik kumpul (*Meeting Point*) yang Anda inginkan.
+3. **Lengkapi Data Manifest Peserta (KYC)**:
+   Isi nama lengkap sesuai KTP/Paspor, nomor NIK, dan nomor WhatsApp aktif untuk keperluan asuransi dan izin masuk kawasan konservasi.
+4. **Pilih Metode Pembayaran**:
+   Selesaikan pembayaran menggunakan QRIS, Virtual Account Bank, TapakWallet, atau gerai minimarket sebelum batas waktu habis.
+5. **E-Tiket & Grup Koordinasi**:
+   Setelah pembayaran terverifikasi otomatis, E-Tiket resmi dapat diunduh di menu **Pesanan Saya**, dan Tour Leader akan mengundang Anda ke grup koordinasi WhatsApp H-1 keberangkatan.
+        `,
+        isPopular: true,
+        tags: ['cara pesan', 'pemesanan', 'booking', 'tiket', 'e-tiket', 'panduan'],
+    },
+    {
+        id: 'general-travel-insurance',
+        category: 'general',
+        categoryLabel: 'Informasi Umum',
+        title: 'Apakah setiap perjalanan di TapakLokal dilindungi oleh asuransi perjalanan?',
+        summary: 'Ya! Semua paket Open Trip dan Private Trip di TapakLokal sudah mencakup perlindungan asuransi keselamatan jiwa.',
+        content: `
+Keselamatan dan kenyamanan Anda adalah prioritas mutlak kami. 
+
+**Ketentuan Perlindungan Asuransi:**
+- **Otomatis Aktif**: Polis asuransi otomatis aktif sejak waktu keberangkatan di titik kumpul hingga trip selesai.
+- **Cakupan Proteksi**: Meliputi biaya pertolongan pertama darurat, santunan perawatan medis kecelakaan, hingga evakuasi darurat di medan alam bebas.
+- **Syarat Validitas**: Pastikan data nama dan NIK yang Anda isi saat pemesanan sesuai dengan identitas resmi KTP/Paspor Anda agar proses klaim valid dan tidak terkendala.
+        `,
+        isPopular: false,
+        tags: ['asuransi', 'keselamatan', 'proteksi', 'klaim', 'jaminan'],
+    },
+
     // 1. OPEN TRIP
     {
         id: 'open-trip-quota',
@@ -253,29 +337,105 @@ Kualitas dan keaslian produk adalah prioritas utama TapakLokal:
         tags: ['kesegaran', 'garansi', 'rusak', 'retur', 'umkm'],
     },
 
-    // 4. TAPAKWALLET & PEMBAYARAN
+    // 4. METODE PEMBAYARAN (PAYMENT METHODS)
     {
-        id: 'wallet-methods',
-        category: 'wallet',
-        categoryLabel: 'TapakWallet & Bayar',
-        title: 'Metode pembayaran apa saja yang didukung dan bagaimana cara bayar dengan TapakWallet?',
-        summary: 'Dukungan QRIS instan, Virtual Account semua bank, E-Wallet, minimarket, serta TapakWallet bebas biaya admin.',
+        id: 'payment-available-methods',
+        category: 'payment',
+        categoryLabel: 'Metode Pembayaran',
+        title: 'Apa saja metode pembayaran resmi yang tersedia di TapakLokal?',
+        summary: 'Dukungan QRIS instan, Virtual Account semua bank (BCA, Mandiri, BRI, BNI), E-Wallet, dan gerai minimarket.',
         content: `
-TapakLokal menyediakan pilihan pembayaran resmi terlengkap dan terenkripsi 256-bit:
+TapakLokal menyediakan pilihan pembayaran resmi terlengkap dengan verifikasi otomatis 24/7 dan enkripsi keamanan 256-bit SSL:
 
-1. **TapakWallet**:
-   - Saldo dompet digital terintegrasi TapakLokal.
-   - Checkout 1-klik instan tanpa biaya admin transaksi.
-   - Penampungan dana refund tercepat (langsung cair dalam hitungan detik).
-2. **QRIS (Quick Response Code Indonesian Standard)**:
-   - Berlaku untuk semua aplikasi m-banking (BCA, Mandiri Livin, BRImo, BNI, CIMB) dan e-wallet (GoPay, OVO, Dana, ShopeePay, LinkAja).
-3. **Virtual Account Bank (Otomatis Terverifikasi)**:
-   - Bank BCA, Bank Mandiri, Bank BNI, Bank BRI, Bank Permata.
-4. **Gerai Retail Modern**:
+1. **QRIS (Quick Response Code Indonesian Standard)**:
+   - Pembayaran real-time 1-detik menggunakan semua aplikasi mobile banking (BCA Mobile, Mandiri Livin, BRImo, BNI Mobile, CIMB Octo) dan e-wallet (GoPay, OVO, DANA, ShopeePay, LinkAja).
+2. **Virtual Account Bank (Verifikasi Otomatis Tanpa Upload Bukti)**:
+   - Nomor Virtual Account unik untuk Bank BCA, Bank Mandiri, Bank BRI, Bank BNI, dan Bank Permata.
+3. **TapakWallet Saldo**:
+   - Pembayaran instan 1-klik bebas biaya transaksi serta keuntungan cashback reward.
+4. **Gerai Minimarket Retail**:
    - Pembayaran tunai melalui kasir Indomaret dan Alfamart di seluruh Indonesia.
         `,
         isPopular: true,
-        tags: ['pembayaran', 'qris', 'virtual account', 'tapakwallet', 'bca'],
+        tags: ['metode pembayaran', 'pembayaran', 'qris', 'transfer bank', 'virtual account', 'indomaret', 'alfamart'],
+    },
+    {
+        id: 'payment-unverified-troubleshoot',
+        category: 'payment',
+        categoryLabel: 'Metode Pembayaran',
+        title: 'Bagaimana jika saya sudah transfer pembayaran tetapi status pesanan belum terupdate?',
+        summary: 'Langkah verifikasi transaksi, waktu sinkronisasi sistem perbankan, dan solusi konfirmasi ke Customer Service.',
+        content: `
+Sistem pembayaran TapakLokal memverifikasi transaksi secara otomatis dalam waktu 1–3 menit. Jika status pesanan Anda belum berubah menjadi **"Lunas / Terkonfirmasi"**:
+
+1. **Periksa Waktu Transaksi & Nomor Virtual Account**:
+   Pastikan Anda mentransfer sesuai nominal yang tertera ke nomor Virtual Account yang tepat sebelum batas waktu (*expiry time*) berakhir.
+2. **Cek Riwayat Mutasi Rekening**:
+   Pastikan saldo pada rekening bank / e-wallet Anda telah berhasil terpotong.
+3. **Muat Ulang Halaman Pesanan**:
+   Tekan tombol **"Cek Status Pembayaran"** pada halaman rincian tagihan Anda.
+4. **Hubungi Customer Service Kami**:
+   Jika dalam 10 menit status belum terupdate, klik menu **"Contact Us / Chat WhatsApp"** dengan melampirkan Kode Pesanan (contoh: #TPL-2026-XXXX) dan foto bukti mutasi untuk verifikasi manual instan oleh tim finance kami.
+        `,
+        isPopular: true,
+        tags: ['status pembayaran', 'pembayaran belum masuk', 'kendala transfer', 'verifikasi', 'bantuan bayar'],
+    },
+    {
+        id: 'payment-voucher-discount',
+        category: 'payment',
+        categoryLabel: 'Metode Pembayaran',
+        title: 'Bagaimana cara menggunakan voucher promo atau potongan diskon saat checkout?',
+        summary: 'Gunakan kode promo pada kolom voucher di halaman pembayaran untuk mendapatkan potongan harga instan.',
+        content: `
+Nikmati diskon dan promo menarik di TapakLokal dengan langkah berikut:
+
+1. Pilih paket trip atau produk Open PO Oleh-Oleh yang Anda inginkan.
+2. Pada halaman ringkasan checkout, temukan kolom **"Punya Kode Promo / Voucher?"**.
+3. Masukkan kode promo yang valid atau pilih dari daftar voucher yang tersedia di akun Anda, lalu klik **"Terapkan"**.
+4. Total tagihan akan otomatis terpotong sesuai nilai diskon voucher sebelum Anda memilih metode pembayaran.
+
+> **Catatan:** Pastikan membaca syarat & ketentuan masing-masing voucher seperti batas minimum transaksi dan periode keberangkatan trip.
+        `,
+        isPopular: false,
+        tags: ['voucher', 'promo', 'diskon', 'potongan harga', 'hemat'],
+    },
+
+    // 5. TAPAKWALLET
+    {
+        id: 'wallet-benefits',
+        category: 'wallet',
+        categoryLabel: 'TapakWallet & Bayar',
+        title: 'Apa keuntungan menggunakan TapakWallet dan bagaimana cara top up saldo?',
+        summary: 'Bebas biaya admin transaksi, penampungan dana refund tercepat (1-5 menit), dan kemudahan tarik dana ke rekening.',
+        content: `
+**TapakWallet** adalah dompet digital terintegrasi di platform TapakLokal yang dirancang khusus untuk kenyamanan transaksi para penjelajah:
+
+**Keuntungan TapakWallet:**
+- **Checkout 1-Klik**: Pembayaran trip dan oleh-oleh instan tanpa biaya admin transfer antar bank.
+- **Pusat Pencairan Refund Tercepat**: Dana pengembalian (refund) langsung masuk dalam waktu 1–5 menit tanpa menunggu hari kerja kliring bank.
+- **Tarik Dana Kapan Saja (*Withdrawal*)**: Saldo TapakWallet dapat ditarik kembali ke rekening bank pribadi Anda kapan saja dengan proses mudah dan aman.
+- **Cashback Eksklusif**: Dapatkan reward cashback saldo pada promo-promo trip spesial.
+        `,
+        isPopular: true,
+        tags: ['tapakwallet', 'saldo', 'topup', 'keuntungan', 'tarik dana'],
+    },
+    {
+        id: 'wallet-refund-flow',
+        category: 'wallet',
+        categoryLabel: 'TapakWallet & Bayar',
+        title: 'Bagaimana alur dan estimasi waktu proses pengembalian dana (Refund)?',
+        summary: 'Refund ke TapakWallet cair dalam 1-5 menit; refund ke rekening bank diproses 1-3 hari kerja.',
+        content: `
+Jika pengajuan pembatalan atau refund Anda telah disetujui sesuai syarat dan ketentuan:
+- **Pencairan ke Saldo TapakWallet**:
+  Proses instan **1–5 Menit**. Saldo dapat langsung digunakan untuk memesan trip lain atau dicairkan ke rekening bank pribadi Anda kapan saja.
+- **Pencairan ke Rekening Bank Asal (Transfer Bank)**:
+  Memerlukan waktu **1–3 Hari Kerja** (tidak termasuk hari libur dan akhir pekan) tergantung kliring bank tujuan.
+- **Pencairan Kartu Kredit / E-Wallet**:
+  Memerlukan waktu **3–7 Hari Kerja** sesuai kebijakan penerbit kartu dan operator dompet digital.
+        `,
+        isPopular: true,
+        tags: ['refund', 'pengembalian dana', 'saldo', 'rekening', 'estimasi'],
     },
     {
         id: 'wallet-refund-flow',
@@ -462,9 +622,10 @@ const safeRoute = (name, params) => {
 // Quick Search Tags
 const quickTags = [
     { label: '#CaraRefund', query: 'refund' },
+    { label: '#MetodeBayar', query: 'pembayaran' },
     { label: '#KuotaOpenTrip', query: 'kuota' },
     { label: '#PO_OlehOleh', query: 'oleh-oleh' },
-    { label: '#TitikKumpul', query: 'titik kumpul' },
+    { label: '#InfoUmum', query: 'informasi umum' },
     { label: '#TapakWallet', query: 'tapakwallet' },
     { label: '#LaporPungli', query: 'pungli' },
 ];
@@ -478,7 +639,7 @@ const setQuickTag = (tagQuery) => {
     <Head title="Pusat Bantuan (Help Center) - TapakLokal">
         <meta
             name="description"
-            content="Pusat Bantuan resmi TapakLokal: temukan jawaban dan panduan seputar Open Trip, Private Trip, Open PO Oleh-Oleh khas daerah, TapakWallet, kebijakan refund, dan anti-pungli."
+            content="Pusat Bantuan resmi TapakLokal: temukan jawaban dan panduan seputar Open Trip, Private Trip, Open PO Oleh-Oleh khas daerah, Metode Pembayaran, TapakWallet, kebijakan refund, dan anti-pungli."
         />
     </Head>
 
@@ -521,7 +682,7 @@ const setQuickTag = (tagQuery) => {
                             <input
                                 v-model="searchQuery"
                                 type="text"
-                                placeholder="Type your topic here (e.g. refund, kuota open trip, oleh-oleh)..."
+                                placeholder="Type your topic here (e.g. pembayaran, refund, kuota, oleh-oleh)..."
                                 class="h-12 sm:h-13.5 w-full rounded-full border-0 bg-white pl-12 sm:pl-14 pr-12 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-300/60 shadow-[0_10px_28px_rgba(0,35,80,0.28)] transition-all"
                             />
                             <button
@@ -606,9 +767,11 @@ const setQuickTag = (tagQuery) => {
                                         <span
                                             class="inline-block rounded-md px-2 py-0.5 text-[10px] font-extrabold tracking-wide uppercase"
                                             :class="{
+                                                'bg-cyan-50 text-cyan-700': item.category === 'general',
                                                 'bg-sky-50 text-[#0088ff]': item.category === 'open-trip',
                                                 'bg-emerald-50 text-emerald-700': item.category === 'private-trip',
                                                 'bg-amber-50 text-amber-700': item.category === 'culinary-po',
+                                                'bg-violet-50 text-violet-700': item.category === 'payment',
                                                 'bg-indigo-50 text-indigo-700': item.category === 'wallet',
                                                 'bg-blue-50 text-blue-700': item.category === 'profile',
                                                 'bg-rose-50 text-rose-700': item.category === 'anti-pungli',
@@ -661,12 +824,12 @@ const setQuickTag = (tagQuery) => {
                                 Explore by Product
                             </h2>
                             <span class="text-[11px] font-bold text-[#0088ff] bg-sky-50 px-2.5 py-1 rounded-full">
-                                3 Layanan Utama
+                                Kategori Panduan
                             </span>
                         </div>
 
-                        <!-- Circular Icons Grid (4 columns on mobile/tablet, 3-4 on desktop) -->
-                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-3 text-center">
+                        <!-- Circular Icons Grid (5 columns on desktop, 4 on sm, 3 on mobile) -->
+                        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-y-6 gap-x-2.5 sm:gap-x-3 text-center">
                             <button
                                 v-for="cat in productCategories"
                                 :key="cat.id"
@@ -676,15 +839,15 @@ const setQuickTag = (tagQuery) => {
                             >
                                 <!-- Circular Button Icon -->
                                 <div
-                                    class="size-13 sm:size-14 rounded-full flex items-center justify-center border transition-all duration-200 group-hover:scale-105 shadow-xs"
+                                    class="size-12 sm:size-13.5 lg:size-13 rounded-full flex items-center justify-center border transition-all duration-200 group-hover:scale-105 shadow-xs"
                                     :class="activeProduct === cat.id ? cat.activeClass : cat.colorClass"
                                 >
-                                    <component :is="cat.icon" class="size-6 sm:size-6.5 stroke-[2.2]" />
+                                    <component :is="cat.icon" class="size-5.5 sm:size-6 stroke-[2.2]" />
                                 </div>
 
                                 <!-- Label Below Icon -->
                                 <span
-                                    class="mt-2 text-[11px] sm:text-xs font-bold leading-tight transition-colors line-clamp-2 max-w-[90px]"
+                                    class="mt-2 text-[10.5px] sm:text-[11px] font-bold leading-tight transition-colors line-clamp-2 max-w-[80px]"
                                     :class="activeProduct === cat.id ? 'text-[#0088ff]' : 'text-slate-700 group-hover:text-[#0088ff]'"
                                 >
                                     {{ cat.shortName }}
@@ -740,9 +903,11 @@ const setQuickTag = (tagQuery) => {
                                 <span
                                     class="inline-block rounded-md px-2 py-0.5 text-[10px] font-extrabold tracking-wide uppercase"
                                     :class="{
+                                        'bg-cyan-50 text-cyan-700': selectedArticle.category === 'general',
                                         'bg-sky-50 text-[#0088ff]': selectedArticle.category === 'open-trip',
                                         'bg-emerald-50 text-emerald-700': selectedArticle.category === 'private-trip',
                                         'bg-amber-50 text-amber-700': selectedArticle.category === 'culinary-po',
+                                        'bg-violet-50 text-violet-700': selectedArticle.category === 'payment',
                                         'bg-indigo-50 text-indigo-700': selectedArticle.category === 'wallet',
                                         'bg-blue-50 text-blue-700': selectedArticle.category === 'profile',
                                         'bg-rose-50 text-rose-700': selectedArticle.category === 'anti-pungli',
