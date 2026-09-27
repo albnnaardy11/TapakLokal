@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import CatalogSearchHero from '../Components/Catalog/CatalogSearchHero.vue';
 import CatalogResultsSection from '../Components/Catalog/CatalogResultsSection.vue';
+import TripCatalogFaq from '../Components/Home/TripCatalogFaq.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const props = defineProps({
@@ -48,6 +49,9 @@ const pageTitle = computed(() => {
 
             <!-- Traveloka Style Catalog Results Section with Left Filters & Right Trip Listings -->
             <CatalogResultsSection :trips="trips" :initial-filters="filters" :partner="partner" />
+
+            <!-- FAQ Section: Seputar Open/Private Trip & Pembayaran (1:1 Homepage Style) -->
+            <TripCatalogFaq :questions="cmsFaqs" class="!mt-12 sm:!mt-16" />
         </div>
 
         <!-- Main Footer -->

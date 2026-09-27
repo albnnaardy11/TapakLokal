@@ -71,7 +71,7 @@ const toggleQuestion = (id) => {
 </script>
 
 <template>
-    <section class="mx-auto max-w-[1180px] px-1" aria-labelledby="catalog-faq-heading">
+    <section class="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-0" aria-labelledby="catalog-faq-heading">
         <div class="grid items-stretch gap-5 sm:gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
             <!-- Left Poster Card (1:1 with Homepage TravelFaq Style) -->
             <div class="relative isolate flex min-h-[320px] flex-col justify-between overflow-hidden rounded-3xl bg-[#092244] p-7 sm:p-8 text-white shadow-xs">
