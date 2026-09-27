@@ -107,11 +107,26 @@ function safeRoute(name, params) {
                         <div class="mt-7">
                             <h4 class="text-xs font-bold text-white tracking-wide">Payment Partners</h4>
                             <div class="mt-3 flex flex-wrap items-center gap-2 max-w-[280px]">
-                                <div
+                                <Link
                                     v-for="partner in paymentPartners"
                                     :key="partner.id"
-                                    class="flex h-7 w-[52px] items-center justify-center rounded bg-white px-1.5 py-0.5 shadow-xs transition hover:scale-105"
-                                    :title="partner.name"
+                                    :href="
+                                        partner.id === 'wallet'
+                                            ? safeRoute('help.article', { category: 'wallet', slug: 'keuntungan-tapakwallet-dan-cara-top-up-saldo' })
+                                            : partner.id === 'gopay'
+                                                ? safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-tapaklokal-lewat-gopay' })
+                                                : partner.id === 'ovo'
+                                                    ? safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-tapaklokal-lewat-ovo' })
+                                                    : partner.id === 'indomaret'
+                                                        ? safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-tapaklokal-lewat-indomaret' })
+                                                        : partner.id === 'alfamart'
+                                                            ? safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-tapaklokal-lewat-alfamart' })
+                                                            : partner.id === 'mandiri'
+                                                                ? safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-mandiri-virtual-account' })
+                                                                : safeRoute('help.article', { category: 'payment-methods', slug: 'cara-bayar-bca-virtual-account' })
+                                    "
+                                    class="flex h-7 w-[52px] items-center justify-center rounded bg-white px-1.5 py-0.5 shadow-xs transition hover:scale-105 cursor-pointer"
+                                    :title="`Panduan pembayaran ${partner.name}`"
                                 >
                                     <!-- Tapak Lokal Wallet -->
                                     <div v-if="partner.isWallet" class="flex items-center gap-1">
@@ -133,7 +148,7 @@ function safeRoute(name, params) {
                                     <span v-else class="text-[8.5px] font-black uppercase tracking-tight text-[#032454]">
                                         {{ partner.name }}
                                     </span>
-                                </div>
+                                </Link>
                             </div>
                         </div>
 

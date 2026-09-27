@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\PublicContentController;
 use App\Models\ContentPage;
 use App\Models\VirtualTour;
@@ -36,7 +37,10 @@ Route::get('/pages/{slug}', function (string $slug): Response {
 })->name('content.show');
 
 Route::get('/panduan-aksesibilitas', fn (): Response => Inertia::render('AccessibilityGuide'))->name('accessibility.guide');
-Route::get('/bantuan', fn (): Response => Inertia::render('HelpCenter'))->name('help.index');
+
+Route::get('/bantuan', [HelpCenterController::class, 'index'])->name('help.index');
+Route::get('/bantuan/{category}', [HelpCenterController::class, 'category'])->name('help.category');
+Route::get('/bantuan/{category}/{slug}', [HelpCenterController::class, 'article'])->name('help.article');
 Route::redirect('/help-center', '/bantuan');
 Route::redirect('/help', '/bantuan');
 
