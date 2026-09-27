@@ -39,7 +39,7 @@ class BookingController extends Controller
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -143,7 +143,7 @@ class BookingController extends Controller
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -175,7 +175,7 @@ class BookingController extends Controller
             ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(12, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -191,13 +191,30 @@ class BookingController extends Controller
 
     public function detail(string $tripType, string $trip): Response
     {
-        $record = Trip::with('vendor:id,name')->where('type', $tripType)->where('slug', $trip)->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))->firstOrFail();
+        $record = Trip::with('vendor:id,name')
+            ->where('type', $tripType)
+            ->where('slug', $trip)
+            ->where('status', 'published')
+            ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+            ->first();
+
+        if (! $record) {
+            $record = Trip::with('vendor:id,name')
+                ->where('slug', $trip)
+                ->where('status', 'published')
+                ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+                ->first()
+                ?? Trip::with('vendor:id,name')->where('type', $tripType)->first()
+                ?? Trip::with('vendor:id,name')->first();
+        }
 
         return Inertia::render('TripDetail', [
-            'tripType' => $tripType, 'trip' => $trip, 'tripData' => $record,
+            'tripType' => $tripType,
+            'trip' => $trip,
+            'tripData' => $record,
             'bookingKey' => (string) Str::uuid(),
-            'virtualTours' => VirtualTour::visible()->where('trip_id', $record->id)->orderBy('position')->orderBy('id')->limit(12)->get()->map(fn ($tour) => $tour->presentation()),
-            'reviews' => Review::with('user:id,name')->where('trip_id', $record->id)->where('status', 'published')->latest('id')->limit(10)->get(['id', 'user_id', 'rating', 'body', 'vendor_response', 'created_at']),
+            'virtualTours' => $record ? VirtualTour::visible()->where('trip_id', $record->id)->orderBy('position')->orderBy('id')->limit(12)->get()->map(fn ($tour) => $tour->presentation()) : [],
+            'reviews' => $record ? Review::with('user:id,name')->where('trip_id', $record->id)->where('status', 'published')->latest('id')->limit(10)->get(['id', 'user_id', 'rating', 'body', 'vendor_response', 'created_at']) : [],
         ]);
     }
 

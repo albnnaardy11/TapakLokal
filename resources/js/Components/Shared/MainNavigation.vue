@@ -10,6 +10,14 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    hideOnScroll: {
+        type: Boolean,
+        default: false,
+    },
+    isStatic: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const isMobileMenuOpen = ref(false);
@@ -79,14 +87,21 @@ const openAuthModal = (mode) => {
 </script>
 
 <template>
-    <div :class="transparentOnTop ? 'h-0' : 'h-[58px] lg:h-[102px]'">
+    <div :class="[isStatic ? 'w-full' : transparentOnTop ? 'h-0' : 'h-[58px] lg:h-[102px]']">
         <header
-            class="fixed inset-x-0 top-0 z-40 transition-all duration-500 ease-in-out"
-            :class="
-                isTransparent
-                    ? 'bg-white/0 text-white shadow-none'
-                    : 'bg-white/95 backdrop-blur-md text-slate-900 shadow-[0_4px_15px_rgba(15,44,92,0.08)]'
-            "
+            :class="[
+                isStatic
+                    ? 'relative z-40 bg-white text-slate-900 shadow-[0_4px_15px_rgba(15,44,92,0.08)]'
+                    : [
+                        'fixed inset-x-0 top-0 z-40 transition-all duration-300 ease-in-out',
+                        hideOnScroll && isScrolled
+                            ? '-translate-y-full opacity-0 pointer-events-none shadow-none'
+                            : 'translate-y-0 opacity-100',
+                        isTransparent
+                            ? 'bg-white/0 text-white shadow-none'
+                            : 'bg-white/95 backdrop-blur-md text-slate-900 shadow-[0_4px_15px_rgba(15,44,92,0.08)]'
+                    ]
+            ]"
         >
             <div class="mx-auto flex h-[58px] max-w-[1180px] items-center px-4 sm:px-6 lg:px-0">
                 <!-- Logo -->
