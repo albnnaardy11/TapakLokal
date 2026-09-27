@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowRight, UsersRound } from 'lucide-vue-next';
+import { ArrowRight } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import TripOptionSkeleton from '../Skeletons/Cards/TripOptionSkeleton.vue';
@@ -20,6 +20,7 @@ const tripOptions = [
         description: 'Gabung dengan traveler lain, nikmati perjalanan seru dengan biaya lebih hemat!',
         action: 'Lihat Open Trip',
         image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=85',
+        iconType: 'hiker',
     },
     {
         id: 'private-trip',
@@ -29,6 +30,7 @@ const tripOptions = [
         description: 'Perjalanan eksklusif untuk kamu, keluarga, atau teman. Bebas pilih waktu dan rute.',
         action: 'Lihat Private Trip',
         image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=85',
+        iconType: 'crown',
     },
 ];
 </script>
@@ -58,7 +60,28 @@ const tripOptions = [
                 <img :src="trip.image" :alt="`${trip.title} bersama TapakLokal`" loading="lazy" class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-r from-[#102129]/80 via-[#102129]/45 to-transparent"></div>
                 <div class="relative flex h-full max-w-[290px] flex-col justify-end">
-                    <span class="mb-4 grid size-10 place-items-center rounded-full bg-white text-[#3E7BEF] shadow-sm"><UsersRound class="size-5" /></span>
+                    <!-- Distinct Category Icon (Person Hiking for Open Trip, Crown for Private Trip) -->
+                    <span class="mb-4 grid size-11 place-items-center rounded-full bg-white text-[#0088ff] shadow-md transition-transform duration-300 group-hover:scale-108">
+                        <!-- Official Person Hiking Icon for Open Trip -->
+                        <svg
+                            v-if="trip.iconType === 'hiker'"
+                            class="size-5 fill-current"
+                            viewBox="0 0 384 512"
+                            aria-hidden="true"
+                        >
+                            <path d="M192 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm51.3 182.7L224.2 307l49.7 49.7c9 9 14.1 21.2 14.1 33.9l0 89.4c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-82.7-73.9-73.9c-15.8-15.8-22.2-38.6-16.9-60.3l20.4-84c8.3-34.1 42.7-54.9 76.7-46.4c19 4.8 35.6 16.4 46.4 32.7L305.1 208l30.9 0 0-24c0-13.3 10.7-24 24-24s24 10.7 24 24l0 55.8c0 .1 0 .2 0 .2s0 .2 0 .2L384 488c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-216-39.4 0c-16 0-31-8-39.9-21.4l-13.3-20zM81.1 471.9L117.3 334c3 4.2 6.4 8.2 10.1 11.9l41.9 41.9L142.9 488.1c-4.5 17.1-22 27.3-39.1 22.8s-27.3-22-22.8-39.1zm55.5-346L101.4 266.5c-3 12.1-14.9 19.9-27.2 17.9l-47.9-8c-14-2.3-22.9-16.3-19.2-30L31.9 155c9.5-34.8 41.1-59 77.2-59l4.2 0c15.6 0 27.1 14.7 23.3 29.8z"/>
+                        </svg>
+
+                        <!-- Official Crown Icon for Private Trip -->
+                        <svg
+                            v-else
+                            class="size-5 fill-current"
+                            viewBox="0 0 576 512"
+                            aria-hidden="true"
+                        >
+                            <path d="M309 106c11.4-7 19-19.7 19-34c0-22.1-17.9-40-40-40s-40 17.9-40 40c0 14.4 7.6 27 19 34L209.7 220.6c-9.1 18.2-32.7 23.4-48.6 10.7L72 160c5-6.7 8-15 8-24c0-22.1-17.9-40-40-40S0 113.9 0 136s17.9 40 40 40c.2 0 .5 0 .7 0L86.4 427.4c5.5 30.4 32 52.6 63 52.6l277.2 0c30.9 0 57.4-22.1 63-52.6L535.3 176c.2 0 .5 0 .7 0c22.1 0 40-17.9 40-40s-17.9-40-40-40s-40 17.9-40 40c0 9 3 17.3 8 24l-89.1 71.3c-15.9 12.7-39.5 7.5-48.6-10.7L309 106z"/>
+                        </svg>
+                    </span>
                     <h3 class="text-xl font-extrabold">{{ trip.title }}</h3>
                     <p class="mt-1.5 text-sm leading-relaxed text-white/85">{{ trip.description }}</p>
                     <Link :href="route('catalog', { type: trip.id })" class="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[#1769aa] transition hover:bg-[#e9f1ff] focus:outline-none focus:ring-4 focus:ring-white/40">{{ trip.action }} <ArrowRight class="size-4" /></Link>
