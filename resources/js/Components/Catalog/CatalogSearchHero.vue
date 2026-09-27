@@ -44,6 +44,9 @@ const duration = ref(props.initialFilters?.duration || '');
 const adults = ref(Number(props.initialFilters?.guests) || 1);
 const children = ref(0);
 
+// Detect if current page is partner profile page (/mitra/{slug})
+const isPartnerPage = computed(() => Boolean(props.partner && (props.partner.id || props.partner.name || props.partner.slug)));
+
 // Dropdowns tracker & Seamless Morphing Scroll Tracker
 const activeDropdown = ref(null);
 const dateInputRef = ref(null);
@@ -232,11 +235,13 @@ const selectQuickDestination = (dest) => {
 </script>
 
 <template>
-    <section ref="heroContainerRef" class="relative w-full pt-1 sm:pt-2.5" aria-labelledby="catalog-search-heading">
-        <div class="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-0">
-            <!-- Daylight Sky Scenic Banner Container (Slightly taller for better logo breathing room) -->
+    <section ref="heroContainerRef" class="relative w-full" aria-labelledby="catalog-search-heading">
+        <!-- ==================================================================== -->
+        <!-- CASE 1: PARTNER PAGE HERO BANNER (/mitra/{partner})                  -->
+        <!-- Card-style container constrained to max-w-[1180px] with rounded corners -->
+        <!-- ==================================================================== -->
+        <div v-if="isPartnerPage" class="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-0 pt-1 sm:pt-2.5">
             <div class="relative overflow-hidden rounded-[22px] sm:rounded-[26px] bg-[#d9effe] min-h-[195px] sm:min-h-[210px] md:min-h-[225px] shadow-[0_12px_32px_rgba(20,70,130,0.09)] border border-sky-100/80">
-                <!-- Daylight Blue Sky with Soft White Clouds Background Image -->
                 <img
                     src="https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=1920&q=85"
                     alt="Langit Biru Cerah Indonesia"
@@ -245,31 +250,40 @@ const selectQuickDestination = (dest) => {
                 />
                 <div class="absolute inset-0 bg-gradient-to-b from-sky-100/15 via-sky-200/20 to-sky-300/30"></div>
 
-                <!-- Top Left: Vendor / Airline Wings Emblem -->
-                <div class="relative z-10 px-6 pt-5 sm:px-8 sm:pt-6">
+                <!-- Top Left: Partner Logo -->
+                <div v-if="partner?.logo" class="relative z-10 px-6 pt-5 sm:px-8 sm:pt-6">
                     <div class="flex items-center gap-2.5">
                         <img
-                            v-if="partner?.logo"
                             :src="partner.logo"
                             :alt="partner.name"
                             class="h-12 sm:h-14 md:h-17 max-w-[220px] w-auto object-contain filter drop-shadow-md"
                         />
-                        <svg v-else class="h-10 sm:h-12 md:h-14 w-auto drop-shadow-md" viewBox="0 0 100 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Partner">
-                            <path d="M4 14C16 14 34 8 52 16C37 17 23 20 12 25C27 21 44 22 58 30C41 28 29 32 18 38C35 33 52 36 70 42C80 38 90 32 96 24C90 26 80 26 72 22C84 20 94 14 98 8C88 12 76 13 64 11C76 8 86 3 90 0C76 4 60 7 44 8C30 9 17 11 4 14Z" fill="url(#wingGradientHero)" />
-                            <defs>
-                                <linearGradient id="wingGradientHero" x1="4" y1="21" x2="98" y2="21" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#245ec7" />
-                                    <stop offset="0.6" stop-color="#3E7BEF" />
-                                    <stop offset="1" stop-color="#00c8b3" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Floating White Search Box Container (Width 95% centered in hero) -->
-            <div ref="searchAnchorRef" class="relative z-10 -mt-24 sm:-mt-28 md:-mt-32 w-[95%] mx-auto">
+        <!-- ==================================================================== -->
+        <!-- CASE 2: CATEGORY PAGE HERO BANNER (/pilihan-trip/{type})             -->
+        <!-- Full-Width Edge-to-Edge Banner (like Homepage width)                 -->
+        <!-- ==================================================================== -->
+        <div v-else class="relative w-full overflow-hidden bg-[#d9effe] min-h-[195px] sm:min-h-[220px] md:min-h-[240px] shadow-[0_4px_20px_rgba(20,70,130,0.06)]">
+            <img
+                src="https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=1920&q=85"
+                alt="Langit Biru Cerah Indonesia"
+                class="absolute inset-0 size-full object-cover object-center"
+                loading="eager"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-sky-100/10 via-sky-200/20 to-sky-300/35 pointer-events-none"></div>
+        </div>
+
+        <!-- Floating White Search Box Container -->
+        <div class="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-0">
+            <div
+                ref="searchAnchorRef"
+                class="relative z-10 -mt-24 sm:-mt-28 md:-mt-32"
+                :class="isPartnerPage ? 'w-[95%] mx-auto' : 'w-full'"
+            >
                 <!-- Frosted Translucent Title Bar -->
                 <div
                     class="rounded-t-[18px] sm:rounded-t-[20px] bg-gradient-to-r from-slate-900/60 via-slate-900/30 to-transparent px-5 pt-2 pb-4 sm:px-6 sm:pt-2.5 sm:pb-5 text-white transition-opacity duration-300"
@@ -286,12 +300,12 @@ const selectQuickDestination = (dest) => {
                     class="relative z-10 -mt-2.5 sm:-mt-3 rounded-[18px] sm:rounded-[20px] bg-white p-3.5 sm:p-4 shadow-[0_16px_36px_rgba(15,44,92,0.12)] border border-slate-200/90 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     :class="isSticky ? 'opacity-0 scale-[0.98] -translate-y-1 pointer-events-none' : 'opacity-100 scale-100 translate-y-0'"
                 >
-                    <!-- Top Filter Row: Pill Tabs -->
-                    <div class="flex items-center border-b border-slate-100 pb-2.5">
+                    <!-- Top Filter Row: Pill Tabs (ONLY ON PARTNER PAGES /mitra/...) -->
+                    <div v-if="isPartnerPage" class="flex items-center border-b border-slate-100 pb-2.5 mb-2.5">
                         <div class="flex items-center gap-1 p-0.5 rounded-full bg-slate-100/90 border border-slate-200/70">
                             <button
                                 type="button"
-                                class="rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200"
+                                class="rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200 cursor-pointer"
                                 :class="tripType === '' ? 'bg-[#3E7BEF] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'"
                                 @click="tripType = ''"
                             >
@@ -299,7 +313,7 @@ const selectQuickDestination = (dest) => {
                             </button>
                             <button
                                 type="button"
-                                class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200"
+                                class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200 cursor-pointer"
                                 :class="tripType === 'open-trip' ? 'bg-[#3E7BEF] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'"
                                 @click="tripType = 'open-trip'"
                             >
@@ -310,7 +324,7 @@ const selectQuickDestination = (dest) => {
                             </button>
                             <button
                                 type="button"
-                                class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200"
+                                class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-[11px] font-bold transition-all duration-200 cursor-pointer"
                                 :class="tripType === 'private-trip' ? 'bg-[#3E7BEF] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'"
                                 @click="tripType = 'private-trip'"
                             >
@@ -323,7 +337,7 @@ const selectQuickDestination = (dest) => {
                     </div>
 
                     <!-- Main Input Form: Multi-box layout -->
-                    <form class="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[1.15fr_auto_1.15fr_1fr_0.9fr_1fr_auto] items-center" @submit.prevent="handleSearch">
+                    <form class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[1.15fr_auto_1.15fr_1fr_0.9fr_1fr_auto] items-center" @submit.prevent="handleSearch">
                         <!-- Box 1: From / Meeting Point -->
                         <div class="relative flex flex-col justify-center rounded-xl border border-slate-200 bg-white px-3 py-1.5 hover:border-[#3E7BEF]/60 focus-within:border-[#3E7BEF] focus-within:ring-2 focus-within:ring-[#3E7BEF]/15 transition min-h-[44px]">
                             <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 leading-tight">Dari (Meeting Point)</span>
