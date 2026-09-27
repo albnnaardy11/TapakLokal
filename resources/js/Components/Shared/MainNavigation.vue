@@ -160,7 +160,7 @@ const openAuthModal = (mode) => {
                     <button
                         class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
                         :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
-                        @click="router.visit(typeof route === 'function' ? route('account.section', 'support') : '/account/support')"
+                        @click="router.visit(typeof route === 'function' ? route('help.index') : '/bantuan')"
                     >
                         <CircleHelp class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
                         Bantuan

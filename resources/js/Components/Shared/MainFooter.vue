@@ -159,7 +159,7 @@ function safeRoute(name, params) {
                                 <Link :href="safeRoute('catalog')" class="transition hover:text-white">Cara Pemesanan (How to Book)</Link>
                             </li>
                             <li>
-                                <Link :href="safeRoute('account.section', 'support')" class="transition hover:text-white">Pusat Bantuan & Kontak</Link>
+                                <Link :href="safeRoute('help.index')" class="transition hover:text-white">Pusat Bantuan & Kontak</Link>
                             </li>
                             <li>
                                 <Link :href="safeRoute('explore', 'destination')" class="transition hover:text-white">Pemandu Lokal Terverifikasi</Link>

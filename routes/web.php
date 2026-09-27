@@ -36,6 +36,9 @@ Route::get('/pages/{slug}', function (string $slug): Response {
 })->name('content.show');
 
 Route::get('/panduan-aksesibilitas', fn (): Response => Inertia::render('AccessibilityGuide'))->name('accessibility.guide');
+Route::get('/bantuan', fn (): Response => Inertia::render('HelpCenter'))->name('help.index');
+Route::redirect('/help-center', '/bantuan');
+Route::redirect('/help', '/bantuan');
 
 Route::get('/trips/{tripType}/{trip}', [BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
 
