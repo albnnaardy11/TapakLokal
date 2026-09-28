@@ -327,7 +327,7 @@ const toggleFaq = (index) => {
 
         <main class="w-full overflow-x-hidden">
             <!-- Unified Page Container -->
-            <div class="mx-auto max-w-[1200px] px-4 pt-6 pb-20 sm:px-6 sm:pt-8 sm:pb-28 md:pt-10 lg:px-8 lg:pt-12 xl:pt-14">
+            <div class="mx-auto max-w-[1200px] px-4 pt-2.5 pb-20 sm:px-6 sm:pt-3 sm:pb-28 md:pt-4 lg:px-8 lg:pt-5">
                 <!-- ======================================================= -->
                 <!-- 1. HERO SECTION (CARD STYLE MATCHING ACCESSIBILITY GUIDE) -->
                 <!-- ======================================================= -->
@@ -354,10 +354,10 @@ const toggleFaq = (index) => {
                             </p>
 
                             <!-- Action Buttons -->
-                            <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                            <div class="mt-6 sm:mt-8 flex flex-wrap items-center gap-3 sm:gap-3.5">
                                 <button
                                     type="button"
-                                    class="group inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-300 hover:bg-[#1d4ed8] hover:shadow-[0_12px_28px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base text-center cursor-pointer"
+                                    class="group inline-flex min-h-[44px] sm:min-h-[48px] items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#2563eb] px-6 sm:px-7 py-3 text-xs sm:text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-300 hover:bg-[#1d4ed8] hover:shadow-[0_12px_28px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] text-center cursor-pointer"
                                     @click="openAffiliateAuthModal('join')"
                                 >
                                     <span>Gabung Jadi Affiliate</span>
@@ -366,71 +366,51 @@ const toggleFaq = (index) => {
 
                                 <Link
                                     href="/cari-trip"
-                                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-[#e2eaf4] bg-white px-6 py-3.5 text-sm font-bold text-[#1e293b] shadow-xs transition-all duration-200 hover:bg-slate-50 hover:border-[#cbd5e1] hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-7 sm:py-4 sm:text-base text-center"
+                                    class="inline-flex min-h-[44px] sm:min-h-[48px] items-center justify-center gap-2 whitespace-nowrap rounded-full border border-[#e2eaf4] bg-white px-5 sm:px-6 py-3 text-xs sm:text-sm font-bold text-[#1e293b] shadow-xs transition-all duration-200 hover:bg-slate-50 hover:border-[#cbd5e1] hover:shadow-sm hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] text-center"
                                 >
                                     <span>Lihat Paket Wisata</span>
                                 </Link>
                             </div>
                         </div>
 
-                        <!-- Right Graphic: Affiliate Live Dashboard Card (Proportional & Enlarged) -->
-                        <div class="flex items-center justify-center lg:justify-end">
-                            <div class="w-full max-w-[390px] sm:max-w-[430px] lg:max-w-[460px] select-none">
-                                <!-- Foreground Mockup: Affiliate Live Dashboard Card -->
-                                <div class="rounded-[28px] sm:rounded-[32px] border border-[#bfdbfe] bg-white p-6 sm:p-7 shadow-[0_20px_48px_rgba(37,99,235,0.12)] backdrop-blur-md">
-                                    <!-- Card Header -->
-                                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex size-11 items-center justify-center rounded-2xl bg-[#2563eb] text-white shadow-xs">
-                                                <BadgePercent class="size-5.5" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm sm:text-base font-bold text-slate-800 leading-tight">TapakLokal Affiliate</p>
-                                                <p class="text-xs text-slate-400 font-medium mt-0.5">Panel Kemitraan Resmi</p>
-                                            </div>
-                                        </div>
-                                      
+                        <!-- Right Graphic: Hero Photo with Floating Affiliate Metrics -->
+                        <div class="relative flex items-center justify-center lg:justify-end select-none">
+                            <div class="relative w-full max-w-[390px] sm:max-w-[430px] lg:max-w-[460px] py-4">
+                                <!-- Main Photo Container -->
+                                <div class="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-[#dce8f8] bg-white p-2 sm:p-2.5 shadow-[0_20px_50px_rgba(37,99,235,0.12)]">
+                                    <div class="relative overflow-hidden rounded-[22px] sm:rounded-[28px] aspect-[4/3.8] sm:aspect-[4/3.5] bg-slate-100">
+                                        <img
+                                            src="/Assets/Images/affiliate-hero-person.jpg"
+                                            alt="Affiliate Partner TapakLokal"
+                                            class="size-full object-cover object-center transition-transform duration-700 ease-out hover:scale-105"
+                                        />
+                                        <!-- Soft Gradient Overlay at the bottom -->
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent"></div>
                                     </div>
+                                </div>
 
-                                    <!-- Commission Balance Card -->
-                                    <div class="mt-4 sm:mt-5 rounded-2xl bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#3b82f6] p-5 sm:p-5.5 text-white shadow-md">
-                                        <div class="flex items-center justify-between text-xs sm:text-[13px] text-blue-100">
-                                            <span class="inline-flex items-center gap-1.5 font-medium">
-                                                <Wallet class="size-3.5 sm:size-4" /> Total Komisi Kamu
-                                            </span>
-                                            <span class="rounded-lg bg-white/20 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-200">
-                                                Komisi s.d 20%
-                                            </span>
-                                        </div>
-                                        <div class="mt-2 text-2xl sm:text-3xl font-black tracking-tight">
-                                            Rp 4.850.000
-                                        </div>
-                                        <div class="mt-2.5 flex items-center justify-between text-xs text-blue-100 pt-2.5 border-t border-white/20">
-                                            <span>18 Booking Berhasil</span>
-                                            <span class="font-bold text-white flex items-center gap-1">
-                                                <span class="size-1.5 rounded-full bg-emerald-300"></span> Siap Cair
-                                            </span>
-                                        </div>
+                                <!-- Floating Badge 1: Top Left - Komisi s.d 20% -->
+                                <div class="absolute -top-1 -left-2 sm:-top-2 sm:-left-3 z-20 flex items-center gap-2.5 rounded-2xl border border-white/90 bg-white/95 px-3.5 py-2.5 shadow-[0_12px_32px_rgba(15,23,42,0.12)] backdrop-blur-md">
+                                    <div class="flex size-8 items-center justify-center rounded-xl bg-[#2563eb] text-white shadow-xs">
+                                        <Banknote class="size-4" />
                                     </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">KOMISI RESMI</p>
+                                        <p class="text-xs sm:text-sm font-extrabold text-slate-800 leading-tight">Hingga 20% / Booking</p>
+                                    </div>
+                                </div>
 
-                                    <!-- Active Referral Link Snippet -->
-                                    <div class="mt-4 rounded-2xl border border-slate-100 bg-[#f8fafc] p-3.5 sm:p-4">
-                                        <div class="flex items-center justify-between text-xs sm:text-[13px]">
-                                            <span class="font-bold text-slate-700">Link Referral Kamu:</span>
-                                            <span class="text-xs text-[#2563eb] font-semibold">Tervalidasi</span>
-                                        </div>
-                                        <div class="mt-2 flex items-center justify-between gap-2 rounded-xl bg-white border border-slate-200 px-3 py-2 text-xs sm:text-sm text-slate-600 font-mono">
-                                            <span class="truncate">tapaklokal.com/ref?a=TL77</span>
-                                            <button
-                                                type="button"
-                                                class="inline-flex shrink-0 items-center gap-1 rounded-lg bg-[#2563eb] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#1d4ed8] cursor-pointer shadow-xs"
-                                                @click="openAffiliateAuthModal('copy_referral')"
-                                            >
-                                                <Copy class="size-3" />
-                                                <span>Salin</span>
-                                            </button>
-                                        </div>
+                                <!-- Floating Badge 2: Bottom Right - Saldo Siap Cair Card -->
+                                <div class="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-20 rounded-2xl border border-white/90 bg-white/95 p-3.5 sm:p-4 shadow-[0_16px_36px_rgba(37,99,235,0.18)] backdrop-blur-md max-w-[210px] sm:max-w-[230px]">
+                                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-600">
+                                        <Wallet class="size-3.5 text-[#2563eb]" /> Saldo Komisi
                                     </div>
+                                    <p class="mt-1.5 text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                                        Rp 4.850.000
+                                    </p>
+                                    <p class="text-[10px] font-semibold text-slate-400 mt-0.5">
+                                        18 transaksi berhasil dicairkan
+                                    </p>
                                 </div>
                             </div>
                         </div>
