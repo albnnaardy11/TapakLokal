@@ -1,40 +1,33 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import {
-    ArrowDown,
     ArrowRight,
     BadgeCheck,
     Banknote,
-    BedDouble,
-    Box,
     Building2,
     Calendar,
     Check,
     CheckCircle2,
     ChevronDown,
-    ChevronRight,
     Clock,
     Compass,
     Handshake,
     HelpCircle,
-    Home,
+    Layers,
     MapPin,
-    Minus,
     PackageCheck,
-    Plus,
     ShieldCheck,
     ShoppingBag,
     Sparkles,
-    Star,
     Store,
-    Timer,
     TrendingUp,
     Truck,
     Users,
     Utensils,
     Wallet,
     X,
+    Zap,
 } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
@@ -75,165 +68,143 @@ const handleRegisterSubmit = () => {
     }, 1000);
 };
 
-// 4 Benefits (Matching Affiliate 2-Col Editorial Style)
-const whyJoinBenefits = [
+// Trust Badges / Stats Bar (Traveloka Style)
+const partnerHighlights = [
     {
-        title: 'Paket All-in-One + Opsi Add-On Bebas',
-        description: 'Jual paket trip lengkap standar homestay, atau sediakan pilihan upgrade villa & rumah warga lokal yang telah Anda kurasi.',
-        icon: Compass,
+        icon: Banknote,
+        title: '0% Biaya Pendaftaran',
+        subtitle: 'Bebas biaya langganan bulanan tanpa komitmen kuota penjualan minimum.',
     },
     {
-        title: 'Smart Regional Food Logistics',
-        description: 'Oleh-oleh basah (1-3 hari) otomatis terproteksi khusus pembeli sameday/next-day, makanan kering bebas kirim se-Indonesia.',
-        icon: Truck,
+        icon: Zap,
+        title: 'Pencairan Dana 1x24 Jam',
+        subtitle: 'Otomatis cair ke rekening bank Anda setelah trip atau pesanan selesai.',
     },
     {
-        title: 'Sistem Booking & Manifest Otomatis',
-        description: 'Semua data peserta trip, pesanan oleh-oleh, dan pilihan add-on tercatat rapi secara real-time di dashboard Anda.',
-        icon: TrendingUp,
+        icon: Layers,
+        title: 'Fitur Add-On Fleksibel',
+        subtitle: 'Sediakan opsi upgrade Private Villa & Rumah Warga untuk margin ekstra.',
     },
     {
-        title: 'Pencairan Dana 1x24 Jam Tanpa Potongan Tersembunyi',
-        description: 'Dana langsung cair ke rekening bank Anda setelah trip selesai atau barang tiba di tujuan dengan aman.',
-        icon: Wallet,
+        icon: ShieldCheck,
+        title: 'Smart Regional Logistics',
+        subtitle: 'Proteksi otomatis makanan basah (1-3 hari) khusus kurir Sameday/Next-Day.',
     },
 ];
 
-// 4 Steps (Matching Affiliate 4-Card Process Layout with Circular Arrows)
+// 2 Partnership Pillars (Compact Traveloka Style)
+const partnerTracks = [
+    {
+        id: 'trip',
+        categoryTag: 'VENDOR TRIP WISATA',
+        badgeColor: 'bg-[#2563eb]',
+        title: 'Paket Trip Wisata (Open & Private)',
+        description: 'Pasarkan paket wisata all-in-one dengan fleksibilitas opsi upgrade akomodasi bagi wisatawan.',
+        image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=700&q=80',
+        imageAlt: 'Wisata Alam & Open Trip Indonesia',
+        features: [
+            'Paket All-in-One: Guide, transportasi & homestay bawaan',
+            'Add-On Fleksibel: Opsi upgrade Private Villa & Rumah Warga',
+            'Fleksibilitas Kuota: Dukungan Open Trip & Private Charter',
+            'Pencairan 1x24 Jam: Otomatis cair setelah trip selesai',
+        ],
+        ctaText: 'Daftar Mitra Trip',
+    },
+    {
+        id: 'souvenir',
+        categoryTag: 'VENDOR OLEH-OLEH & KULINER',
+        badgeColor: 'bg-emerald-600',
+        title: 'Oleh-Oleh & Kuliner Khas Daerah',
+        description: 'Jangkau penikmat kuliner nusantara dengan proteksi kesegaran berbasis ketahanan makanan.',
+        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=700&q=80',
+        imageAlt: 'Kuliner & Oleh-Oleh Tradisional Khas Daerah',
+        features: [
+            'Smart Shelf-Life: Makanan basah (1-3 hari) via Sameday/Next-Day',
+            'Jangkauan Nasional: Makanan kering, kopi & kriya se-Indonesia',
+            'Pick-up Logistik: Kurir otomatis jemput paket ke lokasi usaha',
+            'Pencairan Aman: Otomatis ditransfer saat barang tiba di pembeli',
+        ],
+        ctaText: 'Daftar Mitra Oleh-Oleh',
+    },
+];
+
+// Why Join TapakLokal (4 Value Propositions)
+const whyJoinBenefits = [
+    {
+        icon: Users,
+        title: 'Jangkau Wisatawan Se-Indonesia',
+        description: 'Terhubung langsung dengan ribuan penjelajah aktif yang mencari pengalaman liburan autentik dan produk khas daerah.',
+    },
+    {
+        icon: Wallet,
+        title: 'Pencairan Dana Pasti & Tepat Waktu',
+        description: 'Dana hasil penjualan langsung ditransfer ke rekening bank Anda dalam 1x24 jam setelah trip atau pesanan selesai.',
+    },
+    {
+        icon: Layers,
+        title: 'Manajemen Produk & Kuota Fleksibel',
+        description: 'Atur jadwal keberangkatan, batas kuota peserta, opsi add-on villa, hingga daya tahan makanan secara mandiri.',
+    },
+    {
+        icon: ShieldCheck,
+        title: 'Keamanan Transaksi & Bebas Ribet',
+        description: 'Seluruh pembayaran wisatawan diverifikasi secara otomatis. Tidak perlu lagi mencatat transfer manual atau khawatir cancelation bodong.',
+    },
+];
+
+// 4 Simple Onboarding Steps (Traveloka Style)
 const steps = [
     {
         number: 1,
-        title: 'Pilih Kategori Kemitraan',
-        description: 'Daftar sebagai Vendor Paket Trip Wisata (Open/Private) atau Produsen Oleh-Oleh Khas Daerah.',
+        title: 'Daftar Kemitraan',
+        description: 'Isi formulir online dan pilih kategori usaha Anda (Vendor Trip atau Vendor Oleh-Oleh) dalam 2 menit.',
         icon: Store,
     },
     {
         number: 2,
-        title: 'Kurasi & Verifikasi Usaha',
-        description: 'Kirimkan profil usaha, izin edar kuliner, atau portofolio rute wisata Anda untuk kurasi 1x24 jam.',
+        title: 'Kurasi & Verifikasi',
+        description: 'Tim kurasi TapakLokal memverifikasi data legalitas usaha atau portofolio rute wisata dalam 1x24 jam.',
         icon: BadgeCheck,
     },
     {
         number: 3,
-        title: 'Unggah Paket & Atur Add-On',
-        description: 'Atur jadwal open trip, opsi upgrade villa privat, atau tentukan ketahanan produk oleh-oleh.',
-        icon: Box,
+        title: 'Unggah Paket & Produk',
+        description: 'Atur jadwal open trip, opsi add-on villa/rumah warga, atau tentukan daya tahan produk kuliner Anda.',
+        icon: PackageCheck,
     },
     {
         number: 4,
-        title: 'Terima Pesanan & Cairkan Hasil',
-        description: 'Terima booking dari ribuan wisatawan dan nikmati pencairan dana 1x24 jam langsung ke rekening.',
+        title: 'Mulai Terima Pesanan',
+        description: 'Terima booking dari wisatawan nusantara dan nikmati pencairan dana otomatis langsung ke rekening bank Anda.',
         icon: Banknote,
     },
 ];
 
-// 3 Feature Showcase Cards (Matching Affiliate 3-Card Catalog Grid 1:1)
-const featureCards = [
-    {
-        id: 1,
-        type: 'trip',
-        badge: 'Vendor Trip Wisata',
-        location: 'Seluruh Destinasi Indonesia',
-        title: 'Paket Open & Private Trip All-in-One',
-        description: 'Paket wisata lengkap mencakup pemandu lokal (guide), transportasi, tiket destinasi, dan akomodasi homestay bawaan dalam satu paket siap jalan.',
-        highlightLabel: 'Include Homestay & Guide',
-        perkBadge: 'Trip All-in-One',
-        buttonText: 'Daftar Vendor Trip',
-        image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=85',
-    },
-    {
-        id: 2,
-        type: 'trip',
-        badge: 'Fitur Unggulan Trip',
-        location: 'Fleksibilitas Upgrade Wisatawan',
-        title: 'Fitur Add-On Villa & Rumah Warga',
-        description: 'Wisatawan yang menginginkan privasi atau pengalaman otentik dapat memilih opsi upgrade ke Private Villa atau tinggal di Rumah Warga kurasi Anda.',
-        highlightLabel: 'Extra Margin untuk Vendor',
-        perkBadge: 'Add-On Fleksibel',
-        buttonText: 'Pelajari Sistem Add-On',
-        image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=85',
-    },
-    {
-        id: 3,
-        type: 'souvenir',
-        badge: 'Vendor Oleh-Oleh Daerah',
-        location: 'Sentra UMKM & Kuliner Nusantara',
-        title: 'Smart Regional Food & Souvenir',
-        description: 'Sistem logistik cerdas memproteksi makanan basah (1-3 hari) agar hanya dibeli radius sameday/next-day, sementara makanan kering & kriya bisa dikirim se-Indonesia.',
-        highlightLabel: 'Anti Basi & Resi Otomatis',
-        perkBadge: 'Regional Protected',
-        buttonText: 'Daftar Vendor Oleh-Oleh',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=85',
-    },
-];
-
-// Interactive Revenue Potential Calculator
-const calcType = ref('trip'); // 'trip' | 'souvenir'
-const calcTripPrice = ref(1500000);
-const calcTripBookings = ref(20);
-const calcSouvenirPrice = ref(75000);
-const calcSouvenirOrders = ref(80);
-
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        maximumFractionDigits: 0,
-    }).format(amount);
-};
-
-const calculatedMonthlyRevenue = computed(() => {
-    if (calcType.value === 'trip') {
-        return calcTripPrice.value * calcTripBookings.value;
-    }
-    return calcSouvenirPrice.value * calcSouvenirOrders.value;
-});
-
-const changeTripPrice = (delta) => {
-    const next = calcTripPrice.value + delta;
-    if (next >= 250000 && next <= 25000000) calcTripPrice.value = next;
-};
-
-const changeTripBookings = (delta) => {
-    const next = calcTripBookings.value + delta;
-    if (next >= 1 && next <= 200) calcTripBookings.value = next;
-};
-
-const changeSouvenirPrice = (delta) => {
-    const next = calcSouvenirPrice.value + delta;
-    if (next >= 15000 && next <= 1000000) calcSouvenirPrice.value = next;
-};
-
-const changeSouvenirOrders = (delta) => {
-    const next = calcSouvenirOrders.value + delta;
-    if (next >= 5 && next <= 1000) calcSouvenirOrders.value = next;
-};
-
-// FAQ List (1:1 with Affiliate FAQ structure)
+// FAQs
 const faqs = ref([
     {
         q: 'Siapa saja yang bisa bergabung menjadi Mitra Vendor di TapakLokal?',
-        a: 'Kemitraan dibuka untuk dua kelompok utama: (1) Operator Trip Wisata yang menyelenggarakan Open Trip maupun Private Trip lengkap dengan akomodasi dan pemandu, dan (2) Produsen/UMKM Oleh-Oleh Khas Daerah yang memproduksi makanan basah, makanan kering, kopi, maupun kerajinan kriya khas daerah di Indonesia.',
+        a: 'Kemitraan terbuka bagi Operator Trip Wisata (Open Trip & Private Trip) yang menyediakan paket wisata lengkap dengan pemandu dan transportasi, serta Produsen UMKM Oleh-Oleh Khas Daerah (makanan basah, makanan kering, kopi, dan kerajinan kriya autentik).',
         open: true,
     },
     {
         q: 'Bagaimana fitur Add-On Akomodasi (Villa / Rumah Warga) bekerja untuk Vendor Trip?',
-        a: 'Paket trip Anda tetap dikemas all-in-one dengan homestay bawaan standar. Namun, Anda dapat menyertakan opsi Add-On berupa Upgrade ke Private Villa atau tinggal di Rumah Warga Lokal yang sudah Anda kurasi. Ketika wisatawan memilih opsi add-on saat checkout, selisih biaya tersebut langsung masuk sebagai pendapatan tambahan Anda dan otomatis tercatat pada manifest peserta.',
+        a: 'Paket trip Anda tetap all-in-one dengan homestay bawaan standar. Anda dapat menambahkan opsi Add-On seperti Upgrade ke Private Villa atau tinggal di Rumah Warga Lokal. Saat wisatawan memilih opsi tersebut saat checkout, selisih biaya langsung menjadi pendapatan tambahan vendor dan otomatis tercatat pada manifest peserta.',
         open: false,
     },
     {
-        q: 'Bagaimana sistem memastikan oleh-oleh makanan basah tetap segar sampai ke pembeli?',
-        a: 'Sistem TapakLokal menerapkan Smart Regional Filter. Produk kuliner dengan ketahanan 1-3 hari hanya akan ditampilkan dan dapat dibeli oleh pelanggan dalam jangkauan ekspedisi Sameday atau Next-Day dari lokasi produksi Anda. Sedangkan makanan kering dan kriya dapat dipesan oleh wisatawan di seluruh Indonesia.',
+        q: 'Bagaimana sistem memastikan oleh-oleh makanan basah tidak basi di perjalanan?',
+        a: 'Sistem TapakLokal menggunakan Smart Regional Filter. Produk makanan basah dengan daya tahan 1-3 hari hanya akan ditampilkan dan dapat dibeli oleh pelanggan dalam radius jangkauan ekspedisi Sameday atau Next-Day dari dapur Anda.',
         open: false,
     },
     {
         q: 'Kapan dan bagaimana pencairan dana ditransfer ke rekening vendor?',
-        a: 'Untuk Vendor Trip, dana otomatis dicairkan ke rekening bank Anda 1x24 jam setelah trip selesai terlaksana tanpa kendala. Untuk Vendor Oleh-Oleh, dana cair segera setelah paket terkonfirmasi diterima dengan baik oleh pembeli berdasarkan pelacakan resi ekspedisi.',
+        a: 'Untuk Vendor Trip, dana otomatis cair ke rekening bank Anda 1x24 jam setelah trip selesai terlaksana tanpa kendala. Untuk Vendor Oleh-Oleh, dana cair segera setelah paket terkonfirmasi diterima dengan baik oleh pembeli berdasarkan pelacakan resi ekspedisi.',
         open: false,
     },
     {
         q: 'Apakah ada biaya pendaftaran atau biaya langganan bulanan?',
-        a: 'Pendaftaran kemitraan di TapakLokal 100% Gratis selamanya tanpa ada biaya langganan bulanan maupun kuota target penjualan minimum. TapakLokal hanya mengenakan platform fee transparan berbasis persentase bagi hasil dari setiap transaksi yang berhasil.',
+        a: 'Pendaftaran kemitraan di TapakLokal 100% Gratis selamanya tanpa ada biaya langganan bulanan maupun target penjualan minimum. TapakLokal hanya mengenakan platform fee transparan berbasis bagi hasil dari setiap transaksi yang berhasil.',
         open: false,
     },
 ]);
@@ -260,7 +231,7 @@ const toggleFaq = (index) => {
             <div class="mx-auto max-w-[1200px] px-4 pt-2.5 pb-20 sm:px-6 sm:pt-3 sm:pb-28 md:pt-4 lg:px-8 lg:pt-5">
                 
                 <!-- ======================================================= -->
-                <!-- 1. HERO SECTION (APPROVED - DO NOT MODIFY)               -->
+                <!-- 1. HERO SECTION (APPROVED - PRESERVED 1:1)               -->
                 <!-- ======================================================= -->
                 <section
                     aria-labelledby="partner-hero-title"
@@ -350,529 +321,231 @@ const toggleFaq = (index) => {
                     </div>
                 </section>
 
-                <!-- ========================================================== -->
-                <!-- 2. SECTION: KENAPA JADI MITRA TAPAK LOKAL? (2-COL POLAROID)-->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20" aria-labelledby="why-partner-title">
-                    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-16">
-                        <!-- Left Side: Layered Travel Photos (With Paper Tape / Tempelan Kertas) -->
-                        <div class="lg:col-span-6 flex items-center justify-center">
-                            <div class="relative w-full max-w-[460px] py-6 sm:py-8 select-none">
-                                <!-- Main Center Photo (Local Tour Boat / Expedition) -->
-                                <div class="relative z-10 mx-auto w-[82%] sm:w-[85%] transition-transform duration-300 hover:scale-[1.02]">
-                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-14 sm:w-16 -rotate-1 rounded-xs bg-[#ebe3d0]/90 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
-                                    <div class="overflow-hidden rounded-[24px] sm:rounded-[32px] border-4 border-white bg-white shadow-[0_16px_40px_rgba(15,44,92,0.12)]">
-                                        <img
-                                            src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85"
-                                            alt="Kapal Wisata & Tour Operator Lokal"
-                                            class="aspect-[4/3] w-full object-cover"
-                                        />
-                                    </div>
-                                </div>
-
-                                <!-- Floating Top-Left Photo (Private Villa & Homestay Kurasi) -->
-                                <div class="absolute -top-1 -left-1 sm:-left-3 z-20 w-32 sm:w-40 -rotate-8 transition-transform duration-300 hover:rotate-0 hover:scale-105">
-                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-12 sm:w-14 -rotate-3 rounded-xs bg-[#ebe3d0]/95 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
-                                    <div class="overflow-hidden rounded-2xl border-4 border-white bg-white shadow-[0_12px_28px_rgba(15,44,92,0.16)]">
-                                        <img
-                                            src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=80"
-                                            alt="Villa & Homestay Lokal"
-                                            class="aspect-square w-full object-cover"
-                                        />
-                                    </div>
-                                </div>
-
-                                <!-- Floating Bottom-Right Photo (Kuliner & Oleh-Oleh Daerah) -->
-                                <div class="absolute -bottom-2 -right-1 sm:-right-3 z-20 w-32 sm:w-40 rotate-8 transition-transform duration-300 hover:rotate-0 hover:scale-105">
-                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-12 sm:w-14 rotate-3 rounded-xs bg-[#ebe3d0]/95 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
-                                    <div class="overflow-hidden rounded-2xl border-4 border-white bg-white shadow-[0_12px_28px_rgba(15,44,92,0.16)]">
-                                        <img
-                                            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80"
-                                            alt="Oleh-oleh Tradisional Daerah"
-                                            class="aspect-square w-full object-cover"
-                                        />
-                                    </div>
-                                </div>
+                <!-- ======================================================= -->
+                <!-- 2. SECTION: PARTNER VALUE HIGHLIGHTS (B2B TRUST BAR)    -->
+                <!-- ======================================================= -->
+                <section class="mt-6 sm:mt-8" aria-label="Keunggulan Kemitraan">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+                        <div
+                            v-for="(item, idx) in partnerHighlights"
+                            :key="idx"
+                            class="flex items-start gap-3 rounded-2xl border border-[#e2eaf4] bg-white p-4 shadow-[0_2px_8px_rgba(23,44,80,0.02)] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_6px_16px_rgba(37,99,235,0.06)]"
+                        >
+                            <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#edf5fe] text-[#2563eb]">
+                                <component :is="item.icon" class="size-4.5 stroke-[2.2]" />
+                            </div>
+                            <div class="pt-0.5">
+                                <h2 class="text-xs sm:text-[13px] font-bold text-[#0f172a] leading-snug">
+                                    {{ item.title }}
+                                </h2>
+                                <p class="mt-0.5 text-[11px] sm:text-[11.5px] leading-relaxed text-[#556987]">
+                                    {{ item.subtitle }}
+                                </p>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <!-- Right Side: Title & 4 Benefit Items -->
-                        <div class="lg:col-span-6 space-y-6">
+                <!-- ======================================================= -->
+                <!-- 3. SECTION: 2 PILAR KEMITRAAN (COMPACT TRAVELOKA STYLE)  -->
+                <!-- ======================================================= -->
+                <section class="mt-10 sm:mt-14" aria-labelledby="tracks-heading">
+                    <div class="text-center max-w-2xl mx-auto">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2563eb]">
+                            SPESIALISASI BISNIS
+                        </p>
+                        <h2 id="tracks-heading" class="mt-1 text-xl font-extrabold tracking-tight text-[#0f172a] sm:text-2xl md:text-3xl">
+                            2 Kategori Mitra Resmi TapakLokal
+                        </h2>
+                        <p class="mt-1 text-xs sm:text-sm text-[#556987]">
+                            Pilih jalur kemitraan yang sesuai dengan model bisnis dan operasional Anda.
+                        </p>
+                    </div>
+
+                    <!-- 2 Compact Cards Grid -->
+                    <div class="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        <div
+                            v-for="track in partnerTracks"
+                            :key="track.id"
+                            class="group flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#e2eaf4] bg-white p-4.5 sm:p-5 shadow-[0_2px_12px_rgba(15,23,42,0.03)] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)] hover:-translate-y-0.5"
+                        >
                             <div>
-                                <h2 id="why-partner-title" class="text-2xl sm:text-3xl lg:text-[36px] font-extrabold tracking-tight text-[#0f172a] leading-tight">
-                                    Kenapa Bermitra dengan<br />
-                                    Tapak Lokal?
-                                </h2>
+                                <!-- Compact Image Banner -->
+                                <div class="relative aspect-[21/9] sm:aspect-[2.4/1] w-full overflow-hidden rounded-xl bg-slate-100">
+                                    <img
+                                        :src="track.image"
+                                        :alt="track.imageAlt"
+                                        class="size-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/20 to-transparent"></div>
+                                    <div class="absolute top-2.5 left-2.5">
+                                        <span class="rounded-full px-2.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-white shadow-xs backdrop-blur-xs" :class="track.badgeColor">
+                                            {{ track.categoryTag }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Text Details -->
+                                <div class="mt-3.5">
+                                    <h3 class="text-base sm:text-lg font-extrabold text-[#0f172a] group-hover:text-[#2563eb] transition-colors leading-snug">
+                                        {{ track.title }}
+                                    </h3>
+                                    <p class="mt-1 text-xs text-[#556987] leading-relaxed">
+                                        {{ track.description }}
+                                    </p>
+
+                                    <!-- Compact 1-line Feature Bullets -->
+                                    <div class="mt-3.5 space-y-2 pt-3 border-t border-slate-100">
+                                        <div
+                                            v-for="(feat, fIdx) in track.features"
+                                            :key="fIdx"
+                                            class="flex items-center gap-2.5"
+                                        >
+                                            <div class="flex size-4.5 shrink-0 items-center justify-center rounded-full bg-[#edf5fe] text-[#2563eb]">
+                                                <Check class="size-3 stroke-[3]" />
+                                            </div>
+                                            <span class="text-xs text-[#334155] font-medium leading-tight">
+                                                {{ feat }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- 4 Compact Benefit Rows (1:1 with Affiliate style) -->
-                            <div class="space-y-4 pt-1 sm:space-y-5">
-                                <div
-                                    v-for="(item, idx) in whyJoinBenefits"
-                                    :key="idx"
-                                    class="group flex items-start gap-4 rounded-2xl p-1 transition-all duration-200"
+                            <!-- Compact Action Button -->
+                            <div class="mt-5 pt-1">
+                                <button
+                                    type="button"
+                                    class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-[0_4px_14px_rgba(37,99,235,0.2)] transition-all duration-200 hover:-translate-y-0.5 active:scale-98 cursor-pointer"
+                                    @click="openRegistrationModal(track.id)"
                                 >
-                                    <div class="flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-2xl bg-[#edf5fe] text-[#2563eb] transition-transform duration-200 group-hover:scale-105 group-hover:bg-[#2563eb] group-hover:text-white">
-                                        <component :is="item.icon" class="size-5.5 sm:size-6 stroke-[2.2]" />
+                                    <span>{{ track.ctaText }}</span>
+                                    <ArrowRight class="size-3.5 stroke-[2.5]" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================= -->
+                <!-- 4. SECTION: KENAPA BERMITRA (4 VALUE PROPS)             -->
+                <!-- ======================================================= -->
+                <section class="mt-10 sm:mt-14" aria-labelledby="why-partner-title">
+                    <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-[#dce8f8] bg-[#f8fbff] p-5 sm:p-7 md:p-8 shadow-[0_2px_16px_rgba(37,99,235,0.03)]">
+                        <div class="text-center max-w-2xl mx-auto">
+                            <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2563eb]">
+                                KEUNGGULAN EKOSISTEM
+                            </p>
+                            <h2 id="why-partner-title" class="mt-1 text-xl font-extrabold tracking-tight text-[#0f172a] sm:text-2xl">
+                                Kenapa Bermitra dengan TapakLokal?
+                            </h2>
+                            <p class="mt-1 text-xs sm:text-sm text-[#556987]">
+                                Infrastruktur andal dan transparan untuk mendukung pertumbuhan bisnis lokal Anda.
+                            </p>
+                        </div>
+
+                        <div class="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                            <div
+                                v-for="(item, idx) in whyJoinBenefits"
+                                :key="idx"
+                                class="group flex flex-col justify-between rounded-2xl border border-[#e2eaf4] bg-white p-4 sm:p-4.5 shadow-[0_2px_8px_rgba(23,44,80,0.02)] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_8px_20px_rgba(37,99,235,0.06)] hover:-translate-y-0.5"
+                            >
+                                <div>
+                                    <div class="flex size-10 items-center justify-center rounded-xl bg-[#edf5fe] text-[#2563eb] transition-transform duration-300 group-hover:scale-105">
+                                        <component :is="item.icon" class="size-5 stroke-[2.2]" />
                                     </div>
-                                    <div class="pt-0.5">
-                                        <h3 class="text-sm sm:text-base font-bold text-[#0f172a] group-hover:text-[#2563eb] transition-colors">
-                                            {{ item.title }}
-                                        </h3>
-                                        <p class="mt-1 text-xs sm:text-[13.5px] leading-relaxed text-[#556987]">
-                                            {{ item.description }}
-                                        </p>
-                                    </div>
+                                    <h3 class="mt-3 text-xs sm:text-sm font-bold text-[#0f172a] group-hover:text-[#2563eb] transition-colors leading-snug">
+                                        {{ item.title }}
+                                    </h3>
+                                    <p class="mt-1 text-[11.5px] leading-relaxed text-[#556987]">
+                                        {{ item.description }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- ========================================================== -->
-                <!-- 3. SECTION: MULAI JADI MITRA DALAM 4 LANGKAH               -->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20" aria-labelledby="steps-partner-title">
-                    <div class="relative overflow-hidden rounded-[28px] border border-[#dce8f8] bg-[#f8fbff] p-6 sm:rounded-[36px] sm:p-9 md:p-11 lg:rounded-[40px] lg:p-12 xl:p-14 shadow-[0_4px_24px_rgba(37,99,235,0.03)]">
-                        <div class="mx-auto max-w-2xl text-center">
-                            <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
-                                CARA BERGABUNG
-                            </p>
-                            <h2 id="steps-partner-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl lg:text-4xl">
-                                Mulai Jadi Mitra dalam <span class="text-[#2563eb]">4 Langkah</span>
-                            </h2>
-                            <p class="mt-2.5 text-xs leading-relaxed text-[#556987] sm:text-sm">
-                                Proses pendaftaran cepat, kurasi mudah, dan langsung terhubung ke ribuan wisatawan.
-                            </p>
-                        </div>
+                <!-- ======================================================= -->
+                <!-- 5. SECTION: ALUR KEMITRAAN (4 LANGKAH BERGABUNG)        -->
+                <!-- ======================================================= -->
+                <section class="mt-10 sm:mt-14" aria-labelledby="steps-title">
+                    <div class="text-center max-w-2xl mx-auto">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2563eb]">
+                            PROSES ONBOARDING
+                        </p>
+                        <h2 id="steps-title" class="mt-1 text-xl font-extrabold tracking-tight text-[#0f172a] sm:text-2xl">
+                            Mulai Jadi Mitra dalam 4 Langkah
+                        </h2>
+                        <p class="mt-1 text-xs sm:text-sm text-[#556987]">
+                            Pendaftaran mudah, verifikasi cepat, dan Anda siap menerima pesanan pertama.
+                        </p>
+                    </div>
 
-                        <!-- Desktop Layout (lg:flex with standalone circular arrows in between) -->
-                        <div class="mt-8 sm:mt-12 hidden lg:flex items-stretch justify-between gap-2 xl:gap-3">
-                            <template v-for="(step, index) in steps" :key="step.number">
-                                <!-- Card -->
-                                <div
-                                    class="group relative flex flex-1 flex-col items-center justify-between rounded-[24px] border border-[#e2eaf4] bg-white p-5 xl:p-6 text-center shadow-[0_2px_12px_rgba(23,44,80,0.03)] min-h-[250px] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)] hover:-translate-y-1"
-                                >
-                                    <span class="absolute left-4 top-4 grid size-7 place-items-center rounded-full bg-[#2563eb] text-xs font-extrabold text-white shadow-xs">
+                    <div class="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                        <div
+                            v-for="step in steps"
+                            :key="step.number"
+                            class="relative flex flex-col justify-between rounded-2xl border border-[#e2eaf4] bg-white p-4.5 sm:p-5 shadow-[0_2px_8px_rgba(23,44,80,0.02)] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_8px_20px_rgba(37,99,235,0.06)] hover:-translate-y-0.5"
+                        >
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <span class="grid size-7 place-items-center rounded-full bg-[#2563eb] text-[11px] font-extrabold text-white shadow-xs">
                                         {{ step.number }}
                                     </span>
-                                    <div class="mt-2 grid size-14 xl:size-16 place-items-center rounded-2xl bg-[#edf5fe] text-[#2563eb] transition-transform duration-300 group-hover:scale-105">
-                                        <component :is="step.icon" class="size-7 xl:size-8 stroke-[2.2]" />
-                                    </div>
-                                    <div class="mt-4 flex flex-col items-center flex-1 justify-center">
-                                        <h3 class="text-sm xl:text-base font-bold text-[#111c38] group-hover:text-[#2563eb] transition-colors">
-                                            {{ step.title }}
-                                        </h3>
-                                        <p class="mt-1.5 text-xs leading-relaxed text-[#556987]">
-                                            {{ step.description }}
-                                        </p>
+                                    <div class="flex size-8.5 items-center justify-center rounded-xl bg-[#edf5fe] text-[#2563eb]">
+                                        <component :is="step.icon" class="size-4.5 stroke-[2.2]" />
                                     </div>
                                 </div>
-
-                                <!-- Standalone Arrow Between Cards -->
-                                <div
-                                    v-if="index < steps.length - 1"
-                                    class="flex items-center justify-center shrink-0 px-1 text-[#2563eb]"
-                                >
-                                    <div class="flex size-8 xl:size-9 items-center justify-center rounded-full bg-[#edf5fe] border border-[#d8eafb] text-[#2563eb] shadow-xs">
-                                        <ArrowRight class="size-4 xl:size-4.5 stroke-[2.5]" />
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <!-- Mobile & Tablet Layout (< lg) -->
-                        <div class="mt-8 flex flex-col sm:grid sm:grid-cols-2 gap-4 sm:gap-6 lg:hidden">
-                            <template v-for="(step, index) in steps" :key="step.number">
-                                <div class="flex flex-col">
-                                    <div
-                                        class="group relative flex flex-col items-center justify-between rounded-[20px] sm:rounded-[24px] border border-[#e2eaf4] bg-white p-6 text-center shadow-[0_2px_12px_rgba(23,44,80,0.03)] h-full min-h-[230px] transition-all duration-300 hover:border-[#93c5fd]"
-                                    >
-                                        <span class="absolute left-4 top-4 grid size-7 place-items-center rounded-full bg-[#2563eb] text-xs font-extrabold text-white shadow-xs">
-                                            {{ step.number }}
-                                        </span>
-                                        <div class="mt-2 grid size-14 place-items-center rounded-2xl bg-[#edf5fe] text-[#2563eb]">
-                                            <component :is="step.icon" class="size-7 stroke-[2.2]" />
-                                        </div>
-                                        <div class="mt-4 flex flex-col items-center flex-1 justify-center">
-                                            <h3 class="text-base font-bold text-[#111c38]">
-                                                {{ step.title }}
-                                            </h3>
-                                            <p class="mt-2 text-xs sm:text-[13px] leading-relaxed text-[#556987]">
-                                                {{ step.description }}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Arrow Down on Mobile -->
-                                    <div
-                                        v-if="index < steps.length - 1"
-                                        class="flex sm:hidden justify-center py-2 text-[#2563eb]"
-                                    >
-                                        <div class="flex size-8 items-center justify-center rounded-full bg-[#edf5fe] border border-[#d8eafb] shadow-xs">
-                                            <ArrowDown class="size-4 stroke-[2.5]" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ========================================================== -->
-                <!-- 4. SECTION: FITUR & SPESIALISASI KEMITRAAN (3-CARD GRID)   -->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20" aria-labelledby="catalog-partner-title">
-                    <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
-                                SPESIALISASI KEMITRAAN
-                            </p>
-                            <h2 id="catalog-partner-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl">
-                                2 Jalur Kemitraan Unggulan TapakLokal
-                            </h2>
-                            <p class="mt-1 text-xs leading-relaxed text-[#556987] sm:text-sm">
-                                Dirancang khusus sesuai spesialisasi bisnis Anda dengan sistem dan fitur terlengkap di Indonesia.
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#2563eb] transition-colors hover:text-[#1d4ed8] cursor-pointer"
-                            @click="openRegistrationModal('trip')"
-                        >
-                            <span>Daftar Kemitraan Sekarang</span>
-                            <ArrowRight class="size-4" />
-                        </button>
-                    </div>
-
-                    <!-- 3 Showcase Cards (1:1 Matching Affiliate Trip Cards Grid) -->
-                    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        <div
-                            v-for="card in featureCards"
-                            :key="card.id"
-                            class="group flex flex-col overflow-hidden rounded-[20px] sm:rounded-[24px] border border-[#e2eaf4] bg-white shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#93c5fd] hover:shadow-[0_16px_36px_rgba(37,99,235,0.09)]"
-                        >
-                            <!-- Card Image -->
-                            <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-                                <img
-                                    :src="card.image"
-                                    :alt="card.title"
-                                    class="size-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div class="absolute top-3 left-3">
-                                    <span class="rounded-lg bg-[#2563eb] px-2.5 py-1 text-[11px] font-bold text-white shadow-xs">
-                                        {{ card.badge }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Card Body Info -->
-                            <div class="flex flex-1 flex-col p-5 sm:p-6">
-                                <!-- Location / Subtitle -->
-                                <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                                    <MapPin class="size-3.5 text-[#2563eb] shrink-0" />
-                                    <span>{{ card.location }}</span>
-                                </div>
-
-                                <!-- Title -->
-                                <h3 class="mt-2 text-base sm:text-lg font-bold text-[#111c38] line-clamp-1 group-hover:text-[#2563eb] transition-colors">
-                                    {{ card.title }}
+                                <h3 class="mt-3.5 text-xs sm:text-sm font-bold text-[#0f172a]">
+                                    {{ step.title }}
                                 </h3>
-
-                                <!-- Description -->
-                                <p class="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-[#556987] line-clamp-3">
-                                    {{ card.description }}
+                                <p class="mt-1 text-[11.5px] leading-relaxed text-[#556987]">
+                                    {{ step.description }}
                                 </p>
-
-                                <!-- Perk & Highlight Bar -->
-                                <div class="mt-auto pt-4 flex items-center justify-between border-t border-slate-100">
-                                    <div class="text-xs font-bold text-slate-700 truncate pr-2">
-                                        {{ card.highlightLabel }}
-                                    </div>
-
-                                    <div class="shrink-0 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600">
-                                        {{ card.perkBadge }}
-                                    </div>
-                                </div>
-
-                                <!-- Quick Action Button -->
-                                <div class="mt-4 pt-1">
-                                    <button
-                                        type="button"
-                                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#edf5fe] hover:bg-[#2563eb] text-[#2563eb] hover:text-white py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer active:scale-98"
-                                        @click="openRegistrationModal(card.type)"
-                                    >
-                                        <span>{{ card.buttonText }}</span>
-                                        <ArrowRight class="size-3.5" />
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- ========================================================== -->
-                <!-- 5. INTERACTIVE CALCULATOR (Potensi Omzet Kemitraan)        -->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20" aria-labelledby="calc-partner-title">
-                    <div class="relative overflow-hidden rounded-[28px] border border-[#dce8f8] bg-[#f8fbff] p-6 sm:rounded-[36px] sm:p-9 md:p-11 lg:rounded-[40px] lg:p-12 xl:p-14 shadow-[0_4px_24px_rgba(37,99,235,0.03)]">
-                        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8 xl:gap-12">
-                            <!-- Left Side: Controls & Steppers -->
-                            <div class="lg:col-span-6 xl:col-span-6">
-                                <h2 id="calc-partner-title" class="mt-2 text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#0f172a] leading-tight">
-                                    Hitung Potensi Omzet Usaha Anda
-                                </h2>
-                                <p class="mt-2 text-xs sm:text-sm text-[#556987] leading-relaxed max-w-lg">
-                                    Simulasikan estimasi perputaran omzet bulanan dari paket trip wisata atau penjualan produk oleh-oleh khas daerah Anda.
-                                </p>
-
-                                <!-- Track Switcher (Trip vs Souvenir) -->
-                                <div class="mt-5 inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-2xs">
-                                    <button
-                                        type="button"
-                                        class="rounded-lg px-4 py-2 text-xs font-bold transition cursor-pointer"
-                                        :class="calcType === 'trip' ? 'bg-[#2563eb] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'"
-                                        @click="calcType = 'trip'"
-                                    >
-                                        Vendor Trip Wisata
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="rounded-lg px-4 py-2 text-xs font-bold transition cursor-pointer"
-                                        :class="calcType === 'souvenir' ? 'bg-[#2563eb] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'"
-                                        @click="calcType = 'souvenir'"
-                                    >
-                                        Vendor Oleh-Oleh Daerah
-                                    </button>
-                                </div>
-
-                                <!-- Steppers for Trip -->
-                                <template v-if="calcType === 'trip'">
-                                    <!-- Stepper 1: Rata-rata harga paket trip -->
-                                    <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-1">
-                                        <span class="text-xs sm:text-sm font-semibold text-slate-700">
-                                            Rata-rata harga paket trip
-                                        </span>
-                                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-xs min-w-[210px] sm:min-w-[230px]">
-                                            <button
-                                                type="button"
-                                                aria-label="Kurangi harga paket trip"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcTripPrice <= 500000"
-                                                @click="changeTripPrice(-250000)"
-                                            >
-                                                <Minus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900">
-                                                {{ formatCurrency(calcTripPrice) }}
-                                            </span>
-                                            <button
-                                                type="button"
-                                                aria-label="Tambah harga paket trip"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcTripPrice >= 25000000"
-                                                @click="changeTripPrice(250000)"
-                                            >
-                                                <Plus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Stepper 2: Peserta / Booking per bulan -->
-                                    <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-1">
-                                        <span class="text-xs sm:text-sm font-semibold text-slate-700">
-                                            Jumlah peserta / booking per bulan
-                                        </span>
-                                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-xs min-w-[210px] sm:min-w-[230px]">
-                                            <button
-                                                type="button"
-                                                aria-label="Kurangi jumlah peserta"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcTripBookings <= 1"
-                                                @click="changeTripBookings(-1)"
-                                            >
-                                                <Minus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900">
-                                                {{ calcTripBookings }} orang
-                                            </span>
-                                            <button
-                                                type="button"
-                                                aria-label="Tambah jumlah peserta"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcTripBookings >= 200"
-                                                @click="changeTripBookings(1)"
-                                            >
-                                                <Plus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                <!-- Steppers for Souvenir -->
-                                <template v-else>
-                                    <!-- Stepper 1: Rata-rata harga oleh-oleh -->
-                                    <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-1">
-                                        <span class="text-xs sm:text-sm font-semibold text-slate-700">
-                                            Rata-rata harga per item / box
-                                        </span>
-                                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-xs min-w-[210px] sm:min-w-[230px]">
-                                            <button
-                                                type="button"
-                                                aria-label="Kurangi harga oleh-oleh"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcSouvenirPrice <= 25000"
-                                                @click="changeSouvenirPrice(-10000)"
-                                            >
-                                                <Minus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900">
-                                                {{ formatCurrency(calcSouvenirPrice) }}
-                                            </span>
-                                            <button
-                                                type="button"
-                                                aria-label="Tambah harga oleh-oleh"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcSouvenirPrice >= 500000"
-                                                @click="changeSouvenirPrice(10000)"
-                                            >
-                                                <Plus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Stepper 2: Jumlah pesanan oleh-oleh per bulan -->
-                                    <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 py-1">
-                                        <span class="text-xs sm:text-sm font-semibold text-slate-700">
-                                            Jumlah pesanan per bulan
-                                        </span>
-                                        <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-xs min-w-[210px] sm:min-w-[230px]">
-                                            <button
-                                                type="button"
-                                                aria-label="Kurangi jumlah pesanan"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcSouvenirOrders <= 10"
-                                                @click="changeSouvenirOrders(-10)"
-                                            >
-                                                <Minus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                            <span class="text-xs sm:text-sm font-extrabold text-slate-900">
-                                                {{ calcSouvenirOrders }} pesanan
-                                            </span>
-                                            <button
-                                                type="button"
-                                                aria-label="Tambah jumlah pesanan"
-                                                class="flex size-7 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                                                :disabled="calcSouvenirOrders >= 1000"
-                                                @click="changeSouvenirOrders(10)"
-                                            >
-                                                <Plus class="size-4 stroke-[2.5]" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-
-                            <!-- Right Side: Result Card + Tilted Polaroid Photo with Washi Tape -->
-                            <div class="lg:col-span-6 xl:col-span-6 flex items-center justify-center lg:justify-end">
-                                <div class="relative w-full max-w-[500px] rounded-[28px] border border-[#d8eafb] bg-white/95 p-6 sm:p-7 shadow-[0_12px_36px_rgba(37,99,235,0.06)]">
-                                    <div class="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-5 sm:gap-6">
-                                        <!-- Result Content -->
-                                        <div class="flex-1 text-center sm:text-left pt-2 sm:pt-4">
-                                            <p class="text-xs sm:text-sm font-bold text-slate-700">
-                                                Estimasi Omzet Penjualan
-                                            </p>
-                                            <div class="mt-1 text-2xl sm:text-3xl lg:text-[32px] font-black tracking-tight text-[#2563eb]">
-                                                {{ formatCurrency(calculatedMonthlyRevenue) }}
-                                            </div>
-                                            <p class="mt-0.5 text-xs font-semibold text-slate-500">
-                                                per bulan
-                                            </p>
-
-                                            <p class="mt-4 text-[11px] leading-relaxed text-slate-400 max-w-[210px] mx-auto sm:mx-0">
-                                                *Perhitungan adalah simulasi potensi omzet. Pencairan dana otomatis masuk ke rekening setelah trip/pesanan selesai.
-                                            </p>
-
-                                            <div class="mt-5">
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex items-center justify-center gap-2 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] px-5 sm:px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-95 text-center cursor-pointer"
-                                                    @click="openRegistrationModal(calcType)"
-                                                >
-                                                    <span>Daftar Kemitraan</span>
-                                                    <ArrowRight class="size-4 stroke-[2.5]" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <!-- Tilted Photo with Washi Tape -->
-                                        <div class="relative shrink-0 select-none pt-6 pb-2 sm:pt-7 sm:pb-3">
-                                            <div class="hidden sm:block absolute top-1.5 -right-2 z-20 text-right">
-                                                <span class="inline-block text-[10px] font-bold text-slate-600 italic rotate-6 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shadow-2xs">
-                                                    Bisnis Lokal Naik Kelas
-                                                </span>
-                                            </div>
-
-                                            <div class="relative w-36 sm:w-40 lg:w-44 rotate-6 rounded-2xl border-4 border-white bg-white p-1.5 pb-3 shadow-[0_12px_28px_rgba(15,44,92,0.14)] transition-transform duration-300 hover:rotate-3 hover:scale-105">
-                                                <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-12 h-5 bg-[#e2d9c8]/90 border-t border-b border-[#cfc3ad] -rotate-2 rounded-xs shadow-xs z-10"></div>
-                                                <img
-                                                    src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80"
-                                                    alt="Keindahan Alam Nusantara"
-                                                    class="aspect-[3/4] w-full rounded-xl object-cover"
-                                                />
-                                                <p class="mt-2 text-center text-[9px] sm:text-[10px] font-bold text-slate-600 leading-tight">
-                                                    Mitra Resmi Nusantara
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ========================================================== -->
-                <!-- 6. SECTION: FAQ (Pertanyaan yang Sering Diajukan)          -->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20" aria-labelledby="faq-partner-title">
+                <!-- ======================================================= -->
+                <!-- 6. SECTION: FAQ (Pertanyaan yang Sering Diajukan)       -->
+                <!-- ======================================================= -->
+                <section class="mt-10 sm:mt-14" aria-labelledby="faq-partner-title">
                     <div class="mx-auto max-w-2xl text-center">
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#2563eb]">
                             BANTUAN & INFORMASI
                         </p>
-                        <h2 id="faq-partner-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl">
+                        <h2 id="faq-partner-title" class="mt-1 text-xl font-extrabold tracking-tight text-[#111c38] sm:text-2xl">
                             Pertanyaan yang Sering Diajukan
                         </h2>
-                        <p class="mt-2 text-xs sm:text-sm text-[#556987]">
+                        <p class="mt-1 text-xs sm:text-sm text-[#556987]">
                             Punya pertanyaan seputar program kemitraan TapakLokal? Temukan jawabannya di bawah ini.
                         </p>
                     </div>
 
-                    <div class="mx-auto mt-8 max-w-3xl space-y-3">
+                    <div class="mx-auto mt-6 max-w-3xl space-y-2.5">
                         <div
                             v-for="(faq, fIndex) in faqs"
                             :key="fIndex"
-                            class="overflow-hidden rounded-[20px] border border-[#e2eaf4] bg-white shadow-xs transition-all duration-200"
+                            class="overflow-hidden rounded-2xl border border-[#e2eaf4] bg-white shadow-xs transition-all duration-200"
                         >
                             <button
                                 type="button"
-                                class="flex w-full items-center justify-between p-5 text-left font-bold text-[#111c38] transition hover:text-[#2563eb] cursor-pointer"
+                                class="flex w-full items-center justify-between p-4 sm:p-4.5 text-left font-bold text-[#111c38] transition hover:text-[#2563eb] cursor-pointer"
                                 @click="toggleFaq(fIndex)"
                             >
                                 <span class="text-xs sm:text-sm pr-4">{{ faq.q }}</span>
                                 <span
-                                    class="flex size-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-transform duration-200"
+                                    class="flex size-6.5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-transform duration-200"
                                     :class="{ 'rotate-180 bg-[#edf5fe] text-[#2563eb]': faq.open }"
                                 >
-                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
+                                    <ChevronDown class="size-3.5 stroke-[2.5]" />
                                 </span>
                             </button>
                             <div
                                 v-if="faq.open"
-                                class="px-5 pb-5 text-xs sm:text-sm leading-relaxed text-[#556987] border-t border-slate-100 pt-3"
+                                class="px-4 sm:px-4.5 pb-4 text-xs sm:text-[13px] leading-relaxed text-[#556987] border-t border-slate-100 pt-2.5"
                             >
                                 {{ faq.a }}
                             </div>
@@ -880,11 +553,11 @@ const toggleFaq = (index) => {
                     </div>
                 </section>
 
-                <!-- ========================================================== -->
-                <!-- 7. BOTTOM CTA BANNER (Cinematic Editorial Style)           -->
-                <!-- ========================================================== -->
-                <section class="mt-14 sm:mt-20">
-                    <div class="relative overflow-hidden rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] border border-slate-700/40 p-8 sm:p-12 md:p-16 text-center text-white shadow-[0_20px_50px_rgba(5,19,41,0.35)] select-none">
+                <!-- ======================================================= -->
+                <!-- 7. BOTTOM CTA BANNER (Cinematic Editorial Style)        -->
+                <!-- ======================================================= -->
+                <section class="mt-10 sm:mt-14">
+                    <div class="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-700/40 p-6 sm:p-9 md:p-12 text-center text-white shadow-[0_16px_40px_rgba(5,19,41,0.3)] select-none">
                         <!-- Background Landscape Photo -->
                         <img
                             src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85"
@@ -902,27 +575,27 @@ const toggleFaq = (index) => {
 
                         <!-- Content -->
                         <div class="relative z-10 mx-auto max-w-2xl">
-                            <h2 class="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl leading-tight">
+                            <h2 class="text-xl font-black tracking-tight text-white sm:text-2xl lg:text-3xl leading-tight">
                                 Siap Mengembangkan Usaha Wisata & Oleh-Oleh Anda?
                             </h2>
-                            <p class="mt-3.5 text-xs sm:text-sm md:text-[15px] leading-relaxed text-slate-200/90 font-normal max-w-xl mx-auto">
+                            <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-200/90 font-normal max-w-xl mx-auto">
                                 Daftarkan paket trip atau produk lokal Anda dalam hitungan menit dan mulai jangkau ribuan wisatawan nusantara bersama TapakLokal.
                             </p>
 
                             <!-- Action Buttons -->
-                            <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
                                 <button
                                     type="button"
-                                    class="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_10px_28px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-[#0088ff] hover:text-white hover:shadow-[0_14px_35px_rgba(0,136,255,0.5)] hover:-translate-y-0.5 active:scale-98 cursor-pointer"
+                                    class="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-[#0088ff] hover:text-white hover:shadow-[0_12px_28px_rgba(0,136,255,0.4)] hover:-translate-y-0.5 active:scale-98 cursor-pointer"
                                     @click="openRegistrationModal('trip')"
                                 >
                                     <span>Daftar Jadi Mitra Sekarang</span>
-                                    <ArrowRight class="size-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-1" />
+                                    <ArrowRight class="size-3.5 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-1" />
                                 </button>
 
                                 <Link
                                     href="/bantuan"
-                                    class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-[#0c2340] hover:border-white hover:shadow-[0_10px_28px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 active:scale-98"
+                                    class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-[#0c2340] hover:border-white hover:shadow-[0_8px_20px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 active:scale-98"
                                 >
                                     <span>Pusat Bantuan Mitra</span>
                                 </Link>
@@ -1102,4 +775,5 @@ const toggleFaq = (index) => {
         <MainFooter />
     </div>
 </template>
+
 
