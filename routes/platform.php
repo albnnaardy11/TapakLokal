@@ -24,7 +24,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AuthController::class, 'adminStore'])->middleware('throttle:login')->name('admin.login.store');
     Route::get('/vendor/login', [AuthController::class, 'vendorCreate'])->name('vendor.login');
     Route::post('/vendor/login', [AuthController::class, 'vendorStore'])->middleware('throttle:login')->name('vendor.login.store');
-    Route::get('/register', fn () => Inertia::render('Auth/Login', ['mode' => 'register']))->name('register');
+    Route::redirect('/register', '/?auth=register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.store');
     Route::get('/forgot-password', fn () => Inertia::render('Auth/Login', ['mode' => 'forgot']))->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'forgot'])->middleware('throttle:5,1')->name('password.email');

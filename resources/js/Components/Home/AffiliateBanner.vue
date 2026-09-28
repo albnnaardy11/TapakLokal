@@ -5,7 +5,7 @@ import { ArrowRight, TrendingUp, Share2, Wallet, CheckCircle2, Sparkles } from '
 defineProps({
     linkHref: {
         type: String,
-        default: '/register',
+        default: '/bisnis/affiliate',
     },
 });
 </script>

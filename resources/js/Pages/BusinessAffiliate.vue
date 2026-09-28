@@ -29,6 +29,7 @@ import {
 } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
+import AuthModal from '../Components/Shared/AuthModal.vue';
 
 // Toast Notification State
 const toastMessage = ref('');
@@ -42,6 +43,44 @@ const triggerToast = (msg) => {
     toastTimeout = setTimeout(() => {
         showToast.value = false;
     }, 2800);
+};
+
+// Traveloka 1:1 Login / Auth Modal State
+const isAuthModalOpen = ref(false);
+const authModalTitle = ref("We've got a deal you can't resist!");
+const authModalSubtitle = ref("Yuk masuk untuk mulai jadi affiliate, nikmati komisi hingga 20%, dan cairkan saldo dengan mudah!");
+const pendingAction = ref(null);
+
+const openAffiliateAuthModal = (type = 'join', data = null) => {
+    pendingAction.value = { type, data };
+    if (type === 'copy_promo') {
+        authModalTitle.value = "Yuk masuk untuk salin link affiliate!";
+    } else if (type === 'copy_referral') {
+        authModalTitle.value = "Masuk untuk bagikan link referral!";
+    } else {
+        authModalTitle.value = "We've got a deal you can't resist!";
+    }
+    isAuthModalOpen.value = true;
+};
+
+const handleLoginSuccess = () => {
+    if (pendingAction.value?.type === 'copy_promo' && pendingAction.value.data) {
+        copyPromoLink(pendingAction.value.data);
+    } else if (pendingAction.value?.type === 'copy_referral') {
+        triggerToast('Link referral siap dibagikan!');
+    } else {
+        triggerToast('Selamat bergabung di Affiliate TapakLokal!');
+    }
+};
+
+const handleGuestContinue = () => {
+    if (pendingAction.value?.type === 'copy_promo' && pendingAction.value.data) {
+        copyPromoLink(pendingAction.value.data);
+    } else if (pendingAction.value?.type === 'copy_referral') {
+        triggerToast('Link referral siap dibagikan!');
+    } else {
+        triggerToast('Melanjutkan sebagai penjelajah tamu.');
+    }
 };
 
 // Copy link simulation
@@ -169,24 +208,26 @@ const steps = [
     },
 ];
 
-// Why Join Cards (Clean Design System)
-const reasons = [
+// Why Join Benefit Points (2-Column Layout matching design)
+const whyJoinBenefits = [
     {
         title: 'Dapatkan Komisi',
-        description: 'Raih komisi hingga 20% dari setiap pemesanan paket wisata yang berhasil melalui tautan referral unik kamu.',
-        highlight: 'Komisi hingga 20% per transaksi',
-        icon: Banknote,
+        description: 'Komisi dari setiap pemesanan yang dilakukan melalui link affiliate kamu.',
+        icon: Wallet,
     },
     {
-        title: 'Promosikan Wisata Indonesia',
-        description: 'Bantu wisatawan menemukan destinasi lokal yang otentik dan mempesona dari Sabang sampai Merauke bersama mitra lokal terpercaya.',
-        highlight: '1.000+ Paket Trip Terverifikasi',
+        title: 'Pilih Paket Wisata Terlengkap',
+        description: 'Ratusan destinasi lokal dengan kategori beragam yang bisa kamu promosikan.',
         icon: Compass,
     },
     {
-        title: 'Fleksibel & Tanpa Biaya',
-        description: 'Bisa dijalankan kapan saja dan dari mana saja tanpa syarat minimal followers serta tanpa biaya pendaftaran sepeser pun.',
-        highlight: '100% Gratis & Bebas Target',
+        title: 'Tracking Otomatis',
+        description: 'Semua klik, pemesanan, dan komisi tercatat real-time di dashboard kamu.',
+        icon: TrendingUp,
+    },
+    {
+        title: 'Fleksibel & Mudah',
+        description: 'Bisa dilakukan kapan saja, di mana saja, tanpa biaya awal.',
         icon: Clock,
     },
 ];
@@ -254,6 +295,16 @@ const toggleFaq = (index) => {
         <!-- Main Navigation -->
         <MainNavigation :transparent-on-top="false" :is-static="true" />
 
+        <!-- Traveloka 1:1 Auth Modal -->
+        <AuthModal
+            :open="isAuthModalOpen"
+            :title="authModalTitle"
+            :subtitle="authModalSubtitle"
+            @close="isAuthModalOpen = false"
+            @login-success="handleLoginSuccess"
+            @guest-continue="handleGuestContinue"
+        />
+
         <!-- Toast Feedback Notification -->
         <Transition
             enter-active-class="transition duration-300 ease-out"
@@ -276,7 +327,7 @@ const toggleFaq = (index) => {
 
         <main class="w-full overflow-x-hidden">
             <!-- Unified Page Container -->
-            <div class="mx-auto max-w-[1200px] px-4 pt-6 pb-20 sm:px-6 sm:pt-8 sm:pb-28 lg:px-8 lg:pt-10">
+            <div class="mx-auto max-w-[1200px] px-4 pt-6 pb-20 sm:px-6 sm:pt-8 sm:pb-28 md:pt-10 lg:px-8 lg:pt-12 xl:pt-14">
                 <!-- ======================================================= -->
                 <!-- 1. HERO SECTION (CARD STYLE MATCHING ACCESSIBILITY GUIDE) -->
                 <!-- ======================================================= -->
@@ -304,13 +355,14 @@ const toggleFaq = (index) => {
 
                             <!-- Action Buttons -->
                             <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                                <Link
-                                    href="/register"
-                                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:bg-[#1d4ed8] hover:shadow-[0_12px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base text-center"
+                                <button
+                                    type="button"
+                                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:bg-[#1d4ed8] hover:shadow-[0_12px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base text-center cursor-pointer"
+                                    @click="openAffiliateAuthModal('join')"
                                 >
                                     <span>Gabung Jadi Affiliate</span>
                                     <ArrowRight class="size-4 shrink-0 stroke-[2.5]" aria-hidden="true" />
-                                </Link>
+                                </button>
 
                                 <Link
                                     href="/cari-trip"
@@ -321,80 +373,60 @@ const toggleFaq = (index) => {
                             </div>
                         </div>
 
-                        <!-- Right Graphic: Layered Composition with Tilted Photos & Dashboard Card -->
+                        <!-- Right Graphic: Affiliate Live Dashboard Card (Proportional & Enlarged) -->
                         <div class="flex items-center justify-center lg:justify-end">
-                            <div class="relative w-full max-w-[440px] sm:max-w-[480px] lg:max-w-[500px] py-6 sm:py-8 select-none">
-                                <!-- Background Photo 1 (Tilted Left: Bromo Sunrise) -->
-                                <div class="absolute -top-1 left-2 sm:-left-2 z-10 w-36 sm:w-44 -rotate-8 rounded-2xl border-4 border-white bg-white shadow-[0_10px_25px_rgba(15,44,92,0.12)] transition-transform duration-300 hover:-rotate-4 hover:scale-105">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=360&q=80"
-                                        alt="Bromo Sunrise"
-                                        class="aspect-[4/3] w-full rounded-xl object-cover"
-                                    />
-                                </div>
-
-                                <!-- Background Photo 2 (Tilted Right: Polaroid Raja Ampat with Tape) -->
-                                <div class="absolute top-2 right-1 sm:-right-2 z-10 w-36 sm:w-44 rotate-6 rounded-2xl border-4 border-white bg-white p-1.5 pb-3 shadow-[0_12px_28px_rgba(15,44,92,0.14)] transition-transform duration-300 hover:rotate-3 hover:scale-105">
-                                    <!-- Washi Tape Graphic -->
-                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-12 h-5 bg-[#e2d9c8]/90 border-t border-b border-[#cfc3ad] -rotate-2 rounded-xs shadow-xs"></div>
-                                    <img
-                                        src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=360&q=80"
-                                        alt="Raja Ampat"
-                                        class="aspect-[4/3] w-full rounded-lg object-cover"
-                                    />
-                                    <p class="mt-2 text-center text-[9px] sm:text-[10px] font-bold text-slate-600 leading-tight">
-                                        Rezeki bagi pelaku lokal 🌴
-                                    </p>
-                                </div>
-
-                                <!-- Foreground Center Mockup: Affiliate Live Dashboard Card -->
-                                <div class="relative z-20 mx-auto w-[270px] sm:w-[300px] rounded-[24px] border border-[#bfdbfe] bg-white p-4 sm:p-5 shadow-[0_16px_36px_rgba(37,99,235,0.14)] backdrop-blur-md">
+                            <div class="w-full max-w-[390px] sm:max-w-[430px] lg:max-w-[460px] select-none">
+                                <!-- Foreground Mockup: Affiliate Live Dashboard Card -->
+                                <div class="rounded-[28px] sm:rounded-[32px] border border-[#bfdbfe] bg-white p-6 sm:p-7 shadow-[0_20px_48px_rgba(37,99,235,0.12)] backdrop-blur-md">
                                     <!-- Card Header -->
-                                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="flex size-8 items-center justify-center rounded-xl bg-[#2563eb] text-white shadow-xs">
-                                                <BadgePercent class="size-4.5" />
+                                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex size-11 items-center justify-center rounded-2xl bg-[#2563eb] text-white shadow-xs">
+                                                <BadgePercent class="size-5.5" />
                                             </div>
                                             <div>
-                                                <p class="text-xs font-bold text-slate-800 leading-tight">TapakLokal Affiliate</p>
-                                                <p class="text-[10px] text-slate-400 font-medium">Panel Kemitraan</p>
+                                                <p class="text-sm sm:text-base font-bold text-slate-800 leading-tight">TapakLokal Affiliate</p>
+                                                <p class="text-xs text-slate-400 font-medium mt-0.5">Panel Kemitraan Resmi</p>
                                             </div>
                                         </div>
+                                      
                                     </div>
 
                                     <!-- Commission Balance Card -->
-                                    <div class="mt-3.5 rounded-2xl bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#3b82f6] p-3.5 text-white shadow-sm">
-                                        <div class="flex items-center justify-between text-[10px] text-blue-100">
-                                            <span class="inline-flex items-center gap-1">
-                                                <Wallet class="size-3" /> Total Komisi
+                                    <div class="mt-4 sm:mt-5 rounded-2xl bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#3b82f6] p-5 sm:p-5.5 text-white shadow-md">
+                                        <div class="flex items-center justify-between text-xs sm:text-[13px] text-blue-100">
+                                            <span class="inline-flex items-center gap-1.5 font-medium">
+                                                <Wallet class="size-3.5 sm:size-4" /> Total Komisi Kamu
                                             </span>
-                                            <span class="rounded-md bg-white/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-200">
+                                            <span class="rounded-lg bg-white/20 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold text-emerald-200">
                                                 Komisi s.d 20%
                                             </span>
                                         </div>
-                                        <div class="mt-1 text-lg font-black tracking-tight">
+                                        <div class="mt-2 text-2xl sm:text-3xl font-black tracking-tight">
                                             Rp 4.850.000
                                         </div>
-                                        <div class="mt-1.5 flex items-center justify-between text-[9px] text-blue-100 pt-1.5 border-t border-white/20">
+                                        <div class="mt-2.5 flex items-center justify-between text-xs text-blue-100 pt-2.5 border-t border-white/20">
                                             <span>18 Booking Berhasil</span>
-                                            <span class="font-bold text-white">Siap Cair</span>
+                                            <span class="font-bold text-white flex items-center gap-1">
+                                                <span class="size-1.5 rounded-full bg-emerald-300"></span> Siap Cair
+                                            </span>
                                         </div>
                                     </div>
 
                                     <!-- Active Referral Link Snippet -->
-                                    <div class="mt-3 rounded-xl border border-slate-100 bg-[#f8fafc] p-2.5">
-                                        <div class="flex items-center justify-between text-[10px]">
+                                    <div class="mt-4 rounded-2xl border border-slate-100 bg-[#f8fafc] p-3.5 sm:p-4">
+                                        <div class="flex items-center justify-between text-xs sm:text-[13px]">
                                             <span class="font-bold text-slate-700">Link Referral Kamu:</span>
-                                            <span class="text-[9px] text-[#2563eb] font-semibold">Aktif</span>
+                                            <span class="text-xs text-[#2563eb] font-semibold">Tervalidasi</span>
                                         </div>
-                                        <div class="mt-1.5 flex items-center justify-between gap-1.5 rounded-lg bg-white border border-slate-200 px-2 py-1 text-[9px] text-slate-500 font-mono">
+                                        <div class="mt-2 flex items-center justify-between gap-2 rounded-xl bg-white border border-slate-200 px-3 py-2 text-xs sm:text-sm text-slate-600 font-mono">
                                             <span class="truncate">tapaklokal.com/ref?a=TL77</span>
                                             <button
                                                 type="button"
-                                                class="inline-flex shrink-0 items-center gap-0.5 rounded bg-[#2563eb] px-1.5 py-0.5 text-[9px] font-bold text-white transition hover:bg-[#1d4ed8]"
-                                                @click="triggerToast('Link referral siap dibagikan!')"
+                                                class="inline-flex shrink-0 items-center gap-1 rounded-lg bg-[#2563eb] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#1d4ed8] cursor-pointer shadow-xs"
+                                                @click="openAffiliateAuthModal('copy_referral')"
                                             >
-                                                <Copy class="size-2.5" />
+                                                <Copy class="size-3" />
                                                 <span>Salin</span>
                                             </button>
                                         </div>
@@ -406,44 +438,84 @@ const toggleFaq = (index) => {
                 </section>
 
                 <!-- ========================================================== -->
-                <!-- 2. SECTION: KENAPA JADI AFFILIATE TAPAK LOKAL?             -->
+                <!-- 2. SECTION: KENAPA JADI AFFILIATE TAPAK LOKAL? (2-COL)     -->
                 <!-- ========================================================== -->
-                <section class="mt-12 sm:mt-16" aria-labelledby="why-join-title">
-                    <div class="mx-auto max-w-2xl text-center">
-                        <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
-                            KEUNGGULAN AFFILIATE
-                        </p>
-                        <h2 id="why-join-title" class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl lg:text-4xl">
-                            Kenapa Jadi <span class="text-[#2563eb]">Affiliate Tapak Lokal?</span>
-                        </h2>
-                        <p class="mt-2.5 text-xs leading-relaxed text-[#556987] sm:text-sm">
-                            Lebih dari sekadar penghasilan, ini kesempatan untuk ikut mengenalkan keindahan Indonesia.
-                        </p>
-                    </div>
+                <section class="mt-14 sm:mt-20" aria-labelledby="why-join-title">
+                    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-16">
+                        <!-- Left Side: Layered Travel Photos (With Paper Tape / Tempelan Kertas) -->
+                        <div class="lg:col-span-6 flex items-center justify-center">
+                            <div class="relative w-full max-w-[460px] py-6 sm:py-8 select-none">
+                                <!-- Main Center Photo -->
+                                <div class="relative z-10 mx-auto w-[82%] sm:w-[85%] transition-transform duration-300 hover:scale-[1.02]">
+                                    <!-- Optional subtle top tape for main card -->
+                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-14 sm:w-16 -rotate-1 rounded-xs bg-[#ebe3d0]/90 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
+                                    <div class="overflow-hidden rounded-[24px] sm:rounded-[32px] border-4 border-white bg-white shadow-[0_16px_40px_rgba(15,44,92,0.12)]">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=85"
+                                            alt="Petualangan Wisata Indonesia"
+                                            class="aspect-[4/3] w-full object-cover"
+                                        />
+                                    </div>
+                                </div>
 
-                    <!-- 3 Feature Benefit Cards (Clean Design System) -->
-                    <div class="mt-8 sm:mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        <article
-                            v-for="(reason, index) in reasons"
-                            :key="index"
-                            class="group relative flex flex-col justify-between rounded-[20px] sm:rounded-[24px] border border-[#e2eaf4] bg-white p-6 sm:p-7 shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-300 hover:border-[#93c5fd] hover:shadow-[0_12px_28px_rgba(37,99,235,0.08)] hover:-translate-y-1"
-                        >
+                                <!-- Floating Top-Left Photo (Tanah Lot Bali with Paper Tape) -->
+                                <div class="absolute -top-1 -left-1 sm:-left-3 z-20 w-32 sm:w-40 -rotate-8 transition-transform duration-300 hover:rotate-0 hover:scale-105">
+                                    <!-- Paper Tape Graphic -->
+                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-12 sm:w-14 -rotate-3 rounded-xs bg-[#ebe3d0]/95 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
+                                    <div class="overflow-hidden rounded-2xl border-4 border-white bg-white shadow-[0_12px_28px_rgba(15,44,92,0.16)]">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80"
+                                            alt="Tanah Lot Bali"
+                                            class="aspect-square w-full object-cover"
+                                        />
+                                    </div>
+                                </div>
+
+                                <!-- Floating Bottom-Right Photo (Gunung Bromo with Paper Tape) -->
+                                <div class="absolute -bottom-2 -right-1 sm:-right-3 z-20 w-32 sm:w-40 rotate-8 transition-transform duration-300 hover:rotate-0 hover:scale-105">
+                                    <!-- Paper Tape Graphic -->
+                                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-30 h-4.5 sm:h-5 w-12 sm:w-14 rotate-3 rounded-xs bg-[#ebe3d0]/95 border-t border-b border-[#cfc3ad] shadow-xs backdrop-blur-xs pointer-events-none"></div>
+                                    <div class="overflow-hidden rounded-2xl border-4 border-white bg-white shadow-[0_12px_28px_rgba(15,44,92,0.16)]">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=400&q=80"
+                                            alt="Gunung Bromo"
+                                            class="aspect-square w-full object-cover"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Title & 4 Feature Items -->
+                        <div class="lg:col-span-6 space-y-6">
                             <div>
-                                <span class="mb-4 grid size-12 sm:size-14 place-items-center rounded-2xl bg-[#edf5fe] text-[#2563eb] transition-transform duration-300 group-hover:scale-105">
-                                    <component :is="reason.icon" class="size-6 sm:size-7 stroke-[2.2]" aria-hidden="true" />
-                                </span>
-                                <h3 class="text-base sm:text-lg font-bold text-[#111c38] group-hover:text-[#2563eb] transition-colors">
-                                    {{ reason.title }}
-                                </h3>
-                                <p class="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-[#556987]">
-                                    {{ reason.description }}
-                                </p>
+                                <h2 id="why-join-title" class="text-2xl sm:text-3xl lg:text-[36px] font-extrabold tracking-tight text-[#0f172a] leading-tight">
+                                    Kenapa Jadi Affiliate<br />
+                                    Tapak Lokal?
+                                </h2>
                             </div>
 
-                            <div class="mt-5 rounded-xl bg-[#edf5fe] px-3.5 py-2.5 text-center text-xs font-bold text-[#2563eb]">
-                                {{ reason.highlight }}
+                            <!-- 4 Compact Benefit Rows -->
+                            <div class="space-y-4 pt-1 sm:space-y-5">
+                                <div
+                                    v-for="(item, idx) in whyJoinBenefits"
+                                    :key="idx"
+                                    class="group flex items-start gap-4 rounded-2xl p-1 transition-all duration-200"
+                                >
+                                    <div class="flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-2xl bg-[#edf5fe] text-[#2563eb] transition-transform duration-200 group-hover:scale-105 group-hover:bg-[#2563eb] group-hover:text-white">
+                                        <component :is="item.icon" class="size-5.5 sm:size-6 stroke-[2.2]" />
+                                    </div>
+                                    <div class="pt-0.5">
+                                        <h3 class="text-sm sm:text-base font-bold text-[#0f172a] group-hover:text-[#2563eb] transition-colors">
+                                            {{ item.title }}
+                                        </h3>
+                                        <p class="mt-1 text-xs sm:text-[13.5px] leading-relaxed text-[#556987]">
+                                            {{ item.description }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </article>
+                        </div>
                     </div>
                 </section>
 
@@ -625,8 +697,8 @@ const toggleFaq = (index) => {
                             <div class="mt-4 pt-1">
                                 <button
                                     type="button"
-                                    class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#edf5fe] hover:bg-[#2563eb] text-[#2563eb] hover:text-white py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer"
-                                    @click="copyPromoLink(trip)"
+                                    class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#edf5fe] hover:bg-[#2563eb] text-[#2563eb] hover:text-white py-2.5 text-xs font-bold transition-all duration-200 cursor-pointer active:scale-98"
+                                    @click="openAffiliateAuthModal('copy_promo', trip)"
                                 >
                                     <component :is="copiedTripId === trip.id ? Check : Copy" class="size-3.5" />
                                     <span>{{ copiedTripId === trip.id ? 'Tersalin!' : 'Salin Link Promosi' }}</span>
@@ -766,13 +838,14 @@ const toggleFaq = (index) => {
                                         </p>
 
                                         <div class="mt-5">
-                                            <Link
-                                                href="/register"
-                                                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] px-5 sm:px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-95 text-center"
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] px-5 sm:px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-95 text-center cursor-pointer"
+                                                @click="openAffiliateAuthModal('join')"
                                             >
                                                 <span>Mulai Jadi Affiliate</span>
                                                 <ArrowRight class="size-4 stroke-[2.5]" />
-                                            </Link>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -806,61 +879,7 @@ const toggleFaq = (index) => {
                 </div>
             </section>
 
-            <!-- ========================================================== -->
-            <!-- 6. SECTION: DAMPAK NYATA BERSAMA TAPAK LOKAL               -->
-            <!-- ========================================================== -->
-            <section class="mt-14 sm:mt-20">
-                <div class="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-[#d8eafb] bg-[#edf5fe] p-6 sm:p-9 lg:p-12">
-                    <div class="grid items-center gap-8 lg:grid-cols-12 lg:gap-12">
-                        <!-- Left: Title & Subtitle -->
-                        <div class="lg:col-span-5">
-                            <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#2563eb]">
-                                DAMPAK POSITIF
-                            </p>
-                            <h2 class="mt-2 text-2xl font-extrabold tracking-tight text-[#111c38] sm:text-3xl lg:text-[34px] lg:leading-tight">
-                                Lebih dari Komisi,<br />
-                                <span class="text-[#2563eb]">ini tentang Dampak Nyata</span>
-                            </h2>
-
-                            <p class="mt-4 text-xs sm:text-sm leading-relaxed text-[#556987]">
-                                Setiap perjalanan yang kamu promosikan membantu lebih banyak orang mengenal keindahan Indonesia dan memberikan manfaat langsung bagi masyarakat lokal.
-                            </p>
-
-                            <!-- Extra Mini Badges -->
-                            <div class="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-[#111c38]">
-                                <span class="rounded-xl bg-white px-3.5 py-2 border border-[#dce8f8] shadow-xs">
-                                    🌴 500+ Mitra Lokal Terbantu
-                                </span>
-                                <span class="rounded-xl bg-white px-3.5 py-2 border border-[#dce8f8] shadow-xs">
-                                    🇮🇩 38 Provinsi Terjangkau
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Right: 3 Stacked Impact Cards -->
-                        <div class="space-y-3.5 lg:col-span-7">
-                            <div
-                                v-for="(impact, idx) in impactPoints"
-                                :key="idx"
-                                class="flex items-center gap-4 rounded-[20px] border border-[#e2eaf4] bg-white p-4 sm:p-5 shadow-[0_2px_12px_rgba(23,44,80,0.03)] transition-all duration-200 hover:border-[#b8d2fc]"
-                            >
-                                <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#edf5fe] text-[#2563eb]">
-                                    <component :is="impact.icon" class="size-5.5" />
-                                </div>
-                                <div>
-                                    <h3 class="text-xs sm:text-sm font-bold text-[#111c38]">
-                                        {{ impact.title }}
-                                    </h3>
-                                    <p class="mt-0.5 text-xs text-[#556987] leading-relaxed">
-                                        {{ impact.description }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
+    
             <!-- ========================================================== -->
             <!-- 7. SECTION: FAQ (Pertanyaan yang Sering Diajukan)          -->
             <!-- ========================================================== -->
@@ -941,13 +960,14 @@ const toggleFaq = (index) => {
                     
                         <!-- Action Buttons -->
                         <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                            <Link
-                                href="/register"
-                                class="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_10px_25px_rgba(0,0,0,0.3)] transition-all duration-200 hover:bg-slate-100 hover:shadow-[0_14px_30px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 active:scale-95"
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_10px_25px_rgba(0,0,0,0.3)] transition-all duration-200 hover:bg-slate-100 hover:shadow-[0_14px_30px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                                @click="openAffiliateAuthModal('join')"
                             >
                                 <span>Daftar Affiliate Sekarang</span>
                                 <ArrowRight class="size-4 stroke-[2.5]" />
-                            </Link>
+                            </button>
 
                             <Link
                                 href="/bantuan"

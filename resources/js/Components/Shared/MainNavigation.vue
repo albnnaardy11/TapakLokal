@@ -51,6 +51,18 @@ const handleScroll = () => {
 onMounted(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
+
+    // Otomatis buka modal login / register jika ada parameter ?auth= di URL
+    if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('auth')) {
+            const authMode = urlParams.get('auth') === 'register' ? 'register' : 'login';
+            openAuthModal(authMode);
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('auth');
+            window.history.replaceState({}, '', cleanUrl.pathname + (cleanUrl.search ? cleanUrl.search : ''));
+        }
+    }
 });
 
 onBeforeUnmount(() => {
@@ -91,14 +103,29 @@ const selectNavigation = (item) => {
     notify(`${item.label} dipilih — ${item.description}`);
 };
 
+import AuthModal from './AuthModal.vue';
+
 const submitGlobalSearch = () => router.get(typeof route === 'function' ? route('catalog') : '/cari-trip', { q: globalSearch.value.trim() });
-const openAuthModal = (mode) => {
-    const target = currentPage.props.auth?.user
-        ? (typeof route === 'function' ? route('account') : '/account')
-        : mode === 'register'
-            ? (typeof route === 'function' ? route('register') : '/register')
-            : (typeof route === 'function' ? route('login') : '/login');
-    router.visit(target);
+
+const isAuthModalOpen = ref(false);
+const authModalMode = ref('login');
+const authModalTitle = ref("Masuk untuk mulai perjalananmu");
+const authModalSubtitle = ref("Simpan trip, kelola pesanan, dan dapatkan poin serta kemudahan transaksi.");
+
+const openAuthModal = (mode = 'login') => {
+    if (currentPage.props.auth?.user) {
+        router.visit(typeof route === 'function' ? route('account') : '/account');
+        return;
+    }
+    authModalMode.value = mode;
+    if (mode === 'register') {
+        authModalTitle.value = "Buat akun & mulai petualanganmu!";
+        authModalSubtitle.value = "Daftar cepat dengan Google, Apple, atau gunakan email & nomor WhatsApp.";
+    } else {
+        authModalTitle.value = "Masuk untuk mulai perjalananmu";
+        authModalSubtitle.value = "Simpan trip, kelola pesanan, dan nikmati promo eksklusif TapakLokal.";
+    }
+    isAuthModalOpen.value = true;
 };
 </script>
 
@@ -408,6 +435,15 @@ const openAuthModal = (mode) => {
                     </div>
                 </div>
             </div>
+
+            <!-- Traveloka 1:1 Auth Modal -->
+            <AuthModal
+                :open="isAuthModalOpen"
+                :mode="authModalMode"
+                :title="authModalTitle"
+                :subtitle="authModalSubtitle"
+                @close="isAuthModalOpen = false"
+            />
 
             <!-- Toast Notification -->
             <Transition enter-active-class="transition duration-200" enter-from-class="translate-y-2 opacity-0" leave-active-class="transition duration-150" leave-to-class="translate-y-2 opacity-0">
