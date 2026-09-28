@@ -293,7 +293,7 @@ const toggleFaq = (index) => {
 
     <div class="min-h-screen bg-[#f8fafc] font-sans text-[#172c50] selection:bg-[#0088ff] selection:text-white">
         <!-- Main Navigation -->
-        <MainNavigation :transparent-on-top="false" :is-static="true" />
+        <MainNavigation :transparent-on-top="false" />
 
         <!-- Traveloka 1:1 Auth Modal -->
         <AuthModal

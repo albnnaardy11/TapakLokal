@@ -120,7 +120,7 @@ const openAuthModal = (mode = 'login') => {
     authModalMode.value = mode;
     if (mode === 'register') {
         authModalTitle.value = "Buat akun & mulai petualanganmu!";
-        authModalSubtitle.value = "Daftar cepat dengan Google, Apple, atau gunakan email & nomor WhatsApp.";
+        authModalSubtitle.value = "Daftar cepat dengan Google, No. HP, atau gunakan email & nomor WhatsApp.";
     } else {
         authModalTitle.value = "Masuk untuk mulai perjalananmu";
         authModalSubtitle.value = "Simpan trip, kelola pesanan, dan nikmati promo eksklusif TapakLokal.";

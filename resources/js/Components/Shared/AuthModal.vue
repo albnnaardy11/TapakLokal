@@ -179,28 +179,26 @@ const continueAsGuest = () => {
 
                         <!-- Modal Body Actions -->
                         <div class="px-6 pb-6 pt-2 sm:px-8 sm:pb-8">
-                            <!-- 1. GOOGLE LOGIN BUTTON (1:1 Match with Divider & 'Recently used' Ribbon) -->
+                            <!-- Google login -->
                             <div class="relative mt-2">
-                                <!-- Pink Ribbon Badge ("Recently used") tepat di pojok kanan -->
-                                <div v-if="recentlyUsed" class="absolute -top-2.5 right-0 z-20 select-none pointer-events-none">
-                                    <div class="relative flex h-[24px] items-center whitespace-nowrap bg-[#ff2d6c] px-3.5 text-xs font-extrabold text-white rounded-l-full rounded-tr-md shadow-xs tracking-tight leading-none">
+                                <div v-if="recentlyUsed" class="pointer-events-none absolute -top-[5px] -right-[9px] z-20 select-none">
+                                    <div class="relative flex h-[25px] items-center whitespace-nowrap rounded-t-[8px] rounded-bl-[8px] bg-[#ff3d80] px-[10px] font-[Arial,sans-serif] text-[12px] leading-none font-bold text-white">
                                         <span>{{ recentlyUsed }}</span>
-                                        <!-- Garis Segitiga Miring Lipatan Pita di Pojok Kanan Bawah (Melipat ke dalam kurva) -->
                                         <svg class="absolute top-full right-0 size-2.5 pointer-events-none" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                                            <polygon points="0,0 10,0 0,10" fill="#7a0a2c" />
+                                            <polygon points="0,0 10,0 0,10" fill="#a91850" />
                                         </svg>
                                     </div>
                                 </div>
 
                                 <button
                                     type="button"
-                                    class="group relative flex h-[50px] w-full items-center justify-center rounded-full border border-slate-200 bg-white px-16 text-sm sm:text-base font-bold text-slate-800 shadow-xs transition-colors duration-200 hover:border-slate-300 hover:bg-slate-50/90 active:scale-[0.99] cursor-pointer disabled:cursor-wait"
+                                    class="relative flex h-[50px] w-full cursor-pointer items-center justify-center rounded-full border border-[#eeeeee] bg-white px-[72px] font-[Arial,sans-serif] text-[17px] leading-5 font-bold text-[#303030] shadow-[0_2px_12px_rgba(0,0,0,0.04)] transition-colors duration-200 hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4285f4] disabled:cursor-wait"
                                     :disabled="isLoading"
                                     @click="handleSocialLogin('Google')"
                                 >
                                     <!-- Left Google Icon & Divider -->
-                                    <div class="absolute left-5 flex h-7 items-center" aria-hidden="true">
-                                        <svg class="size-5 shrink-0" viewBox="0 0 24 24">
+                                    <span class="absolute inset-y-0 left-0 flex w-[66px] items-center justify-center" aria-hidden="true">
+                                        <svg class="size-[22px] shrink-0" viewBox="0 0 24 24">
                                             <path
                                                 fill="#4285F4"
                                                 d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
@@ -218,28 +216,26 @@ const continueAsGuest = () => {
                                                 d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"
                                             />
                                         </svg>
-                                        <span class="ml-4 h-5 w-px bg-slate-200"></span>
-                                    </div>
+                                        <span class="absolute right-0 h-[30px] w-px bg-[#f1f1f1]"></span>
+                                    </span>
 
                                     <!-- Centered Google Label -->
-                                    <span class="font-bold tracking-tight text-slate-800">Google</span>
+                                    <span>Google</span>
                                 </button>
                             </div>
 
-                            <!-- 2. APPLE & FACEBOOK BUTTONS (2 Columns) -->
+                            <!-- 2. NO. HP / EMAIL & FACEBOOK BUTTONS (2 Columns) -->
                             <div class="mt-3.5 grid grid-cols-2 gap-3">
-                                <!-- Apple Button -->
+                                <!-- No. HP / Email Button -->
                                 <button
                                     type="button"
                                     class="flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm font-bold text-slate-800 shadow-xs transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/90 active:scale-[0.99] cursor-pointer"
                                     :disabled="isLoading"
-                                    @click="handleSocialLogin('Apple')"
+                                    @click="screen = 'credentials'"
                                 >
-                                    <!-- Apple Black Logo -->
-                                    <svg class="size-4.5 shrink-0 fill-current text-black" viewBox="0 0 170 170">
-                                        <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12.01-14.42-6.73-10.37-12-21.73-15.79-34.07-3.79-12.35-5.69-24.16-5.69-35.43 0-14.42 3.69-26.47 11.08-36.14 7.39-9.68 16.66-14.61 27.81-14.81 4.58 0 9.87 1.25 15.86 3.75 6 2.5 10.14 3.75 12.44 3.75 1.7 0 5.86-1.25 12.48-3.75 6.62-2.5 11.83-3.64 15.65-3.41 12.58.62 22.42 5.09 29.51 13.41-11.08 6.74-16.51 16.08-16.3 28.02.21 9.4 3.77 17.27 10.68 23.61 6.91 6.34 15.02 10.02 24.32 11.04-2.24 6.74-4.83 13.36-7.77 19.86zM119.22 32.74c0-7.23 2.66-13.99 7.99-20.28 5.33-6.29 11.83-10.22 19.51-11.79.43 1.95.64 3.8.64 5.54 0 7.23-2.77 14.1-8.32 20.6-5.55 6.51-12.21 10.38-19.98 11.61-.1-1.74-.84-3.63-.84-5.68z"/>
-                                    </svg>
-                                    <span>Apple</span>
+                                    <!-- Phone/Mail Icon -->
+                                    <Phone class="size-4 text-[#0088ff] shrink-0" />
+                                    <span>No. HP / Email</span>
                                 </button>
 
                                 <!-- Facebook Button -->
