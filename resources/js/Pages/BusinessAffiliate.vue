@@ -357,11 +357,11 @@ const toggleFaq = (index) => {
                             <div class="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                                 <button
                                     type="button"
-                                    class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-200 hover:bg-[#1d4ed8] hover:shadow-[0_12px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base text-center cursor-pointer"
+                                    class="group inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[#2563eb] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition-all duration-300 hover:bg-[#1d4ed8] hover:shadow-[0_12px_28px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] sm:px-8 sm:py-4 sm:text-base text-center cursor-pointer"
                                     @click="openAffiliateAuthModal('join')"
                                 >
                                     <span>Gabung Jadi Affiliate</span>
-                                    <ArrowRight class="size-4 shrink-0 stroke-[2.5]" aria-hidden="true" />
+                                    <ArrowRight class="size-4 shrink-0 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                                 </button>
 
                                 <Link
@@ -962,16 +962,16 @@ const toggleFaq = (index) => {
                         <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                             <button
                                 type="button"
-                                class="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_10px_25px_rgba(0,0,0,0.3)] transition-all duration-200 hover:bg-slate-100 hover:shadow-[0_14px_30px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+                                class="group inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0c2340] shadow-[0_10px_28px_rgba(0,0,0,0.3)] transition-all duration-300 hover:bg-[#0088ff] hover:text-white hover:shadow-[0_14px_35px_rgba(0,136,255,0.5)] hover:-translate-y-0.5 active:scale-98 cursor-pointer"
                                 @click="openAffiliateAuthModal('join')"
                             >
                                 <span>Daftar Affiliate Sekarang</span>
-                                <ArrowRight class="size-4 stroke-[2.5]" />
+                                <ArrowRight class="size-4 stroke-[2.5] transition-transform duration-300 group-hover:translate-x-1" />
                             </button>
 
                             <Link
                                 href="/bantuan"
-                                class="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-md transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5 active:scale-95"
+                                class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-md transition-all duration-300 hover:bg-white hover:text-[#0c2340] hover:border-white hover:shadow-[0_10px_28px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 active:scale-98"
                             >
                                 <span>Pusat Bantuan</span>
                             </Link>
