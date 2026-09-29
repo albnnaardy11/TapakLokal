@@ -26,6 +26,18 @@ const corporateLogos = [
     { name: 'IHG Hotels and Resorts', src: '/Assets/Images/partners/partner-4.svg' },
     { name: 'Ascott The Residence', src: '/Assets/Images/partners/partner-5.svg' },
 ];
+const trustedTripVendors = [
+    { name: 'Explorer Tour', src: '/Assets/Images/logo-vendor/explorer.webp' },
+    { name: 'Campa Tour', src: '/Assets/Images/logo-vendor/campatour.webp' },
+    { name: 'Kili Kili Adventure', src: '/Assets/Images/logo-vendor/kilikili.webp' },
+    { name: 'Java Wisata', src: '/Assets/Images/logo-vendor/javawisata.webp' },
+    { name: 'Tour Bandung', src: '/Assets/Images/logo-vendor/tourbandung.webp' },
+    { name: 'Raja Wisata', src: '/Assets/Images/logo-vendor/rajawisata.webp' },
+    { name: 'Labiru Tour', src: '/Assets/Images/logo-vendor/labirutour.webp' },
+    { name: 'Indonesia Juara', src: '/Assets/Images/logo-vendor/indonesiajuara.webp' },
+    { name: 'Fun Trips', src: '/Assets/Images/logo-vendor/funtrips.webp' },
+    { name: 'Brenggo Tour', src: '/Assets/Images/logo-vendor/brenggo.webp' },
+];
 const activeStory = ref(0);
 const hoveredRole = ref(null);
 const pinnedRole = ref(null);
@@ -557,6 +569,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
                 </div>
             </section>
+
+           
+
             <section id="benefits" class="corp-container py-16 lg:py-24">
                 <div>
                     <p class="corp-eyebrow">SATU PERJALANAN, BANYAK MANFAAT</p>
@@ -608,55 +623,34 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </button>
                 </div>
             </section>
-            <section id="stories" class="bg-[#07345a] py-16 text-white lg:py-20">
-                <div class="corp-container">
-                    <div class="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-                        <div>
-                            <p class="corp-eyebrow !text-sky-300">CERITA TIM DIMULAI DI SINI</p>
-                            <h2 class="corp-heading mt-3 !text-white">
-                                Agenda berbeda.
-                                <br />
-                                Sama-sama berkesan.
-                            </h2>
-                        </div>
-                        <p class="max-w-xs text-sm leading-6 text-blue-100/75">Gambaran perjalanan yang bisa Anda rencanakan bersama tim. Sesuaikan dengan tujuan perusahaan Anda.</p>
-                    </div>
-                    <div class="mt-10 grid overflow-hidden rounded-2xl bg-[#0d4069] md:grid-cols-[1.05fr_1fr]">
-                        <img :src="stories[activeStory].image" :alt="stories[activeStory].place" class="h-64 w-full object-cover md:h-full md:min-h-80" loading="lazy" />
-                        <div class="flex flex-col items-start justify-center p-7 sm:p-10">
-                            <span class="text-[10px] font-semibold tracking-[0.2em] text-sky-300">{{ stories[activeStory].tag }}</span>
-                            <h3 class="mt-4 text-3xl leading-tight font-semibold tracking-tight">{{ stories[activeStory].title }}</h3>
-                            <p class="mt-4 text-sm leading-7 text-blue-100/80">{{ stories[activeStory].text }}</p>
-                            <div class="mt-6 flex flex-wrap gap-4 text-xs text-blue-100">
-                                <span class="flex items-center gap-1.5">
-                                    <MapPin class="size-3.5" />
-                                    {{ stories[activeStory].place }}
-                                </span>
-                                <span class="flex items-center gap-1.5">
-                                    <CalendarDays class="size-3.5" />
-                                    {{ stories[activeStory].duration }}
-                                </span>
+
+            <!-- Trusted Trip Vendors Section (Marquee to Left) -->
+            <section class="border-y border-[#d5ecfb] bg-[#eaf5fc] py-12 sm:py-16 overflow-hidden" aria-label="Vendor trip terpercaya">
+                <div class="mx-auto max-w-[1600px] px-5 sm:px-8">
+                    <h3 class="text-center text-lg sm:text-xl lg:text-2xl font-extrabold tracking-tight text-[#009cf0]">
+                        Vendor trip terpercaya
+                    </h3>
+                    <div class="vendor-logo-marquee mt-8 sm:mt-10 overflow-hidden" tabindex="0" aria-label="Daftar logo vendor trip terpercaya. Arahkan kursor atau fokuskan untuk menjeda animasi.">
+                        <div class="vendor-logo-track">
+                            <div v-for="copy in 3" :key="copy" class="vendor-logo-group" :aria-hidden="copy > 1 ? true : undefined">
+                                <div
+                                    v-for="vendor in trustedTripVendors"
+                                    :key="vendor.name + '-' + copy"
+                                    class="group/vendor flex h-20 sm:h-24 w-44 sm:w-56 shrink-0 items-center justify-center p-2 cursor-pointer transition-transform duration-300 hover:scale-110"
+                                    :title="vendor.name"
+                                >
+                                    <img
+                                        :src="vendor.src"
+                                        :alt="copy === 1 ? vendor.name : ''"
+                                        class="h-14 sm:h-18 max-h-20 w-auto max-w-[170px] sm:max-w-[220px] object-contain filter grayscale opacity-65 transition-all duration-300 group-hover/vendor:grayscale-0 group-hover/vendor:opacity-100"
+                                        loading="lazy"
+                                    />
+                                </div>
                             </div>
-                            <button class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-white underline decoration-sky-400 underline-offset-8" @click="openConsultation">
-                                Rencanakan perjalanan serupa
-                                <ArrowUpRight class="size-4" />
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-6 flex items-center justify-between gap-4">
-                        <span class="text-[11px] text-blue-100/60">Ilustrasi agenda, bukan testimoni pelanggan.</span>
-                        <div class="flex gap-2">
-                            <button v-for="(story, index) in stories" :key="story.tag" :aria-label="`Lihat inspirasi ${story.tag}`" :aria-pressed="activeStory === index" class="h-9 rounded-full px-3 text-xs transition" :class="activeStory === index ? 'bg-white text-[#07345a]' : 'border border-white/25 text-white hover:bg-white/10'" @click="activeStory = index">0{{ index + 1 }}</button>
                         </div>
                     </div>
                 </div>
             </section>
-            <div class="corp-container flex flex-wrap items-center justify-center gap-x-10 gap-y-4 border-b border-slate-100 py-8 text-sm font-semibold text-slate-400">
-                <span class="text-xs font-normal text-slate-500">Banyak cara mengenal Indonesia</span>
-                <span>Alam & petualangan</span>
-                <span>Budaya & tradisi</span>
-                <span>Kuliner & kriya</span>
-            </div>
             <section id="faq" class="corp-container grid gap-10 py-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:py-24">
                 <div>
                     <p class="corp-eyebrow">ADA YANG INGIN DITANYAKAN?</p>
@@ -680,33 +674,6 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                             </button>
                         </h3>
                         <div v-show="openFaq === index" :id="`faq-answer-${index}`" role="region" :aria-labelledby="`faq-question-${index}`" class="pb-5 pr-6 text-sm leading-7 text-slate-500">{{ faq.answer }}</div>
-                    </div>
-                </div>
-            </section>
-            <section class="border-t border-slate-100 bg-[#fbfcfd] py-16 lg:py-20">
-                <div class="corp-container">
-                    <div class="flex flex-wrap items-end justify-between gap-4">
-                        <div>
-                            <p class="corp-eyebrow">BEKAL SEBELUM BERANGKAT</p>
-                            <h2 class="corp-heading mt-3">Inspirasi untuk langkah berikutnya.</h2>
-                        </div>
-                        <Link :href="route('blog')" class="corp-text-link">
-                            Jelajahi blog
-                            <ArrowUpRight class="size-4" />
-                        </Link>
-                    </div>
-                    <div class="mt-9 grid gap-7 md:grid-cols-3">
-                        <Link v-for="insight in insights" :key="insight.title" :href="route(insight.routeName, insight.params)" class="group">
-                            <div class="overflow-hidden rounded-2xl bg-slate-100">
-                                <img :src="insight.image" alt="" class="aspect-[16/10] w-full object-cover transition duration-500 motion-safe:group-hover:scale-105" loading="lazy" />
-                            </div>
-                            <p class="mt-5 text-[10px] font-semibold tracking-[0.13em] text-[#0088ff]">{{ insight.category }}</p>
-                            <h3 class="mt-2 text-xl leading-snug font-semibold tracking-tight text-[#07345a] group-hover:text-[#0088ff]">{{ insight.title }}</h3>
-                            <span class="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
-                                {{ insight.action }}
-                                <ArrowRight class="size-3.5" />
-                            </span>
-                        </Link>
                     </div>
                 </div>
             </section>
@@ -797,6 +764,56 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 @keyframes corporate-logos-left { to { transform: translateX(-33.333333%); } }
 @media (max-width: 767px) { .corporate-trust-strip { gap: 15px; padding: 20px 16px 24px; } .trust-badge { font-size: 10px; } .trust-laurel { height: 38px; width: 18px; } .corporate-logo-group { gap: 30px; padding-right: 30px; } .corporate-company-logo { width: 115px; height: 36px; } }
 @media (prefers-reduced-motion: reduce) { .corporate-logo-track { animation: none; } .corporate-logo-group[aria-hidden="true"] { display: none; } .corporate-logo-marquee { overflow-x: auto; } }
+
+/* Vendor Partners Marquee */
+.vendor-logo-marquee {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.vendor-logo-marquee:focus-visible {
+    outline: 2px solid #0088ff;
+    outline-offset: 4px;
+}
+.vendor-logo-track {
+    display: flex;
+    width: max-content;
+    animation: vendor-logos-left 28s linear infinite;
+}
+.vendor-logo-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 64px;
+    padding-right: 64px;
+}
+.vendor-logo-marquee:hover .vendor-logo-track,
+.vendor-logo-marquee:focus-within .vendor-logo-track {
+    animation-play-state: paused;
+}
+@keyframes vendor-logos-left {
+    to {
+        transform: translateX(-33.333333%);
+    }
+}
+@media (max-width: 767px) {
+    .vendor-logo-group {
+        gap: 36px;
+        padding-right: 36px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .vendor-logo-track {
+        animation: none;
+    }
+    .vendor-logo-group[aria-hidden="true"] {
+        display: none;
+    }
+    .vendor-logo-marquee {
+        overflow-x: auto;
+    }
+}
 @media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
 @media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-budget { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
 
