@@ -2,13 +2,18 @@
 import { computed, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { Menu, UserRound, Globe, ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, Compass, FileText, Info, MapPin, MessageCircle, RotateCcw, ShoppingBag, Users, Wallet, X } from 'lucide-vue-next';
+import {
+    Menu, UserRound, Globe, ArrowRight, ArrowUpRight, CalendarDays, Check,
+    ChevronDown, Compass, FileText, Info, MapPin, MessageCircle, RotateCcw,
+    ShoppingBag, Users, Wallet, X, CreditCard, ShieldCheck, Sparkles,
+    AlertTriangle, TrendingUp, Plane, Lock
+} from 'lucide-vue-next';
 import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const mobileNavigationOpen = ref(false);
 const corporateLinks = [
     { href: '#solutions', label: 'Solusi Platform' },
-    { href: '#features', label: 'Kemudahan' },
+    { href: '#features', label: 'Fitur' },
     { href: '#benefits', label: 'Manfaat' },
     { href: '#stories', label: 'Inspirasi' },
     { href: '#faq', label: 'FAQ' },
@@ -21,7 +26,6 @@ const corporateLogos = [
     { name: 'IHG Hotels and Resorts', src: '/Assets/Images/partners/partner-4.svg' },
     { name: 'Ascott The Residence', src: '/Assets/Images/partners/partner-5.svg' },
 ];
-const activeFeature = ref(0);
 const activeStory = ref(0);
 const hoveredRole = ref(null);
 const pinnedRole = ref(null);
@@ -30,12 +34,6 @@ const consultationDialog = ref(null);
 const brief = ref({ company: '', name: '', destination: '', participants: '', notes: '' });
 const photo = (id, width = 1000) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
 const landscape = photo('photo-1537996194471-e657df975ab4', 1400);
-const features = [
-    { icon: Compass, title: 'Rencana perjalanan, sesuai kebutuhan', text: 'Mulai dari tujuan, tanggal, dan jumlah peserta. Susun kebutuhan tim sebagai dasar memilih paket dan berdiskusi dengan tim TapakLokal.', label: 'Rencana perjalanan', rows: [['Destinasi', 'Yogyakarta'], ['Durasi', '3 hari, 2 malam'], ['Peserta', '24 orang'], ['Agenda', 'Team gathering']], note: 'Contoh kebutuhan perjalanan' },
-    { icon: Users, title: 'Koordinasi tim yang lebih terarah', text: 'Tetapkan PIC dan rangkum kebutuhan peserta sebelum pemesanan, agar detail penting bisa dibahas dalam satu konsultasi.', label: 'Kebutuhan peserta', rows: [['PIC perusahaan', 'Tim People & Culture'], ['Titik kumpul', 'Kantor perusahaan'], ['Kamar', 'Sesuai kebutuhan'], ['Konsumsi', 'Catat kebutuhan khusus']], note: 'Contoh daftar koordinasi' },
-    { icon: Wallet, title: 'Rincian biaya untuk bahan persetujuan', text: 'Diskusikan anggaran serta komponen paket sejak awal. Gunakan rincian penawaran untuk proses persetujuan internal perusahaan Anda.', label: 'Komponen penawaran', rows: [['Transportasi', 'Sesuai rute'], ['Akomodasi', 'Sesuai pilihan paket'], ['Aktivitas', 'Sesuai agenda'], ['Tambahan', 'Dikonfirmasi terpisah']], note: 'Ilustrasi rincian, bukan penawaran harga' },
-    { icon: MessageCircle, title: 'Ada teman untuk berdiskusi', text: 'Sampaikan pertanyaan tentang itinerary, fasilitas, dan kebutuhan khusus melalui pusat bantuan sebelum menentukan perjalanan.', label: 'Catatan konsultasi', rows: [['Tujuan', 'Outing tahunan'], ['Prioritas', 'Aktivitas bersama'], ['Kebutuhan khusus', 'Menu vegetarian'], ['Langkah berikutnya', 'Diskusikan pilihan trip']], note: 'Contoh brief konsultasi' },
-];
 const roles = [
     { title: 'Untuk PIC perjalanan', english: 'For bookers', subtitle: 'Lebih terencana, lebih tenang.', position: '0%', points: ['Temukan paket sesuai agenda perusahaan', 'Rangkum tanggal dan kebutuhan peserta', 'Diskusikan detail trip sebelum memesan'], summary: 'Dari mengumpulkan kebutuhan hingga menentukan itinerary, mulai dari satu brief yang jelas.', label: 'HR, GA & koordinator tim' },
     { title: 'Untuk peserta', english: 'For travelers', subtitle: 'Fokus pada pengalaman.', position: '50%', points: ['Kenali itinerary dan fasilitas paket', 'Jelajahi destinasi bersama pemandu lokal', 'Sampaikan kebutuhan khusus kepada PIC'], summary: 'Lebih banyak kesempatan mengenal tempat baru sekaligus rekan satu tim.', label: 'Karyawan & peserta perjalanan' },
@@ -329,53 +327,232 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
                 </div>
             </section>
-            <section id="features" class="bg-[#f1f8fc] py-16 lg:py-24">
+            <section id="features" class="relative overflow-hidden border-t border-sky-100/60 bg-[#f6fbfe] py-20 lg:py-28">
                 <div class="corp-container">
-                    <div class="max-w-2xl">
-                        <p class="corp-eyebrow">LEBIH MUDAH DI SETIAP LANGKAH</p>
-                        <h2 class="corp-heading mt-3">
-                            Detailnya terencana.
-                            <br />
-                            Tim Anda tinggal melangkah.
+                    <!-- Section Heading -->
+                    <div class="mx-auto max-w-4xl text-center">
+                        <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
+                            All the features you need to make corporate travel simpler and stress-free
                         </h2>
+                        <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                            Dirancang khusus untuk membantu tim People, GA, dan Finance mengelola perjalanan bisnis dengan kontrol penuh, visibilitas real-time, dan alur otomatis.
+                        </p>
                     </div>
-                    <div class="mt-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
-                        <div>
-                            <div v-for="(feature, index) in features" :key="feature.title" class="border-b border-[#d3e3ed]">
-                                <h3>
-                                    <button :id="`feature-${index}`" class="flex w-full items-center gap-4 py-5 text-left" :aria-expanded="activeFeature === index" :aria-controls="`feature-copy-${index}`" @click="activeFeature = index">
-                                        <component :is="feature.icon" class="size-5 shrink-0 text-[#0088ff]" />
-                                        <span class="flex-1 text-base font-semibold text-[#07345a]">{{ feature.title }}</span>
-                                        <ChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': activeFeature === index }" />
-                                    </button>
-                                </h3>
-                                <p v-show="activeFeature === index" :id="`feature-copy-${index}`" class="pb-6 pl-9 text-sm leading-7 text-slate-600">{{ feature.text }}</p>
+
+                    <!-- 4 Feature Cards Grid (2x2) -->
+                    <div class="mt-14 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
+                        <!-- Card 1: Transparent reporting -->
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                            <div>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Transparent reporting</h3>
+                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                    Monitor every business trip in one dashboard: track transactions, budgets, compliance, and more.
+                                </p>
                             </div>
-                        </div>
-                        <div class="relative rounded-[26px] border border-white bg-[#dfedf6] p-5 sm:p-9">
-                            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_16px_45px_-20px_#07345a50]">
-                                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                                    <span class="text-sm font-bold text-[#07345a]">
-                                        tapak
-                                        <span class="text-[#0088ff]">lokal</span>
+
+                            <!-- Reporting Mockup UI -->
+                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 text-[11px] font-semibold text-slate-400">
+                                    <span>CORPORATE SPEND METRICS</span>
+                                    <span class="inline-flex items-center gap-1 text-[#0088ff]">
+                                        <TrendingUp class="size-3.5" /> +14.8% vs last month
                                     </span>
-                                    <span class="text-[9px] font-semibold tracking-widest text-slate-400">CORPORATE BRIEF</span>
                                 </div>
-                                <div class="p-6 sm:p-8">
-                                    <span class="text-[10px] font-semibold tracking-widest text-[#0088ff]">MULAI DARI RENCANA YANG JELAS</span>
-                                    <h3 class="mt-2 text-xl font-bold text-[#07345a]">{{ features[activeFeature].label }}</h3>
-                                    <div class="mt-6 divide-y divide-slate-100">
-                                        <div v-for="row in features[activeFeature].rows" :key="row[0]" class="flex justify-between gap-4 py-3.5 text-xs">
-                                            <span class="text-slate-500">{{ row[0] }}</span>
-                                            <span class="text-right font-semibold text-slate-700">{{ row[1] }}</span>
+                                <div class="mt-4 space-y-3">
+                                    <!-- Stat 1: Total transaction -->
+                                    <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
+                                        <span class="text-xs font-semibold text-slate-600">Total transaction</span>
+                                        <span class="rounded-lg bg-[#e1f4ff] px-3 py-1 text-xs font-bold text-[#0077df] shadow-2xs">
+                                            Rp3.100.000.222
+                                        </span>
+                                    </div>
+                                    <!-- Stat 2: Total booking -->
+                                    <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
+                                        <span class="text-xs font-semibold text-slate-600">Total booking</span>
+                                        <span class="rounded-lg bg-[#e6fbf2] px-3 py-1 text-xs font-bold text-[#059669] shadow-2xs">
+                                            776 bookings
+                                        </span>
+                                    </div>
+                                    <!-- Stat 3: Policy compliance -->
+                                    <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <span class="text-xs font-semibold text-slate-600">Policy compliance</span>
+                                            <span class="rounded-lg bg-[#fef7e7] px-3 py-1 text-xs font-bold text-[#d97706] shadow-2xs">
+                                                99% of all bookings
+                                            </span>
+                                        </div>
+                                        <div class="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                                            <div class="h-full w-[99%] rounded-full bg-emerald-500 transition-all duration-1000"></div>
                                         </div>
                                     </div>
-                                    <div class="mt-5 flex items-center gap-2 rounded-lg bg-[#eff8ff] p-3 text-[11px] text-[#1674b9]">
-                                        <FileText class="size-4 shrink-0" />
-                                        {{ features[activeFeature].note }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Flexible payment options -->
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                            <div>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Flexible payment options</h3>
+                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                    Choose between credit card or invoicing system as your preferred payment method. Every transaction is secured by RapidSSL to keep your data safe.
+                                </p>
+                            </div>
+
+                            <!-- Payment Options Mockup UI -->
+                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                                <div class="space-y-2.5">
+                                    <!-- Item 1: Invoicing (Selected) -->
+                                    <div class="flex items-center justify-between rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-3 shadow-xs">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex size-9 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-xs">
+                                                <FileText class="size-5" />
+                                            </div>
+                                            <div>
+                                                <span class="block text-xs font-bold text-slate-800">Centralized Invoicing</span>
+                                                <span class="block text-[10px] text-slate-500">Net 30 terms & e-Faktur Pajak</span>
+                                            </div>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs">
+                                            Selected <Check class="size-3" />
+                                        </span>
+                                    </div>
+
+                                    <!-- Item 2: Corporate credit card -->
+                                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-slate-600 transition hover:bg-slate-50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                                                <CreditCard class="size-5" />
+                                            </div>
+                                            <div>
+                                                <span class="block text-xs font-bold text-slate-700">Corporate credit card</span>
+                                                <span class="block text-[10px] text-slate-400">Card limit & departmental tags</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400">Available</span>
+                                    </div>
+
+                                    <!-- Item 3: Personal credit card -->
+                                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-slate-600 transition hover:bg-slate-50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                                                <UserRound class="size-5" />
+                                            </div>
+                                            <div>
+                                                <span class="block text-xs font-bold text-slate-700">Personal credit card / Reimburse</span>
+                                                <span class="block text-[10px] text-slate-400">Instant digital receipts export</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400">Available</span>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Card 3: Travel policy setup -->
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                            <div>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Travel policy setup</h3>
+                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                    Set different travel policies based on employee roles, levels, and division. Ensure company-wide compliance without any additional effort.
+                                </p>
+                            </div>
+
+                            <!-- Policy Simulator Mockup UI -->
+                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                                <!-- Route Tag -->
+                                <div class="inline-flex items-center gap-2 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-bold text-[#0077df] border border-sky-100">
+                                    <Plane class="size-4 text-[#0088ff]" />
+                                    <span>Jakarta (CGK) ⇄ Bali (DPS)</span>
+                                </div>
+
+                                <div class="mt-3.5 space-y-2.5">
+                                    <!-- Option 1: Business Class (Non-compliant) -->
+                                    <div class="flex items-center justify-between rounded-xl border border-rose-100 bg-rose-50/40 p-3">
+                                        <div>
+                                            <span class="block text-[11px] font-medium text-slate-500">Business class</span>
+                                            <span class="block text-xs font-bold text-slate-700">Rp3.122.000</span>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1 rounded-lg bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700 border border-rose-200">
+                                            <AlertTriangle class="size-3 text-rose-600" /> Non-compliant
+                                        </span>
+                                    </div>
+
+                                    <!-- Option 2: Economy Class (Compliant) -->
+                                    <div class="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 shadow-2xs">
+                                        <div>
+                                            <span class="block text-[11px] font-medium text-emerald-800">Economy class (Flex)</span>
+                                            <span class="block text-xs font-bold text-[#07345a]">Rp2.122.000</span>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-2xs">
+                                            <Check class="size-3" /> Compliant
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-center text-[10px] text-slate-400">
+                                    Otomatis mendeteksi kebijakan kelas penerbangan & batas anggaran per divisi
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Built-in approval system -->
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                            <div>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Built-in approval system</h3>
+                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                    Streamline corporate travel requests by cutting unnecessary steps. Define approval hierarchy and manage requests in just a few clicks.
+                                </p>
+                            </div>
+
+                            <!-- Approval Flow Mockup UI -->
+                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                                <div class="relative flex flex-col items-center">
+                                    <!-- Step 1: Traveler -->
+                                    <div class="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 shadow-2xs">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Traveler" class="size-9 rounded-full object-cover border border-slate-200" />
+                                        <div class="flex-1 min-w-0">
+                                            <span class="block truncate text-xs font-bold text-[#07345a]">Traveler (Rizky R.)</span>
+                                            <span class="block text-[10px] text-slate-500">Trip requested • Bali Gathering</span>
+                                        </div>
+                                        <span class="rounded bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-[#0088ff]">Submitted</span>
+                                    </div>
+
+                                    <!-- Connecting Line -->
+                                    <div class="my-1.5 flex flex-col items-center">
+                                        <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
+                                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-bold text-emerald-600 border border-emerald-200">
+                                            Policy check passed ✓
+                                        </span>
+                                        <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
+                                    </div>
+
+                                    <!-- Step 2: Approver -->
+                                    <div class="flex w-full items-center justify-between gap-3 rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-2.5 sm:p-3 shadow-xs">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Approver" class="size-9 rounded-full object-cover border border-emerald-300" />
+                                            <div class="min-w-0">
+                                                <span class="block truncate text-xs font-bold text-emerald-950">Approver (Sarah A.)</span>
+                                                <span class="block text-[10px] text-emerald-700">Trip request approved</span>
+                                            </div>
+                                        </div>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-xs shrink-0">
+                                            Approved
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom CTA Banner -->
+                    <div class="mt-16 text-center">
+                        <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">
+                            Are you ready to upgrade your business travel experience?
+                        </h3>
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
+                            <button type="button" class="corp-button !bg-[#0088ff] !px-8 !py-4 !text-sm shadow-xl shadow-blue-500/25 transition-transform duration-200 hover:scale-[1.03] hover:!bg-[#0074d9]" @click="openConsultation">
+                                Request a demo
+                                <ArrowRight class="size-4" />
+                            </button>
                         </div>
                     </div>
                 </div>
