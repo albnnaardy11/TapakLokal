@@ -80,9 +80,9 @@ function safeRoute(name, params) {
             <div class="mx-auto max-w-[1180px] px-4 pt-12 pb-10 sm:px-6 lg:px-0">
                 <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1.05fr_1.15fr_1.25fr] lg:gap-8">
                     <!-- Column 1: Brand, Certifications, Partner Button & Payments -->
-                    <div class="flex flex-col items-start">
+                    <div class="flex flex-col items-center text-center sm:items-start sm:text-left">
                         <!-- Brand Logo (Traveloka Style with Blue Bird/Compass) -->
-                        <Link href="/" class="inline-flex items-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-white">
+                        <Link href="/" class="inline-flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-white sm:justify-start">
                             <span class="text-2xl font-black tracking-tight text-white">
                                 tapak<span class="text-[#0194f3]">lokal</span>
                             </span>
@@ -93,7 +93,7 @@ function safeRoute(name, params) {
                         </Link>
 
                         <!-- Partner with Tapak Lokal Button (Traveloka Light Blue Pill) -->
-                        <div class="mt-6">
+                        <div class="mt-6 flex w-full justify-center sm:justify-start">
                             <Link
                                 :href="safeRoute('vendor.login')"
                                 class="inline-flex items-center gap-2 rounded-full bg-[#0194f3] px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#0080d3] active:scale-95"
@@ -104,9 +104,9 @@ function safeRoute(name, params) {
                         </div>
 
                         <!-- Payment Partners (7 Metode Pembayaran Sesuai Account Settings) -->
-                        <div class="mt-7">
-                            <h4 class="text-xs font-bold text-white tracking-wide">Payment Partners</h4>
-                            <div class="mt-3 flex flex-wrap items-center gap-2 max-w-[280px]">
+                        <div class="mt-7 flex w-full flex-col items-center sm:items-start">
+                            <h4 class="text-xs font-bold tracking-wide text-white">Payment Partners</h4>
+                            <div class="mt-3 flex max-w-[280px] flex-wrap items-center justify-center gap-2 sm:justify-start">
                                 <Link
                                     v-for="partner in paymentPartners"
                                     :key="partner.id"
@@ -153,13 +153,13 @@ function safeRoute(name, params) {
                         </div>
 
                         <!-- Support by Section -->
-                        <div class="mt-7 w-full max-w-[280px]">
-                            <p class="text-xs font-medium text-slate-300 text-center mb-2.5">Support by:</p>
-                            <div class="overflow-hidden rounded-2xl bg-white p-2.5 sm:p-3 shadow-xs transition hover:shadow-md">
+                        <div class="mt-7 flex w-full max-w-[280px] flex-col items-center sm:items-start">
+                            <p class="mb-2.5 w-full text-center text-xs font-medium text-slate-300 sm:text-left">Support by:</p>
+                            <div class="w-full overflow-hidden rounded-2xl bg-white p-2.5 shadow-xs transition hover:shadow-md sm:p-3">
                                 <img
                                     src="/Assets/Images/suport/logo.webp"
                                     alt="Support by Infra Competition, Jagoan Hosting, Komdigi, Maspion IT, Garuda Spark, Ngalup.co"
-                                    class="w-full h-auto object-contain"
+                                    class="h-auto w-full object-contain"
                                     loading="lazy"
                                 />
                             </div>
@@ -167,7 +167,7 @@ function safeRoute(name, params) {
                     </div>
 
                     <!-- Column 2: About Tapak Lokal (from Mindmap Trust & Local) + Follow us on -->
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center text-center sm:items-start sm:text-left">
                         <h4 class="text-sm font-bold text-white">About Tapak Lokal</h4>
                         <ul class="mt-3.5 space-y-2 text-xs text-[#9eb6d7]">
                             <li>
@@ -194,25 +194,25 @@ function safeRoute(name, params) {
                         </ul>
 
                         <!-- Follow us on (with specific Brand Icons) -->
-                        <div class="mt-7">
-                            <h4 class="text-xs font-bold text-white tracking-wide">Follow us on</h4>
-                            <div class="mt-3 space-y-2.5 text-xs text-[#9eb6d7]">
+                        <div class="mt-7 flex w-full flex-col items-center sm:items-start">
+                            <h4 class="text-xs font-bold tracking-wide text-white">Follow us on</h4>
+                            <div class="mt-3 flex flex-col items-center space-y-2.5 text-xs text-[#9eb6d7] sm:items-start">
                                 <!-- Facebook -->
-                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 transition hover:text-white">
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 transition hover:text-white sm:justify-start">
                                     <div class="grid size-5 place-items-center rounded bg-[#1877f2] text-white">
                                         <svg class="size-3 fill-current" viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.6l.4-4h-4V6.3c0-.9.2-1.3 1.2-1.3H18V0h-3.8C10.5 0 9 1.6 9 4.6V8z"/></svg>
                                     </div>
                                     <span class="font-medium">Facebook</span>
                                 </a>
                                 <!-- Instagram -->
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 transition hover:text-white">
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 transition hover:text-white sm:justify-start">
                                     <div class="grid size-5 place-items-center rounded bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white">
                                         <svg class="size-3 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                                     </div>
                                     <span class="font-medium">Instagram</span>
                                 </a>
                                 <!-- Youtube -->
-                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 transition hover:text-white">
+                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2.5 transition hover:text-white sm:justify-start">
                                     <div class="grid size-5 place-items-center rounded bg-[#ff0000] text-white">
                                         <svg class="size-3 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                                     </div>
@@ -223,7 +223,7 @@ function safeRoute(name, params) {
                     </div>
 
                     <!-- Column 3: Products (from Mindmap Discover & Plan & Experience) -->
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center text-center sm:items-start sm:text-left">
                         <h4 class="text-sm font-bold text-white">Products</h4>
                         <ul class="mt-3.5 space-y-2 text-xs text-[#9eb6d7]">
                             <li>
@@ -260,7 +260,7 @@ function safeRoute(name, params) {
                     </div>
 
                     <!-- Column 4: Others (from Mindmap Book & Transact, Growth & Engagement) + Download App -->
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center text-center sm:items-start sm:text-left">
                         <h4 class="text-sm font-bold text-white">Others</h4>
                         <ul class="mt-3.5 space-y-2 text-xs text-[#9eb6d7]">
                             <li>
