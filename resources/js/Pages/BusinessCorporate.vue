@@ -114,6 +114,24 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                             <p class="hero-card-title">Rencanakan sesuai anggaran Anda</p>
                             <div class="relative mt-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-32 rounded-full border-[20px] border-[#dcf5ff]"></div><div class="absolute h-16 w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-16 w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-3 text-white shadow-lg"><Wallet class="size-7" /><span class="mt-1 block h-1 w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-8 size-5 text-[#83c800]" /></div>
                         </div>
+                        <div class="hero-float hero-float-ticket" aria-hidden="true">
+                            <p class="hero-card-title">Persetujuan & tiket instan</p>
+                            <div class="mt-2.5 rounded-xl border border-sky-100 bg-gradient-to-br from-[#f6fbff] to-[#edf7fe] p-2.5 shadow-2xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[9px] font-bold text-[#07345a]">E-Tiket & Hotel</span>
+                                    <span class="rounded-full bg-emerald-500 px-2 py-0.5 text-[8px] font-bold text-white shadow-2xs">Siap Digunakan ✓</span>
+                                </div>
+                                <div class="mt-2 flex items-center gap-2 rounded-lg bg-white p-2 border border-sky-100 shadow-2xs">
+                                    <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-sky-50 text-[#0088ff] border border-sky-100">
+                                        <Plane class="size-3.5" />
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="block truncate text-[10px] font-bold text-slate-700">CGK ⇄ DPS • 24 Tiket</span>
+                                        <span class="block text-[8px] text-emerald-600 font-semibold">Terkonfirmasi otomatis</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <p class="mt-3 text-center text-[10px] tracking-wide text-[#4d7e99]">Ilustrasi pengalaman TapakLokal · Sesuaikan perjalanan melalui konsultasi</p>
                 </div>
@@ -736,6 +754,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 .hero-float-brief { left: 6%; top: 0; }
 .hero-float-agenda { right: 1%; top: 2px; }
 .hero-float-budget { left: 0; top: 185px; }
+.hero-float-ticket { left: 83.5%; top: 215px; width: 220px; right: auto; }
 .hero-donut { display: grid; width: 91px; height: 91px; place-items: center; border-radius: 50%; background: conic-gradient(#2566a9 0 28%, #2bc3e8 28% 100%); transform: rotate(-15deg); }
 .hero-donut > span { display: flex; width: 63px; height: 63px; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: #f8fcff; transform: rotate(15deg); }
 .corporate-trust-strip { display: flex; align-items: center; gap: 32px; width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px 24px 30px; color: #5c7b8c; }
@@ -800,8 +819,8 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
         overflow-x: auto;
     }
 }
-@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
-@media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-budget { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
+@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-float-ticket { top: 155px; left: 83%; width: 175px; right: auto; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
+@media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-budget { display: block; } .hero-float-ticket { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
 
 .corporate-page button { cursor: pointer; }
 .corporate-page :is(a, button):focus-visible { outline: 3px solid #0088ff; outline-offset: 4px; }
