@@ -172,28 +172,25 @@ function prepareEmail() {
 
                 <!-- Modern Interactive Segmented Tabs -->
                 <div class="mt-6 sm:mt-8 flex justify-center w-full">
-                    <div class="grid grid-cols-2 w-full max-w-xl rounded-2xl border border-slate-200/80 bg-slate-100/90 p-1 sm:inline-flex sm:w-auto sm:p-1.5 shadow-xs" role="tablist" aria-label="Pilihan jenis kemitraan">
+                    <div class="grid grid-cols-2 w-full max-w-md rounded-2xl border border-slate-200/80 bg-slate-100/90 p-1 sm:flex sm:w-auto sm:max-w-none sm:p-1.5 shadow-xs" role="tablist" aria-label="Pilihan jenis kemitraan">
                         <button
                             v-for="track in tracks"
                             :key="track.id"
                             role="tab"
                             :aria-selected="selectedTrack === track.id"
-                            class="flex flex-col xs:flex-row items-center sm:items-start text-center sm:text-left gap-1.5 sm:gap-3 rounded-xl px-2.5 py-2 sm:px-6 sm:py-3 transition-all duration-200 cursor-pointer justify-center"
+                            class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-1.5 sm:gap-3 rounded-xl px-2.5 py-2.5 sm:px-5 sm:py-2.5 transition-all duration-200 cursor-pointer justify-center"
                             :class="selectedTrack === track.id
                                 ? 'bg-white text-[#07345a] shadow-md shadow-slate-900/5 ring-1 ring-black/5 font-bold'
                                 : 'text-slate-500 hover:text-[#07345a] hover:bg-white/50 font-medium'"
                             @click="selectedTrack = track.id"
                         >
                             <span
-                                class="flex size-7 sm:size-9 items-center justify-center rounded-lg transition-colors shrink-0"
+                                class="flex size-7 sm:size-8 items-center justify-center rounded-lg transition-colors shrink-0"
                                 :class="selectedTrack === track.id ? 'bg-[#009cf0] text-white shadow-xs' : 'bg-slate-200/80 text-slate-500'"
                             >
-                                <component :is="track.icon" class="size-3.5 sm:size-5" />
+                                <component :is="track.icon" class="size-3.5 sm:size-4" />
                             </span>
-                            <div class="min-w-0">
-                                <div class="text-xs sm:text-sm font-bold leading-tight truncate sm:whitespace-normal">{{ track.label }}</div>
-                                <div class="text-[9px] sm:text-[11px] font-normal text-slate-400 hidden xs:block">{{ track.tagline }}</div>
-                            </div>
+                            <span class="text-xs sm:text-sm font-bold leading-tight sm:whitespace-nowrap">{{ track.label }}</span>
                         </button>
                     </div>
                 </div>
