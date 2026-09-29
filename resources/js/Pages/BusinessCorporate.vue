@@ -12,11 +12,10 @@ import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const mobileNavigationOpen = ref(false);
 const corporateLinks = [
-    { href: '#solutions', label: 'Solusi Platform' },
-    { href: '#features', label: 'Fitur' },
-    { href: '#benefits', label: 'Manfaat' },
-    { href: '#stories', label: 'Inspirasi' },
-    { href: '#faq', label: 'FAQ' },
+    { href: '#solutions', label: 'Solusi Bisnis' },
+    { href: '#features', label: 'Fitur Unggulan' },
+    { href: '#benefits', label: 'Manfaat Tim' },
+    { href: '#faq', label: 'Tanya Jawab' },
 ];
 // Existing partner assets are initial logo choices; replace with corporate client logos before publishing.
 const corporateLogos = [
@@ -38,36 +37,23 @@ const trustedTripVendors = [
     { name: 'Fun Trips', src: '/Assets/Images/logo-vendor/funtrips.webp' },
     { name: 'Brenggo Tour', src: '/Assets/Images/logo-vendor/brenggo.webp' },
 ];
-const activeStory = ref(0);
 const hoveredRole = ref(null);
 const pinnedRole = ref(null);
 const openFaq = ref(0);
 const consultationDialog = ref(null);
 const brief = ref({ company: '', name: '', destination: '', participants: '', notes: '' });
-const photo = (id, width = 1000) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
-const landscape = photo('photo-1537996194471-e657df975ab4', 1400);
 const roles = [
-    { title: 'Untuk PIC perjalanan', english: 'For bookers', subtitle: 'Lebih terencana, lebih tenang.', position: '0%', points: ['Temukan paket sesuai agenda perusahaan', 'Rangkum tanggal dan kebutuhan peserta', 'Diskusikan detail trip sebelum memesan'], summary: 'Dari mengumpulkan kebutuhan hingga menentukan itinerary, mulai dari satu brief yang jelas.', label: 'HR, GA & koordinator tim' },
-    { title: 'Untuk peserta', english: 'For travelers', subtitle: 'Fokus pada pengalaman.', position: '50%', points: ['Kenali itinerary dan fasilitas paket', 'Jelajahi destinasi bersama pemandu lokal', 'Sampaikan kebutuhan khusus kepada PIC'], summary: 'Lebih banyak kesempatan mengenal tempat baru sekaligus rekan satu tim.', label: 'Karyawan & peserta perjalanan' },
-    { title: 'Untuk tim finance', english: 'For finance', subtitle: 'Anggaran dengan arah yang jelas.', position: '100%', points: ['Diskusikan batas anggaran sejak awal', 'Tinjau komponen biaya dalam penawaran', 'Konfirmasikan ketentuan pembayaran'], summary: 'Jadikan rincian kebutuhan perjalanan sebagai dasar pembahasan biaya dan persetujuan internal.', label: 'Finance & procurement' },
-];
-const stories = [
-    { tag: 'COMPANY GATHERING', title: 'Jeda dari rutinitas. Ruang untuk lebih dekat.', text: 'Bayangkan agenda tim di Yogyakarta: menikmati budaya, berbagi meja makan, dan pulang dengan cerita yang sama. Diskusikan perpaduan kegiatan yang pas untuk tim Anda.', place: 'Yogyakarta', duration: 'Inspirasi 3 hari, 2 malam', image: photo('photo-1596402184320-417e7178b2cd') },
-    { tag: 'TEAM RETREAT', title: 'Ide segar sering datang dari tempat baru.', text: 'Bali bisa menjadi latar untuk sesi refleksi tim, aktivitas di alam, dan waktu bersama. Seimbangkan agenda perusahaan dengan ruang untuk beristirahat.', place: 'Bali', duration: 'Inspirasi 3 hari, 2 malam', image: landscape },
-    { tag: 'APRESIASI KARYAWAN', title: 'Rayakan pencapaian lewat sebuah perjalanan.', text: 'Berikan waktu untuk menikmati lanskap Indonesia dan pengalaman bersama. Pilih private trip berdasarkan minat peserta dan anggaran perusahaan.', place: 'Destinasi pilihan tim', duration: 'Durasi sesuai kebutuhan', image: photo('photo-1544644181-1484b3fdfc62') },
+    { title: 'Untuk PIC perjalanan', english: 'HR, GA & KOORDINATOR TRIP', subtitle: 'Lebih terencana, lebih tenang.', position: '0%', points: ['Temukan paket sesuai agenda dan anggaran perusahaan', 'Rangkum tanggal dan kebutuhan seluruh peserta', 'Diskusikan detail fasilitas trip sebelum memesan'], summary: 'Dari mengumpulkan kebutuhan hingga menentukan itinerary, semua beres dalam satu brief yang jelas.', label: 'HR, GA & koordinator tim' },
+    { title: 'Untuk peserta', english: 'KARYAWAN & PESERTA PERJALANAN', subtitle: 'Fokus pada pengalaman seru.', position: '50%', points: ['Kenali itinerary lengkap dan fasilitas perjalanan', 'Jelajahi destinasi seru bersama pemandu lokal terbaik', 'Sampaikan kebutuhan khusus tim kepada PIC dengan mudah'], summary: 'Lebih banyak ruang untuk rehat, membangun keakraban, dan menikmati destinasi bersama rekan kerja.', label: 'Karyawan & peserta perjalanan' },
+    { title: 'Untuk tim finance', english: 'TIM KEUANGAN & FINANCE', subtitle: 'Anggaran transparan dan terkontrol.', position: '100%', points: ['Tetapkan batas plafon anggaran sejak awal perencanaan', 'Tinjau rincian biaya penawaran secara transparan', 'Pilih skema pembayaran tempo atau invoicing resmi'], summary: 'Laporan pengeluaran tercatat rapi sebagai dasar persetujuan internal dan kepatuhan pajak kantor.', label: 'Finance & procurement' },
 ];
 const faqs = [
-    { question: 'Apa itu TapakLokal for Corporates?', answer: 'TapakLokal for Corporates membantu perusahaan menjajaki kebutuhan perjalanan tim, private trip, dan pengalaman lokal. Mulai dengan konsultasi untuk membahas destinasi, jumlah peserta, agenda, dan anggaran.' },
-    { question: 'Layanan apa saja yang bisa didiskusikan?', answer: 'Anda dapat mendiskusikan private trip, company gathering, aktivitas lokal, dan kebutuhan oleh-oleh. Transportasi, akomodasi, konsumsi, dan pemandu mengikuti fasilitas paket serta penawaran yang disepakati.' },
-    { question: 'Apakah ada minimum jumlah peserta?', answer: 'Kapasitas dan ketentuan peserta bergantung pada paket serta mitra penyelenggara. Cantumkan estimasi peserta saat konsultasi agar pilihan perjalanan dapat disesuaikan.' },
-    { question: 'Apakah tersedia dashboard dan approval perusahaan?', answer: 'Saat ini halaman ini melayani informasi dan konsultasi kebutuhan corporate. Dashboard khusus perusahaan, approval berjenjang, dan laporan anggaran otomatis belum tersedia. Persetujuan perjalanan tetap mengikuti proses internal perusahaan Anda.' },
-    { question: 'Bagaimana pembayaran dan kebutuhan invoice?', answer: 'Metode, jadwal pembayaran, dan kebutuhan dokumen perusahaan perlu dikonfirmasi saat pembahasan penawaran. Sampaikan kebutuhan invoice sejak awal; ketentuan akhir mengikuti paket dan kesepakatan pemesanan.' },
-    { question: 'Bagaimana cara memulai?', answer: 'Klik “Konsultasikan perjalanan”, lengkapi brief, lalu buka draf email. Periksa dan kirim email melalui aplikasi email Anda. Anda juga dapat melihat pilihan private trip atau mengunjungi Pusat Bantuan TapakLokal.' },
-];
-const insights = [
-    { title: 'Temukan destinasi untuk agenda tim berikutnya', category: 'INSPIRASI DESTINASI', image: landscape, routeName: 'blog', action: 'Baca inspirasi' },
-    { title: 'Kenali pilihan private trip untuk rombongan', category: 'PANDUAN PERJALANAN', image: photo('photo-1544644181-1484b3fdfc62', 700), routeName: 'trips.category', params: { type: 'private-trip' }, action: 'Lihat pilihan trip' },
-    { title: 'Siapkan detail sebelum melakukan pemesanan', category: 'PUSAT BANTUAN', image: '/Assets/Images/accessibility/laptop-closeup.jpg', routeName: 'help.index', action: 'Baca panduan' },
+    { question: 'Apa itu TapakLokal for Corporates?', answer: 'TapakLokal for Corporates adalah solusi perjalanan bisnis dan corporate gathering terpadu dari TapakLokal. Kami membantu perusahaan merencanakan agenda outing, gathering tahunan, business trip, hingga private trip dengan alur yang mudah, transparan, dan hemat anggaran.' },
+    { question: 'Layanan apa saja yang bisa didiskusikan dan dipesan?', answer: 'Anda dapat merencanakan company gathering, outing kantor, private trip rombongan, aktivitas team building lokal, hingga penyediaan transportasi, akomodasi, konsumsi, dan pemandu lokal profesional.' },
+    { question: 'Apakah ada batas minimum jumlah peserta?', answer: 'Kapasitas peserta sangat fleksibel mulai dari rombongan kecil (tim divisi) hingga gathering skala besar ratusan orang. Cantumkan estimasi jumlah peserta saat konsultasi agar penawaran paket dapat disesuaikan.' },
+    { question: 'Bagaimana dengan sistem persetujuan (approval) dan invoice perusahaan?', answer: 'Kami mendukung kebutuhan administrasi perusahaan, termasuk penerbitan invoice resmi, bukti transaksi digital, e-Faktur Pajak, serta penyesuaian alur persetujuan internal dan skema pembayaran yang disepakati.' },
+    { question: 'Bagaimana skema pembayaran yang tersedia?', answer: 'Tersedia pilihan pembayaran fleksibel mulai dari kartu kredit korporat, transfer bank, hingga skema invoicing dengan termin pembayaran (term of payment) sesuai kesepakatan kerjasama perusahaan.' },
+    { question: 'Bagaimana cara memulai konsultasi perjalanan tim?', answer: 'Klik tombol “Mulai sekarang” atau “Konsultasikan perjalanan”, lengkapi brief singkat kebutuhan tim Anda, lalu kirimkan email ke tim konsultan kami. Kami akan segera menghubungi Anda dengan rekomendasi terbaik.' },
 ];
 const emailHref = computed(() => {
     const body = `Halo tim TapakLokal,\n\nSaya ingin berdiskusi tentang perjalanan perusahaan.\nPerusahaan: ${brief.value.company}\nNama PIC: ${brief.value.name}\nDestinasi: ${brief.value.destination || 'Butuh rekomendasi'}\nJumlah peserta: ${brief.value.participants}\nKebutuhan: ${brief.value.notes}\n\nTerima kasih.`;
@@ -80,8 +66,8 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 </script>
 
 <template>
-    <Head title="For Corporates — Perjalanan Tim & Pengalaman Lokal">
-        <meta name="description" content="Rencanakan private trip, company gathering, dan pengalaman lokal bersama TapakLokal. Diskusikan destinasi, kebutuhan peserta, dan anggaran perjalanan perusahaan Anda." />
+    <Head title="Solusi Perjalanan Bisnis & Corporate Gathering — TapakLokal">
+        <meta name="description" content="Kelola perjalanan bisnis, company gathering, dan agenda tim perusahaan Anda dengan mudah bersama TapakLokal. Praktis, transparan, dan hemat anggaran." />
     </Head>
     <div class="corporate-page min-h-screen bg-white font-sans text-slate-800">
         <header class="corporate-header sticky top-0 z-40 bg-white/95 backdrop-blur-md" @keydown.esc="mobileNavigationOpen = false">
@@ -137,7 +123,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                             <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
                             <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
                         </svg>
-                        <p>Trusted by <strong>100+</strong><br />companies</p>
+                        <p>Dipercaya oleh <strong>100+</strong><br />perusahaan</p>
                         <svg class="trust-laurel -scale-x-100" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
                             <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
                             <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
@@ -155,9 +141,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             <section id="solutions" class="corp-container py-16 lg:py-24">
                 <div class="mx-auto max-w-4xl text-center">
                     <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
-                        Digitalize your business travel workflow with
+                        Kelola Perjalanan Bisnis Tim Anda Bersama
                         <br class="hidden sm:inline" />
-                        <span class="text-[#0088ff]">TapakLokal for Corporates</span>
+                        <span class="text-[#0088ff]">TapakLokal Corporates</span>
                     </h2>
                 </div>
 
@@ -167,18 +153,18 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                             <!-- Left Copy -->
                             <div class="lg:col-span-5">
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">Corporate booking platform</h3>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">Portal Pemesanan Perusahaan</h3>
                                 <p class="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
-                                    Book flights, hotels, and more directly in one portal, with travel policy settings and comprehensive reporting.
+                                    Pesan tiket pesawat, hotel, dan trip tim langsung dalam satu platform terpadu, lengkap dengan pengaturan batas anggaran serta laporan keuangan transparan.
                                 </p>
                                 <ul class="mt-5 space-y-3 text-sm text-slate-700">
                                     <li class="flex items-start gap-2.5">
                                         <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                        <span>Sign up, get approved, and start booking—no installation needed</span>
+                                        <span>Daftar akun perusahaan, dapatkan persetujuan, dan langsung pesan—tanpa instalasi aplikasi tambahan</span>
                                     </li>
                                     <li class="flex items-start gap-2.5">
                                         <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                        <span>Plan and manage business trips, anywhere</span>
+                                        <span>Rencanakan dan pantau seluruh agenda perjalanan bisnis di mana saja dan kapan saja</span>
                                     </li>
                                 </ul>
                                 <button type="button" class="corp-button mt-7 !px-6 !py-3 !text-xs sm:!text-sm" @click="openConsultation">
@@ -205,18 +191,18 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     <!-- 2. Personalized Services (Bottom Left) -->
                     <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                         <div>
-                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Personalized services</h3>
+                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Layanan Pendampingan Khusus</h3>
                             <p class="mt-3 text-sm leading-relaxed text-slate-600">
-                                Need help with specific requirements? Our corporate travel team is ready to assist you, just a click or call away.
+                                Butuh paket gathering khusus, outing, atau agenda perusahaan unik? Tim konsultan perjalanan kami siap mendampingi Anda setiap saat.
                             </p>
                             <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                    <span>Consult us for corporate events and group travel solutions</span>
+                                    <span>Konsultasi gratis untuk gathering perusahaan, retreat, dan paket rombongan besar</span>
                                 </li>
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                    <span>Professional customer support for every unique requirement</span>
+                                    <span>Dukungan tim bantuan profesional dan responsif untuk setiap kebutuhan tim Anda</span>
                                 </li>
                             </ul>
                         </div>
@@ -231,8 +217,8 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                         <span class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-white bg-emerald-500"></span>
                                     </div>
                                     <div class="rounded-2xl rounded-tl-xs border border-sky-200/90 bg-white px-4 py-3 shadow-sm">
-                                        <span class="block text-[10px] font-bold text-[#0088ff]">Aurelia, TapakLokal for Corporate</span>
-                                        <p class="mt-0.5 text-sm font-semibold text-[#07345a]">Hi! How can I help you?</p>
+                                        <span class="block text-[10px] font-bold text-[#0088ff]">Aurelia, Konsultan TapakLokal Bisnis</span>
+                                        <p class="mt-0.5 text-sm font-semibold text-[#07345a]">Halo! Ada agenda perjalanan tim yang ingin kami bantu?</p>
                                     </div>
                                 </div>
                                 <!-- Typing Indicator Bubble -->
@@ -240,7 +226,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
-                                    <span class="ml-1 text-[9px] font-medium text-slate-400">Live agent standby</span>
+                                    <span class="ml-1 text-[9px] font-medium text-slate-400">Konsultan siap membantu</span>
                                 </div>
                             </div>
                         </div>
@@ -249,18 +235,18 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     <!-- 3. API Integration (Bottom Right) -->
                     <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                         <div>
-                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">API integration</h3>
+                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Integrasi Sistem & API Perusahaan</h3>
                             <p class="mt-3 text-sm leading-relaxed text-slate-600">
-                                Access our travel inventory and all of our platform capabilities through your own system.
+                                Hubungkan inventaris trip, tiket, dan seluruh kapabilitas platform kami langsung ke sistem internal perusahaan Anda.
                             </p>
                             <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                    <span>Use booking flows, policy checks, and reporting in your existing tools</span>
+                                    <span>Gunakan alur pemesanan, pengecekan kebijakan anggaran, dan rekap di sistem HR/ERP Anda</span>
                                 </li>
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
-                                    <span>Consistent experience across connected platforms</span>
+                                    <span>Pengalaman pemesanan yang cepat, aman, dan terhubung mulus antar platform</span>
                                 </li>
                             </ul>
                         </div>
@@ -298,7 +284,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                             <path d="M32 4 L36 10 L32 16 L28 10 Z" fill="white" />
                                         </svg>
                                     </div>
-                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">TapakLokal API</span>
+                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">API TapakLokal</span>
                                 </div>
 
                                 <!-- Connecting Flow Line with Arrow -->
@@ -332,7 +318,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                             <path d="M26 10 L30 14 L38 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
                                         </svg>
                                     </div>
-                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">Corporate System</span>
+                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">Sistem Kantor</span>
                                 </div>
                             </div>
                         </div>
@@ -344,10 +330,10 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     <!-- Section Heading -->
                     <div class="mx-auto max-w-4xl text-center">
                         <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
-                            All the features you need to make corporate travel simpler and stress-free
+                            Semua Fitur Lengkap untuk Perjalanan Bisnis yang Lebih Hemat, Praktis & Bebas Repot
                         </h2>
                         <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                            Dirancang khusus untuk membantu tim People, GA, dan Finance mengelola perjalanan bisnis dengan kontrol penuh, visibilitas real-time, dan alur otomatis.
+                            Dirancang khusus untuk membantu tim HR, GA, dan Keuangan mengelola perjalanan dinas serta event kantor dengan kendali penuh, transparansi langsung, dan alur serba otomatis.
                         </p>
                     </div>
 
@@ -356,41 +342,41 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <!-- Card 1: Transparent reporting -->
                         <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Transparent reporting</h3>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Laporan Pengeluaran Transparan</h3>
                                 <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
-                                    Monitor every business trip in one dashboard: track transactions, budgets, compliance, and more.
+                                    Pantau setiap pengeluaran perjalanan bisnis dalam satu dashboard: rekap transaksi otomatis, kepatuhan anggaran, hingga ekspor data instan.
                                 </p>
                             </div>
 
                             <!-- Reporting Mockup UI -->
                             <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-3 text-[11px] font-semibold text-slate-400">
-                                    <span>CORPORATE SPEND METRICS</span>
+                                    <span>REKAP PENGELUARAN KANTOR</span>
                                     <span class="inline-flex items-center gap-1 text-[#0088ff]">
-                                        <TrendingUp class="size-3.5" /> +14.8% vs last month
+                                        <TrendingUp class="size-3.5" /> +14.8% dari bulan lalu
                                     </span>
                                 </div>
                                 <div class="mt-4 space-y-3">
                                     <!-- Stat 1: Total transaction -->
                                     <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
-                                        <span class="text-xs font-semibold text-slate-600">Total transaction</span>
+                                        <span class="text-xs font-semibold text-slate-600">Total Transaksi</span>
                                         <span class="rounded-lg bg-[#e1f4ff] px-3 py-1 text-xs font-bold text-[#0077df] shadow-2xs">
                                             Rp3.100.000.222
                                         </span>
                                     </div>
                                     <!-- Stat 2: Total booking -->
                                     <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
-                                        <span class="text-xs font-semibold text-slate-600">Total booking</span>
+                                        <span class="text-xs font-semibold text-slate-600">Total Perjalanan</span>
                                         <span class="rounded-lg bg-[#e6fbf2] px-3 py-1 text-xs font-bold text-[#059669] shadow-2xs">
-                                            776 bookings
+                                            776 Perjalanan
                                         </span>
                                     </div>
                                     <!-- Stat 3: Policy compliance -->
                                     <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
                                         <div class="flex items-center justify-between gap-3">
-                                            <span class="text-xs font-semibold text-slate-600">Policy compliance</span>
+                                            <span class="text-xs font-semibold text-slate-600">Kepatuhan Kebijakan Anggaran</span>
                                             <span class="rounded-lg bg-[#fef7e7] px-3 py-1 text-xs font-bold text-[#d97706] shadow-2xs">
-                                                99% of all bookings
+                                                99% Sesuai Anggaran
                                             </span>
                                         </div>
                                         <div class="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
@@ -404,9 +390,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <!-- Card 2: Flexible payment options -->
                         <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Flexible payment options</h3>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Pilihan Pembayaran Fleksibel</h3>
                                 <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
-                                    Choose between credit card or invoicing system as your preferred payment method. Every transaction is secured by RapidSSL to keep your data safe.
+                                    Pilih metode pembayaran yang paling sesuai untuk perusahaan Anda: sistem invoice tempo (termin pembayaran), kartu kredit korporat, hingga reimbursement otomatis.
                                 </p>
                             </div>
 
@@ -420,12 +406,12 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                                 <FileText class="size-5" />
                                             </div>
                                             <div>
-                                                <span class="block text-xs font-bold text-slate-800">Centralized Invoicing</span>
-                                                <span class="block text-[10px] text-slate-500">Net 30 terms & e-Faktur Pajak</span>
+                                                <span class="block text-xs font-bold text-slate-800">Invoicing Terpusat (Tempo / Termin)</span>
+                                                <span class="block text-[10px] text-slate-500">Tempo pembayaran Net 30 & e-Faktur Pajak resmi</span>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs">
-                                            Selected <Check class="size-3" />
+                                            Dipilih <Check class="size-3" />
                                         </span>
                                     </div>
 
@@ -436,11 +422,11 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                                 <CreditCard class="size-5" />
                                             </div>
                                             <div>
-                                                <span class="block text-xs font-bold text-slate-700">Corporate credit card</span>
-                                                <span class="block text-[10px] text-slate-400">Card limit & departmental tags</span>
+                                                <span class="block text-xs font-bold text-slate-700">Kartu Kredit Perusahaan</span>
+                                                <span class="block text-[10px] text-slate-400">Batas anggaran & penandaan divisi otomatis</span>
                                             </div>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400">Available</span>
+                                        <span class="text-[10px] font-semibold text-slate-400">Tersedia</span>
                                     </div>
 
                                     <!-- Item 3: Personal credit card -->
@@ -450,11 +436,11 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                                 <UserRound class="size-5" />
                                             </div>
                                             <div>
-                                                <span class="block text-xs font-bold text-slate-700">Personal credit card / Reimburse</span>
-                                                <span class="block text-[10px] text-slate-400">Instant digital receipts export</span>
+                                                <span class="block text-xs font-bold text-slate-700">Reimbursement & Kartu Personal</span>
+                                                <span class="block text-[10px] text-slate-400">Unduh bukti transaksi & struk digital instan</span>
                                             </div>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400">Available</span>
+                                        <span class="text-[10px] font-semibold text-slate-400">Tersedia</span>
                                     </div>
                                 </div>
                             </div>
@@ -463,9 +449,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <!-- Card 3: Travel policy setup -->
                         <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Travel policy setup</h3>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Pengaturan Kebijakan Anggaran Perjalanan</h3>
                                 <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
-                                    Set different travel policies based on employee roles, levels, and division. Ensure company-wide compliance without any additional effort.
+                                    Atur batas plafon anggaran dan fasilitas otomatis berdasarkan jabatan, divisi, atau level karyawan untuk mencegah kelebihan biaya tanpa verifikasi manual yang merepotkan.
                                 </p>
                             </div>
 
@@ -481,22 +467,22 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                     <!-- Option 1: Business Class (Non-compliant) -->
                                     <div class="flex items-center justify-between rounded-xl border border-rose-100 bg-rose-50/40 p-3">
                                         <div>
-                                            <span class="block text-[11px] font-medium text-slate-500">Business class</span>
+                                            <span class="block text-[11px] font-medium text-slate-500">Kelas Bisnis (Penerbangan)</span>
                                             <span class="block text-xs font-bold text-slate-700">Rp3.122.000</span>
                                         </div>
                                         <span class="inline-flex items-center gap-1 rounded-lg bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700 border border-rose-200">
-                                            <AlertTriangle class="size-3 text-rose-600" /> Non-compliant
+                                            <AlertTriangle class="size-3 text-rose-600" /> Melebihi Plafon
                                         </span>
                                     </div>
 
                                     <!-- Option 2: Economy Class (Compliant) -->
                                     <div class="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 shadow-2xs">
                                         <div>
-                                            <span class="block text-[11px] font-medium text-emerald-800">Economy class (Flex)</span>
+                                            <span class="block text-[11px] font-medium text-emerald-800">Kelas Ekonomi (Fleksibel)</span>
                                             <span class="block text-xs font-bold text-[#07345a]">Rp2.122.000</span>
                                         </div>
                                         <span class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-2xs">
-                                            <Check class="size-3" /> Compliant
+                                            <Check class="size-3" /> Sesuai Anggaran
                                         </span>
                                     </div>
                                 </div>
@@ -509,9 +495,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <!-- Card 4: Built-in approval system -->
                         <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Built-in approval system</h3>
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Sistem Persetujuan (Approval) Otomatis</h3>
                                 <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
-                                    Streamline corporate travel requests by cutting unnecessary steps. Define approval hierarchy and manage requests in just a few clicks.
+                                    Pangkas birokrasi pengajuan perjalanan dinas. Tentukan hierarki persetujuan berjenjang untuk manajer dan tim finance hanya dengan beberapa klik.
                                 </p>
                             </div>
 
@@ -520,19 +506,19 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                 <div class="relative flex flex-col items-center">
                                     <!-- Step 1: Traveler -->
                                     <div class="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 shadow-2xs">
-                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Traveler" class="size-9 rounded-full object-cover border border-slate-200" />
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Pemohon" class="size-9 rounded-full object-cover border border-slate-200" />
                                         <div class="flex-1 min-w-0">
-                                            <span class="block truncate text-xs font-bold text-[#07345a]">Traveler (Rizky R.)</span>
-                                            <span class="block text-[10px] text-slate-500">Trip requested • Bali Gathering</span>
+                                            <span class="block truncate text-xs font-bold text-[#07345a]">Pemohon (Rizky R. - Tim Produk)</span>
+                                            <span class="block text-[10px] text-slate-500">Pengajuan Trip • Gathering Bali</span>
                                         </div>
-                                        <span class="rounded bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-[#0088ff]">Submitted</span>
+                                        <span class="rounded bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-[#0088ff]">Diajukan</span>
                                     </div>
 
                                     <!-- Connecting Line -->
                                     <div class="my-1.5 flex flex-col items-center">
                                         <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
                                         <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-bold text-emerald-600 border border-emerald-200">
-                                            Policy check passed ✓
+                                            Lolos verifikasi anggaran ✓
                                         </span>
                                         <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
                                     </div>
@@ -540,14 +526,14 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                     <!-- Step 2: Approver -->
                                     <div class="flex w-full items-center justify-between gap-3 rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-2.5 sm:p-3 shadow-xs">
                                         <div class="flex items-center gap-3 min-w-0">
-                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Approver" class="size-9 rounded-full object-cover border border-emerald-300" />
+                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Penyetujui" class="size-9 rounded-full object-cover border border-emerald-300" />
                                             <div class="min-w-0">
-                                                <span class="block truncate text-xs font-bold text-emerald-950">Approver (Sarah A.)</span>
-                                                <span class="block text-[10px] text-emerald-700">Trip request approved</span>
+                                                <span class="block truncate text-xs font-bold text-emerald-950">Penyetujui (Sarah A. - Finance Manager)</span>
+                                                <span class="block text-[10px] text-emerald-700">Pengajuan disetujui & anggaran dirilis</span>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-xs shrink-0">
-                                            Approved
+                                            Disetujui
                                         </span>
                                     </div>
                                 </div>
@@ -558,11 +544,11 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     <!-- Bottom CTA Banner -->
                     <div class="mt-16 text-center">
                         <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">
-                            Are you ready to upgrade your business travel experience?
+                            Siap Tingkatkan Efisiensi Perjalanan Bisnis Perusahaan Anda?
                         </h3>
                         <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
                             <button type="button" class="corp-button !bg-[#0088ff] !px-8 !py-4 !text-sm shadow-xl shadow-blue-500/25 transition-transform duration-200 hover:scale-[1.03] hover:!bg-[#0074d9]" @click="openConsultation">
-                                Request a demo
+                                Jadwalkan Konsultasi / Demo Gratis
                                 <ArrowRight class="size-4" />
                             </button>
                         </div>
@@ -576,9 +562,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                 <div>
                     <p class="corp-eyebrow">SATU PERJALANAN, BANYAK MANFAAT</p>
                     <h2 class="corp-heading mt-3">
-                        Dirancang untuk setiap
+                        Dirancang untuk Setiap
                         <br />
-                        peran di tim Anda.
+                        Peran di Tim Anda.
                     </h2>
                 </div>
                 <div class="mt-10 grid gap-6 md:grid-cols-3">
@@ -588,7 +574,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                 <span class="role-photo" :style="{ backgroundPosition: `${role.position} top`, backgroundImage: 'url(/Assets/Images/corporate-roles.png)' }"></span>
                                 <span class="flex items-center justify-between gap-3 bg-white px-6 py-5">
                                     <span>
-                                        <span class="block text-[10px] font-semibold tracking-[0.12em] text-slate-400 uppercase">{{ role.english }}</span>
+                                        <span class="block text-[10px] font-semibold tracking-[0.12em] text-[#0088ff] uppercase">{{ role.english }}</span>
                                         <span class="mt-1 block text-base font-bold text-[#07345a]">{{ role.title }}</span>
                                     </span>
                                     <Info class="size-5 shrink-0 text-[#0088ff]" />
@@ -609,16 +595,16 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                 </span>
                                 <span class="mt-4 flex items-center gap-2 text-[10px] text-slate-400">
                                     <RotateCcw class="size-3" />
-                                    Ketuk untuk membalik kartu
+                                    Ketuk untuk melihat ringkasan
                                 </span>
                             </span>
                         </span>
                     </button>
                 </div>
                 <div class="mt-10 text-center">
-                    <p class="text-lg font-semibold text-[#07345a]">Mari temukan perjalanan yang pas untuk tim Anda.</p>
+                    <p class="text-lg font-semibold text-[#07345a]">Mari wujudkan agenda perjalanan tim yang berkesan bersama kami.</p>
                     <button class="corp-button mt-5" @click="openConsultation">
-                        Saya tertarik
+                        Konsultasikan Perjalanan Sekarang
                         <ArrowRight class="size-4" />
                     </button>
                 </div>
@@ -653,15 +639,15 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             </section>
             <section id="faq" class="corp-container grid gap-10 py-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:py-24">
                 <div>
-                    <p class="corp-eyebrow">ADA YANG INGIN DITANYAKAN?</p>
+                    <p class="corp-eyebrow">PERTANYAAN UMUM (FAQ)</p>
                     <h2 class="corp-heading mt-3">
-                        Kenali lebih dekat,
+                        Kenali Lebih Dekat,
                         <br />
-                        rencanakan lebih yakin.
+                        Rencanakan Lebih Yakin.
                     </h2>
-                    <p class="corp-description mt-4">Hal-hal yang perlu diketahui sebelum memulai perjalanan perusahaan.</p>
+                    <p class="corp-description mt-4">Informasi lengkap seputar pemesanan, layanan, dan kerjasama perjalanan bisnis perusahaan Anda.</p>
                     <Link :href="route('help.index')" class="corp-text-link mt-6">
-                        Kunjungi pusat bantuan
+                        Kunjungi Pusat Bantuan
                         <ArrowUpRight class="size-4" />
                     </Link>
                 </div>
@@ -683,44 +669,44 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             <div class="p-6 sm:p-8">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <p class="corp-eyebrow">MULAI PERJALANAN TIM ANDA</p>
-                        <h2 id="consultation-heading" class="mt-2 text-2xl font-bold tracking-tight text-[#07345a]">Ceritakan rencana Anda.</h2>
+                        <p class="corp-eyebrow">KONSULTASI PERJALANAN TIM</p>
+                        <h2 id="consultation-heading" class="mt-2 text-2xl font-bold tracking-tight text-[#07345a]">Ceritakan Rencana Perjalanan Anda.</h2>
                     </div>
                     <button aria-label="Tutup konsultasi" class="rounded-full bg-slate-100 p-2 hover:bg-slate-200" @click="consultationDialog.close()">
                         <X class="size-4" />
                     </button>
                 </div>
-                <p class="mt-3 text-sm leading-6 text-slate-500">Isi brief singkat ini untuk menyiapkan email konsultasi ke tim TapakLokal.</p>
+                <p class="mt-3 text-sm leading-6 text-slate-500">Isi brief singkat ini agar tim konsultan TapakLokal dapat menyiapkan rekomendasi destinasi, itinerary, dan estimasi anggaran terbaik.</p>
                 <form class="mt-6 grid gap-4" @submit.prevent="prepareEmail">
                     <label class="corp-label">
-                        Nama perusahaan
-                        <input v-model="brief.company" required maxlength="150" autocomplete="organization" class="corp-input" placeholder="Nama perusahaan Anda" />
+                        Nama Perusahaan
+                        <input v-model="brief.company" required maxlength="150" autocomplete="organization" class="corp-input" placeholder="Contoh: PT Nusantara Maju" />
                     </label>
                     <label class="corp-label">
-                        Nama PIC
-                        <input v-model="brief.name" required maxlength="100" autocomplete="name" class="corp-input" placeholder="Nama penanggung jawab" />
+                        Nama PIC (Penanggung Jawab)
+                        <input v-model="brief.name" required maxlength="100" autocomplete="name" class="corp-input" placeholder="Nama lengkap Anda" />
                     </label>
                     <div class="grid grid-cols-2 gap-4">
                         <label class="corp-label">
-                            Destinasi tujuan
-                            <input v-model="brief.destination" maxlength="100" class="corp-input" placeholder="Contoh: Yogyakarta" />
+                            Destinasi Tujuan
+                            <input v-model="brief.destination" maxlength="100" class="corp-input" placeholder="Contoh: Yogyakarta / Labuan Bajo" />
                         </label>
                         <label class="corp-label">
-                            Jumlah peserta
-                            <input v-model="brief.participants" required type="number" min="1" max="10000" class="corp-input" placeholder="Contoh: 24" />
+                            Jumlah Peserta
+                            <input v-model="brief.participants" required type="number" min="1" max="10000" class="corp-input" placeholder="Contoh: 30" />
                         </label>
                     </div>
                     <label class="corp-label">
-                        Tanggal & kebutuhan lainnya
-                        <textarea v-model="brief.notes" required maxlength="1500" rows="3" class="corp-input resize-y" placeholder="Rencana tanggal, anggaran, dan agenda tim..."></textarea>
+                        Tanggal & Kebutuhan Khusus
+                        <textarea v-model="brief.notes" required maxlength="1500" rows="3" class="corp-input resize-y" placeholder="Rencana tanggal pelaksanaan, perkiraan anggaran, agenda outing, gala dinner, atau kebutuhan khusus lainnya..."></textarea>
                     </label>
                     <button type="submit" class="corp-button w-full justify-center">
-                        Buka draf email
+                        Buka Draf Email Konsultasi
                         <ArrowUpRight class="size-4" />
                     </button>
                     <p class="text-xs leading-5 text-slate-500">
-                        Brief belum dikirim atau disimpan. Periksa dan kirim melalui aplikasi email Anda ke
-                        <a href="mailto:support@tapaklokal.com" class="text-[#0077df] underline">support@tapaklokal.com</a>
+                        Brief belum dikirim atau disimpan secara publik. Periksa dan kirim melalui aplikasi email Anda ke
+                        <a href="mailto:support@tapaklokal.com" class="text-[#0077df] underline font-semibold">support@tapaklokal.com</a>
                         .
                     </p>
                 </form>
