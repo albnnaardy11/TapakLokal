@@ -256,19 +256,27 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         </div>
 
                         <!-- Architecture Diagram Visual -->
-                        <div class="relative mt-8 flex min-h-[200px] items-center justify-center rounded-2xl border border-sky-100/80 bg-gradient-to-b from-[#f8fcff] to-[#edf7fc] p-5 sm:p-6 overflow-hidden">
-                            <!-- Radar Pulse Rings centered around TapakLokal Node -->
-                            <div class="absolute left-[22%] top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                                <div class="radar-ring size-20"></div>
-                                <div class="radar-ring size-32"></div>
-                                <div class="radar-ring size-44"></div>
-                            </div>
-
+                        <div class="relative mt-8 flex min-h-[220px] items-center justify-center rounded-2xl border border-sky-100/80 bg-gradient-to-b from-[#f8fcff] to-[#edf7fc] p-5 sm:p-6 overflow-hidden">
                             <div class="relative flex w-full max-w-xs items-center justify-between z-10">
-                                <!-- TapakLokal Core API Node (Blue Isometric Stack) -->
+                                <!-- TapakLokal Core API Node (Blue Isometric Stack with Concentric Radar Circles exactly behind it) -->
                                 <div class="flex flex-col items-center">
                                     <div class="relative flex size-14 items-center justify-center">
-                                        <svg viewBox="0 0 64 64" class="size-14 drop-shadow-md">
+                                        <!-- Concentric Radar Rings EXACTLY Centered Behind Icon -->
+                                        <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 flex items-center justify-center">
+                                            <!-- Static Concentric Rings -->
+                                            <div class="absolute size-24 rounded-full border border-sky-300/50"></div>
+                                            <div class="absolute size-36 rounded-full border border-sky-300/40"></div>
+                                            <div class="absolute size-48 rounded-full border border-sky-200/35"></div>
+                                            <div class="absolute size-64 rounded-full border border-sky-200/25"></div>
+                                            <div class="absolute size-80 rounded-full border border-sky-100/20"></div>
+
+                                            <!-- Animated Expanding Radar Waves -->
+                                            <div class="radar-pulse-ring size-24"></div>
+                                            <div class="radar-pulse-ring size-24 [animation-delay:1s]"></div>
+                                            <div class="radar-pulse-ring size-24 [animation-delay:2s]"></div>
+                                        </div>
+
+                                        <svg viewBox="0 0 64 64" class="relative z-10 size-14 drop-shadow-md">
                                             <ellipse cx="32" cy="46" rx="26" ry="10" fill="#0066cc" />
                                             <ellipse cx="32" cy="42" rx="26" ry="10" fill="#0088ff" />
                                             <ellipse cx="32" cy="38" rx="26" ry="10" fill="#29c2ea" />
@@ -646,17 +654,16 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 .typing-dot:nth-child(3) { animation-delay: 0s; }
 
 @keyframes radar-pulse-wave {
-    0% { transform: scale(0.6); opacity: 0.8; }
-    100% { transform: scale(1.6); opacity: 0; }
+    0% { transform: scale(0.6); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
 }
-.radar-ring {
+.radar-pulse-ring {
     position: absolute;
     border-radius: 50%;
-    border: 1.5px solid rgba(0, 136, 255, 0.35);
-    animation: radar-pulse-wave 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+    border: 1.5px solid rgba(0, 136, 255, 0.45);
+    animation: radar-pulse-wave 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    pointer-events: none;
 }
-.radar-ring:nth-child(2) { animation-delay: 1s; }
-.radar-ring:nth-child(3) { animation-delay: 2s; }
 
 @keyframes dash-flow {
     from { stroke-dashoffset: 32; }
