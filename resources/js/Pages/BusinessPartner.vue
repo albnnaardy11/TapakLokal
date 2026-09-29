@@ -5,7 +5,7 @@ import { route } from 'ziggy-js';
 import {
     ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2,
     Clock, Compass, FileText, LayoutDashboard, MapPin,
-    ShieldCheck, Sparkles, Star, Store, Users, Wallet, X
+    Sparkles, Star, Store, Users, Wallet, X
 } from 'lucide-vue-next';
 import BusinessLanding from '../Components/Shared/BusinessLanding.vue';
 
@@ -140,9 +140,6 @@ function prepareEmail() {
                     <div class="mt-7 flex flex-wrap gap-3">
                         <button class="business-button inline-flex" @click="openRegistration()">Mulai jadi mitra <ArrowRight class="size-4" /></button>
                         <a href="#kemitraan" class="business-button business-button-secondary inline-flex">Jelajahi kemitraan</a>
-                    </div>
-                    <div class="mt-6 flex items-center gap-2 text-xs text-[#527386]">
-                        <ShieldCheck class="size-4 text-[#009cf0]" /> Untuk operator wisata & pelaku usaha lokal
                     </div>
                 </div>
                 <div class="relative">
