@@ -94,7 +94,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
         <main>
             <section id="corporate-hero" class="corporate-hero overflow-hidden">
                 <div class="px-5 pt-6 text-center sm:pt-8 lg:pt-8">
-                    <h1 class="hero-title mx-auto max-w-5xl text-[28px] leading-[1.3] font-bold tracking-[-0.035em] text-[#26292c] sm:text-[34px] lg:text-[38px]">
+                    <h1 class="hero-title mx-auto max-w-5xl text-[26px] leading-[1.3] font-bold tracking-[-0.035em] text-[#26292c] sm:text-[34px] lg:text-[38px]">
                         Cara lebih <span class="hero-handwritten">mudah</span><br />mengatur perjalanan perusahaan
                     </h1>
                 </div>
@@ -103,31 +103,31 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         <img src="/Assets/Images/corporate-device-mockup.png" alt="" width="1536" height="1024" fetchpriority="high" class="hero-devices" />
                         <div class="hero-float hero-float-brief" aria-hidden="true">
                             <p class="hero-card-title">Satu brief,<br />detail perjalanan lebih jelas</p>
-                            <div class="mt-3 flex border-b border-slate-100 text-[9px] font-semibold"><span class="flex-1 pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-2 text-[#009cf0]">Rencana trip</span></div>
-                            <div class="mt-2 grid grid-cols-3 gap-2 rounded-lg bg-[#f5fafd] p-2 text-[9px]"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong>Bali</strong><strong>24 orang</strong><strong>3 hari</strong></div>
+                            <div class="mt-2 sm:mt-3 flex border-b border-slate-100 text-[8px] sm:text-[9px] font-semibold"><span class="flex-1 pb-1.5 sm:pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-1.5 sm:pb-2 text-[#009cf0]">Rencana trip</span></div>
+                            <div class="mt-1.5 sm:mt-2 grid grid-cols-3 gap-1 sm:gap-2 rounded-lg bg-[#f5fafd] p-1.5 sm:p-2 text-[8px] sm:text-[9px] text-center"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong class="truncate">Bali</strong><strong class="truncate">24 orang</strong><strong class="truncate">3 hari</strong></div>
                         </div>
                         <div class="hero-float hero-float-agenda" aria-hidden="true">
                             <p class="hero-card-title">Agenda yang pas untuk tim</p>
-                            <div class="relative mt-3 flex items-center justify-center gap-3 rounded-lg bg-[#f1fbff] py-3"><span class="text-[9px] leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-xl leading-6 text-[#07345a]">3 hari</strong><span class="text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[9px] leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
+                            <div class="relative mt-2 sm:mt-3 flex items-center justify-center gap-2 sm:gap-3 rounded-lg bg-[#f1fbff] py-2 sm:py-3"><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-base sm:text-xl leading-5 sm:leading-6 text-[#07345a]">3 hari</strong><span class="text-[7px] sm:text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
                         </div>
                         <div class="hero-float hero-float-budget" aria-hidden="true">
                             <p class="hero-card-title">Rencanakan sesuai anggaran Anda</p>
-                            <div class="relative mt-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-32 rounded-full border-[20px] border-[#dcf5ff]"></div><div class="absolute h-16 w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-16 w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-3 text-white shadow-lg"><Wallet class="size-7" /><span class="mt-1 block h-1 w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-8 size-5 text-[#83c800]" /></div>
+                            <div class="relative mt-2 sm:mt-3 flex h-24 sm:h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-28 sm:size-32 rounded-full border-[16px] sm:border-[20px] border-[#dcf5ff]"></div><div class="absolute h-14 sm:h-16 w-20 sm:w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-14 sm:h-16 w-20 sm:w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-2.5 sm:p-3 text-white shadow-lg"><Wallet class="size-6 sm:size-7" /><span class="mt-1 block h-1 w-10 sm:w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-4 sm:right-8 size-4 sm:size-5 text-[#83c800]" /></div>
                         </div>
                         <div class="hero-float hero-float-ticket" aria-hidden="true">
                             <p class="hero-card-title">Persetujuan & tiket instan</p>
-                            <div class="mt-2.5 rounded-xl border border-sky-100 bg-gradient-to-br from-[#f6fbff] to-[#edf7fe] p-2.5 shadow-2xs">
+                            <div class="mt-2 sm:mt-2.5 rounded-xl border border-sky-100 bg-gradient-to-br from-[#f6fbff] to-[#edf7fe] p-2 sm:p-2.5 shadow-2xs">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[9px] font-bold text-[#07345a]">E-Tiket & Hotel</span>
-                                    <span class="rounded-full bg-emerald-500 px-2 py-0.5 text-[8px] font-bold text-white shadow-2xs">Siap Digunakan ✓</span>
+                                    <span class="text-[8px] sm:text-[9px] font-bold text-[#07345a]">E-Tiket & Hotel</span>
+                                    <span class="rounded-full bg-emerald-500 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8px] font-bold text-white shadow-2xs">Siap Digunakan ✓</span>
                                 </div>
-                                <div class="mt-2 flex items-center gap-2 rounded-lg bg-white p-2 border border-sky-100 shadow-2xs">
-                                    <span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-sky-50 text-[#0088ff] border border-sky-100">
-                                        <Plane class="size-3.5" />
+                                <div class="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 rounded-lg bg-white p-1.5 sm:p-2 border border-sky-100 shadow-2xs">
+                                    <span class="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md bg-sky-50 text-[#0088ff] border border-sky-100">
+                                        <Plane class="size-3 sm:size-3.5" />
                                     </span>
                                     <div class="min-w-0 flex-1">
-                                        <span class="block truncate text-[10px] font-bold text-slate-700">CGK ⇄ DPS • 24 Tiket</span>
-                                        <span class="block text-[8px] text-emerald-600 font-semibold">Terkonfirmasi otomatis</span>
+                                        <span class="block truncate text-[9px] sm:text-[10px] font-bold text-slate-700">CGK ⇄ DPS • 24 Tiket</span>
+                                        <span class="block text-[7px] sm:text-[8px] text-emerald-600 font-semibold truncate">Terkonfirmasi otomatis</span>
                                     </div>
                                 </div>
                             </div>
@@ -156,26 +156,26 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
                 </div>
             </section>
-            <section id="solutions" class="corp-container py-16 lg:py-24">
+            <section id="solutions" class="corp-container py-14 sm:py-16 lg:py-24">
                 <div class="mx-auto max-w-4xl text-center">
-                    <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
+                    <h2 class="text-2xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
                         Kelola Perjalanan Bisnis Tim Anda Bersama
                         <br class="hidden sm:inline" />
                         <span class="text-[#0088ff]">TapakLokal Corporates</span>
                     </h2>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
+                <div class="mt-10 sm:mt-12 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
                     <!-- 1. Corporate Booking Platform (Spans 2 columns on lg) -->
-                    <div class="group relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-white via-[#f7fbfe] to-[#eaf5fc] p-7 sm:p-10 lg:col-span-2 lg:p-12 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                    <div class="group relative overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-white via-[#f7fbfe] to-[#eaf5fc] p-6 sm:p-10 lg:col-span-2 lg:p-12 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                         <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                             <!-- Left Copy -->
                             <div class="lg:col-span-5">
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">Portal Pemesanan Perusahaan</h3>
-                                <p class="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+                                <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-3xl">Portal Pemesanan Perusahaan</h3>
+                                <p class="mt-2.5 sm:mt-3 text-xs leading-relaxed text-slate-600 sm:text-base">
                                     Pesan tiket pesawat, hotel, dan trip tim langsung dalam satu platform terpadu, lengkap dengan pengaturan batas anggaran serta laporan keuangan transparan.
                                 </p>
-                                <ul class="mt-5 space-y-3 text-sm text-slate-700">
+                                <ul class="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-slate-700">
                                     <li class="flex items-start gap-2.5">
                                         <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
                                         <span>Daftar akun perusahaan, dapatkan persetujuan, dan langsung pesan—tanpa instalasi aplikasi tambahan</span>
@@ -185,7 +185,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                         <span>Rencanakan dan pantau seluruh agenda perjalanan bisnis di mana saja dan kapan saja</span>
                                     </li>
                                 </ul>
-                                <button type="button" class="corp-button mt-7 !px-6 !py-3 !text-xs sm:!text-sm" @click="openConsultation">
+                                <button type="button" class="corp-button mt-6 sm:mt-7 !px-6 !py-3 !text-xs sm:!text-sm" @click="openConsultation">
                                     Mulai sekarang
                                     <ArrowRight class="size-4" />
                                 </button>
@@ -207,13 +207,13 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
 
                     <!-- 2. Personalized Services (Bottom Left) -->
-                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                         <div>
-                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Layanan Pendampingan Khusus</h3>
-                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                            <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Layanan Pendampingan Khusus</h3>
+                            <p class="mt-2.5 sm:mt-3 text-xs leading-relaxed text-slate-600 sm:text-sm">
                                 Butuh paket gathering khusus, outing, atau agenda perusahaan unik? Tim konsultan perjalanan kami siap mendampingi Anda setiap saat.
                             </p>
-                            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
+                            <ul class="mt-4 sm:mt-5 space-y-2.5 text-xs sm:text-sm text-slate-700">
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
                                     <span>Konsultasi gratis untuk gathering perusahaan, retreat, dan paket rombongan besar</span>
@@ -226,38 +226,38 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         </div>
 
                         <!-- Chat & Live CS Display -->
-                        <div class="bento-dot-bg relative mt-8 flex min-h-[200px] flex-col justify-center rounded-2xl border border-sky-100/80 bg-[#f8fbfe] p-5 sm:p-6">
+                        <div class="bento-dot-bg relative mt-6 sm:mt-8 flex min-h-[190px] sm:min-h-[200px] flex-col justify-center rounded-2xl border border-sky-100/80 bg-[#f8fbfe] p-4 sm:p-6">
                             <div class="relative mx-auto w-full max-w-xs space-y-3">
                                 <!-- CS Avatar & Speech Bubble -->
-                                <div class="flex items-start gap-3">
+                                <div class="flex items-start gap-2.5 sm:gap-3">
                                     <div class="relative shrink-0">
-                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Aurelia CS" class="size-10 rounded-full border-2 border-white object-cover shadow-sm" />
-                                        <span class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-white bg-emerald-500"></span>
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Aurelia CS" class="size-9 sm:size-10 rounded-full border-2 border-white object-cover shadow-sm" />
+                                        <span class="absolute bottom-0 right-0 size-2.5 sm:size-3 rounded-full border-2 border-white bg-emerald-500"></span>
                                     </div>
-                                    <div class="rounded-2xl rounded-tl-xs border border-sky-200/90 bg-white px-4 py-3 shadow-sm">
-                                        <span class="block text-[10px] font-bold text-[#0088ff]">Aurelia, Konsultan TapakLokal Bisnis</span>
-                                        <p class="mt-0.5 text-sm font-semibold text-[#07345a]">Halo! Ada agenda perjalanan tim yang ingin kami bantu?</p>
+                                    <div class="rounded-2xl rounded-tl-xs border border-sky-200/90 bg-white px-3.5 sm:px-4 py-2.5 sm:py-3 shadow-sm">
+                                        <span class="block text-[9px] sm:text-[10px] font-bold text-[#0088ff]">Aurelia, Konsultan TapakLokal Bisnis</span>
+                                        <p class="mt-0.5 text-xs sm:text-sm font-semibold text-[#07345a]">Halo! Ada agenda perjalanan tim yang ingin kami bantu?</p>
                                     </div>
                                 </div>
                                 <!-- Typing Indicator Bubble -->
-                                <div class="ml-13 flex w-fit items-center gap-1.5 rounded-full border border-sky-100 bg-white/95 px-3 py-1.5 shadow-xs">
+                                <div class="ml-9 sm:ml-12 flex w-fit items-center gap-1.5 rounded-full border border-sky-100 bg-white/95 px-3 py-1.5 shadow-xs">
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
                                     <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
-                                    <span class="ml-1 text-[9px] font-medium text-slate-400">Konsultan siap membantu</span>
+                                    <span class="ml-1 text-[8px] sm:text-[9px] font-medium text-slate-400">Konsultan siap membantu</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 3. API Integration (Bottom Right) -->
-                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                         <div>
-                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Integrasi Sistem & API Perusahaan</h3>
-                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                            <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Integrasi Sistem & API Perusahaan</h3>
+                            <p class="mt-2.5 sm:mt-3 text-xs leading-relaxed text-slate-600 sm:text-sm">
                                 Hubungkan inventaris trip, tiket, dan seluruh kapabilitas platform kami langsung ke sistem internal perusahaan Anda.
                             </p>
-                            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
+                            <ul class="mt-4 sm:mt-5 space-y-2.5 text-xs sm:text-sm text-slate-700">
                                 <li class="flex items-start gap-2.5">
                                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
                                     <span>Gunakan alur pemesanan, pengecekan kebijakan anggaran, dan rekap di sistem HR/ERP Anda</span>
@@ -270,27 +270,27 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         </div>
 
                         <!-- Architecture Diagram Visual -->
-                        <div class="relative mt-8 flex min-h-[220px] items-center justify-center rounded-2xl border border-sky-100/80 bg-gradient-to-b from-[#f8fcff] to-[#edf7fc] p-5 sm:p-6 overflow-hidden">
+                        <div class="relative mt-6 sm:mt-8 flex min-h-[190px] sm:min-h-[220px] items-center justify-center rounded-2xl border border-sky-100/80 bg-gradient-to-b from-[#f8fcff] to-[#edf7fc] p-4 sm:p-6 overflow-hidden">
                             <div class="relative flex w-full max-w-xs items-center justify-between z-10">
                                 <!-- TapakLokal Core API Node (Blue Isometric Stack with Concentric Radar Circles exactly behind it) -->
                                 <div class="flex flex-col items-center">
-                                    <div class="relative flex size-14 items-center justify-center">
+                                    <div class="relative flex size-12 sm:size-14 items-center justify-center">
                                         <!-- Concentric Radar Rings EXACTLY Centered Behind Icon -->
                                         <div class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 flex items-center justify-center">
                                             <!-- Static Concentric Rings -->
-                                            <div class="absolute size-24 rounded-full border border-sky-300/50"></div>
-                                            <div class="absolute size-36 rounded-full border border-sky-300/40"></div>
-                                            <div class="absolute size-48 rounded-full border border-sky-200/35"></div>
-                                            <div class="absolute size-64 rounded-full border border-sky-200/25"></div>
-                                            <div class="absolute size-80 rounded-full border border-sky-100/20"></div>
+                                            <div class="absolute size-20 sm:size-24 rounded-full border border-sky-300/50"></div>
+                                            <div class="absolute size-32 sm:size-36 rounded-full border border-sky-300/40"></div>
+                                            <div class="absolute size-44 sm:size-48 rounded-full border border-sky-200/35"></div>
+                                            <div class="absolute size-56 sm:size-64 rounded-full border border-sky-200/25"></div>
+                                            <div class="absolute size-72 sm:size-80 rounded-full border border-sky-100/20"></div>
 
                                             <!-- Animated Expanding Radar Waves -->
-                                            <div class="radar-pulse-ring size-24"></div>
-                                            <div class="radar-pulse-ring size-24 [animation-delay:1s]"></div>
-                                            <div class="radar-pulse-ring size-24 [animation-delay:2s]"></div>
+                                            <div class="radar-pulse-ring size-20 sm:size-24"></div>
+                                            <div class="radar-pulse-ring size-20 sm:size-24 [animation-delay:1s]"></div>
+                                            <div class="radar-pulse-ring size-20 sm:size-24 [animation-delay:2s]"></div>
                                         </div>
 
-                                        <svg viewBox="0 0 64 64" class="relative z-10 size-14 drop-shadow-md">
+                                        <svg viewBox="0 0 64 64" class="relative z-10 size-12 sm:size-14 drop-shadow-md">
                                             <ellipse cx="32" cy="46" rx="26" ry="10" fill="#0066cc" />
                                             <ellipse cx="32" cy="42" rx="26" ry="10" fill="#0088ff" />
                                             <ellipse cx="32" cy="38" rx="26" ry="10" fill="#29c2ea" />
@@ -302,12 +302,12 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                             <path d="M32 4 L36 10 L32 16 L28 10 Z" fill="white" />
                                         </svg>
                                     </div>
-                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">API TapakLokal</span>
+                                    <span class="mt-1.5 text-[9px] sm:text-[10px] font-bold text-[#07345a]">API TapakLokal</span>
                                 </div>
 
                                 <!-- Connecting Flow Line with Arrow -->
                                 <div class="relative flex-1 mx-2 flex items-center justify-center">
-                                    <svg class="w-full h-8 overflow-visible" viewBox="0 0 100 20" fill="none">
+                                    <svg class="w-full h-7 sm:h-8 overflow-visible" viewBox="0 0 100 20" fill="none">
                                         <defs>
                                             <linearGradient id="streamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                                 <stop offset="0%" stop-color="#0088ff" />
@@ -318,13 +318,13 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                         <line x1="6" y1="10" x2="86" y2="10" stroke="url(#streamGrad)" stroke-width="2.5" stroke-linecap="round" class="flow-line-animated" />
                                         <polygon points="86,6 96,10 86,14" fill="#10b981" />
                                     </svg>
-                                    <div class="data-particle absolute left-1 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[#0088ff] shadow-[0_0_6px_#0088ff]"></div>
+                                    <div class="data-particle absolute left-1 top-1/2 -translate-y-1/2 size-1.5 sm:size-2 rounded-full bg-[#0088ff] shadow-[0_0_6px_#0088ff]"></div>
                                 </div>
 
                                 <!-- Corporate Enterprise System Node (Green Isometric Stack) -->
                                 <div class="flex flex-col items-center">
-                                    <div class="relative flex size-14 items-center justify-center">
-                                        <svg viewBox="0 0 64 64" class="size-14 drop-shadow-md">
+                                    <div class="relative flex size-12 sm:size-14 items-center justify-center">
+                                        <svg viewBox="0 0 64 64" class="size-12 sm:size-14 drop-shadow-md">
                                             <ellipse cx="32" cy="46" rx="26" ry="10" fill="#047857" />
                                             <ellipse cx="32" cy="42" rx="26" ry="10" fill="#059669" />
                                             <ellipse cx="32" cy="38" rx="26" ry="10" fill="#10b981" />
@@ -336,64 +336,64 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                             <path d="M26 10 L30 14 L38 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
                                         </svg>
                                     </div>
-                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">Sistem Kantor</span>
+                                    <span class="mt-1.5 text-[9px] sm:text-[10px] font-bold text-[#07345a]">Sistem Kantor</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-            <section id="features" class="relative overflow-hidden border-t border-sky-100/60 bg-[#f6fbfe] py-20 lg:py-28">
+            <section id="features" class="relative overflow-hidden border-t border-sky-100/60 bg-[#f6fbfe] py-16 sm:py-20 lg:py-28">
                 <div class="corp-container">
                     <!-- Section Heading -->
                     <div class="mx-auto max-w-4xl text-center">
-                        <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
+                        <h2 class="text-2xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
                             Semua Fitur Lengkap untuk Perjalanan Bisnis yang Lebih Hemat, Praktis & Bebas Repot
                         </h2>
-                        <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                        <p class="mx-auto mt-3.5 sm:mt-4 max-w-2xl text-xs sm:text-base leading-relaxed text-slate-600">
                             Dirancang khusus untuk membantu tim HR, GA, dan Keuangan mengelola perjalanan dinas serta event kantor dengan kendali penuh, transparansi langsung, dan alur serba otomatis.
                         </p>
                     </div>
 
                     <!-- 4 Feature Cards Grid (2x2) -->
-                    <div class="mt-14 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
+                    <div class="mt-10 sm:mt-14 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
                         <!-- Card 1: Transparent reporting -->
-                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Laporan Pengeluaran Transparan</h3>
-                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Laporan Pengeluaran Transparan</h3>
+                                <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
                                     Pantau setiap pengeluaran perjalanan bisnis dalam satu dashboard: rekap transaksi otomatis, kepatuhan anggaran, hingga ekspor data instan.
                                 </p>
                             </div>
 
                             <!-- Reporting Mockup UI -->
-                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 text-[11px] font-semibold text-slate-400">
+                            <div class="mt-6 sm:mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-4 sm:p-6 shadow-xs">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 text-[10px] sm:text-[11px] font-semibold text-slate-400">
                                     <span>REKAP PENGELUARAN KANTOR</span>
-                                    <span class="inline-flex items-center gap-1 text-[#0088ff]">
+                                    <span class="inline-flex items-center gap-1 text-[#0088ff] font-bold">
                                         <TrendingUp class="size-3.5" /> +14.8% dari bulan lalu
                                     </span>
                                 </div>
-                                <div class="mt-4 space-y-3">
+                                <div class="mt-3.5 sm:mt-4 space-y-2.5 sm:space-y-3">
                                     <!-- Stat 1: Total transaction -->
-                                    <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
+                                    <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 rounded-xl bg-slate-50/80 p-2.5 sm:p-3 border border-slate-100/80">
                                         <span class="text-xs font-semibold text-slate-600">Total Transaksi</span>
-                                        <span class="rounded-lg bg-[#e1f4ff] px-3 py-1 text-xs font-bold text-[#0077df] shadow-2xs">
+                                        <span class="rounded-lg bg-[#e1f4ff] px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold text-[#0077df] shadow-2xs">
                                             Rp3.100.000.222
                                         </span>
                                     </div>
                                     <!-- Stat 2: Total booking -->
-                                    <div class="flex items-center justify-between gap-3 rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
+                                    <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 rounded-xl bg-slate-50/80 p-2.5 sm:p-3 border border-slate-100/80">
                                         <span class="text-xs font-semibold text-slate-600">Total Perjalanan</span>
-                                        <span class="rounded-lg bg-[#e6fbf2] px-3 py-1 text-xs font-bold text-[#059669] shadow-2xs">
+                                        <span class="rounded-lg bg-[#e6fbf2] px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold text-[#059669] shadow-2xs">
                                             776 Perjalanan
                                         </span>
                                     </div>
                                     <!-- Stat 3: Policy compliance -->
-                                    <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100/80">
-                                        <div class="flex items-center justify-between gap-3">
+                                    <div class="rounded-xl bg-slate-50/80 p-2.5 sm:p-3 border border-slate-100/80">
+                                        <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
                                             <span class="text-xs font-semibold text-slate-600">Kepatuhan Kebijakan Anggaran</span>
-                                            <span class="rounded-lg bg-[#fef7e7] px-3 py-1 text-xs font-bold text-[#d97706] shadow-2xs">
+                                            <span class="rounded-lg bg-[#fef7e7] px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold text-[#d97706] shadow-2xs">
                                                 99% Sesuai Anggaran
                                             </span>
                                         </div>
@@ -406,151 +406,151 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         </div>
 
                         <!-- Card 2: Flexible payment options -->
-                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Pilihan Pembayaran Fleksibel</h3>
-                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Pilihan Pembayaran Fleksibel</h3>
+                                <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
                                     Pilih metode pembayaran yang paling sesuai untuk perusahaan Anda: sistem invoice tempo (termin pembayaran), kartu kredit korporat, hingga reimbursement otomatis.
                                 </p>
                             </div>
 
                             <!-- Payment Options Mockup UI -->
-                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                            <div class="mt-6 sm:mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-4 sm:p-6 shadow-xs">
                                 <div class="space-y-2.5">
                                     <!-- Item 1: Invoicing (Selected) -->
-                                    <div class="flex items-center justify-between rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-3 shadow-xs">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex size-9 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-xs">
-                                                <FileText class="size-5" />
+                                    <div class="flex items-center justify-between gap-2 rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-2.5 sm:p-3 shadow-xs">
+                                        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                            <div class="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-xs">
+                                                <FileText class="size-4 sm:size-5" />
                                             </div>
-                                            <div>
-                                                <span class="block text-xs font-bold text-slate-800">Invoicing Terpusat (Tempo / Termin)</span>
-                                                <span class="block text-[10px] text-slate-500">Tempo pembayaran Net 30 & e-Faktur Pajak resmi</span>
+                                            <div class="min-w-0">
+                                                <span class="block truncate text-xs font-bold text-slate-800">Invoicing Terpusat (Tempo)</span>
+                                                <span class="block text-[9px] sm:text-[10px] text-slate-500 truncate">Tempo Net 30 & e-Faktur Pajak resmi</span>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs">
+                                        <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500 px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-white shadow-xs">
                                             Dipilih <Check class="size-3" />
                                         </span>
                                     </div>
 
                                     <!-- Item 2: Corporate credit card -->
-                                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-slate-600 transition hover:bg-slate-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                                                <CreditCard class="size-5" />
+                                    <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 text-slate-600 transition hover:bg-slate-50">
+                                        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                            <div class="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                                                <CreditCard class="size-4 sm:size-5" />
                                             </div>
-                                            <div>
-                                                <span class="block text-xs font-bold text-slate-700">Kartu Kredit Perusahaan</span>
-                                                <span class="block text-[10px] text-slate-400">Batas anggaran & penandaan divisi otomatis</span>
+                                            <div class="min-w-0">
+                                                <span class="block truncate text-xs font-bold text-slate-700">Kartu Kredit Perusahaan</span>
+                                                <span class="block text-[9px] sm:text-[10px] text-slate-400 truncate">Batas anggaran & divisi otomatis</span>
                                             </div>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400">Tersedia</span>
+                                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400 shrink-0">Tersedia</span>
                                     </div>
 
                                     <!-- Item 3: Personal credit card -->
-                                    <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-slate-600 transition hover:bg-slate-50">
-                                        <div class="flex items-center gap-3">
-                                            <div class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                                                <UserRound class="size-5" />
+                                    <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 text-slate-600 transition hover:bg-slate-50">
+                                        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                            <div class="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                                                <UserRound class="size-4 sm:size-5" />
                                             </div>
-                                            <div>
-                                                <span class="block text-xs font-bold text-slate-700">Reimbursement & Kartu Personal</span>
-                                                <span class="block text-[10px] text-slate-400">Unduh bukti transaksi & struk digital instan</span>
+                                            <div class="min-w-0">
+                                                <span class="block truncate text-xs font-bold text-slate-700">Reimbursement & Personal</span>
+                                                <span class="block text-[9px] sm:text-[10px] text-slate-400 truncate">Unduh bukti transaksi instan</span>
                                             </div>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400">Tersedia</span>
+                                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400 shrink-0">Tersedia</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Card 3: Travel policy setup -->
-                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Pengaturan Kebijakan Anggaran Perjalanan</h3>
-                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Pengaturan Kebijakan Anggaran Perjalanan</h3>
+                                <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
                                     Atur batas plafon anggaran dan fasilitas otomatis berdasarkan jabatan, divisi, atau level karyawan untuk mencegah kelebihan biaya tanpa verifikasi manual yang merepotkan.
                                 </p>
                             </div>
 
                             <!-- Policy Simulator Mockup UI -->
-                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                            <div class="mt-6 sm:mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-4 sm:p-6 shadow-xs">
                                 <!-- Route Tag -->
-                                <div class="inline-flex items-center gap-2 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-bold text-[#0077df] border border-sky-100">
-                                    <Plane class="size-4 text-[#0088ff]" />
+                                <div class="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg bg-sky-50 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#0077df] border border-sky-100">
+                                    <Plane class="size-3.5 sm:size-4 text-[#0088ff]" />
                                     <span>Jakarta (CGK) ⇄ Bali (DPS)</span>
                                 </div>
 
                                 <div class="mt-3.5 space-y-2.5">
                                     <!-- Option 1: Business Class (Non-compliant) -->
-                                    <div class="flex items-center justify-between rounded-xl border border-rose-100 bg-rose-50/40 p-3">
+                                    <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 rounded-xl border border-rose-100 bg-rose-50/40 p-2.5 sm:p-3">
                                         <div>
-                                            <span class="block text-[11px] font-medium text-slate-500">Kelas Bisnis (Penerbangan)</span>
+                                            <span class="block text-[10px] sm:text-[11px] font-medium text-slate-500">Kelas Bisnis (Penerbangan)</span>
                                             <span class="block text-xs font-bold text-slate-700">Rp3.122.000</span>
                                         </div>
-                                        <span class="inline-flex items-center gap-1 rounded-lg bg-rose-100 px-2.5 py-1 text-[10px] font-bold text-rose-700 border border-rose-200">
+                                        <span class="inline-flex items-center gap-1 rounded-lg bg-rose-100 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold text-rose-700 border border-rose-200">
                                             <AlertTriangle class="size-3 text-rose-600" /> Melebihi Plafon
                                         </span>
                                     </div>
 
                                     <!-- Option 2: Economy Class (Compliant) -->
-                                    <div class="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/60 p-3 shadow-2xs">
+                                    <div class="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 rounded-xl border border-emerald-200 bg-emerald-50/60 p-2.5 sm:p-3 shadow-2xs">
                                         <div>
-                                            <span class="block text-[11px] font-medium text-emerald-800">Kelas Ekonomi (Fleksibel)</span>
+                                            <span class="block text-[10px] sm:text-[11px] font-medium text-emerald-800">Kelas Ekonomi (Fleksibel)</span>
                                             <span class="block text-xs font-bold text-[#07345a]">Rp2.122.000</span>
                                         </div>
-                                        <span class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-2xs">
+                                        <span class="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold text-white shadow-2xs">
                                             <Check class="size-3" /> Sesuai Anggaran
                                         </span>
                                     </div>
                                 </div>
-                                <p class="mt-3 text-center text-[10px] text-slate-400">
+                                <p class="mt-3 text-center text-[9px] sm:text-[10px] text-slate-400">
                                     Otomatis mendeteksi kebijakan kelas penerbangan & batas anggaran per divisi
                                 </p>
                             </div>
                         </div>
 
                         <!-- Card 4: Built-in approval system -->
-                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-[28px] border border-slate-200/80 bg-white p-6 sm:p-9 shadow-[0_10px_35px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
                             <div>
-                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Sistem Persetujuan (Approval) Otomatis</h3>
-                                <p class="mt-2.5 text-sm leading-relaxed text-slate-600">
+                                <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Sistem Persetujuan (Approval) Otomatis</h3>
+                                <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
                                     Pangkas birokrasi pengajuan perjalanan dinas. Tentukan hierarki persetujuan berjenjang untuk manajer dan tim finance hanya dengan beberapa klik.
                                 </p>
                             </div>
 
                             <!-- Approval Flow Mockup UI -->
-                            <div class="mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-5 sm:p-6 shadow-xs">
+                            <div class="mt-6 sm:mt-8 rounded-2xl border border-sky-100/90 bg-gradient-to-br from-[#f8fcff] via-white to-[#f0f8ff] p-4 sm:p-6 shadow-xs">
                                 <div class="relative flex flex-col items-center">
                                     <!-- Step 1: Traveler -->
-                                    <div class="flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 shadow-2xs">
-                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Pemohon" class="size-9 rounded-full object-cover border border-slate-200" />
+                                    <div class="flex w-full items-center gap-2.5 sm:gap-3 rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3 shadow-2xs">
+                                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Pemohon" class="size-8 sm:size-9 rounded-full object-cover border border-slate-200" />
                                         <div class="flex-1 min-w-0">
-                                            <span class="block truncate text-xs font-bold text-[#07345a]">Pemohon (Rizky R. - Tim Produk)</span>
-                                            <span class="block text-[10px] text-slate-500">Pengajuan Trip • Gathering Bali</span>
+                                            <span class="block truncate text-xs font-bold text-[#07345a]">Pemohon (Rizky R. - Produk)</span>
+                                            <span class="block text-[9px] sm:text-[10px] text-slate-500 truncate">Pengajuan Trip • Gathering Bali</span>
                                         </div>
-                                        <span class="rounded bg-sky-50 px-2 py-0.5 text-[9px] font-bold text-[#0088ff]">Diajukan</span>
+                                        <span class="rounded bg-sky-50 px-2 py-0.5 text-[8px] sm:text-[9px] font-bold text-[#0088ff] shrink-0">Diajukan</span>
                                     </div>
 
                                     <!-- Connecting Line -->
                                     <div class="my-1.5 flex flex-col items-center">
-                                        <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
-                                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[8px] font-bold text-emerald-600 border border-emerald-200">
+                                        <div class="h-3.5 sm:h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
+                                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[7px] sm:text-[8px] font-bold text-emerald-600 border border-emerald-200">
                                             Lolos verifikasi anggaran ✓
                                         </span>
-                                        <div class="h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
+                                        <div class="h-3.5 sm:h-4 w-0.5 border-l-2 border-dashed border-emerald-400"></div>
                                     </div>
 
                                     <!-- Step 2: Approver -->
-                                    <div class="flex w-full items-center justify-between gap-3 rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-2.5 sm:p-3 shadow-xs">
-                                        <div class="flex items-center gap-3 min-w-0">
-                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Penyetujui" class="size-9 rounded-full object-cover border border-emerald-300" />
+                                    <div class="flex w-full items-center justify-between gap-2 rounded-xl border-2 border-emerald-400 bg-emerald-50/70 p-2.5 sm:p-3 shadow-xs">
+                                        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Penyetujui" class="size-8 sm:size-9 rounded-full object-cover border border-emerald-300 shrink-0" />
                                             <div class="min-w-0">
-                                                <span class="block truncate text-xs font-bold text-emerald-950">Penyetujui (Sarah A. - Finance Manager)</span>
-                                                <span class="block text-[10px] text-emerald-700">Pengajuan disetujui & anggaran dirilis</span>
+                                                <span class="block truncate text-xs font-bold text-emerald-950">Penyetujui (Sarah A. - Finance)</span>
+                                                <span class="block text-[9px] sm:text-[10px] text-emerald-700 truncate">Pengajuan disetujui & rilis</span>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-xs shrink-0">
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold text-white shadow-xs shrink-0">
                                             Disetujui
                                         </span>
                                     </div>
@@ -560,12 +560,12 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
 
                     <!-- Bottom CTA Banner -->
-                    <div class="mt-16 text-center">
-                        <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">
+                    <div class="mt-12 sm:mt-16 text-center">
+                        <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-3xl">
                             Siap Tingkatkan Efisiensi Perjalanan Bisnis Perusahaan Anda?
                         </h3>
-                        <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
-                            <button type="button" class="corp-button !bg-[#0088ff] !px-8 !py-4 !text-sm shadow-xl shadow-blue-500/25 transition-transform duration-200 hover:scale-[1.03] hover:!bg-[#0074d9]" @click="openConsultation">
+                        <div class="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-4">
+                            <button type="button" class="corp-button w-full sm:w-auto justify-center !bg-[#0088ff] !px-8 !py-4 !text-sm shadow-xl shadow-blue-500/25 transition-transform duration-200 hover:scale-[1.03] hover:!bg-[#0074d9]" @click="openConsultation">
                                 Jadwalkan Konsultasi / Demo Gratis
                                 <ArrowRight class="size-4" />
                             </button>
@@ -574,9 +574,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                 </div>
             </section>
 
-           
-
-            <section id="benefits" class="corp-container py-16 lg:py-24">
+            <section id="benefits" class="corp-container py-14 sm:py-16 lg:py-24">
                 <div>
                     <p class="corp-eyebrow">SATU PERJALANAN, BANYAK MANFAAT</p>
                     <h2 class="corp-heading mt-3">
@@ -585,33 +583,33 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         Peran di Tim Anda.
                     </h2>
                 </div>
-                <div class="mt-10 grid gap-6 md:grid-cols-3">
+                <div class="mt-8 sm:mt-10 grid gap-6 md:grid-cols-3">
                     <button v-for="(role, index) in roles" :key="role.title" type="button" class="role-card text-left" :class="{ 'is-flipped': isFlipped(index) }" :aria-label="`${role.title}: ${isFlipped(index) ? 'tutup manfaat' : 'lihat manfaat'}`" :aria-expanded="isFlipped(index)" :aria-controls="`role-benefits-${index}`" @pointerenter="hoverRole($event, index)" @pointerleave="hoveredRole = null" @click="pinnedRole = pinnedRole === index ? null : index; hoveredRole = null" @keydown.esc="pinnedRole = null; hoveredRole = null">
                         <span class="role-inner">
                             <span class="role-front" :aria-hidden="isFlipped(index)">
                                 <span class="role-photo" :style="{ backgroundPosition: `${role.position} top`, backgroundImage: 'url(/Assets/Images/corporate-roles.png)' }"></span>
-                                <span class="flex items-center justify-between gap-3 bg-white px-6 py-5">
+                                <span class="flex items-center justify-between gap-3 bg-white px-5 sm:px-6 py-4 sm:py-5">
                                     <span>
                                         <span class="block text-[10px] font-semibold tracking-[0.12em] text-[#0088ff] uppercase">{{ role.english }}</span>
-                                        <span class="mt-1 block text-base font-bold text-[#07345a]">{{ role.title }}</span>
+                                        <span class="mt-1 block text-sm sm:text-base font-bold text-[#07345a]">{{ role.title }}</span>
                                     </span>
                                     <Info class="size-5 shrink-0 text-[#0088ff]" />
                                 </span>
                             </span>
                             <span :id="`role-benefits-${index}`" class="role-back" :aria-hidden="!isFlipped(index)">
                                 <span class="text-xs font-semibold tracking-widest text-[#0088ff] uppercase">{{ role.english }}</span>
-                                <span class="mt-3 block text-3xl leading-tight font-bold tracking-tight text-[#07345a]">{{ role.subtitle }}</span>
-                                <span class="mt-6 flex flex-col gap-4">
-                                    <span v-for="point in role.points" :key="point" class="flex gap-3 text-sm leading-6 text-slate-600">
-                                        <Check class="mt-1 size-4 shrink-0 text-[#0088ff]" />
+                                <span class="mt-2.5 sm:mt-3 block text-2xl sm:text-3xl leading-tight font-bold tracking-tight text-[#07345a]">{{ role.subtitle }}</span>
+                                <span class="mt-4 sm:mt-6 flex flex-col gap-3 sm:gap-4">
+                                    <span v-for="point in role.points" :key="point" class="flex gap-2.5 sm:gap-3 text-xs sm:text-sm leading-5 sm:leading-6 text-slate-600">
+                                        <Check class="mt-0.5 sm:mt-1 size-4 shrink-0 text-[#0088ff]" />
                                         {{ point }}
                                     </span>
                                 </span>
-                                <span class="mt-auto block border-t border-sky-100 pt-5">
-                                    <span class="block text-sm leading-6 text-slate-500">{{ role.summary }}</span>
-                                    <span class="mt-3 block text-xs font-bold text-[#07345a]">{{ role.label }}</span>
+                                <span class="mt-auto block border-t border-sky-100 pt-4 sm:pt-5">
+                                    <span class="block text-xs sm:text-sm leading-5 sm:leading-6 text-slate-500">{{ role.summary }}</span>
+                                    <span class="mt-2.5 sm:mt-3 block text-xs font-bold text-[#07345a]">{{ role.label }}</span>
                                 </span>
-                                <span class="mt-4 flex items-center gap-2 text-[10px] text-slate-400">
+                                <span class="mt-3 sm:mt-4 flex items-center gap-2 text-[10px] text-slate-400">
                                     <RotateCcw class="size-3" />
                                     Ketuk untuk melihat ringkasan
                                 </span>
@@ -619,9 +617,9 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         </span>
                     </button>
                 </div>
-                <div class="mt-10 text-center">
-                    <p class="text-lg font-semibold text-[#07345a]">Mari wujudkan agenda perjalanan tim yang berkesan bersama kami.</p>
-                    <button class="corp-button mt-5" @click="openConsultation">
+                <div class="mt-8 sm:mt-10 text-center">
+                    <p class="text-base sm:text-lg font-semibold text-[#07345a]">Mari wujudkan agenda perjalanan tim yang berkesan bersama kami.</p>
+                    <button class="corp-button mt-4 sm:mt-5" @click="openConsultation">
                         Konsultasikan Perjalanan Sekarang
                         <ArrowRight class="size-4" />
                     </button>
@@ -629,24 +627,24 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             </section>
 
             <!-- Trusted Trip Vendors Section (Marquee to Left) -->
-            <section class="border-y border-[#d5ecfb] bg-[#eaf5fc] py-12 sm:py-16 overflow-hidden" aria-label="Vendor trip terpercaya">
+            <section class="border-y border-[#d5ecfb] bg-[#eaf5fc] py-10 sm:py-16 overflow-hidden" aria-label="Vendor trip terpercaya">
                 <div class="mx-auto max-w-[1600px] px-5 sm:px-8">
-                    <h3 class="text-center text-lg sm:text-xl lg:text-2xl font-extrabold tracking-tight text-[#009cf0]">
+                    <h3 class="text-center text-base sm:text-xl lg:text-2xl font-extrabold tracking-tight text-[#009cf0]">
                         Vendor trip terpercaya
                     </h3>
-                    <div class="vendor-logo-marquee mt-8 sm:mt-10 overflow-hidden" tabindex="0" aria-label="Daftar logo vendor trip terpercaya. Arahkan kursor atau fokuskan untuk menjeda animasi.">
+                    <div class="vendor-logo-marquee mt-6 sm:mt-10 overflow-hidden" tabindex="0" aria-label="Daftar logo vendor trip terpercaya. Arahkan kursor atau fokuskan untuk menjeda animasi.">
                         <div class="vendor-logo-track">
                             <div v-for="copy in 3" :key="copy" class="vendor-logo-group" :aria-hidden="copy > 1 ? true : undefined">
                                 <div
                                     v-for="vendor in trustedTripVendors"
                                     :key="vendor.name + '-' + copy"
-                                    class="group/vendor flex h-20 sm:h-24 w-44 sm:w-56 shrink-0 items-center justify-center p-2 cursor-pointer transition-transform duration-300 hover:scale-110"
+                                    class="group/vendor flex h-16 sm:h-24 w-36 sm:w-56 shrink-0 items-center justify-center p-1.5 sm:p-2 cursor-pointer transition-transform duration-300 hover:scale-105 sm:hover:scale-110"
                                     :title="vendor.name"
                                 >
                                     <img
                                         :src="vendor.src"
                                         :alt="copy === 1 ? vendor.name : ''"
-                                        class="h-14 sm:h-18 max-h-20 w-auto max-w-[170px] sm:max-w-[220px] object-contain filter grayscale opacity-65 transition-all duration-300 group-hover/vendor:grayscale-0 group-hover/vendor:opacity-100"
+                                        class="h-10 sm:h-18 max-h-12 sm:max-h-20 w-auto max-w-[130px] sm:max-w-[220px] object-contain filter grayscale opacity-65 transition-all duration-300 group-hover/vendor:grayscale-0 group-hover/vendor:opacity-100"
                                         loading="lazy"
                                     />
                                 </div>
@@ -655,7 +653,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                     </div>
                 </div>
             </section>
-            <section id="faq" class="corp-container grid gap-10 py-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:py-24">
+            <section id="faq" class="corp-container grid gap-8 sm:gap-10 py-14 sm:py-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20 lg:py-24">
                 <div>
                     <p class="corp-eyebrow">PERTANYAAN UMUM (FAQ)</p>
                     <h2 class="corp-heading mt-3">
@@ -672,30 +670,30 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                 <div>
                     <div v-for="(faq, index) in faqs" :key="faq.question" class="border-b border-slate-200 first:border-t">
                         <h3>
-                            <button :id="`faq-question-${index}`" class="flex w-full items-center justify-between gap-5 py-5 text-left text-sm font-semibold text-[#07345a]" :aria-expanded="openFaq === index" :aria-controls="`faq-answer-${index}`" @click="openFaq = openFaq === index ? null : index">
-                                {{ faq.question }}
-                                <ChevronDown class="size-4 shrink-0 text-[#0088ff] transition-transform" :class="{ 'rotate-180': openFaq === index }" />
+                            <button :id="`faq-question-${index}`" class="flex w-full items-center justify-between gap-4 py-4 sm:py-5 text-left text-xs sm:text-sm font-semibold text-[#07345a]" :aria-expanded="openFaq === index" :aria-controls="`faq-answer-${index}`" @click="openFaq = openFaq === index ? null : index">
+                                <span>{{ faq.question }}</span>
+                                <ChevronDown class="size-4 shrink-0 text-[#0088ff] transition-transform duration-200" :class="{ 'rotate-180': openFaq === index }" />
                             </button>
                         </h3>
-                        <div v-show="openFaq === index" :id="`faq-answer-${index}`" role="region" :aria-labelledby="`faq-question-${index}`" class="pb-5 pr-6 text-sm leading-7 text-slate-500">{{ faq.answer }}</div>
+                        <div v-show="openFaq === index" :id="`faq-answer-${index}`" role="region" :aria-labelledby="`faq-question-${index}`" class="pb-4 sm:pb-5 pr-4 sm:pr-6 text-xs sm:text-sm leading-relaxed text-slate-500">{{ faq.answer }}</div>
                     </div>
                 </div>
             </section>
         </main>
         <MainFooter />
-        <dialog ref="consultationDialog" aria-labelledby="consultation-heading" class="consultation-dialog fixed m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-3xl bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-[#032454]/60" @click.self="consultationDialog.close()">
-            <div class="p-6 sm:p-8">
+        <dialog ref="consultationDialog" aria-labelledby="consultation-heading" class="consultation-dialog fixed m-auto max-h-[90dvh] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-[#032454]/60" @click.self="consultationDialog.close()">
+            <div class="p-5 sm:p-8">
                 <div class="flex items-start justify-between gap-4">
                     <div>
                         <p class="corp-eyebrow">KONSULTASI PERJALANAN TIM</p>
-                        <h2 id="consultation-heading" class="mt-2 text-2xl font-bold tracking-tight text-[#07345a]">Ceritakan Rencana Perjalanan Anda.</h2>
+                        <h2 id="consultation-heading" class="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-[#07345a]">Ceritakan Rencana Perjalanan Anda.</h2>
                     </div>
                     <button aria-label="Tutup konsultasi" class="rounded-full bg-slate-100 p-2 hover:bg-slate-200" @click="consultationDialog.close()">
                         <X class="size-4" />
                     </button>
                 </div>
-                <p class="mt-3 text-sm leading-6 text-slate-500">Isi brief singkat ini agar tim konsultan TapakLokal dapat menyiapkan rekomendasi destinasi, itinerary, dan estimasi anggaran terbaik.</p>
-                <form class="mt-6 grid gap-4" @submit.prevent="prepareEmail">
+                <p class="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-5 sm:leading-6 text-slate-500">Isi brief singkat ini agar tim konsultan TapakLokal dapat menyiapkan rekomendasi destinasi, itinerary, dan estimasi anggaran terbaik.</p>
+                <form class="mt-5 sm:mt-6 grid gap-3.5 sm:gap-4" @submit.prevent="prepareEmail">
                     <label class="corp-label">
                         Nama Perusahaan
                         <input v-model="brief.company" required maxlength="150" autocomplete="organization" class="corp-input" placeholder="Contoh: PT Nusantara Maju" />
@@ -704,7 +702,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                         Nama PIC (Penanggung Jawab)
                         <input v-model="brief.name" required maxlength="100" autocomplete="name" class="corp-input" placeholder="Nama lengkap Anda" />
                     </label>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                         <label class="corp-label">
                             Destinasi Tujuan
                             <input v-model="brief.destination" maxlength="100" class="corp-input" placeholder="Contoh: Yogyakarta / Labuan Bajo" />
@@ -737,12 +735,12 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 @reference '../../css/app.css';
 .corp-container { @apply mx-auto w-full max-w-[1180px] px-5 sm:px-8 xl:px-0; }
 .corp-eyebrow { @apply text-[11px] font-bold tracking-[0.16em] text-[#0088ff]; }
-.corp-heading { @apply text-3xl leading-[1.2] font-bold tracking-[-0.035em] text-[#07345a] sm:text-[38px]; }
-.corp-description { @apply max-w-xl text-sm leading-7 text-slate-500 sm:text-base; }
+.corp-heading { @apply text-2xl leading-[1.2] font-bold tracking-[-0.035em] text-[#07345a] sm:text-[38px]; }
+.corp-description { @apply max-w-xl text-xs leading-6 text-slate-500 sm:text-base sm:leading-7; }
 .corp-button { @apply inline-flex cursor-pointer items-center gap-3 rounded-full bg-[#0088ff] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0071d6] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500; }
 .corp-text-link { @apply inline-flex items-center gap-2 text-sm font-semibold text-[#0077df] hover:text-[#07345a]; }
 .corp-label { @apply flex flex-col gap-1.5 text-xs font-semibold text-slate-700; }
-.corp-input { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100; }
+.corp-input { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base sm:text-sm font-normal outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100; }
 .corporate-page section[id] { scroll-margin-top: 96px; }
 .corporate-hero { min-height: calc(100dvh - 68px); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(180deg, #fff 10%, #f5fcff 32%, #c4e9fb 100%); }
 .hero-handwritten { position: relative; display: inline-block; color: #009cf0; font-family: 'Segoe Print', 'Bradley Hand', cursive; font-size: 1.25em; font-weight: 700; font-style: italic; line-height: 1.3; letter-spacing: -.065em; }
@@ -767,7 +765,14 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 .corporate-company-logo { display: block; width: 150px; height: 45px; object-fit: contain; filter: grayscale(1); opacity: .65; }
 .corporate-logo-marquee:hover .corporate-logo-track, .corporate-logo-marquee:focus-within .corporate-logo-track { animation-play-state: paused; }
 @keyframes corporate-logos-left { to { transform: translateX(-33.333333%); } }
-@media (max-width: 767px) { .corporate-trust-strip { gap: 15px; padding: 20px 16px 24px; } .trust-badge { font-size: 10px; } .trust-laurel { height: 38px; width: 18px; } .corporate-logo-group { gap: 30px; padding-right: 30px; } .corporate-company-logo { width: 115px; height: 36px; } }
+@media (max-width: 767px) {
+    .corporate-trust-strip { flex-direction: column; gap: 12px; padding: 16px 16px 20px; text-align: center; }
+    .trust-badge { justify-content: center; font-size: 11px; }
+    .trust-laurel { height: 32px; width: 16px; }
+    .corporate-logo-marquee { width: 100%; }
+    .corporate-logo-group { gap: 24px; padding-right: 24px; }
+    .corporate-company-logo { width: 95px; height: 30px; }
+}
 @media (prefers-reduced-motion: reduce) { .corporate-logo-track { animation: none; } .corporate-logo-group[aria-hidden="true"] { display: none; } .corporate-logo-marquee { overflow-x: auto; } }
 
 /* Vendor Partners Marquee */
@@ -804,8 +809,8 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 }
 @media (max-width: 767px) {
     .vendor-logo-group {
-        gap: 36px;
-        padding-right: 36px;
+        gap: 24px;
+        padding-right: 24px;
     }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -820,7 +825,19 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
     }
 }
 @media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-float-ticket { top: 155px; left: 83%; width: 175px; right: auto; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
-@media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-budget { display: block; } .hero-float-ticket { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
+@media (max-width: 767px) {
+    .corporate-hero { min-height: auto; }
+    .hero-title { font-size: clamp(23px, 6vw, 30px); }
+    .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: calc(100% - 24px); height: auto; margin-top: 18px; padding-bottom: 14px; }
+    .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; }
+    .hero-float { position: relative; inset: auto; width: 100%; padding: 10px 8px 8px; border-radius: 12px; }
+    .hero-float-brief, .hero-float-agenda, .hero-float-budget, .hero-float-ticket { left: auto; right: auto; top: auto; width: 100%; }
+    .hero-float-brief { align-self: stretch; }
+    .hero-card-title { font-size: 10px; }
+    .hero-donut { width: 64px; height: 64px; }
+    .hero-donut > span { width: 44px; height: 44px; }
+    .hero-donut strong { font-size: 13px; line-height: 1.1; }
+}
 
 .corporate-page button { cursor: pointer; }
 .corporate-page :is(a, button):focus-visible { outline: 3px solid #0088ff; outline-offset: 4px; }
@@ -832,7 +849,11 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 .role-photo { display: block; flex: 1; background-size: 300% auto; background-repeat: no-repeat; }
 .role-back { display: flex; flex-direction: column; transform: rotateY(180deg); background: white; padding: 28px; }
 @media (min-width: 768px) and (max-width: 1023px) { .role-inner { min-height: 570px; } .role-back { padding: 20px; } .role-photo { background-size: auto 100%; } }
-@media (max-width: 767px) { .role-card { max-width: 420px; margin-inline: auto; } }
+@media (max-width: 767px) {
+    .role-card { max-width: 420px; min-height: 480px; margin-inline: auto; }
+    .role-inner { min-height: 480px; }
+    .role-back { padding: 22px 18px; }
+}
 @media (prefers-reduced-motion: reduce) { .role-inner { transition: none; } }
 
 /* Bento Grid Micro-Animations */
