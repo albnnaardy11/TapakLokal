@@ -5,7 +5,7 @@ import { route } from 'ziggy-js';
 import {
     ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2,
     Clock, Compass, FileText, LayoutDashboard, MapPin,
-    Sparkles, Star, Store, Users, Wallet, X
+    ShieldCheck, Sparkles, Star, Store, Users, Wallet, X
 } from 'lucide-vue-next';
 import BusinessLanding from '../Components/Shared/BusinessLanding.vue';
 
@@ -290,7 +290,6 @@ function prepareEmail() {
             <p class="business-eyebrow">LANGKAH KECIL, PELUANG BARU</p><div class="mt-4 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><h2 class="business-heading">Mulai dari usaha Anda.<br />Kami bantu langkah berikutnya.</h2><button class="business-text-link" @click="openRegistration()">Ajukan kemitraan <ArrowUpRight class="size-4" /></button></div>
             <ol class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4"><li v-for="(step, index) in steps" :key="step.title" class="border-t border-sky-200 pt-5"><span class="text-3xl font-light text-[#009cf0]">0{{ index + 1 }}</span><h3 class="mt-5 font-bold text-[#07345a]">{{ step.title }}</h3><p class="mt-3 text-sm leading-6 text-slate-500">{{ step.description }}</p></li></ol>
         </section>
-        <template #closing><section class="bg-[#e9f7ff]"><div class="business-container flex flex-col items-start justify-between gap-7 py-12 sm:flex-row sm:items-center"><div><p class="business-eyebrow">BERSAMA TAPAKLOKAL</p><h2 class="business-heading mt-3">Potensi lokal Anda,<br />layak dikenal lebih luas.</h2></div><button class="business-button inline-flex shrink-0" @click="openRegistration()">Mari jadi mitra <ArrowRight class="size-4" /></button></div></section></template>
         <template #dialogs>
             <dialog ref="registrationDialog" aria-labelledby="partner-dialog-title" aria-describedby="partner-dialog-description" class="fixed inset-0 m-auto w-[calc(100%-32px)] max-w-lg rounded-2xl border-0 p-6 shadow-2xl sm:p-8" @click="event => { if (event.target === registrationDialog) registrationDialog.close(); }">
                 <div class="flex items-start justify-between gap-5"><div><p class="business-eyebrow">KENALKAN USAHA ANDA</p><h2 id="partner-dialog-title" class="mt-2 text-2xl font-bold text-[#07345a]">Mulai percakapan kemitraan</h2></div><button aria-label="Tutup formulir" class="rounded-full p-2 hover:bg-slate-100" @click="registrationDialog.close()"><X class="size-5" /></button></div>
