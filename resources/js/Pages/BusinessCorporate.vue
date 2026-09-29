@@ -109,32 +109,30 @@ function selectProduct(event, index, direction) {
         </header>
         <main>
             <section id="corporate-hero" class="corporate-hero overflow-hidden">
-                <div class="px-5 pt-5 text-center sm:pt-6 lg:pt-5">
+                <div class="px-5 pt-6 text-center sm:pt-8 lg:pt-8">
                     <h1 class="hero-title mx-auto max-w-5xl text-[28px] leading-[1.3] font-bold tracking-[-0.035em] text-[#26292c] sm:text-[34px] lg:text-[38px]">
                         Cara lebih <span class="hero-handwritten">mudah</span><br />mengatur perjalanan perusahaan
                     </h1>
                 </div>
-                <div class="hero-composition" role="img" aria-label="Ilustrasi laptop dan ponsel TapakLokal dengan brief perjalanan, agenda tim, pengalaman lokal, serta perencanaan anggaran.">
-                    <img src="/Assets/Images/corporate-device-mockup.png" alt="" width="1536" height="1024" fetchpriority="high" class="hero-devices" />
-                    <div class="hero-float hero-float-brief" aria-hidden="true">
-                        <p class="hero-card-title">Satu brief,<br />detail perjalanan lebih jelas</p>
-                        <div class="mt-3 flex border-b border-slate-100 text-[9px] font-semibold"><span class="flex-1 pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-2 text-[#009cf0]">Rencana trip</span></div>
-                        <div class="mt-2 grid grid-cols-3 gap-2 rounded-lg bg-[#f5fafd] p-2 text-[9px]"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong>Bali</strong><strong>24 orang</strong><strong>3 hari</strong></div>
+                <div class="my-auto flex flex-col items-center">
+                    <div class="hero-composition" role="img" aria-label="Ilustrasi laptop dan ponsel TapakLokal dengan brief perjalanan, agenda tim, serta perencanaan anggaran.">
+                        <img src="/Assets/Images/corporate-device-mockup.png" alt="" width="1536" height="1024" fetchpriority="high" class="hero-devices" />
+                        <div class="hero-float hero-float-brief" aria-hidden="true">
+                            <p class="hero-card-title">Satu brief,<br />detail perjalanan lebih jelas</p>
+                            <div class="mt-3 flex border-b border-slate-100 text-[9px] font-semibold"><span class="flex-1 pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-2 text-[#009cf0]">Rencana trip</span></div>
+                            <div class="mt-2 grid grid-cols-3 gap-2 rounded-lg bg-[#f5fafd] p-2 text-[9px]"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong>Bali</strong><strong>24 orang</strong><strong>3 hari</strong></div>
+                        </div>
+                        <div class="hero-float hero-float-agenda" aria-hidden="true">
+                            <p class="hero-card-title">Agenda yang pas untuk tim</p>
+                            <div class="relative mt-3 flex items-center justify-center gap-3 rounded-lg bg-[#f1fbff] py-3"><span class="text-[9px] leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-xl leading-6 text-[#07345a]">3 hari</strong><span class="text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[9px] leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
+                        </div>
+                        <div class="hero-float hero-float-budget" aria-hidden="true">
+                            <p class="hero-card-title">Rencanakan sesuai anggaran Anda</p>
+                            <div class="relative mt-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-32 rounded-full border-[20px] border-[#dcf5ff]"></div><div class="absolute h-16 w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-16 w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-3 text-white shadow-lg"><Wallet class="size-7" /><span class="mt-1 block h-1 w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-8 size-5 text-[#83c800]" /></div>
+                        </div>
                     </div>
-                    <div class="hero-float hero-float-agenda" aria-hidden="true">
-                        <p class="hero-card-title">Agenda yang pas untuk tim</p>
-                        <div class="relative mt-3 flex items-center justify-center gap-3 rounded-lg bg-[#f1fbff] py-3"><span class="text-[9px] leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-xl leading-6 text-[#07345a]">3 hari</strong><span class="text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[9px] leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
-                    </div>
-                    <div class="hero-float hero-float-experience" aria-hidden="true">
-                        <p class="hero-card-title">Lebih dekat dengan pengalaman lokal</p>
-                        <div class="relative mt-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-[#ecf9ff]"><div class="absolute size-28 rounded-full border-[18px] border-[#d3f0fc]"></div><div class="relative rotate-[-9deg] rounded-xl bg-[#0872bd] p-3 text-white shadow-lg"><Compass class="size-12" /></div><span class="absolute top-2 right-7 flex size-9 items-center justify-center rounded-full bg-[#29c2ea] text-white"><MapPin class="size-5" /></span><span class="absolute bottom-2 left-7 flex size-8 items-center justify-center rounded-full bg-[#ffb12d] text-white"><Users class="size-4" /></span></div>
-                    </div>
-                    <div class="hero-float hero-float-budget" aria-hidden="true">
-                        <p class="hero-card-title">Rencana sesuai anggaran Anda</p>
-                        <div class="relative mt-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-32 rounded-full border-[20px] border-[#dcf5ff]"></div><div class="absolute h-16 w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-16 w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-3 text-white shadow-lg"><Wallet class="size-7" /><span class="mt-1 block h-1 w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-8 size-5 text-[#83c800]" /></div>
-                    </div>
+                    <p class="mt-3 text-center text-[10px] tracking-wide text-[#4d7e99]">Ilustrasi pengalaman TapakLokal · Sesuaikan perjalanan melalui konsultasi</p>
                 </div>
-                <p class="text-center text-[10px] tracking-wide text-[#4d7e99]">Ilustrasi pengalaman TapakLokal · Sesuaikan perjalanan melalui konsultasi</p>
                 <div class="corporate-trust-strip" aria-label="Trusted by 100+ companies">
                     <div class="trust-badge">
                         <svg class="trust-laurel" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
@@ -250,21 +248,13 @@ function selectProduct(event, index, direction) {
                 </div>
             </section>
             <section id="benefits" class="corp-container py-16 lg:py-24">
-                <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-                    <div>
-                        <p class="corp-eyebrow">SATU PERJALANAN, BANYAK MANFAAT</p>
-                        <h2 class="corp-heading mt-3">
-                            Dirancang untuk setiap
-                            <br />
-                            peran di tim Anda.
-                        </h2>
-                    </div>
-                    <p class="max-w-60 text-sm leading-6 text-slate-500">
-                        Arahkan kursor atau ketuk kartu
-                        <br class="hidden sm:block" />
-                        untuk melihat manfaatnya.
-                        <RotateCcw class="mt-3 size-5 text-[#0088ff]" />
-                    </p>
+                <div>
+                    <p class="corp-eyebrow">SATU PERJALANAN, BANYAK MANFAAT</p>
+                    <h2 class="corp-heading mt-3">
+                        Dirancang untuk setiap
+                        <br />
+                        peran di tim Anda.
+                    </h2>
                 </div>
                 <div class="mt-10 grid gap-6 md:grid-cols-3">
                     <button v-for="(role, index) in roles" :key="role.title" type="button" class="role-card text-left" :class="{ 'is-flipped': isFlipped(index) }" :aria-label="`${role.title}: ${isFlipped(index) ? 'tutup manfaat' : 'lihat manfaat'}`" :aria-expanded="isFlipped(index)" :aria-controls="`role-benefits-${index}`" @pointerenter="hoverRole($event, index)" @pointerleave="hoveredRole = null" @click="pinnedRole = pinnedRole === index ? null : index; hoveredRole = null" @keydown.esc="pinnedRole = null; hoveredRole = null">
@@ -473,20 +463,19 @@ function selectProduct(event, index, direction) {
 .corp-label { @apply flex flex-col gap-1.5 text-xs font-semibold text-slate-700; }
 .corp-input { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100; }
 .corporate-page section[id] { scroll-margin-top: 96px; }
-.corporate-hero { background: linear-gradient(180deg, #fff 12%, #f5fcff 32%, #c4e9fb 100%); }
+.corporate-hero { min-height: calc(100dvh - 68px); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(180deg, #fff 10%, #f5fcff 32%, #c4e9fb 100%); }
 .hero-handwritten { position: relative; display: inline-block; color: #009cf0; font-family: 'Segoe Print', 'Bradley Hand', cursive; font-size: 1.25em; font-weight: 700; font-style: italic; line-height: 1.3; letter-spacing: -.065em; }
 .hero-handwritten::after { content: ''; position: absolute; left: 0; right: -3%; bottom: 0; height: 8px; border-top: 4px solid #009cf0; border-radius: 50%; transform: rotate(-3deg); }
-.hero-composition { position: relative; width: min(100% - 40px, 1000px); height: 484px; margin: 38px auto 0; zoom: .76; }
+.hero-composition { position: relative; width: min(100% - 40px, 1000px); height: 484px; margin: 20px auto 0; zoom: .8; }
 .hero-devices { position: absolute; z-index: 2; left: 20%; top: 54px; width: 63%; height: auto; }
 .hero-float { position: absolute; z-index: 3; width: 230px; padding: 13px 10px 10px; border: 1px solid #f3f7fa; border-radius: 15px; background: #fff; box-shadow: 0 5px 22px #1b567817; }
 .hero-card-title { text-align: center; font-size: 12px; font-weight: 650; line-height: 1.3; letter-spacing: -.025em; color: #30383d; }
 .hero-float-brief { left: 6%; top: 0; }
 .hero-float-agenda { right: 1%; top: 2px; }
-.hero-float-experience { left: 0; top: 185px; }
-.hero-float-budget { right: -3%; top: 250px; }
+.hero-float-budget { left: 0; top: 185px; }
 .hero-donut { display: grid; width: 91px; height: 91px; place-items: center; border-radius: 50%; background: conic-gradient(#2566a9 0 28%, #2bc3e8 28% 100%); transform: rotate(-15deg); }
 .hero-donut > span { display: flex; width: 63px; height: 63px; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: #f8fcff; transform: rotate(15deg); }
-.corporate-trust-strip { display: flex; align-items: center; gap: 32px; width: 100%; max-width: 1600px; margin: 0 auto; padding: 23px 24px 27px; color: #5c7b8c; }
+.corporate-trust-strip { display: flex; align-items: center; gap: 32px; width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px 24px 30px; color: #5c7b8c; }
 .trust-badge { display: flex; flex-shrink: 0; align-items: center; gap: 3px; text-align: center; font-size: 13px; line-height: 1.15; font-weight: 500; }
 .trust-laurel { height: 48px; width: 25px; opacity: .8; }
 .corporate-logo-marquee { min-width: 0; flex: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent); }
@@ -498,8 +487,8 @@ function selectProduct(event, index, direction) {
 @keyframes corporate-logos-left { to { transform: translateX(-33.333333%); } }
 @media (max-width: 767px) { .corporate-trust-strip { gap: 15px; padding: 20px 16px 24px; } .trust-badge { font-size: 10px; } .trust-laurel { height: 38px; width: 18px; } .corporate-logo-group { gap: 30px; padding-right: 30px; } .corporate-company-logo { width: 115px; height: 36px; } }
 @media (prefers-reduced-motion: reduce) { .corporate-logo-track { animation: none; } .corporate-logo-group[aria-hidden="true"] { display: none; } .corporate-logo-marquee { overflow-x: auto; } }
-@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-experience { top: 145px; } .hero-float-budget { top: 205px; right: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
-@media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-experience, .hero-float-budget { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
+@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
+@media (max-width: 767px) { .hero-title { font-size: clamp(25px, 6.4vw, 32px); } .hero-composition { zoom: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: calc(100% - 32px); height: auto; margin-top: 24px; padding-bottom: 18px; } .hero-devices { position: relative; grid-column: 1 / -1; left: auto; top: auto; width: 100%; margin-bottom: 0; } .hero-float { position: relative; inset: auto; width: 100%; padding: 12px 8px 8px; } .hero-float-brief { align-self: stretch; } .hero-float-budget { display: block; } .hero-card-title { font-size: 10px; } .hero-donut { width: 70px; height: 70px; } .hero-donut > span { width: 48px; height: 48px; } .hero-donut strong { font-size: 15px; } }
 
 .corporate-page button { cursor: pointer; }
 .corporate-page :is(a, button):focus-visible { outline: 3px solid #0088ff; outline-offset: 4px; }
