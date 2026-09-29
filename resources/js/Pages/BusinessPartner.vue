@@ -131,30 +131,30 @@ function prepareEmail() {
             <div class="business-container my-auto grid w-full flex-1 items-center gap-8 py-6 sm:py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-8 xl:gap-16">
                 <div>
                     <p class="business-eyebrow">TAPAKLOKAL PARTNER PROGRAM</p>
-                    <h1 class="mt-4 text-[36px] leading-[1.15] font-bold tracking-[-0.045em] text-[#07345a] sm:text-5xl lg:text-[48px] xl:text-[52px]">
+                    <h1 class="mt-3 sm:mt-4 text-3xl leading-[1.18] font-bold tracking-[-0.04em] text-[#07345a] sm:text-5xl lg:text-[48px] xl:text-[52px]">
                         Usaha lokal Anda.<br />Peluang yang<br /><span class="business-handwritten">lebih luas.</span>
                     </h1>
-                    <p class="business-copy mt-5 max-w-md text-sm leading-relaxed text-slate-500 sm:text-base">
+                    <p class="business-copy mt-4 sm:mt-5 max-w-md text-xs sm:text-sm lg:text-base leading-relaxed text-slate-500">
                         Hubungkan pengalaman wisata dan produk terbaik Anda dengan lebih banyak penjelajah. Kita tumbuh bersama, dari potensi lokal.
                     </p>
-                    <div class="mt-7 flex flex-wrap gap-3">
-                        <button class="business-button inline-flex" @click="openRegistration()">Mulai jadi mitra <ArrowRight class="size-4" /></button>
-                        <a href="#kemitraan" class="business-button business-button-secondary inline-flex">Jelajahi kemitraan</a>
+                    <div class="mt-6 sm:mt-7 flex flex-col sm:flex-row gap-3">
+                        <button class="business-button w-full sm:w-auto inline-flex" @click="openRegistration()">Mulai jadi mitra <ArrowRight class="size-4" /></button>
+                        <a href="#kemitraan" class="business-button business-button-secondary w-full sm:w-auto inline-flex">Jelajahi kemitraan</a>
                     </div>
                 </div>
                 <div class="relative">
-                    <div class="relative h-[320px] overflow-hidden rounded-t-[110px] rounded-b-2xl sm:h-[400px] lg:h-[430px] xl:h-[460px]">
+                    <div class="relative h-[240px] xs:h-[280px] sm:h-[400px] lg:h-[430px] xl:h-[460px] overflow-hidden rounded-t-[70px] sm:rounded-t-[110px] rounded-b-2xl shadow-lg shadow-sky-950/5">
                         <img src="/Assets/Images/partner-hero-person.jpg" alt="Pelaku usaha wisata mengelola layanan perjalanan menggunakan tablet" width="1200" height="896" fetchpriority="high" class="business-photo object-[48%_center]" />
-                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07345a]/85 to-transparent px-6 pt-16 pb-8 text-white sm:pb-10">
-                            <p class="text-[10px] font-semibold tracking-[.15em]">BERAKAR LOKAL. BERKEMBANG BERSAMA.</p>
-                            <p class="mt-2 text-base font-semibold sm:text-lg">Anda fokus pada pengalaman.<br />Kami bantu membuka peluang.</p>
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07345a]/85 to-transparent px-5 sm:px-6 pt-12 sm:pt-16 pb-6 sm:pb-10 text-white">
+                            <p class="text-[9px] sm:text-[10px] font-semibold tracking-[.15em]">BERAKAR LOKAL. BERKEMBANG BERSAMA.</p>
+                            <p class="mt-1.5 sm:mt-2 text-sm sm:text-base lg:text-lg font-semibold leading-snug">Anda fokus pada pengalaman.<br />Kami bantu membuka peluang.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="w-full shrink-0 border-t border-[#a9d5eb]/50">
-                <div class="business-container grid gap-4 py-4 sm:grid-cols-3 sm:gap-6 sm:py-5">
-                    <div v-for="(item, index) in ['Jangkauan pasar lebih luas', 'Informasi usaha lebih terstruktur', 'Pendampingan awal kemitraan']" :key="item" class="flex items-center gap-3 text-xs font-semibold text-[#315a70] sm:text-sm">
+            <div class="w-full shrink-0 border-t border-[#a9d5eb]/50 bg-white/40 backdrop-blur-xs">
+                <div class="business-container grid gap-2.5 py-3.5 sm:grid-cols-3 sm:gap-6 sm:py-5">
+                    <div v-for="(item, index) in ['Jangkauan pasar lebih luas', 'Informasi usaha lebih terstruktur', 'Pendampingan awal kemitraan']" :key="item" class="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold text-[#315a70] sm:text-sm">
                         <span class="text-xs font-normal text-[#678c9e]">0{{ index + 1 }}</span>
                         <span>{{ item }}</span>
                     </div>
@@ -165,34 +165,34 @@ function prepareEmail() {
         <section id="kemitraan" class="business-container business-section scroll-mt-24">
             <!-- Section Header -->
             <div class="mx-auto max-w-3xl text-center">
-                <h2 class="text-[30px] font-bold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] leading-tight">
+                <h2 class="text-2xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-[#07345a] leading-tight">
                     Dua Cara Bergabung.<br class="hidden sm:inline" />
-                    <span class="text-[#009cf0]">Satu Semangat Tumbuh Bersama.</span>
+                    <span class="text-[#009cf0]"> Satu Semangat Tumbuh Bersama.</span>
                 </h2>
 
                 <!-- Modern Interactive Segmented Tabs -->
-                <div class="mt-8 flex justify-center">
-                    <div class="inline-flex rounded-2xl border border-slate-200/80 bg-slate-100/90 p-1.5 shadow-xs" role="tablist" aria-label="Pilihan jenis kemitraan">
+                <div class="mt-6 sm:mt-8 flex justify-center w-full">
+                    <div class="grid grid-cols-2 w-full max-w-xl rounded-2xl border border-slate-200/80 bg-slate-100/90 p-1 sm:inline-flex sm:w-auto sm:p-1.5 shadow-xs" role="tablist" aria-label="Pilihan jenis kemitraan">
                         <button
                             v-for="track in tracks"
                             :key="track.id"
                             role="tab"
                             :aria-selected="selectedTrack === track.id"
-                            class="flex items-center gap-3 rounded-xl px-4 py-2.5 sm:px-6 sm:py-3 text-left transition-all duration-200 cursor-pointer"
+                            class="flex flex-col xs:flex-row items-center sm:items-start text-center sm:text-left gap-1.5 sm:gap-3 rounded-xl px-2.5 py-2 sm:px-6 sm:py-3 transition-all duration-200 cursor-pointer justify-center"
                             :class="selectedTrack === track.id
                                 ? 'bg-white text-[#07345a] shadow-md shadow-slate-900/5 ring-1 ring-black/5 font-bold'
                                 : 'text-slate-500 hover:text-[#07345a] hover:bg-white/50 font-medium'"
                             @click="selectedTrack = track.id"
                         >
                             <span
-                                class="flex size-8 sm:size-9 items-center justify-center rounded-lg transition-colors shrink-0"
+                                class="flex size-7 sm:size-9 items-center justify-center rounded-lg transition-colors shrink-0"
                                 :class="selectedTrack === track.id ? 'bg-[#009cf0] text-white shadow-xs' : 'bg-slate-200/80 text-slate-500'"
                             >
-                                <component :is="track.icon" class="size-4 sm:size-5" />
+                                <component :is="track.icon" class="size-3.5 sm:size-5" />
                             </span>
-                            <div>
-                                <div class="text-xs sm:text-sm font-bold leading-tight">{{ track.label }}</div>
-                                <div class="text-[10px] sm:text-[11px] font-normal text-slate-400">{{ track.tagline }}</div>
+                            <div class="min-w-0">
+                                <div class="text-xs sm:text-sm font-bold leading-tight truncate sm:whitespace-normal">{{ track.label }}</div>
+                                <div class="text-[9px] sm:text-[11px] font-normal text-slate-400 hidden xs:block">{{ track.tagline }}</div>
                             </div>
                         </button>
                     </div>
@@ -200,13 +200,13 @@ function prepareEmail() {
             </div>
 
             <!-- Dynamic Showcase Card -->
-            <div class="mt-10 overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-b from-white via-[#f7fbff] to-[#edf6fd] p-6 sm:p-8 lg:p-10 shadow-xl shadow-sky-950/5 transition-all duration-300">
-                <div class="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12 xl:gap-16">
+            <div class="mt-8 sm:mt-10 overflow-hidden rounded-2xl sm:rounded-3xl border border-sky-100 bg-gradient-to-b from-white via-[#f7fbff] to-[#edf6fd] p-4 sm:p-8 lg:p-10 shadow-xl shadow-sky-950/5 transition-all duration-300">
+                <div class="grid items-center gap-6 sm:gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12 xl:gap-16">
                     <!-- Left: Realistic Live Mockup Card -->
                     <div class="relative">
                         <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-lg shadow-sky-900/5 transition duration-300 hover:shadow-xl">
                             <!-- Showcase Hero Photo -->
-                            <div class="relative h-48 sm:h-56 overflow-hidden">
+                            <div class="relative h-44 sm:h-56 overflow-hidden">
                                 <img
                                     :src="currentTrack.preview.image"
                                     :alt="currentTrack.preview.title"
@@ -216,13 +216,13 @@ function prepareEmail() {
                             </div>
 
                             <!-- Card Body -->
-                            <div class="p-5 sm:p-6">
+                            <div class="p-4 sm:p-6">
                                 <h4 class="text-base sm:text-lg font-bold text-[#07345a] leading-snug">
                                     {{ currentTrack.preview.title }}
                                 </h4>
 
                                 <!-- Meta Info -->
-                                <div class="mt-3 flex flex-wrap items-center gap-y-1.5 gap-x-4 text-xs text-slate-500">
+                                <div class="mt-2.5 sm:mt-3 flex flex-wrap items-center gap-y-1.5 gap-x-3 sm:gap-x-4 text-xs text-slate-500">
                                     <span class="flex items-center gap-1.5 font-medium text-slate-600">
                                         <MapPin class="size-3.5 text-[#009cf0]" /> {{ currentTrack.preview.location }}
                                     </span>
@@ -235,14 +235,14 @@ function prepareEmail() {
                                 </div>
 
                                 <!-- Mini Features Spec Grid -->
-                                <div class="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4">
+                                <div class="mt-3.5 sm:mt-4 grid grid-cols-3 gap-1.5 sm:gap-2 border-t border-slate-100 pt-3 sm:pt-4">
                                     <div
                                         v-for="spec in currentTrack.preview.features"
                                         :key="spec.label"
-                                        class="rounded-xl bg-sky-50/70 p-2.5 text-center ring-1 ring-sky-100"
+                                        class="rounded-lg sm:rounded-xl bg-sky-50/70 p-2 sm:p-2.5 text-center ring-1 ring-sky-100/80"
                                     >
-                                        <p class="text-[10px] font-medium text-[#507693]">{{ spec.label }}</p>
-                                        <p class="mt-1 text-[11px] font-bold text-[#07345a] leading-tight">{{ spec.value }}</p>
+                                        <p class="text-[9px] sm:text-[10px] font-medium text-[#507693] truncate sm:whitespace-normal">{{ spec.label }}</p>
+                                        <p class="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] font-bold text-[#07345a] leading-tight">{{ spec.value }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -251,23 +251,23 @@ function prepareEmail() {
 
                     <!-- Right: Track Highlights & Benefits -->
                     <div>
-                        <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl leading-snug">
+                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-[#07345a] leading-snug">
                             {{ currentTrack.title }}
                         </h3>
 
                         <!-- Highlights List -->
-                        <div class="mt-6 space-y-3.5">
+                        <div class="mt-5 sm:mt-6 space-y-3 sm:space-y-3.5">
                             <div
                                 v-for="(hl, index) in currentTrack.highlights"
                                 :key="hl.title"
-                                class="flex items-start gap-3.5 rounded-2xl border border-white/80 bg-white/90 p-3.5 sm:p-4 shadow-xs transition hover:border-sky-200 hover:bg-white hover:shadow-sm"
+                                class="flex items-start gap-3 sm:gap-3.5 rounded-xl sm:rounded-2xl border border-white/80 bg-white/90 p-3 sm:p-4 shadow-xs transition hover:border-sky-200 hover:bg-white hover:shadow-sm"
                             >
-                                <span class="flex size-7 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-xs font-bold text-[#009cf0]">
+                                <span class="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-sky-50 text-[11px] sm:text-xs font-bold text-[#009cf0]">
                                     0{{ index + 1 }}
                                 </span>
                                 <div>
-                                    <h4 class="text-sm font-bold text-[#07345a]">{{ hl.title }}</h4>
-                                    <p class="mt-0.5 text-xs leading-relaxed text-slate-500">{{ hl.description }}</p>
+                                    <h4 class="text-xs sm:text-sm font-bold text-[#07345a]">{{ hl.title }}</h4>
+                                    <p class="mt-0.5 text-[11px] sm:text-xs leading-relaxed text-slate-500">{{ hl.description }}</p>
                                 </div>
                             </div>
                         </div>
@@ -278,29 +278,99 @@ function prepareEmail() {
 
         <section id="manfaat" class="bg-[#f7fafc]">
             <div class="business-container business-section">
-                <div class="mx-auto max-w-2xl text-center"><p class="business-eyebrow">LEBIH RAPI MENGELOLA, LEBIH SIAP BERKEMBANG</p><h2 class="business-heading mt-4">Partner untuk perjalanan<br />bisnis Anda berikutnya.</h2><p class="business-copy mt-5">Dari penawaran yang mudah dipahami hingga persiapan operasional, bangun pengalaman yang meyakinkan sejak awal.</p></div>
-                <div class="mt-12 grid gap-5 lg:grid-cols-3">
-                    <article class="rounded-2xl border border-slate-200/70 bg-white p-7 lg:col-span-2"><div class="flex items-center gap-3"><LayoutDashboard class="size-6 text-[#009cf0]" /><h3 class="text-xl font-bold text-[#07345a]">Semua detail, satu pandangan.</h3></div><p class="business-copy mt-3 max-w-xl">Persiapkan paket, jadwal, dan informasi peserta dengan struktur yang jelas untuk tim Anda.</p><div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-[#fbfdff] p-5"><div class="flex justify-between gap-3 text-xs"><span class="font-bold text-[#07345a]">Ringkasan keberangkatan</span><span class="text-slate-400">Contoh tampilan</span></div><div class="mt-5 grid grid-cols-3 gap-3"><div v-for="(value, index) in ['12 Okt', '12 / 16', '3 hari']" :key="value" class="rounded-lg bg-white p-3 ring-1 ring-slate-100"><p class="text-[10px] text-slate-500">{{ ['Jadwal', 'Peserta', 'Durasi'][index] }}</p><p class="mt-2 text-lg font-bold text-[#07345a] sm:text-2xl">{{ value }}</p></div></div><div class="mt-5 flex items-center gap-3 rounded-lg bg-sky-50 px-4 py-3 text-xs text-[#075890]"><CalendarDays class="size-4 shrink-0" />Detail perjalanan siap ditinjau bersama tim</div></div></article>
-                    <article class="flex flex-col rounded-2xl bg-[#07345a] p-7 text-white"><Users class="size-7 text-sky-300" /><h3 class="mt-5 text-xl font-bold">Kekuatan lokal,<br />peluang lebih besar.</h3><p class="mt-4 text-sm leading-7 text-sky-100/80">Cerita, pengetahuan, dan keramahan Anda adalah bagian berharga dari setiap perjalanan. Perkenalkan ke lebih banyak calon pelanggan.</p><div class="mt-auto flex items-center gap-3 pt-9"><span class="flex size-11 items-center justify-center rounded-full border border-white/20"><MapPin class="size-5" /></span><p class="text-xs leading-5 text-sky-100">Dari daerah Anda,<br />untuk penjelajah Indonesia.</p></div></article>
+                <div class="mx-auto max-w-2xl text-center">
+                    <p class="business-eyebrow">LEBIH RAPI MENGELOLA, LEBIH SIAP BERKEMBANG</p>
+                    <h2 class="business-heading mt-3 sm:mt-4">Partner untuk perjalanan<br />bisnis Anda berikutnya.</h2>
+                    <p class="business-copy mt-3 sm:mt-5">Dari penawaran yang mudah dipahami hingga persiapan operasional, bangun pengalaman yang meyakinkan sejak awal.</p>
                 </div>
-                <div class="mt-9 grid gap-8 sm:grid-cols-3"><div v-for="item in [{ icon: FileText, title: 'Penawaran yang jelas', text: 'Bantu pelanggan memahami fasilitas, harga, dan ketentuan sejak awal.' }, { icon: Wallet, title: 'Kerja sama transparan', text: 'Bahas biaya layanan dan mekanisme pembayaran sebelum memulai.' }, { icon: ShieldCheck, title: 'Tumbuh dengan kesiapan', text: 'Tinjau kelengkapan usaha dan standar layanan bersama tim kemitraan.' }]" :key="item.title"><component :is="item.icon" class="size-6 text-[#009cf0]" /><h3 class="mt-4 text-base font-bold text-[#07345a]">{{ item.title }}</h3><p class="mt-2 text-sm leading-6 text-slate-500">{{ item.text }}</p></div></div>
+                <div class="mt-8 sm:mt-12 grid gap-5 lg:grid-cols-3">
+                    <article class="rounded-2xl border border-slate-200/70 bg-white p-5 sm:p-7 lg:col-span-2">
+                        <div class="flex items-center gap-3">
+                            <LayoutDashboard class="size-5 sm:size-6 text-[#009cf0]" />
+                            <h3 class="text-lg sm:text-xl font-bold text-[#07345a]">Semua detail, satu pandangan.</h3>
+                        </div>
+                        <p class="business-copy mt-2 sm:mt-3 max-w-xl">Persiapkan paket, jadwal, dan informasi peserta dengan struktur yang jelas untuk tim Anda.</p>
+                        <div class="mt-6 sm:mt-8 overflow-hidden rounded-xl border border-slate-200 bg-[#fbfdff] p-4 sm:p-5">
+                            <div class="flex justify-between gap-3 text-xs">
+                                <span class="font-bold text-[#07345a]">Ringkasan keberangkatan</span>
+                                <span class="text-slate-400">Contoh tampilan</span>
+                            </div>
+                            <div class="mt-4 sm:mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+                                <div v-for="(value, index) in ['12 Okt', '12 / 16', '3 hari']" :key="value" class="rounded-lg bg-white p-2.5 sm:p-3 text-center sm:text-left ring-1 ring-slate-100">
+                                    <p class="text-[9px] sm:text-[10px] text-slate-500">{{ ['Jadwal', 'Peserta', 'Durasi'][index] }}</p>
+                                    <p class="mt-1 sm:mt-2 text-base sm:text-2xl font-bold text-[#07345a]">{{ value }}</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 sm:mt-5 flex items-center gap-2.5 sm:gap-3 rounded-lg bg-sky-50 px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-[#075890]">
+                                <CalendarDays class="size-4 shrink-0" />
+                                <span>Detail perjalanan siap ditinjau bersama tim</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="flex flex-col justify-between rounded-2xl bg-[#07345a] p-5 sm:p-7 text-white">
+                        <div>
+                            <Users class="size-6 sm:size-7 text-sky-300" />
+                            <h3 class="mt-4 sm:mt-5 text-lg sm:text-xl font-bold">Kekuatan lokal,<br />peluang lebih besar.</h3>
+                            <p class="mt-3 sm:mt-4 text-xs sm:text-sm leading-6 sm:leading-7 text-sky-100/80">Cerita, pengetahuan, dan keramahan Anda adalah bagian berharga dari setiap perjalanan. Perkenalkan ke lebih banyak calon pelanggan.</p>
+                        </div>
+                        <div class="mt-6 sm:mt-auto flex items-center gap-3 pt-6 sm:pt-9 border-t border-white/10 sm:border-t-0">
+                            <span class="flex size-9 sm:size-11 items-center justify-center rounded-full border border-white/20 shrink-0">
+                                <MapPin class="size-4 sm:size-5" />
+                            </span>
+                            <p class="text-xs leading-5 text-sky-100">Dari daerah Anda,<br />untuk penjelajah Indonesia.</p>
+                        </div>
+                    </article>
+                </div>
+                <div class="mt-8 sm:mt-9 grid gap-6 sm:gap-8 sm:grid-cols-3">
+                    <div v-for="item in [{ icon: FileText, title: 'Penawaran yang jelas', text: 'Bantu pelanggan memahami fasilitas, harga, dan ketentuan sejak awal.' }, { icon: Wallet, title: 'Kerja sama transparan', text: 'Bahas biaya layanan dan mekanisme pembayaran sebelum memulai.' }, { icon: ShieldCheck, title: 'Tumbuh dengan kesiapan', text: 'Tinjau kelengkapan usaha dan standar layanan bersama tim kemitraan.' }]" :key="item.title" class="rounded-xl bg-white p-4 sm:p-0 sm:bg-transparent border border-slate-100 sm:border-0 shadow-xs sm:shadow-none">
+                        <component :is="item.icon" class="size-5 sm:size-6 text-[#009cf0]" />
+                        <h3 class="mt-3 sm:mt-4 text-sm sm:text-base font-bold text-[#07345a]">{{ item.title }}</h3>
+                        <p class="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-relaxed sm:leading-6 text-slate-500">{{ item.text }}</p>
+                    </div>
+                </div>
             </div>
         </section>
+
         <section id="cara-bergabung" class="business-container business-section">
-            <p class="business-eyebrow">LANGKAH KECIL, PELUANG BARU</p><div class="mt-4 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><h2 class="business-heading">Mulai dari usaha Anda.<br />Kami bantu langkah berikutnya.</h2><button class="business-text-link" @click="openRegistration()">Ajukan kemitraan <ArrowUpRight class="size-4" /></button></div>
-            <ol class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4"><li v-for="(step, index) in steps" :key="step.title" class="border-t border-sky-200 pt-5"><span class="text-3xl font-light text-[#009cf0]">0{{ index + 1 }}</span><h3 class="mt-5 font-bold text-[#07345a]">{{ step.title }}</h3><p class="mt-3 text-sm leading-6 text-slate-500">{{ step.description }}</p></li></ol>
+            <p class="business-eyebrow">LANGKAH KECIL, PELUANG BARU</p>
+            <div class="mt-3 sm:mt-4 flex flex-col justify-between gap-3 sm:gap-5 sm:flex-row sm:items-end">
+                <h2 class="business-heading">Mulai dari usaha Anda.<br />Kami bantu langkah berikutnya.</h2>
+                <button class="business-text-link self-start sm:self-auto" @click="openRegistration()">Ajukan kemitraan <ArrowUpRight class="size-4" /></button>
+            </div>
+            <ol class="mt-8 sm:mt-12 grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                <li v-for="(step, index) in steps" :key="step.title" class="border-t border-sky-200 pt-4 sm:pt-5">
+                    <span class="text-2xl sm:text-3xl font-light text-[#009cf0]">0{{ index + 1 }}</span>
+                    <h3 class="mt-3 sm:mt-5 font-bold text-[#07345a] text-sm sm:text-base">{{ step.title }}</h3>
+                    <p class="mt-1.5 sm:mt-3 text-xs sm:text-sm leading-relaxed sm:leading-6 text-slate-500">{{ step.description }}</p>
+                </li>
+            </ol>
         </section>
+
         <template #dialogs>
-            <dialog ref="registrationDialog" aria-labelledby="partner-dialog-title" aria-describedby="partner-dialog-description" class="fixed inset-0 m-auto w-[calc(100%-32px)] max-w-lg rounded-2xl border-0 p-6 shadow-2xl sm:p-8" @click="event => { if (event.target === registrationDialog) registrationDialog.close(); }">
-                <div class="flex items-start justify-between gap-5"><div><p class="business-eyebrow">KENALKAN USAHA ANDA</p><h2 id="partner-dialog-title" class="mt-2 text-2xl font-bold text-[#07345a]">Mulai percakapan kemitraan</h2></div><button aria-label="Tutup formulir" class="rounded-full p-2 hover:bg-slate-100" @click="registrationDialog.close()"><X class="size-5" /></button></div>
-                <p id="partner-dialog-description" class="mt-3 text-sm leading-6 text-slate-500">Isi detail berikut untuk menyiapkan email ke tim kami. Pengajuan baru terkirim setelah Anda mengirim email dari aplikasi email Anda.</p>
-                <form class="mt-6 space-y-4" @submit.prevent="prepareEmail">
-                    <label class="block text-xs font-semibold">Jenis kemitraan<select v-model="selectedTrack" class="business-input mt-2"><option value="trip">Vendor trip wisata</option><option value="souvenir">Oleh-oleh & kuliner</option></select></label>
-                    <label class="block text-xs font-semibold">Nama usaha<input v-model="brief.business" required maxlength="120" autocomplete="organization" class="business-input mt-2" /></label>
-                    <div class="grid gap-4 sm:grid-cols-2"><label class="block text-xs font-semibold">Nama penanggung jawab<input v-model="brief.name" required maxlength="100" autocomplete="name" class="business-input mt-2" /></label><label class="block text-xs font-semibold">Kota operasional<input v-model="brief.city" required maxlength="100" autocomplete="address-level2" class="business-input mt-2" /></label></div>
-                    <label class="block text-xs font-semibold">Email atau nomor telepon<input v-model="brief.contact" required maxlength="150" class="business-input mt-2" /></label>
-                    <label class="block text-xs font-semibold">Ceritakan paket atau produk Anda<textarea v-model="brief.notes" rows="3" maxlength="1500" class="business-input mt-2"></textarea></label>
-                    <button type="submit" class="business-button inline-flex w-full">Siapkan email pengajuan <ArrowUpRight class="size-4" /></button><p class="text-center text-xs leading-5 text-slate-500">Tujuan: support@tapaklokal.com</p>
+            <dialog ref="registrationDialog" aria-labelledby="partner-dialog-title" aria-describedby="partner-dialog-description" class="fixed inset-0 m-auto w-[calc(100%-24px)] sm:w-[calc(100%-32px)] max-w-lg rounded-2xl border-0 p-5 sm:p-8 shadow-2xl" @click="event => { if (event.target === registrationDialog) registrationDialog.close(); }">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="business-eyebrow">KENALKAN USAHA ANDA</p>
+                        <h2 id="partner-dialog-title" class="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold text-[#07345a]">Mulai percakapan kemitraan</h2>
+                    </div>
+                    <button aria-label="Tutup formulir" class="rounded-full p-2 hover:bg-slate-100 transition-colors" @click="registrationDialog.close()">
+                        <X class="size-5" />
+                    </button>
+                </div>
+                <p id="partner-dialog-description" class="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-relaxed sm:leading-6 text-slate-500">
+                    Isi detail berikut untuk menyiapkan email ke tim kami. Pengajuan baru terkirim setelah Anda mengirim email dari aplikasi email Anda.
+                </p>
+                <form class="mt-5 sm:mt-6 space-y-3.5 sm:space-y-4" @submit.prevent="prepareEmail">
+                    <label class="block text-xs font-semibold">Jenis kemitraan<select v-model="selectedTrack" class="business-input mt-1.5 sm:mt-2"><option value="trip">Vendor trip wisata</option><option value="souvenir">Oleh-oleh & kuliner</option></select></label>
+                    <label class="block text-xs font-semibold">Nama usaha<input v-model="brief.business" required maxlength="120" autocomplete="organization" class="business-input mt-1.5 sm:mt-2" /></label>
+                    <div class="grid gap-3 sm:gap-4 sm:grid-cols-2">
+                        <label class="block text-xs font-semibold">Nama penanggung jawab<input v-model="brief.name" required maxlength="100" autocomplete="name" class="business-input mt-1.5 sm:mt-2" /></label>
+                        <label class="block text-xs font-semibold">Kota operasional<input v-model="brief.city" required maxlength="100" autocomplete="address-level2" class="business-input mt-1.5 sm:mt-2" /></label>
+                    </div>
+                    <label class="block text-xs font-semibold">Email atau nomor telepon<input v-model="brief.contact" required maxlength="150" class="business-input mt-1.5 sm:mt-2" /></label>
+                    <label class="block text-xs font-semibold">Ceritakan paket atau produk Anda<textarea v-model="brief.notes" rows="3" maxlength="1500" class="business-input mt-1.5 sm:mt-2"></textarea></label>
+                    <button type="submit" class="business-button inline-flex w-full mt-2">Siapkan email pengajuan <ArrowUpRight class="size-4" /></button>
+                    <p class="text-center text-[11px] sm:text-xs leading-5 text-slate-500">Tujuan: support@tapaklokal.com</p>
                 </form>
             </dialog>
         </template>

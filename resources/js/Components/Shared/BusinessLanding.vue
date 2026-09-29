@@ -44,12 +44,30 @@ function join() {
         </header>
         <main>
             <slot />
-            <section id="faq" class="business-container business-section grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
-                <div><p class="business-eyebrow">PERTANYAAN UMUM</p><h2 class="business-heading mt-4">Kenali lebih dekat.<br />Mulai lebih yakin.</h2><p class="business-copy mt-5">Temukan informasi yang Anda butuhkan sebelum bergabung dengan TapakLokal.</p><Link :href="route('help.index')" class="business-text-link mt-6">Kunjungi pusat bantuan <ArrowUpRight class="size-4" /></Link></div>
+            <section id="faq" class="business-container business-section grid gap-8 sm:gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+                <div>
+                    <p class="business-eyebrow">PERTANYAAN UMUM</p>
+                    <h2 class="business-heading mt-3 sm:mt-4">Kenali lebih dekat.<br />Mulai lebih yakin.</h2>
+                    <p class="business-copy mt-3 sm:mt-5">Temukan informasi yang Anda butuhkan sebelum bergabung dengan TapakLokal.</p>
+                    <Link :href="route('help.index')" class="business-text-link mt-5 sm:mt-6">Kunjungi pusat bantuan <ArrowUpRight class="size-4" /></Link>
+                </div>
                 <div class="border-t border-slate-200">
                     <div v-for="(faq, index) in faqs" :key="faq.q" class="border-b border-slate-200">
-                        <h3><button :id="`business-question-${index}`" :aria-expanded="openFaq === index" :aria-controls="`business-answer-${index}`" class="flex w-full items-center justify-between gap-6 py-6 text-left text-sm font-semibold sm:text-base" @click="openFaq = openFaq === index ? null : index">{{ faq.q }}<ChevronDown class="size-5 shrink-0 text-[#009cf0] transition-transform" :class="{ 'rotate-180': openFaq === index }" /></button></h3>
-                        <div v-show="openFaq === index" :id="`business-answer-${index}`" role="region" :aria-labelledby="`business-question-${index}`" class="pb-6 pr-8 text-sm leading-7 text-slate-500">{{ faq.a }}</div>
+                        <h3>
+                            <button
+                                :id="`business-question-${index}`"
+                                :aria-expanded="openFaq === index"
+                                :aria-controls="`business-answer-${index}`"
+                                class="flex w-full items-center justify-between gap-4 sm:gap-6 py-4 sm:py-6 text-left text-sm font-semibold sm:text-base cursor-pointer"
+                                @click="openFaq = openFaq === index ? null : index"
+                            >
+                                <span>{{ faq.q }}</span>
+                                <ChevronDown class="size-4 sm:size-5 shrink-0 text-[#009cf0] transition-transform duration-200" :class="{ 'rotate-180': openFaq === index }" />
+                            </button>
+                        </h3>
+                        <div v-show="openFaq === index" :id="`business-answer-${index}`" role="region" :aria-labelledby="`business-question-${index}`" class="pb-4 sm:pb-6 pr-2 sm:pr-8 text-xs sm:text-sm leading-relaxed sm:leading-7 text-slate-500">
+                            {{ faq.a }}
+                        </div>
                     </div>
                 </div>
             </section>
