@@ -7,7 +7,7 @@ import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const mobileNavigationOpen = ref(false);
 const corporateLinks = [
-    { href: '#products', label: 'Layanan kami' },
+    { href: '#solutions', label: 'Solusi Platform' },
     { href: '#features', label: 'Kemudahan' },
     { href: '#benefits', label: 'Manfaat' },
     { href: '#stories', label: 'Inspirasi' },
@@ -21,7 +21,6 @@ const corporateLogos = [
     { name: 'IHG Hotels and Resorts', src: '/Assets/Images/partners/partner-4.svg' },
     { name: 'Ascott The Residence', src: '/Assets/Images/partners/partner-5.svg' },
 ];
-const activeProduct = ref(0);
 const activeFeature = ref(0);
 const activeStory = ref(0);
 const hoveredRole = ref(null);
@@ -31,12 +30,6 @@ const consultationDialog = ref(null);
 const brief = ref({ company: '', name: '', destination: '', participants: '', notes: '' });
 const photo = (id, width = 1000) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
 const landscape = photo('photo-1537996194471-e657df975ab4', 1400);
-const products = [
-    { title: 'Private & company trip', icon: Compass, eyebrow: 'PERJALANAN YANG PUNYA CERITA', heading: 'Satu tim. Banyak cerita baru.', description: 'Bawa tim keluar dari rutinitas. Jelajahi destinasi Indonesia dengan private trip yang bisa disesuaikan dengan agenda perusahaan.', image: landscape, alt: 'Pura dan lanskap hijau Bali', points: ['Pilihan destinasi dan durasi perjalanan', 'Transportasi, pemandu, dan akomodasi sesuai paket', 'Agenda outing, gathering, hingga team building'], cta: 'Jelajahi private trip', routeName: 'trips.category', params: { type: 'private-trip' } },
-    { title: 'Pengalaman lokal', icon: MapPin, eyebrow: 'LEBIH DEKAT DENGAN INDONESIA', heading: 'Pengalaman baru, koneksi lebih dekat.', description: 'Temukan sisi lain sebuah destinasi bersama pemandu lokal. Dari alam terbuka hingga budaya setempat, pilih kegiatan yang relevan untuk tim Anda.', image: photo('photo-1544644181-1484b3fdfc62'), alt: 'Pemandangan destinasi wisata Indonesia', points: ['Aktivitas alam dan budaya dalam pilihan trip', 'Pengalaman bersama mitra di daerah tujuan', 'Pilihan perjalanan untuk kelompok kecil maupun besar'], cta: 'Temukan pengalaman', routeName: 'trips.category', params: { type: 'open-trip' } },
-    { title: 'Oleh-oleh & bingkisan', icon: ShoppingBag, eyebrow: 'KENANGAN YANG BISA DIBAWA PULANG', heading: 'Sentuhan lokal untuk setiap apresiasi.', description: 'Lengkapi perjalanan tim dengan oleh-oleh khas daerah. Temukan produk lokal untuk dibawa pulang atau dibagikan kepada rekan kerja.', image: photo('photo-1555396273-367ea4eb4db5'), alt: 'Suasana kuliner lokal', points: ['Pilihan kuliner dan produk khas daerah', 'Dukung pelaku usaha lokal lewat setiap pembelian', 'Diskusikan kebutuhan bingkisan dalam konsultasi'], cta: 'Diskusikan bingkisan', consultation: true },
-];
-const selectedProduct = computed(() => products[activeProduct.value]);
 const features = [
     { icon: Compass, title: 'Rencana perjalanan, sesuai kebutuhan', text: 'Mulai dari tujuan, tanggal, dan jumlah peserta. Susun kebutuhan tim sebagai dasar memilih paket dan berdiskusi dengan tim TapakLokal.', label: 'Rencana perjalanan', rows: [['Destinasi', 'Yogyakarta'], ['Durasi', '3 hari, 2 malam'], ['Peserta', '24 orang'], ['Agenda', 'Team gathering']], note: 'Contoh kebutuhan perjalanan' },
     { icon: Users, title: 'Koordinasi tim yang lebih terarah', text: 'Tetapkan PIC dan rangkum kebutuhan peserta sebelum pemesanan, agar detail penting bisa dibahas dalam satu konsultasi.', label: 'Kebutuhan peserta', rows: [['PIC perusahaan', 'Tim People & Culture'], ['Titik kumpul', 'Kantor perusahaan'], ['Kamar', 'Sesuai kebutuhan'], ['Konsumsi', 'Catat kebutuhan khusus']], note: 'Contoh daftar koordinasi' },
@@ -74,11 +67,6 @@ function openConsultation() { consultationDialog.value?.showModal(); }
 function prepareEmail() { window.location.href = emailHref.value; }
 function isFlipped(index) { return hoveredRole.value === index || pinnedRole.value === index; }
 function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRole.value = index; }
-function selectProduct(event, index, direction) {
-    const next = (index + direction + products.length) % products.length;
-    activeProduct.value = next;
-    event.currentTarget.parentElement.children[next].focus();
-}
 </script>
 
 <template>
@@ -154,45 +142,182 @@ function selectProduct(event, index, direction) {
                     </div>
                 </div>
             </section>
-            <section id="products" class="corp-container py-16 lg:py-24">
-                <div class="text-center">
-                    <p class="corp-eyebrow">LAYANAN KAMI</p>
-                    <h2 class="corp-heading mt-3">
-                        Ke mana pun agendanya,
-                        <br class="sm:hidden" />
-                        mulai dari sini.
+            <section id="solutions" class="corp-container py-16 lg:py-24">
+                <div class="mx-auto max-w-4xl text-center">
+                    <h2 class="text-3xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
+                        Digitalize your business travel workflow with
+                        <br class="hidden sm:inline" />
+                        <span class="text-[#0088ff]">TapakLokal for Corporates</span>
                     </h2>
-                    <p class="corp-description mx-auto mt-4">Pilihan perjalanan dan sentuhan lokal untuk kebutuhan perusahaan Anda.</p>
                 </div>
-                <div role="tablist" aria-label="Layanan corporate" class="mx-auto mt-8 flex max-w-2xl gap-1 rounded-2xl bg-slate-100 p-1.5 sm:rounded-full">
-                    <button v-for="(product, index) in products" :id="`product-tab-${index}`" :key="product.title" role="tab" :tabindex="activeProduct === index ? 0 : -1" :aria-selected="activeProduct === index" aria-controls="product-panel" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-semibold transition sm:rounded-full sm:text-sm" :class="activeProduct === index ? 'bg-white text-[#0077df] shadow-sm' : 'text-slate-500 hover:text-slate-900'" @click="activeProduct = index" @keydown.right.prevent="selectProduct($event, index, 1)" @keydown.left.prevent="selectProduct($event, index, -1)">
-                        <component :is="product.icon" class="hidden size-4 sm:block" />
-                        {{ product.title }}
-                    </button>
-                </div>
-                <div id="product-panel" role="tabpanel" :aria-labelledby="`product-tab-${activeProduct}`" class="mt-10 grid overflow-hidden rounded-[28px] border border-slate-100 bg-[#f7fafc] md:grid-cols-2">
-                    <div class="relative min-h-64 md:min-h-[400px]">
-                        <img :src="selectedProduct.image" :alt="selectedProduct.alt" loading="lazy" class="absolute inset-0 size-full object-cover" />
-                        <span class="absolute bottom-6 left-6 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-[#07345a]">Bersama TapakLokal</span>
+
+                <div class="mt-12 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
+                    <!-- 1. Corporate Booking Platform (Spans 2 columns on lg) -->
+                    <div class="group relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-gradient-to-br from-white via-[#f7fbfe] to-[#eaf5fc] p-7 sm:p-10 lg:col-span-2 lg:p-12 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+                            <!-- Left Copy -->
+                            <div class="lg:col-span-5">
+                                <h3 class="text-2xl font-bold tracking-tight text-[#07345a] sm:text-3xl">Corporate booking platform</h3>
+                                <p class="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+                                    Book flights, hotels, and more directly in one portal, with travel policy settings and comprehensive reporting.
+                                </p>
+                                <ul class="mt-5 space-y-3 text-sm text-slate-700">
+                                    <li class="flex items-start gap-2.5">
+                                        <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                        <span>Sign up, get approved, and start booking—no installation needed</span>
+                                    </li>
+                                    <li class="flex items-start gap-2.5">
+                                        <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                        <span>Plan and manage business trips, anywhere</span>
+                                    </li>
+                                </ul>
+                                <button type="button" class="corp-button mt-7 !px-6 !py-3 !text-xs sm:!text-sm" @click="openConsultation">
+                                    Mulai sekarang
+                                    <ArrowRight class="size-4" />
+                                </button>
+                            </div>
+
+                            <!-- Right Mockup Image -->
+                            <div class="relative flex items-center justify-center lg:col-span-7">
+                                <div class="absolute -right-10 -top-10 size-72 rounded-full bg-sky-300/30 blur-3xl pointer-events-none"></div>
+                                <img
+                                    src="/Assets/Images/laptop-bawah.png"
+                                    alt="TapakLokal Corporate Booking Platform UI di Laptop dan Smartphone"
+                                    width="1200"
+                                    height="800"
+                                    loading="lazy"
+                                    class="relative z-10 w-full max-w-[580px] object-contain drop-shadow-[0_15px_35px_rgba(7,52,90,0.15)] transition-transform duration-500 motion-safe:group-hover:scale-[1.02]"
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-start justify-center p-7 lg:p-12">
-                        <p class="corp-eyebrow !text-[10px]">{{ selectedProduct.eyebrow }}</p>
-                        <h3 class="mt-3 text-3xl leading-tight font-bold tracking-tight text-[#07345a]">{{ selectedProduct.heading }}</h3>
-                        <p class="mt-4 text-sm leading-7 text-slate-600">{{ selectedProduct.description }}</p>
-                        <ul class="mt-5 space-y-3">
-                            <li v-for="point in selectedProduct.points" :key="point" class="flex gap-3 text-sm">
-                                <Check class="mt-0.5 size-4 shrink-0 text-[#0088ff]" />
-                                {{ point }}
-                            </li>
-                        </ul>
-                        <button v-if="selectedProduct.consultation" class="corp-text-link mt-7" @click="openConsultation">
-                            {{ selectedProduct.cta }}
-                            <ArrowRight class="size-4" />
-                        </button>
-                        <Link v-else :href="route(selectedProduct.routeName, selectedProduct.params)" class="corp-text-link mt-7">
-                            {{ selectedProduct.cta }}
-                            <ArrowRight class="size-4" />
-                        </Link>
+
+                    <!-- 2. Personalized Services (Bottom Left) -->
+                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div>
+                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">Personalized services</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                Need help with specific requirements? Our corporate travel team is ready to assist you, just a click or call away.
+                            </p>
+                            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                    <span>Consult us for corporate events and group travel solutions</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                    <span>Professional customer support for every unique requirement</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Chat & Live CS Display -->
+                        <div class="bento-dot-bg relative mt-8 flex min-h-[200px] flex-col justify-center rounded-2xl border border-sky-100/80 bg-[#f8fbfe] p-5 sm:p-6">
+                            <div class="relative mx-auto w-full max-w-xs space-y-3">
+                                <!-- CS Avatar & Speech Bubble -->
+                                <div class="flex items-start gap-3">
+                                    <div class="relative shrink-0">
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Aurelia CS" class="size-10 rounded-full border-2 border-white object-cover shadow-sm" />
+                                        <span class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-white bg-emerald-500"></span>
+                                    </div>
+                                    <div class="rounded-2xl rounded-tl-xs border border-sky-200/90 bg-white px-4 py-3 shadow-sm">
+                                        <span class="block text-[10px] font-bold text-[#0088ff]">Aurelia, TapakLokal for Corporate</span>
+                                        <p class="mt-0.5 text-sm font-semibold text-[#07345a]">Hi! How can I help you?</p>
+                                    </div>
+                                </div>
+                                <!-- Typing Indicator Bubble -->
+                                <div class="ml-13 flex w-fit items-center gap-1.5 rounded-full border border-sky-100 bg-white/95 px-3 py-1.5 shadow-xs">
+                                    <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
+                                    <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
+                                    <span class="typing-dot size-1.5 rounded-full bg-[#0088ff]"></span>
+                                    <span class="ml-1 text-[9px] font-medium text-slate-400">Live agent standby</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. API Integration (Bottom Right) -->
+                    <div class="group relative flex flex-col justify-between overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-7 sm:p-9 shadow-[0_12px_40px_-15px_rgba(7,52,90,0.06)] transition-all duration-300 hover:border-sky-300 hover:shadow-[0_20px_50px_-20px_rgba(0,136,255,0.12)]">
+                        <div>
+                            <h3 class="text-2xl font-bold tracking-tight text-[#07345a]">API integration</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                Access our travel inventory and all of our platform capabilities through your own system.
+                            </p>
+                            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                    <span>Use booking flows, policy checks, and reporting in your existing tools</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#0088ff]"></span>
+                                    <span>Consistent experience across connected platforms</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Architecture Diagram Visual -->
+                        <div class="relative mt-8 flex min-h-[200px] items-center justify-center rounded-2xl border border-sky-100/80 bg-gradient-to-b from-[#f8fcff] to-[#edf7fc] p-5 sm:p-6 overflow-hidden">
+                            <!-- Radar Pulse Rings centered around TapakLokal Node -->
+                            <div class="absolute left-[22%] top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                <div class="radar-ring size-20"></div>
+                                <div class="radar-ring size-32"></div>
+                                <div class="radar-ring size-44"></div>
+                            </div>
+
+                            <div class="relative flex w-full max-w-xs items-center justify-between z-10">
+                                <!-- TapakLokal Core API Node (Blue Isometric Stack) -->
+                                <div class="flex flex-col items-center">
+                                    <div class="relative flex size-14 items-center justify-center">
+                                        <svg viewBox="0 0 64 64" class="size-14 drop-shadow-md">
+                                            <ellipse cx="32" cy="46" rx="26" ry="10" fill="#0066cc" />
+                                            <ellipse cx="32" cy="42" rx="26" ry="10" fill="#0088ff" />
+                                            <ellipse cx="32" cy="38" rx="26" ry="10" fill="#29c2ea" />
+                                            <ellipse cx="32" cy="30" rx="26" ry="10" fill="#0066cc" />
+                                            <ellipse cx="32" cy="26" rx="26" ry="10" fill="#0088ff" />
+                                            <ellipse cx="32" cy="22" rx="26" ry="10" fill="#38bdf8" />
+                                            <ellipse cx="32" cy="14" rx="26" ry="10" fill="#0077df" />
+                                            <ellipse cx="32" cy="10" rx="26" ry="10" fill="#60a5fa" />
+                                            <path d="M32 4 L36 10 L32 16 L28 10 Z" fill="white" />
+                                        </svg>
+                                    </div>
+                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">TapakLokal API</span>
+                                </div>
+
+                                <!-- Connecting Flow Line with Arrow -->
+                                <div class="relative flex-1 mx-2 flex items-center justify-center">
+                                    <svg class="w-full h-8 overflow-visible" viewBox="0 0 100 20" fill="none">
+                                        <defs>
+                                            <linearGradient id="streamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#0088ff" />
+                                                <stop offset="100%" stop-color="#10b981" />
+                                            </linearGradient>
+                                        </defs>
+                                        <line x1="6" y1="10" x2="86" y2="10" stroke="#dbeafe" stroke-width="2.5" stroke-linecap="round" />
+                                        <line x1="6" y1="10" x2="86" y2="10" stroke="url(#streamGrad)" stroke-width="2.5" stroke-linecap="round" class="flow-line-animated" />
+                                        <polygon points="86,6 96,10 86,14" fill="#10b981" />
+                                    </svg>
+                                    <div class="data-particle absolute left-1 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[#0088ff] shadow-[0_0_6px_#0088ff]"></div>
+                                </div>
+
+                                <!-- Corporate Enterprise System Node (Green Isometric Stack) -->
+                                <div class="flex flex-col items-center">
+                                    <div class="relative flex size-14 items-center justify-center">
+                                        <svg viewBox="0 0 64 64" class="size-14 drop-shadow-md">
+                                            <ellipse cx="32" cy="46" rx="26" ry="10" fill="#047857" />
+                                            <ellipse cx="32" cy="42" rx="26" ry="10" fill="#059669" />
+                                            <ellipse cx="32" cy="38" rx="26" ry="10" fill="#10b981" />
+                                            <ellipse cx="32" cy="30" rx="26" ry="10" fill="#047857" />
+                                            <ellipse cx="32" cy="26" rx="26" ry="10" fill="#059669" />
+                                            <ellipse cx="32" cy="22" rx="26" ry="10" fill="#34d399" />
+                                            <ellipse cx="32" cy="14" rx="26" ry="10" fill="#059669" />
+                                            <ellipse cx="32" cy="10" rx="26" ry="10" fill="#6ee7b7" />
+                                            <path d="M26 10 L30 14 L38 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                        </svg>
+                                    </div>
+                                    <span class="mt-1.5 text-[10px] font-bold text-[#07345a]">Corporate System</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -502,4 +627,53 @@ function selectProduct(event, index, direction) {
 @media (min-width: 768px) and (max-width: 1023px) { .role-inner { min-height: 570px; } .role-back { padding: 20px; } .role-photo { background-size: auto 100%; } }
 @media (max-width: 767px) { .role-card { max-width: 420px; margin-inline: auto; } }
 @media (prefers-reduced-motion: reduce) { .role-inner { transition: none; } }
+
+/* Bento Grid Micro-Animations */
+.bento-dot-bg {
+    background-image: radial-gradient(#bae6fd 1.3px, transparent 1.3px);
+    background-size: 16px 16px;
+}
+
+@keyframes typing-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+    40% { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot {
+    animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+.typing-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes radar-pulse-wave {
+    0% { transform: scale(0.6); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+.radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0, 136, 255, 0.35);
+    animation: radar-pulse-wave 3s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+.radar-ring:nth-child(2) { animation-delay: 1s; }
+.radar-ring:nth-child(3) { animation-delay: 2s; }
+
+@keyframes dash-flow {
+    from { stroke-dashoffset: 32; }
+    to { stroke-dashoffset: 0; }
+}
+.flow-line-animated {
+    stroke-dasharray: 6 6;
+    animation: dash-flow 1.8s linear infinite;
+}
+
+@keyframes particle-travel {
+    0% { transform: translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(85px); opacity: 0; }
+}
+.data-particle {
+    animation: particle-travel 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
 </style>
