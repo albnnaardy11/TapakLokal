@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 Route::get('/blog', [PublicContentController::class, 'blog'])->name('blog');
+Route::get('/discount', [PublicContentController::class, 'discount'])->name('discount');
 Route::get('/explore/{type}', [PublicContentController::class, 'explore'])->name('explore');
 
 Route::get('/blog/{article}', function (string $article): Response {

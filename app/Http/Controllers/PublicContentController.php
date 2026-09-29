@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promotion;
 use App\Services\PublicContentService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,6 +23,18 @@ class PublicContentController extends Controller
     public function blog(): Response
     {
         return Inertia::render('Blog', ['publishedArticles' => $this->content->published('blog')->latest('id')->paginate(12, ['id', 'title', 'slug', 'category', 'excerpt', 'image_url', 'published_at'])]);
+    }
+
+    public function discount(): Response
+    {
+        return Inertia::render('Discount', [
+            'promotions' => Promotion::where('status', 'published')
+                ->whereDate('starts_at', '<=', today())
+                ->whereDate('ends_at', '>=', today())
+                ->whereColumn('used_count', '<', 'usage_limit')
+                ->orderBy('ends_at')->limit(60)
+                ->get(['id', 'name', 'code', 'type', 'value', 'minimum_amount', 'maximum_discount', 'ends_at']),
+        ]);
     }
 
     public function explore(Request $request, string $type): Response

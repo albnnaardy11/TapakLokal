@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { ArrowRight, ArrowUpRight, Compass, Link2, MapPin, Share2, TrendingUp, Users, Wallet } from 'lucide-vue-next';
+import { ArrowRight, ArrowUpRight, Compass, MapPin, Share2, TrendingUp, Users, Wallet } from 'lucide-vue-next';
 import BusinessLanding from '../Components/Shared/BusinessLanding.vue';
 import AuthModal from '../Components/Shared/AuthModal.vue';
 
@@ -34,22 +34,37 @@ function openRegistration() {
 <template>
     <Head title="Affiliate — Berbagi Perjalanan, Membuka Peluang"><meta name="description" content="Jadikan rekomendasi perjalanan Anda lebih berarti bersama TapakLokal Affiliate. Kenali cara kerja program dan simulasikan potensi komisi Anda." /></Head>
     <BusinessLanding program="AFFILIATES" :links="links" :faqs="faqs" :login-href="route('home', { auth: 'login' })" cta="Mulai bergabung" @join="openRegistration">
-        <section class="business-hero">
-            <div class="business-container pt-12 text-center sm:pt-16">
-                <p class="business-eyebrow">TAPAKLOKAL AFFILIATE PROGRAM</p>
-                <h1 class="mx-auto mt-5 max-w-3xl text-[34px] leading-[1.2] font-bold tracking-[-0.04em] text-[#07345a] sm:text-5xl">Cerita perjalanan Anda.<br /><span class="business-handwritten mr-2 inline-block">Peluang</span> berikutnya.</h1>
-                <p class="business-copy mx-auto mt-6 max-w-xl">Bantu orang lain menemukan perjalanan yang tepat.<br class="hidden sm:block" /> Bangun peluang penghasilan dari rekomendasi yang berarti.</p>
-                <div class="mt-7 flex flex-wrap justify-center gap-3"><button class="business-button inline-flex" @click="openRegistration">Mulai jadi affiliate <ArrowRight class="size-4" /></button><a href="#simulasi" class="business-button business-button-secondary inline-flex">Simulasikan komisi</a></div>
-            </div>
-            <div class="business-container mt-12 pb-12">
-                <div class="mx-auto grid max-w-[1020px] items-center gap-5 md:grid-cols-[1.5fr_1fr] md:gap-0 lg:grid-cols-[.75fr_1.4fr_.8fr]">
-                    <div class="relative z-10 hidden rounded-2xl border border-white bg-white p-5 shadow-lg shadow-sky-900/5 lg:block lg:translate-x-5 lg:-rotate-3"><span class="flex size-10 items-center justify-center rounded-xl bg-sky-50 text-[#009cf0]"><Share2 class="size-5" /></span><p class="mt-4 text-base font-bold text-[#07345a]">Satu rekomendasi.<br />Banyak cerita baru.</p><p class="mt-3 text-xs leading-6 text-slate-500">Bagikan pengalaman yang ingin Anda ceritakan lagi.</p><div class="mt-5 flex items-center gap-2 border-t border-slate-100 pt-4 text-[11px] font-semibold text-[#007bbd]"><Link2 class="size-4" />Konten · Komunitas · Cerita</div></div>
-                    <div class="business-mockup relative rounded-2xl border-[6px] border-white bg-white">
-                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3"><span class="text-sm font-extrabold tracking-tight text-[#07345a]">tapak<span class="text-[#009cf0]">lokal</span><span class="ml-2 text-[10px] font-normal text-slate-400">affiliate studio</span></span><span class="rounded bg-sky-50 px-2 py-1 text-[9px] tracking-wide text-[#007bbd]">ILUSTRASI</span></div>
-                        <div class="grid grid-cols-[1fr_.8fr] gap-4 p-4 sm:p-5"><div><p class="text-[10px] text-slate-500">DARI INSPIRASI KE PERJALANAN</p><h2 class="mt-3 text-xl leading-snug font-bold text-[#07345a]">Rekomendasi Anda,<br />berdampak nyata.</h2><div class="mt-5 space-y-3"><div v-for="(label, index) in ['Temukan pengalaman', 'Bagikan cerita', 'Buka peluang komisi']" :key="label" class="flex items-center gap-2 text-[11px] text-slate-500"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-sky-50 text-[10px] font-bold text-[#007bbd]">{{ index + 1 }}</span>{{ label }}</div></div></div><img src="/Assets/Images/affiliate-hero-person.jpg" alt="Kreator membagikan rekomendasi perjalanan melalui ponsel" width="1200" height="896" fetchpriority="high" class="h-full min-h-52 w-full rounded-xl object-cover object-[48%_center]" /></div>
-                        <div class="mx-4 mb-4 flex items-center gap-2 rounded-lg bg-[#f1f9fe] px-3 py-3 text-[10px] text-[#527386]"><MapPin class="size-4 shrink-0 text-[#009cf0]" />Lebih banyak orang menemukan keindahan Indonesia</div>
+        <section class="business-hero flex min-h-[calc(100dvh-68px)] flex-col justify-between">
+            <div class="business-container my-auto grid w-full flex-1 items-center gap-8 py-6 sm:py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-8 xl:gap-16">
+                <div>
+                    <p class="business-eyebrow">TAPAKLOKAL AFFILIATE PROGRAM</p>
+                    <h1 class="mt-3 sm:mt-4 text-3xl leading-[1.18] font-bold tracking-[-0.04em] text-[#07345a] sm:text-5xl lg:text-[48px] xl:text-[52px]">
+                        Cerita perjalanan Anda.<br />Peluang<br /><span class="business-handwritten">berikutnya.</span>
+                    </h1>
+                    <p class="business-copy mt-4 sm:mt-5 max-w-md text-xs sm:text-sm lg:text-base leading-relaxed text-slate-500">
+                        Bantu orang lain menemukan perjalanan yang tepat. Bangun peluang penghasilan dari rekomendasi yang berarti.
+                    </p>
+                    <div class="mt-6 sm:mt-7 flex flex-col sm:flex-row gap-3">
+                        <button class="business-button w-full sm:w-auto inline-flex" @click="openRegistration">Mulai jadi affiliate <ArrowRight class="size-4" /></button>
+                        <a href="#simulasi" class="business-button business-button-secondary w-full sm:w-auto inline-flex">Simulasikan komisi</a>
                     </div>
-                    <div class="relative z-10 rounded-2xl border border-white bg-white p-5 shadow-lg shadow-sky-900/5 md:-translate-x-4 md:translate-y-8 md:rotate-3"><div class="flex items-center gap-2 text-xs font-semibold text-[#07345a]"><TrendingUp class="size-4 text-[#009cf0]" />Potensi dari rekomendasi</div><p class="mt-4 text-[28px] font-bold tracking-tight text-[#07345a]">Rp2.500.000</p><p class="mt-1 text-[10px] text-slate-400">Contoh simulasi per bulan</p><div class="mt-5 flex h-14 items-end gap-2" aria-hidden="true"><span v-for="height in [25, 42, 35, 62, 54, 82, 100]" :key="height" class="flex-1 rounded-t bg-[#009cf0]/70" :style="{ height: `${height}%` }"></span></div><p class="mt-4 border-t border-slate-100 pt-3 text-[10px] leading-5 text-slate-500">10 pesanan × Rp2,5 juta × 10%<br />Ilustrasi, bukan jaminan penghasilan.</p></div>
+                </div>
+                <div class="relative">
+                    <div class="relative h-[240px] xs:h-[280px] sm:h-[400px] lg:h-[430px] xl:h-[460px] overflow-hidden rounded-t-[70px] sm:rounded-t-[110px] rounded-b-2xl shadow-lg shadow-sky-950/5">
+                        <img src="/Assets/Images/affiliate-hero-person.jpg" alt="Kreator membagikan rekomendasi perjalanan melalui ponsel" width="1200" height="896" fetchpriority="high" class="business-photo object-[48%_center]" />
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#07345a]/85 to-transparent px-5 sm:px-6 pt-12 sm:pt-16 pb-6 sm:pb-10 text-white">
+                            <p class="text-[9px] sm:text-[10px] font-semibold tracking-[.15em]">BAGIKAN CERITA. DAPATKAN KOMISI.</p>
+                            <p class="mt-1.5 sm:mt-2 text-sm sm:text-base lg:text-lg font-semibold leading-snug">Rekomendasi autentik Anda,<br />berdampak nyata bagi wisata lokal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full shrink-0 border-t border-[#a9d5eb]/50 bg-white/40 backdrop-blur-xs">
+                <div class="business-container grid gap-2.5 py-3.5 sm:grid-cols-3 sm:gap-6 sm:py-5">
+                    <div v-for="(item, index) in ['Rekomendasi terkurasi & resmi', 'Komisi transparan per pesanan', 'Materi promosi & tautan siap pakai']" :key="item" class="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold text-[#315a70] sm:text-sm">
+                        <span class="text-xs font-normal text-[#678c9e]">0{{ index + 1 }}</span>
+                        <span>{{ item }}</span>
+                    </div>
                 </div>
             </div>
         </section>

@@ -1,7 +1,7 @@
 <script setup>
 import {
     BadgePercent,
-    Bell,
+    TicketPercent,
     Briefcase,
     Building2,
     ChevronDown,
@@ -39,7 +39,7 @@ const props = defineProps({
 const isMobileMenuOpen = ref(false);
 const openPopover = ref(null);
 const currentPage = usePage();
-const activeNav = computed(() => (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
+const activeNav = computed(() => currentPage.component === 'Discount' ? 'Discount' : (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
 const globalSearch = ref('');
 const notification = ref('');
 
@@ -87,7 +87,7 @@ const navItems = [
     { label: 'Cari Trip', href: typeof route === 'function' ? route('catalog') : '/cari-trip', description: 'Open trip dan private trip pilihan' },
     { label: 'Destinasi', href: typeof route === 'function' ? route('explore', 'destination') : '/explore/destination', description: 'Temukan inspirasi perjalanan di Indonesia' },
     { label: 'Kuliner Lokal', href: typeof route === 'function' ? route('explore', 'culinary') : '/explore/culinary', description: 'Produk lokal pilihan dari berbagai daerah' },
-    { label: 'Promo', href: typeof route === 'function' ? route('account.section', 'vouchers') : '/account/vouchers', description: 'Penawaran perjalanan dan produk pilihan' },
+    { label: 'Discount', href: route('discount'), description: 'Penawaran perjalanan dan produk pilihan' },
     { label: 'Cerita Perjalanan', href: typeof route === 'function' ? route('blog') : '/blog', description: 'Inspirasi dan panduan untuk perjalananmu' },
 ];
 
@@ -199,10 +199,10 @@ const openAuthModal = (mode = 'login') => {
                     <button
                         class="flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-300"
                         :class="isTransparent ? 'hover:bg-white/15 text-white' : 'hover:bg-[#edf3ff] text-slate-700'"
-                        @click="router.visit(typeof route === 'function' ? route('account.section', 'vouchers') : '/account/vouchers')"
+                        @click="router.visit(route('discount'))"
                     >
-                        <Bell class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
-                        Promo
+                        <TicketPercent class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" />
+                        Discount
                     </button>
 
                     <!-- Bisnis Dropdown Popover (Mitra Vendor & Corporate B2B) -->
@@ -455,3 +455,4 @@ const openAuthModal = (mode = 'login') => {
         </header>
     </div>
 </template>
+
