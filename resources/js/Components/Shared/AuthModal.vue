@@ -1,13 +1,19 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 import {
     ArrowLeft,
     CheckCircle2,
+    Compass,
+    Eye,
+    EyeOff,
     Lock,
     Mail,
     Phone,
     ShieldCheck,
     Sparkles,
+    User,
     X,
 } from 'lucide-vue-next';
 
@@ -22,11 +28,11 @@ const props = defineProps({
     },
     title: {
         type: String,
-        default: "Dapatkan komisi & promo menarik!",
+        default: "Masuk untuk mulai perjalananmu",
     },
     subtitle: {
         type: String,
-        default: "Yuk masuk untuk mulai jadi affiliate, dapatkan link komisi hingga 20%, dan cairkan saldo dengan mudah!",
+        default: "Simpan trip, kelola pesanan, dan nikmati promo eksklusif TapakLokal.",
     },
     recentlyUsed: {
         type: String,
@@ -39,24 +45,43 @@ const emit = defineEmits(['close', 'login-success', 'guest-continue']);
 const screen = ref('social'); // 'social' | 'credentials' | 'register'
 const identifier = ref('');
 const password = ref('');
+const name = ref('');
+const passwordConfirmation = ref('');
+const showPassword = ref(false);
 const notice = ref('');
+const errorMessage = ref('');
 const isLoading = ref(false);
 
 watch(
     () => props.open,
     (isOpen) => {
         if (isOpen) {
-            screen.value = 'social';
+            screen.value = props.mode === 'register' ? 'register' : 'social';
             identifier.value = '';
             password.value = '';
+            name.value = '';
+            passwordConfirmation.value = '';
             notice.value = '';
+            errorMessage.value = '';
             isLoading.value = false;
+        }
+    }
+);
+
+watch(
+    () => props.mode,
+    (newMode) => {
+        if (newMode === 'register') {
+            screen.value = 'register';
+        } else if (screen.value === 'register') {
+            screen.value = 'social';
         }
     }
 );
 
 const handleSocialLogin = (provider) => {
     isLoading.value = true;
+    errorMessage.value = '';
     notice.value = `Menghubungkan ke ${provider}...`;
     setTimeout(() => {
         isLoading.value = false;
@@ -64,21 +89,80 @@ const handleSocialLogin = (provider) => {
         setTimeout(() => {
             emit('login-success', { provider });
             emit('close');
-        }, 1200);
-    }, 900);
+            router.visit(typeof route === 'function' ? route('account') : '/account');
+        }, 1000);
+    }, 800);
 };
 
-const handleManualSubmit = () => {
+const handleManualLogin = () => {
     isLoading.value = true;
-    notice.value = 'Memproses autentikasi...';
-    setTimeout(() => {
-        isLoading.value = false;
-        notice.value = 'Berhasil masuk! Selamat datang kembali.';
-        setTimeout(() => {
-            emit('login-success', { identifier: identifier.value });
-            emit('close');
-        }, 1200);
-    }, 900);
+    errorMessage.value = '';
+    notice.value = '';
+
+    const loginRoute = typeof route === 'function' ? route('login.store') : '/login';
+
+    router.post(
+        loginRoute,
+        {
+            email: identifier.value,
+            password: password.value,
+            remember: true,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isLoading.value = false;
+                notice.value = 'Berhasil masuk! Mengalihkan...';
+                emit('login-success', { identifier: identifier.value });
+                setTimeout(() => {
+                    emit('close');
+                }, 500);
+            },
+            onError: (errors) => {
+                isLoading.value = false;
+                errorMessage.value = errors.email || errors.password || 'Email atau kata sandi tidak sesuai.';
+            },
+            onFinish: () => {
+                isLoading.value = false;
+            },
+        }
+    );
+};
+
+const handleRegisterSubmit = () => {
+    isLoading.value = true;
+    errorMessage.value = '';
+    notice.value = '';
+
+    const registerRoute = typeof route === 'function' ? route('register.store') : '/register';
+
+    router.post(
+        registerRoute,
+        {
+            name: name.value,
+            email: identifier.value,
+            password: password.value,
+            password_confirmation: passwordConfirmation.value,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isLoading.value = false;
+                notice.value = 'Pendaftaran berhasil! Mengalihkan ke akun...';
+                emit('login-success', { identifier: identifier.value });
+                setTimeout(() => {
+                    emit('close');
+                }, 500);
+            },
+            onError: (errors) => {
+                isLoading.value = false;
+                errorMessage.value = errors.name || errors.email || errors.password || 'Pendaftaran gagal. Periksa data Anda.';
+            },
+            onFinish: () => {
+                isLoading.value = false;
+            },
+        }
+    );
 };
 
 const continueAsGuest = () => {
@@ -133,6 +217,9 @@ const continueAsGuest = () => {
                                     >
                                         {{ title }}
                                     </h2>
+                                    <p class="mt-1 text-xs text-slate-500 line-clamp-2">
+                                        {{ subtitle }}
+                                    </p>
                                 </div>
 
                                 <!-- Travel Illustration Graphic (Mountain & Traveler Backpack) -->
@@ -156,20 +243,14 @@ const continueAsGuest = () => {
                                         <rect x="95" y="30" width="14" height="2.5" rx="1" fill="#0284c7"/>
                                         <rect x="95" y="34" width="9" height="2" rx="1" fill="#94a3b8"/>
                                         
-                                        <!-- Character Climbing/Jumping into Phone -->
-                                        <!-- Head & Cap -->
+                                        <!-- Character Jumping into Phone -->
                                         <circle cx="70" cy="36" r="6" fill="#fbcfe8"/>
                                         <path d="M64 34C64 31 67 30 71 30C75 30 77 32 78 34H64Z" fill="#10b981"/>
-                                        <!-- Hoodie Green -->
                                         <path d="M64 42C64 40 66 38 70 38C74 38 76 40 76 42L78 56H62L64 42Z" fill="#22c55e"/>
-                                        <!-- Backpack Orange -->
                                         <path d="M57 44C57 41.8 58.8 40 61 40H63V52H61C58.8 52 57 50.2 57 48V44Z" fill="#f97316"/>
-                                        <!-- Arms outstretched to phone -->
                                         <path d="M74 42L86 34" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/>
-                                        <!-- Legs jumping -->
                                         <path d="M66 56L60 68" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
                                         <path d="M74 56L84 66" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
-                                        <!-- Orange Shoes -->
                                         <ellipse cx="57" cy="70" rx="4" ry="2.5" fill="#f97316"/>
                                         <ellipse cx="87" cy="68" rx="4.5" ry="2.5" fill="#f97316"/>
                                     </svg>
@@ -199,77 +280,55 @@ const continueAsGuest = () => {
                                     <!-- Left Google Icon & Divider -->
                                     <span class="absolute inset-y-0 left-0 flex w-[66px] items-center justify-center" aria-hidden="true">
                                         <svg class="size-[22px] shrink-0" viewBox="0 0 24 24">
-                                            <path
-                                                fill="#4285F4"
-                                                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
-                                            />
-                                            <path
-                                                fill="#34A853"
-                                                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"
-                                            />
-                                            <path
-                                                fill="#FBBC05"
-                                                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15Z"
-                                            />
-                                            <path
-                                                fill="#EA4335"
-                                                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"
-                                            />
+                                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+                                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"/>
+                                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.04 0 12s.45 3.82 1.25 5.42l4.03-3.15Z"/>
+                                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/>
                                         </svg>
                                         <span class="absolute right-0 h-[30px] w-px bg-[#f1f1f1]"></span>
                                     </span>
-
-                                    <!-- Centered Google Label -->
                                     <span>Google</span>
                                 </button>
                             </div>
 
-                            <!-- 2. NO. HP / EMAIL & FACEBOOK BUTTONS (2 Columns) -->
+                            <!-- 2. NO. HP / EMAIL & FACEBOOK BUTTONS -->
                             <div class="mt-3.5 grid grid-cols-2 gap-3">
-                                <!-- No. HP / Email Button -->
                                 <button
                                     type="button"
                                     class="flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm font-bold text-slate-800 shadow-xs transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/90 active:scale-[0.99] cursor-pointer"
                                     :disabled="isLoading"
                                     @click="screen = 'credentials'"
                                 >
-                                    <!-- Phone/Mail Icon -->
                                     <Phone class="size-4 text-[#0088ff] shrink-0" />
                                     <span>No. HP / Email</span>
                                 </button>
 
-                                <!-- Facebook Button -->
                                 <button
                                     type="button"
                                     class="flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm font-bold text-slate-800 shadow-xs transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/90 active:scale-[0.99] cursor-pointer"
                                     :disabled="isLoading"
                                     @click="handleSocialLogin('Facebook')"
                                 >
-                                    <!-- Facebook Official Blue Logo -->
                                     <svg class="size-4.5 shrink-0" viewBox="0 0 24 24">
                                         <circle cx="12" cy="12" r="12" fill="#1877F2"/>
-                                        <path
-                                            d="M15.12 12.445l.405-2.64h-2.532V8.09c0-.726.355-1.433 1.496-1.433h1.157V4.41s-1.05-.18-2.054-.18c-2.096 0-3.465 1.27-3.465 3.57v1.995H7.817v2.64h2.31V19.5c.463.073.936.111 1.417.111s.954-.038 1.417-.111v-7.055h2.16z"
-                                            fill="#FFFFFF"
-                                        />
+                                        <path d="M15.12 12.445l.405-2.64h-2.532V8.09c0-.726.355-1.433 1.496-1.433h1.157V4.41s-1.05-.18-2.054-.18c-2.096 0-3.465 1.27-3.465 3.57v1.995H7.817v2.64h2.31V19.5c.463.073.936.111 1.417.111s.954-.038 1.417-.111v-7.055h2.16z" fill="#FFFFFF"/>
                                     </svg>
                                     <span>Facebook</span>
                                 </button>
                             </div>
 
-                            <!-- 3. OTHER OPTIONS LINK -->
-                            <div class="mt-5 text-center">
-                                <button
-                                    type="button"
-                                    class="text-sm font-extrabold text-[#0088ff] hover:text-[#0066cc] transition cursor-pointer"
-                                    @click="screen = 'credentials'"
-                                >
-                                    Pilihan lainnya
-                                </button>
-
-                                <p class="mt-2 text-xs font-medium text-slate-500 leading-relaxed max-w-xs mx-auto">
-                                    Harga lebih hemat dan komisi melimpah menunggumu. Buka semua fiturnya dengan masuk!
-                                </p>
+                            <!-- 3. REGISTER & OTHER OPTIONS LINK -->
+                            <div class="mt-5 text-center space-y-2">
+                                <div>
+                                    <span class="text-xs text-slate-500">Belum punya akun? </span>
+                                    <button
+                                        type="button"
+                                        class="text-xs sm:text-sm font-extrabold text-[#0088ff] hover:text-[#0066cc] transition cursor-pointer"
+                                        @click="screen = 'register'"
+                                    >
+                                        Daftar Akun Baru
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Status Notice / Feedback -->
@@ -290,8 +349,8 @@ const continueAsGuest = () => {
                                 TapakLokal.
                             </p>
 
-                            <!-- 5. BROWSE AS A GUEST / GUEST ACTION -->
-                            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                            <!-- 5. BROWSE AS A GUEST -->
+                            <div class="mt-5 pt-4 border-t border-slate-100 text-center">
                                 <button
                                     type="button"
                                     class="text-sm font-bold text-[#0088ff] hover:text-[#0066cc] hover:underline transition cursor-pointer"
@@ -303,15 +362,14 @@ const continueAsGuest = () => {
                         </div>
                     </template>
 
-                    <!-- SCREEN 2: EMAIL / PHONE NUMBER FORM -->
-                    <template v-else>
-                        <!-- Header with Back Button -->
+                    <!-- SCREEN 2: EMAIL / PHONE NUMBER LOGIN FORM -->
+                    <template v-else-if="screen === 'credentials'">
                         <div class="flex items-center gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
                             <button
                                 type="button"
                                 class="flex size-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                                 aria-label="Kembali"
-                                @click="screen = 'social'; notice = ''"
+                                @click="screen = 'social'; errorMessage = ''; notice = ''"
                             >
                                 <ArrowLeft class="size-5" />
                             </button>
@@ -320,20 +378,28 @@ const continueAsGuest = () => {
                                     TAPAKLOKAL
                                 </p>
                                 <h2 class="text-base font-extrabold text-[#0f172a]">
-                                    Masuk dengan Email / No HP
+                                    Masuk ke Akun Anda
                                 </h2>
                             </div>
                         </div>
 
-                        <form class="p-6 sm:p-8" @submit.prevent="handleManualSubmit">
+                        <form class="p-6 sm:p-8" @submit.prevent="handleManualLogin">
                             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                Masukkan email atau nomor WhatsApp yang terdaftar untuk mengakses panel affiliate kamu.
+                                Masukkan email atau nomor akun terdaftar untuk melanjutkan.
                             </p>
 
+                            <!-- Error Alert -->
+                            <div
+                                v-if="errorMessage"
+                                class="mt-3 rounded-xl bg-red-50 border border-red-200 p-3 text-xs font-semibold text-red-600"
+                            >
+                                {{ errorMessage }}
+                            </div>
+
                             <!-- Input Identifier -->
-                            <div class="mt-5">
+                            <div class="mt-4">
                                 <label class="block text-xs font-bold text-slate-700">
-                                    Nomor HP atau Email
+                                    Email atau No. HP
                                 </label>
                                 <div class="mt-1.5 flex min-h-[46px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
                                     <Phone v-if="!identifier.includes('@')" class="size-4 text-[#0088ff] shrink-0" />
@@ -342,33 +408,43 @@ const continueAsGuest = () => {
                                         v-model="identifier"
                                         type="text"
                                         required
-                                        placeholder="0812xxxx atau email@domain.com"
+                                        placeholder="contoh@email.com atau 0812xxxx"
                                         class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                                     />
                                 </div>
                             </div>
 
                             <!-- Input Password -->
-                            <div class="mt-4">
-                                <label class="block text-xs font-bold text-slate-700">
-                                    Kata Sandi
-                                </label>
+                            <div class="mt-3.5">
+                                <div class="flex items-center justify-between">
+                                    <label class="block text-xs font-bold text-slate-700">
+                                        Kata Sandi
+                                    </label>
+                                </div>
                                 <div class="mt-1.5 flex min-h-[46px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
                                     <Lock class="size-4 text-[#0088ff] shrink-0" />
                                     <input
                                         v-model="password"
-                                        type="password"
+                                        :type="showPassword ? 'text' : 'password'"
                                         required
-                                        placeholder="Masukkan kata sandi akun"
+                                        placeholder="Masukkan kata sandi"
                                         class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                                     />
+                                    <button
+                                        type="button"
+                                        class="text-slate-400 hover:text-slate-600 transition"
+                                        @click="showPassword = !showPassword"
+                                    >
+                                        <EyeOff v-if="showPassword" class="size-4" />
+                                        <Eye v-else class="size-4" />
+                                    </button>
                                 </div>
                             </div>
 
                             <!-- Submit Button -->
                             <button
                                 type="submit"
-                                class="mt-6 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[#0088ff] hover:bg-[#0074d9] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer disabled:opacity-60"
+                                class="mt-5 flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0088ff] hover:bg-[#0074d9] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer disabled:opacity-60"
                                 :disabled="isLoading"
                             >
                                 <span v-if="!isLoading">Masuk Sekarang</span>
@@ -381,20 +457,130 @@ const continueAsGuest = () => {
                             <!-- Notice Feedback -->
                             <p
                                 v-if="notice"
-                                class="mt-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2.5 text-xs font-semibold text-emerald-700"
+                                class="mt-3 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2 text-xs font-semibold text-emerald-700"
                             >
                                 <CheckCircle2 class="size-4 shrink-0" />
                                 <span>{{ notice }}</span>
                             </p>
 
-                            <!-- Toggle Back to Social -->
-                            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                            <!-- Switch to Register -->
+                            <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+                                <button
+                                    type="button"
+                                    class="text-slate-500 hover:text-[#0088ff] transition cursor-pointer"
+                                    @click="screen = 'social'"
+                                >
+                                    Pilihan lain
+                                </button>
+                                <button
+                                    type="button"
+                                    class="text-[#0088ff] hover:underline cursor-pointer"
+                                    @click="screen = 'register'"
+                                >
+                                    Daftar Akun Baru
+                                </button>
+                            </div>
+                        </form>
+                    </template>
+
+                    <!-- SCREEN 3: REGISTRATION FORM -->
+                    <template v-else-if="screen === 'register'">
+                        <div class="flex items-center gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+                            <button
+                                type="button"
+                                class="flex size-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                                aria-label="Kembali"
+                                @click="screen = 'social'; errorMessage = ''; notice = ''"
+                            >
+                                <ArrowLeft class="size-5" />
+                            </button>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#0088ff]">
+                                    DAFTAR AKUN BARU
+                                </p>
+                                <h2 class="text-base font-extrabold text-[#0f172a]">
+                                    Mulai Petualanganmu di TapakLokal
+                                </h2>
+                            </div>
+                        </div>
+
+                        <form class="p-6 sm:p-8" @submit.prevent="handleRegisterSubmit">
+                            <!-- Error Alert -->
+                            <div
+                                v-if="errorMessage"
+                                class="mb-3 rounded-xl bg-red-50 border border-red-200 p-3 text-xs font-semibold text-red-600"
+                            >
+                                {{ errorMessage }}
+                            </div>
+
+                            <!-- Input Name -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700">Nama Lengkap</label>
+                                <div class="mt-1.5 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
+                                    <User class="size-4 text-[#0088ff] shrink-0" />
+                                    <input
+                                        v-model="name"
+                                        type="text"
+                                        required
+                                        placeholder="Nama lengkap Anda"
+                                        class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Input Email -->
+                            <div class="mt-3">
+                                <label class="block text-xs font-bold text-slate-700">Alamat Email</label>
+                                <div class="mt-1.5 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
+                                    <Mail class="size-4 text-[#0088ff] shrink-0" />
+                                    <input
+                                        v-model="identifier"
+                                        type="email"
+                                        required
+                                        placeholder="email@domain.com"
+                                        class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Input Password -->
+                            <div class="mt-3">
+                                <label class="block text-xs font-bold text-slate-700">Kata Sandi (Min. 8 karakter)</label>
+                                <div class="mt-1.5 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
+                                    <Lock class="size-4 text-[#0088ff] shrink-0" />
+                                    <input
+                                        v-model="password"
+                                        :type="showPassword ? 'text' : 'password'"
+                                        required
+                                        minlength="8"
+                                        placeholder="Kata sandi baru"
+                                        class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button
+                                type="submit"
+                                class="mt-5 flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0088ff] hover:bg-[#0074d9] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer disabled:opacity-60"
+                                :disabled="isLoading"
+                            >
+                                <span v-if="!isLoading">Daftar Sekarang</span>
+                                <span v-else class="inline-flex items-center gap-2">
+                                    <Sparkles class="size-4 animate-spin" />
+                                    Mendaftarkan...
+                                </span>
+                            </button>
+
+                            <!-- Toggle Back to Login -->
+                            <div class="mt-5 pt-4 border-t border-slate-100 text-center">
+                                <span class="text-xs text-slate-500">Sudah punya akun? </span>
                                 <button
                                     type="button"
                                     class="text-xs sm:text-sm font-bold text-[#0088ff] hover:underline cursor-pointer"
-                                    @click="screen = 'social'"
+                                    @click="screen = 'credentials'"
                                 >
-                                    Kembali ke pilihan login cepat
+                                    Masuk di sini
                                 </button>
                             </div>
                         </form>

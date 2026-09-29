@@ -21,17 +21,24 @@ use Inertia\Response;
 
 class AuthController extends Controller
 {
-    public function create(Request $request): Response
+    public function create(Request $request): RedirectResponse
     {
         if ($request->filled('trip')) {
             $request->validate(['trip' => ['integer']]);
             $trip = Trip::where('status', 'published')->find($request->input('trip'));
             if ($trip) {
-                $request->session()->put('url.intended', route('trips.show', [$trip->type, $trip->slug]));
+                return redirect()->route('trips.show', [$trip->type, $trip->slug, 'auth' => 'login']);
             }
         }
 
-        return Inertia::render('Auth/Login');
+        $intended = $request->session()->get('url.intended');
+        if ($intended && ! Str::contains($intended, '/login')) {
+            $separator = Str::contains($intended, '?') ? '&' : '?';
+
+            return redirect($intended.$separator.'auth=login');
+        }
+
+        return redirect('/?auth=login');
     }
 
     public function adminCreate(): Response
@@ -131,7 +138,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return to_route('login');
+        return redirect('/');
     }
 
     public function forgot(Request $request): RedirectResponse
@@ -153,6 +160,6 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => __($status)]);
         }
 
-        return to_route('login')->with('success', 'Kata sandi berhasil diperbarui.');
+        return redirect('/?auth=login')->with('success', 'Kata sandi berhasil diperbarui.');
     }
 }

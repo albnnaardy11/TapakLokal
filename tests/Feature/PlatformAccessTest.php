@@ -24,7 +24,7 @@ class PlatformAccessTest extends TestCase
 
     public function test_dedicated_login_pages_render_successfully(): void
     {
-        $this->get('/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/Login'));
+        $this->get('/login')->assertRedirect('/?auth=login');
         $this->get('/admin/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/AdminLogin'));
         $this->get('/vendor/login')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Auth/VendorLogin'));
     }
