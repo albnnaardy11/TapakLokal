@@ -39,7 +39,7 @@ const props = defineProps({
 const isMobileMenuOpen = ref(false);
 const openPopover = ref(null);
 const currentPage = usePage();
-const activeNav = computed(() => currentPage.component === 'Discount' ? 'Discount' : (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
+const activeNav = computed(() => (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
 const globalSearch = ref('');
 const notification = ref('');
 
@@ -85,9 +85,7 @@ const selectLocale = (loc) => {
 const navItems = [
     { label: 'Beranda', href: '/', description: 'Kembali ke halaman utama' },
     { label: 'Cari Trip', href: typeof route === 'function' ? route('catalog') : '/cari-trip', description: 'Open trip dan private trip pilihan' },
-    { label: 'Destinasi', href: typeof route === 'function' ? route('explore', 'destination') : '/explore/destination', description: 'Temukan inspirasi perjalanan di Indonesia' },
     { label: 'Kuliner Lokal', href: typeof route === 'function' ? route('explore', 'culinary') : '/explore/culinary', description: 'Produk lokal pilihan dari berbagai daerah' },
-    { label: 'Discount', href: route('discount'), description: 'Penawaran perjalanan dan produk pilihan' },
     { label: 'Cerita Perjalanan', href: typeof route === 'function' ? route('blog') : '/blog', description: 'Inspirasi dan panduan untuk perjalananmu' },
 ];
 
