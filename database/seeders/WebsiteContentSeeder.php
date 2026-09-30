@@ -60,11 +60,50 @@ class WebsiteContentSeeder extends Seeder
                 ['homepage', 'hero', 'Jelajahi Indonesia Secara Otentik.', 'Temukan destinasi dan pengalaman bersama komunitas lokal.', $image('1537996194471-e657df975ab4')],
                 ['homepage', 'promo-merdeka', 'Merdeka Explore', 'Promo spesial kemerdekaan TapakLokal.', '/Assets/Images/benner/Benner-17an.svg'],
             ];
-            foreach ([['Yogyakarta', '1584810359583-96fc3448beaa'], ['Bali', '1537996194471-e657df975ab4'], ['Lombok', '1518548419970-58e3b4079ab2'], ['Kepulauan Seribu', '1516690561799-46d8f74f9abf'], ['Jawa Barat', '1501179691627-eeaa65ea017c'], ['Raja Ampat', '1516690561799-46d8f74f9abf'], ['Pulau Komodo', '1518548419970-58e3b4079ab2']] as [$name, $photo]) {
-                $pages[] = ['destination', 'destinasi-'.Str::slug($name), $name, 'Jelajahi keindahan '.$name.' bersama masyarakat dan pemandu lokal.', $image($photo)];
+            foreach ([
+                ['Labuan Bajo', '1516690561799-46d8f74f9abf', 'Gerbang wisata bahari Taman Nasional Komodo, Pulau Padar, dan pantai pink Flores.'],
+                ['Gunung Bromo', '1588668214407-6ea9a6d8c272', 'Lautan pasir vulkanik dan panorama kawah magis Bromo Tengger Semeru.'],
+                ['Bali', '1537996194471-e657df975ab4', 'Keindahan pura, pesisir tenang, dan kekayaan budaya adiluhung Pulau Dewata.'],
+                ['Yogyakarta', '1584810359583-96fc3448beaa', 'Jantung kebudayaan Jawa dengan keraton, candi megah, dan kehangatan warga lokal.'],
+                ['Lombok', '1518548419970-58e3b4079ab2', 'Pesisir berpasir putih, bukit eksotis, dan keanggunan Gunung Rinjani.'],
+                ['Raja Ampat', '1516690561799-46d8f74f9abf', 'Gugusan pulau karang karst dan terumbu karang terindah di dunia.'],
+                ['Pulau Komodo', '1518548419970-58e3b4079ab2', 'Habitat asli satwa purba komodo dan keajaiban savana tepi laut NTT.'],
+                ['Tana Toraja', '1544551763-46a013bb70d5', 'Kekayaan budaya megalitikum, rumah Tongkonan, dan perbukitan Sulawesi Selatan.'],
+                ['Kepulauan Derawan', '1507525428034-b723cf961d3e', 'Surga bawah laut penyu hijau dan danau ubur-ubur tanpa sengat Kakaban.'],
+                ['Banda Neira', '1518548419970-58e3b4079ab2', 'Sejarah kejayaan rempah pala berpadu keindahan laut biru Maluku.'],
+                ['Kepulauan Seribu', '1516690561799-46d8f74f9abf', 'Pelarian pulau tropis dekat ibukota dengan pasir putih dan biota laut.'],
+                ['Jawa Barat', '1501179691627-eeaa65ea017c', 'Hamparan kebun teh berkabut, kawah belerang, dan jalur alam pegunungan Sunda.'],
+            ] as [$name, $photo, $desc]) {
+                $pages[] = ['destination', 'destinasi-'.Str::slug($name), $name, $desc, $image($photo)];
             }
             foreach ([['Pulau Pramuka', '1516690561799-46d8f74f9abf'], ['Pulau Pari', '1518548419970-58e3b4079ab2'], ['Pulau Tidung', '1546026423-cc4642628d2b'], ['Pulau Harapan', '1501179691627-eeaa65ea017c'], ['Pulau Kelapa', '1537996194471-e657df975ab4']] as [$name, $photo]) {
                 $pages[] = ['destination', 'destinasi-'.Str::slug($name), $name, 'Kab. Administrasi Kepulauan Seribu', $image($photo)];
+            }
+            foreach ([
+                ['Ayam Betutu Gilimanuk', '1537996194471-e657df975ab4', 'Cita rasa khas rempah base genep Bali dengan ayam empuk beraroma sedap.'],
+                ['Gudeg Yu Djum & Kopi Jos', '1584810359583-96fc3448beaa', 'Kuliner legendaris nangka manis gurih khas Yogyakarta dipadu sensasi arang membara.'],
+                ['Ayam Taliwang & Plecing Kangkung', '1518548419970-58e3b4079ab2', 'Kelezatan pedas gurih khas Lombok dengan sambal terasi bakar yang autentik.'],
+                ['Seafood Segar & Ikan Kuah Asam Labuan Bajo', '1516690561799-46d8f74f9abf', 'Hasil tangkapan segar nelayan Flores dengan bumbu asam segar rempah nusantara.'],
+                ['Coto Makassar & Konro Bakar', '1544551763-46a013bb70d5', 'Kuah rempah kacang kental khas tanah Daeng dengan iga bakar empuk menggoda.'],
+                ['Rawon Daging Sapi Kluwek', '1588668214407-6ea9a6d8c272', 'Sup daging berkuah hitam pekat dari rempah kluwek khas Jawa Timur yang gurih legendaris.'],
+            ] as [$name, $photo, $desc]) {
+                $pages[] = ['culinary', 'kuliner-'.Str::slug($name), $name, $desc, $image($photo)];
+            }
+            foreach ([
+                ['Danau Paisu Pok Banggai', '1507525428034-b723cf961d3e', 'Danau air tawar sejernih kaca di pedalaman Banggai Kepulauan, Sulawesi Tengah.'],
+                ['Desa Adat Wae Rebo', '1516690561799-46d8f74f9abf', 'Desa di atas awan dengan 7 rumah kerucut Mbaru Niang di pedalaman Manggarai Barat, Flores.'],
+                ['Air Terjun Tumpak Sewu', '1588668214407-6ea9a6d8c272', 'Tirai air terjun spektakuler mirip Niagara di kaki Gunung Semeru, Lumajang.'],
+                ['Bukit Ollon Tana Toraja', '1544551763-46a013bb70d5', 'Hamparan bukit teletubbies dan sungai jernih di lembah terpencil Toraja.'],
+            ] as [$name, $photo, $desc]) {
+                $pages[] = ['hidden-gem', 'hidden-gem-'.Str::slug($name), $name, $desc, $image($photo)];
+            }
+            foreach ([
+                ['Kain Tenun Ikat Asli Flores', '1516690561799-46d8f74f9abf', 'Karya seni tenun tangan masyarakat lokal dengan pewarna alami rempah nusantara.'],
+                ['Kopi Arabika Toraja & Flores Bajawa', '1544551763-46a013bb70d5', 'Biji kopi pilihan kualitas ekspor dari dataran tinggi vulkanik Indonesia.'],
+                ['Batik Tulis Tradisional Yogyakarta', '1584810359583-96fc3448beaa', 'Kain batik dengan motif klasik filosofis buatan perajin desa wisata lokal.'],
+                ['Pie Susu & Kopi Bali Asli', '1537996194471-e657df975ab4', 'Camilan renyah manis dan aroma kopi khas Pulau Dewata untuk buah tangan terbaik.'],
+            ] as [$name, $photo, $desc]) {
+                $pages[] = ['souvenir', 'souvenir-'.Str::slug($name), $name, $desc, $image($photo)];
             }
             foreach ($pages as $position => [$type, $slug, $title, $excerpt, $photo]) {
                 $this->seedRecord(ContentPage::class, 'page:'.$slug, ['slug' => $slug], ['type' => $type, 'title' => $title, 'excerpt' => $excerpt, 'body' => $excerpt, 'image_url' => $photo, 'status' => 'published', 'position' => $position, 'published_at' => now()]);

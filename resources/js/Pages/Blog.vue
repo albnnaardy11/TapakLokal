@@ -1,18 +1,13 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
     ArrowRight,
     ArrowUpRight,
     Search,
-    MapPin,
-    BookOpen,
     Compass,
-    Backpack,
-    Check,
     SlidersHorizontal,
-    HeartHandshake,
 } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
@@ -26,10 +21,6 @@ const props = defineProps({
         default: () => ({ data: [] }),
     },
 });
-
-const query = ref('');
-const category = ref('Semua cerita');
-const checklist = ref([]);
 
 const image = (id, width = 900) =>
     `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${width}&q=85`;
@@ -52,24 +43,8 @@ const library = computed(() =>
               }))
 );
 
-const categories = computed(() => [
-    'Semua cerita',
-    ...new Set(library.value.map(item => item.category)),
-]);
-
 const featured = computed(() => library.value.slice(0, 3));
-
-const filtered = computed(() =>
-    library.value.filter(
-        item =>
-            (category.value === 'Semua cerita' || category.value === item.category) &&
-            `${item.title} ${item.excerpt} ${item.category}`
-                .toLowerCase()
-                .includes(query.value.trim().toLowerCase())
-    )
-);
-
-const displayedArticles = computed(() => filtered.value.slice(0, 3));
+const displayedArticles = computed(() => library.value.slice(0, 3));
 
 const date = value =>
     value
@@ -80,31 +55,12 @@ const date = value =>
           })
         : 'Bacaan pilihan';
 
-const localStory = articles.find(item => item.id === 'local');
-
 const destinations = [
     { name: 'Bali', subtitle: 'Budaya, pesisir & ritme yang tenang', image: '1537996194471-e657df975ab4' },
     { name: 'Lombok', subtitle: 'Dari kaki gunung sampai tepi laut', image: '1539367628448-4bc5c9d171c8' },
     { name: 'Labuan Bajo', subtitle: 'Pulau-pulau kecil, cerita besar', image: '1516690561799-46d8f74f9abf' },
     { name: 'Jawa', subtitle: 'Jalur alam & rasa yang beragam', image: '1464822759023-fed622ff2c3b' },
 ];
-
-const preparations = [
-    { title: 'Tentukan ritme perjalanan', text: 'Pilih durasi, aktivitas, dan waktu istirahat yang nyaman.' },
-    { title: 'Buat ruang di anggaran', text: 'Catat transportasi, penginapan, makan, dan dana cadangan.' },
-    { title: 'Bawa yang benar-benar perlu', text: 'Sesuaikan perlengkapan dengan cuaca dan medan tujuan.' },
-];
-
-const togglePreparation = index => {
-    checklist.value = checklist.value.includes(index)
-        ? checklist.value.filter(item => item !== index)
-        : [...checklist.value, index];
-};
-
-const reset = () => {
-    query.value = '';
-    category.value = 'Semua cerita';
-};
 </script>
 
 <template>
@@ -159,36 +115,9 @@ const reset = () => {
                 </div>
             </section>
 
-            <!-- Search & Filter Section -->
+            <!-- Content Sections -->
             <div id="cerita-perjalanan" class="scroll-mt-32">
-                <section aria-label="Temukan bacaan" class="mt-8 border-b border-slate-200 pb-6 sm:mt-10">
-                    <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                        <div class="flex items-center gap-2 text-sm font-bold text-[#173654]">
-                            <BookOpen class="size-5 text-[#1389e8]" />
-                            Temukan cerita untuk perjalananmu
-                        </div>
-                        <label class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 md:w-80">
-                            <Search class="size-4 shrink-0 text-[#1389e8]" />
-                            <span class="sr-only">Cari judul atau topik artikel</span>
-                            <input v-model="query" type="search" placeholder="Cari destinasi, cerita, atau tips..." class="min-w-0 flex-1 bg-transparent text-xs outline-none" />
-                        </label>
-                    </div>
-                    <div class="mt-5 flex gap-2 overflow-x-auto pb-1" aria-label="Kategori artikel">
-                        <button
-                            v-for="item in categories"
-                            :key="item"
-                            :aria-pressed="category === item"
-                            class="shrink-0 rounded-full border px-4 py-2.5 text-xs font-semibold transition-colors cursor-pointer"
-                            :class="category === item ? 'border-[#118bea] bg-[#118bea] text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-sky-300 hover:text-sky-700'"
-                            @click="category = item"
-                        >
-                            {{ item }}
-                        </button>
-                    </div>
-                </section>
-
-                <template v-if="!query && category === 'Semua cerita'">
-                    <!-- Editor's Pick Section -->
+                <!-- Editor's Pick Section -->
                     <section class="mt-10 sm:mt-12" aria-labelledby="editor-heading">
                         <div class="mb-5 flex items-end justify-between gap-4">
                             <div>
@@ -219,7 +148,27 @@ const reset = () => {
                                         <span class="text-[10px] font-bold text-[#1389e8]">{{ article.category }}</span>
                                         <h3 class="mt-2 text-base font-extrabold leading-snug group-hover:text-[#1389e8]">{{ article.title }}</h3>
                                         <p class="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{{ article.excerpt }}</p>
-                                        <span class="mt-auto flex items-center gap-2 pt-4 text-[10px] font-bold text-[#1389e8]">Baca selengkapnya <ArrowRight class="size-3.5" /></span>
+                                        <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+                                            <span class="font-medium">{{ date(article.published_at) }}</span>
+                                            <div
+                                                class="inline-flex items-center overflow-hidden rounded-full bg-[#edf5ff] text-[#1389e8] shadow-xs transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[#1389e8] group-hover:text-white group-hover:shadow-[0_4px_16px_rgba(19,137,232,0.35)]"
+                                            >
+                                                <div
+                                                    class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grid-cols-[1fr]"
+                                                >
+                                                    <div class="overflow-hidden">
+                                                        <span
+                                                            class="block whitespace-nowrap pl-3.5 pr-1 text-[11px] font-bold opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 group-hover:delay-100"
+                                                        >
+                                                            Baca artikel
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <span class="flex size-7 items-center justify-center shrink-0">
+                                                    <ArrowUpRight class="size-3.5 stroke-[2.2] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-45" />
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </Link>
                                 <div v-if="featured.length === 1" class="flex flex-col justify-center rounded-xl border border-sky-100 bg-sky-50 p-8">
@@ -239,7 +188,6 @@ const reset = () => {
                                 <h2 id="regions-heading" class="text-2xl font-extrabold tracking-tight">Mulai dari tempat yang kamu impikan</h2>
                                 <p class="mt-2 text-xs leading-5 text-slate-500">Kenali suasananya. Temukan alasan untuk berangkat.</p>
                             </div>
-                            <MapPin class="hidden size-6 text-[#1389e8] sm:block" />
                         </div>
                         <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                             <Link v-for="destination in destinations" :key="destination.name" :href="route('explore', { type: 'destination', q: destination.name })" class="group relative isolate flex min-h-56 flex-col justify-end overflow-hidden rounded-xl bg-slate-800 p-4 sm:min-h-64 sm:p-5">
@@ -254,46 +202,12 @@ const reset = () => {
                         </div>
                     </section>
 
-                    <!-- Travel Preparation Section -->
-                    <section class="mt-12 grid gap-7 rounded-2xl border border-[#dcecf9] bg-[#eef7ff] p-6 sm:mt-16 sm:p-8 lg:grid-cols-[0.85fr_1.7fr]" aria-labelledby="prepare-heading">
-                        <div>
-                            <span class="inline-flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#1389e8]"><Backpack class="size-4" /> CATATAN SEBELUM BERANGKAT</span>
-                            <h2 id="prepare-heading" class="mt-3 text-2xl font-extrabold leading-tight tracking-tight">Rencana rapi.<br />Liburan lebih santai.</h2>
-                            <p class="mt-3 text-xs leading-6 text-slate-500">Tandai yang sudah kamu siapkan. Checklist ini disimpan selama halaman terbuka.</p>
-                            <span class="mt-4 inline-block text-xs font-bold text-[#1389e8]" role="status">{{ checklist.length }} dari 3 persiapan selesai</span>
-                        </div>
-                        <div class="grid gap-3 sm:grid-cols-3">
-                            <button type="button" :aria-pressed="checklist.includes(index)" @click="togglePreparation(index)" v-for="(item, index) in preparations" :key="item.title" class="relative cursor-pointer rounded-xl border bg-white p-5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-sky-500" :class="checklist.includes(index) ? 'border-sky-400' : 'border-white'">
-                                <span class="flex size-8 items-center justify-center rounded-full border border-sky-200 text-xs font-bold text-sky-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-sky-500">
-                                    <Check v-if="checklist.includes(index)" class="size-4" />
-                                    <template v-else>0{{ index + 1 }}</template>
-                                </span>
-                                <h3 class="mt-5 text-sm font-bold leading-5">{{ item.title }}</h3>
-                                <p class="mt-2 text-[11px] leading-5 text-slate-500">{{ item.text }}</p>
-                            </button>
-                        </div>
-                    </section>
-
-                    <!-- Local Story Spotlight Section -->
-                    <section class="mt-12 grid overflow-hidden rounded-2xl border border-slate-200 bg-white sm:mt-16 md:grid-cols-2" aria-labelledby="local-heading">
-                        <ProgressiveImage :src="image(localStory.image)" :alt="localStory.title" rounded="rounded-none" class="min-h-64 md:min-h-80" />
-                        <div class="flex flex-col justify-center p-6 sm:p-9">
-                            <span class="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#1389e8]"><HeartHandshake class="size-4" /> LEBIH DEKAT DENGAN LOKAL</span>
-                            <h2 id="local-heading" class="mt-4 text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">Bukan sekadar tempat.<br />Ada orang dan cerita di dalamnya.</h2>
-                            <p class="mt-4 text-sm leading-7 text-slate-500">{{ localStory.excerpt }}</p>
-                            <Link :href="route('blog.show', 'local')" class="mt-6 inline-flex items-center gap-2 text-xs font-bold text-[#1389e8]">
-                                Kenali cerita lokal <ArrowRight class="size-4" />
-                            </Link>
-                        </div>
-                    </section>
-                </template>
-
                 <!-- Latest Articles Section (3 items) -->
                 <section id="artikel-terbaru" class="mt-12 scroll-mt-32 sm:mt-16" aria-labelledby="latest-heading">
                     <div class="mb-6 flex items-end justify-between gap-4">
                         <div>
-                            <h2 id="latest-heading" class="text-2xl font-extrabold tracking-tight">{{ query || category !== 'Semua cerita' ? 'Cerita yang kamu cari' : 'Bacaan untuk perjalanan berikutnya' }}</h2>
-                            <p class="mt-2 text-xs text-slate-500">{{ props.publishedArticles?.last_page > 1 ? 'Pencarian dan kategori berlaku pada halaman artikel ini.' : 'Inspirasi, panduan, dan sudut pandang baru dari TapakLokal.' }}</p>
+                            <h2 id="latest-heading" class="text-2xl font-extrabold tracking-tight">Bacaan untuk perjalanan berikutnya</h2>
+                            <p class="mt-2 text-xs text-slate-500">Inspirasi, panduan, dan sudut pandang baru dari TapakLokal.</p>
                         </div>
                         <span class="flex shrink-0 items-center gap-2 text-[10px] text-slate-400" role="status">
                             <SlidersHorizontal class="size-3.5" /> {{ displayedArticles.length }} artikel
@@ -307,9 +221,26 @@ const reset = () => {
                                     <span class="text-[10px] font-bold text-[#1389e8]">{{ article.category }}</span>
                                     <h3 class="mt-2 text-base font-extrabold leading-snug group-hover:text-[#1389e8]">{{ article.title }}</h3>
                                     <p class="mt-3 line-clamp-2 text-xs leading-6 text-slate-500">{{ article.excerpt }}</p>
-                                    <div class="mt-auto flex items-center justify-between pt-5 text-[10px] text-slate-400">
-                                        <span>{{ date(article.published_at) }}</span>
-                                        <ArrowUpRight class="size-4 text-[#1389e8]" />
+                                    <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-100 text-[11px] text-slate-400">
+                                        <span class="font-medium">{{ date(article.published_at) }}</span>
+                                        <div
+                                            class="inline-flex items-center overflow-hidden rounded-full bg-[#edf5ff] text-[#1389e8] shadow-xs transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[#1389e8] group-hover:text-white group-hover:shadow-[0_4px_16px_rgba(19,137,232,0.35)]"
+                                        >
+                                            <div
+                                                class="grid grid-cols-[0fr] transition-[grid-template-columns] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:grid-cols-[1fr]"
+                                            >
+                                                <div class="overflow-hidden">
+                                                    <span
+                                                        class="block whitespace-nowrap pl-3.5 pr-1 text-[11px] font-bold opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 group-hover:delay-100"
+                                                    >
+                                                        Baca artikel
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <span class="flex size-7 items-center justify-center shrink-0">
+                                                <ArrowUpRight class="size-3.5 stroke-[2.2] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:rotate-45" />
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </Link>
@@ -317,23 +248,74 @@ const reset = () => {
                     </div>
                     <div v-if="!displayedArticles.length" class="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
                         <Search class="mx-auto size-7 text-sky-500" />
-                        <h3 class="mt-4 font-bold">Belum ada cerita yang cocok</h3>
-                        <p class="mt-2 text-sm text-slate-500">Coba nama tempat atau topik lain.</p>
-                        <button class="mt-5 text-sm font-bold text-[#1389e8] cursor-pointer" @click="reset">Lihat semua cerita</button>
+                        <h3 class="mt-4 font-bold">Belum ada cerita yang tersedia</h3>
+                        <p class="mt-2 text-sm text-slate-500">Silakan kembali lagi nanti untuk cerita terbaru.</p>
+                        <Link :href="route('blog')" class="mt-5 inline-block text-sm font-bold text-[#1389e8]">Muat ulang halaman</Link>
                     </div>
                     <Pagination v-if="props.publishedArticles" :records="props.publishedArticles" />
                 </section>
 
                 <!-- Bottom CTA Section -->
-                <section class="mt-12 flex flex-col items-start justify-between gap-6 rounded-2xl bg-[#087ed3] p-7 text-white sm:mt-16 sm:p-9 lg:flex-row lg:items-center">
-                    <div>
-                        <span class="text-[10px] font-bold tracking-widest text-sky-100">DARI CERITA JADI RENCANA</span>
-                        <h2 class="mt-2 text-2xl font-extrabold tracking-tight">Destinasi impianmu tinggal selangkah lagi.</h2>
-                        <p class="mt-3 max-w-xl text-xs leading-6 text-sky-100">Temukan open trip dan private trip untuk menjalani cerita versimu sendiri.</p>
+                <section
+                    class="relative isolate mt-14 sm:mt-20 overflow-hidden rounded-2xl sm:rounded-3xl border border-white/20 bg-[#072448] shadow-[0_20px_50px_rgba(2,44,98,0.25)]"
+                    aria-labelledby="cta-heading"
+                >
+                    <!-- Background Travel Image -->
+                    <img
+                        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85"
+                        alt="Pemandangan Alam Nusantara"
+                        loading="lazy"
+                        class="absolute inset-0 size-full object-cover object-center pointer-events-none"
+                    />
+
+                    <!-- Multi-Stop Deep Oceanic & Traveloka-Vibe Gradient Overlay -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-[#031735]/95 via-[#06336e]/85 to-[#0268ce]/65"
+                    ></div>
+
+                    <!-- Ambient Glow Highlights -->
+                    <div class="pointer-events-none absolute -left-12 -top-12 size-64 rounded-full bg-sky-400/25 blur-3xl" aria-hidden="true"></div>
+                    <div class="pointer-events-none absolute -right-12 -bottom-12 size-72 rounded-full bg-cyan-300/20 blur-3xl" aria-hidden="true"></div>
+
+                    <!-- Background Vector Flight / Contour Pattern -->
+                    <svg
+                        class="pointer-events-none absolute inset-0 size-full stroke-white/[0.12] [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]"
+                        viewBox="0 0 1180 320"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                    >
+                        <path d="M-50 80C180 30 350 200 620 120C890 40 1060 220 1280 140" stroke-width="1.8" stroke-dasharray="6 6" />
+                        <path d="M-30 180C220 120 400 300 680 210C960 120 1120 290 1300 220" stroke-width="1.5" />
+                    </svg>
+
+                    <!-- Content Layout -->
+                    <div class="relative z-10 flex flex-col items-start justify-between gap-8 p-6 sm:p-10 lg:flex-row lg:items-center lg:p-12">
+                        <div class="max-w-2xl text-left">
+                            <h2
+                                id="cta-heading"
+                                class="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-[34px] lg:leading-[1.15]"
+                            >
+                                Destinasi impianmu tinggal selangkah lagi.
+                            </h2>
+
+                            <p class="mt-3 text-xs sm:text-sm leading-relaxed text-blue-100/90 max-w-xl">
+                                Temukan pilihan open trip dan private trip terbaik ke berbagai penjuru nusantara. Wujudkan perjalanan impianmu sekarang bersama TapakLokal.
+                            </p>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="flex w-full flex-col sm:w-auto sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                            <Link
+                                :href="route('catalog')"
+                                class="group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#0256af] shadow-[0_10px_25px_rgba(2,30,85,0.3)] transition-all duration-200 hover:bg-[#f0f7ff] hover:shadow-[0_14px_30px_rgba(2,30,85,0.4)] hover:-translate-y-0.5 active:scale-95 text-center cursor-pointer"
+                            >
+                                <span>Temukan Perjalanan</span>
+                                <ArrowRight class="size-4 text-[#0175ea] transition-transform duration-200 group-hover:translate-x-1" />
+                            </Link>
+                        </div>
                     </div>
-                    <Link :href="route('catalog')" class="inline-flex shrink-0 items-center gap-4 rounded-lg bg-white px-5 py-3.5 text-xs font-bold text-[#087ed3] transition-colors hover:bg-sky-50">
-                        Temukan perjalanan <ArrowRight class="size-4" />
-                    </Link>
                 </section>
             </div>
         </main>

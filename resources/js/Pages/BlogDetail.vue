@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
     ArrowLeft,
     ArrowRight,
@@ -22,7 +22,6 @@ import {
     Lightbulb,
     ListTree,
     MapPin,
-    MapPinned,
     MessageSquare,
     Send,
     Share2,
@@ -37,9 +36,6 @@ import {
     X,
 } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
-import BlogDestinations from '../Components/Blog/BlogDestinations.vue';
-import BlogDestinationCta from '../Components/Blog/BlogDestinationCta.vue';
-import BlogNewsletter from '../Components/Blog/BlogNewsletter.vue';
 import { articles, getArticleById } from '../Components/Home/travelArticles';
 
 const props = defineProps({
@@ -47,10 +43,44 @@ const props = defineProps({
         type: String,
         default: 'bali',
     },
+    content: {
+        type: Object,
+        default: null,
+    },
 });
 
 // Article Resolution
-const article = computed(() => getArticleById(props.articleId));
+const article = computed(() => {
+    const slug = props.articleId || props.content?.slug || 'bali';
+    const base = getArticleById(slug);
+
+    if (props.content) {
+        let meta = {};
+        if (typeof props.content.metadata === 'object' && props.content.metadata !== null) {
+            meta = props.content.metadata;
+        } else if (typeof props.content.metadata === 'string') {
+            try {
+                meta = JSON.parse(props.content.metadata);
+            } catch {
+                meta = {};
+            }
+        }
+
+        return {
+            ...base,
+            ...meta,
+            id: props.content.slug || base.id,
+            title: props.content.title || base.title,
+            excerpt: props.content.excerpt || base.excerpt,
+            category: props.content.category || base.category || 'Cerita Perjalanan',
+            body: props.content.body || base.body,
+            image: meta.image || base.image,
+            image_url: props.content.image_url || meta.image_url || base.image_url,
+        };
+    }
+
+    return base;
+});
 
 // Related & Popular Articles
 const relatedArticles = computed(() => {
@@ -65,11 +95,11 @@ const popularArticles = computed(() => {
 const isSaved = ref(false);
 const isLiked = ref(false);
 const likeCount = ref(128);
-const activeFontSize = ref('normal'); // 'normal' | 'medium' | 'large'
 const isShareOpen = ref(false);
 const isCopied = ref(false);
 const toastMessage = ref('');
 const isTocCollapsed = ref(false);
+const readingProgress = ref(0);
 
 // Reaction States
 const reactions = ref({
@@ -115,13 +145,16 @@ watch(
 const isGalleryOpen = ref(false);
 const galleryIndex = ref(0);
 const allImages = computed(() => {
-    if (article.value.gallery && article.value.gallery.length > 0) {
+    if (article.value?.gallery && article.value.gallery.length > 0) {
         return article.value.gallery;
     }
 
-    return [
-        `https://images.unsplash.com/photo-${article.value.image}?auto=format&fit=crop&w=1200&q=88`,
-    ];
+    const mainImg = article.value?.image_url
+        || (article.value?.image?.startsWith?.('http')
+            ? article.value.image
+            : `https://images.unsplash.com/photo-${article.value?.image || '1537996194471-e657df975ab4'}?auto=format&fit=crop&w=1200&q=88`);
+
+    return [mainImg];
 });
 
 const openGallery = (index = 0) => {
@@ -278,12 +311,20 @@ const handleKeyDown = (e) => {
     }
 };
 
+const updateReadingProgress = () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    readingProgress.value = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+};
+
 onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('scroll', updateReadingProgress);
     document.body.style.overflow = '';
 });
 </script>
@@ -294,198 +335,152 @@ onBeforeUnmount(() => {
     </Head>
 
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-[#172c50]">
+        <!-- Reading Progress Bar -->
+        <div
+            class="fixed left-0 top-0 z-[200] h-[3px] bg-gradient-to-r from-[#1677e8] to-[#38bdf8] transition-all duration-100 ease-out"
+            :style="{ width: readingProgress + '%' }"
+        ></div>
+
         <!-- Global Navigation -->
         <MainNavigation />
 
-        <main class="mx-auto max-w-[1220px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+        <!-- ══ MAIN CONTENT ══ -->
+        <main class="mx-auto max-w-[1220px] px-4 pb-16 pt-5 sm:px-6 sm:pt-6 lg:px-8">
             <!-- Breadcrumbs -->
-            <nav class="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500" aria-label="Breadcrumb">
-                <Link href="/" class="transition-colors hover:text-[#3E7BEF]">Beranda</Link>
-                <ChevronRight class="size-3.5 text-slate-300" aria-hidden="true" />
-                <Link :href="route('blog')" class="transition-colors hover:text-[#3E7BEF]">Cerita Perjalanan</Link>
-                <ChevronRight class="size-3.5 text-slate-300" aria-hidden="true" />
-                <span class="font-semibold text-[#3E7BEF]">{{ article.category }}</span>
+            <nav class="mb-4 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500" aria-label="Breadcrumb">
+                <Link href="/" class="transition-colors hover:text-[#1677e8]">Beranda</Link>
+                <ChevronRight class="size-3 text-slate-400" />
+                <Link :href="route('blog')" class="transition-colors hover:text-[#1677e8]">Cerita Perjalanan</Link>
+                <ChevronRight class="size-3 text-slate-400" />
+                <span class="font-semibold text-[#1677e8]">{{ article.category }}</span>
             </nav>
 
-            <!-- ARTICLE HERO HEADER -->
-            <header class="mx-auto max-w-4xl text-left">
-                <!-- Category Badge & Location -->
-                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-[#bfe0ff] bg-[#edf6ff] px-3.5 py-1 text-xs font-bold text-[#1677e8] shadow-sm">
-                        <Compass class="size-3.5" aria-hidden="true" />
-                        {{ article.category }}
-                    </span>
-                    <span v-if="article.location" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500">
-                        <MapPin class="size-3.5 text-[#3E7BEF]" aria-hidden="true" />
-                        {{ article.location }}
-                    </span>
-                </div>
-
-                <!-- Main Title -->
-                <h1 class="mt-4 text-3xl font-extrabold leading-[1.18] tracking-tight text-[#173b70] sm:text-4xl lg:text-[42px]">
-                    {{ article.title }}
-                </h1>
-
-                <!-- Excerpt / Subtitle -->
-                <p class="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-                    {{ article.excerpt }}
-                </p>
-
-                <!-- Author, Date & Reading Meta Bar -->
-                <div class="mt-6 flex flex-col gap-4 border-y border-[#e2edf7] py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <!-- Author Information -->
-                    <div class="flex items-center gap-3.5">
-                        <div class="relative">
-                            <img
-                                :src="article.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'"
-                                :alt="`Foto ${article.author?.name || 'Penulis'}`"
-                                class="size-12 rounded-full border-2 border-white object-cover shadow-md"
-                            />
-                            <span class="absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full bg-[#1677e8] text-white ring-2 ring-white" title="Kontributor Terverifikasi">
-                                <Check class="size-3 stroke-[3]" />
-                            </span>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-[#173b70]">{{ article.author?.name || 'Kontributor TapakLokal' }}</span>
-                                <span class="hidden rounded-md bg-[#eef7ff] px-2 py-0.5 text-[10px] font-bold text-[#1677e8] sm:inline-block">
-                                    {{ article.author?.badge || 'Kontributor Lokal' }}
-                                </span>
-                            </div>
-                            <div class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-                                <span class="flex items-center gap-1">
-                                    <CalendarDays class="size-3.5 text-[#3E7BEF]" />
-                                    {{ article.date || 'September 2026' }}
-                                </span>
-                                <span>·</span>
-                                <span class="flex items-center gap-1">
-                                    <Clock3 class="size-3.5 text-[#3E7BEF]" />
-                                    {{ article.readTime || '4 menit baca' }}
-                                </span>
-                                <span>·</span>
-                                <span class="flex items-center gap-1">
-                                    <Eye class="size-3.5 text-[#3E7BEF]" />
-                                    {{ article.views || '1.8k dibaca' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Article Interaction Controls -->
-                    <div class="flex items-center gap-2 self-start sm:self-auto">
-                        <!-- Like Button -->
-                        <button
-                            type="button"
-                            class="inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-xs font-bold transition-all"
-                            :class="isLiked ? 'border-rose-200 bg-rose-50 text-rose-600 shadow-sm' : 'border-[#dce8f5] bg-white text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600'"
-                            :aria-label="isLiked ? 'Batal suka cerita ini' : 'Sukai cerita ini'"
-                            @click="toggleLike"
-                        >
-                            <Heart class="size-4 transition-transform" :class="isLiked ? 'fill-rose-600 scale-110' : ''" />
-                            <span>{{ likeCount }}</span>
-                        </button>
-
-                        <!-- Bookmark Button -->
-                        <button
-                            type="button"
-                            class="inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-xs font-bold transition-all"
-                            :class="isSaved ? 'border-[#1677e8] bg-[#edf7ff] text-[#1677e8]' : 'border-[#dce8f5] bg-white text-slate-600 hover:border-[#badeff] hover:bg-[#f4f9ff] hover:text-[#1677e8]'"
-                            :aria-label="isSaved ? 'Hapus dari simpanan' : 'Simpan artikel'"
-                            @click="toggleSave"
-                        >
-                            <Bookmark class="size-4" :class="isSaved ? 'fill-[#1677e8]' : ''" />
-                            <span class="hidden sm:inline">{{ isSaved ? 'Tersimpan' : 'Simpan' }}</span>
-                        </button>
-
-                        <!-- Share Dropdown Button -->
-                        <div class="relative">
-                            <button
-                                type="button"
-                                class="grid size-9 place-items-center rounded-full border border-[#dce8f5] bg-white text-slate-600 transition-colors hover:border-[#3E7BEF] hover:bg-[#edf7ff] hover:text-[#3E7BEF]"
-                                aria-label="Bagikan artikel"
-                                @click="isShareOpen = !isShareOpen"
-                            >
-                                <Share2 class="size-4" />
-                            </button>
-
-                            <!-- Share Popover -->
-                            <div
-                                v-if="isShareOpen"
-                                class="absolute right-0 top-full z-40 mt-2 w-48 rounded-2xl border border-[#dfe9f4] bg-white p-2 shadow-xl"
-                            >
-                                <p class="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">Bagikan Cerita</p>
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700"
-                                    @click="shareViaWhatsApp"
-                                >
-                                    <span class="grid size-6 place-items-center rounded-full bg-emerald-100 text-emerald-600">
-                                        <MessageSquare class="size-3.5" />
-                                    </span>
-                                    WhatsApp
-                                </button>
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-sky-50 hover:text-sky-700"
-                                    @click="shareViaTwitter"
-                                >
-                                    <span class="grid size-6 place-items-center rounded-full bg-sky-100 text-sky-600">
-                                        <Twitter class="size-3.5" />
-                                    </span>
-                                    Twitter / X
-                                </button>
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
-                                    @click="shareViaFacebook"
-                                >
-                                    <span class="grid size-6 place-items-center rounded-full bg-blue-100 text-blue-600">
-                                        <Facebook class="size-3.5" />
-                                    </span>
-                                    Facebook
-                                </button>
-                                <div class="my-1 border-t border-slate-100"></div>
-                                <button
-                                    type="button"
-                                    class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-[#edf7ff] hover:text-[#1677e8]"
-                                    @click="copyArticleLink"
-                                >
-                                    <span class="grid size-6 place-items-center rounded-full bg-slate-100 text-slate-600">
-                                        <Check v-if="isCopied" class="size-3.5 text-emerald-600" />
-                                        <Copy v-else class="size-3.5" />
-                                    </span>
-                                    {{ isCopied ? 'Tersalin!' : 'Salin Tautan' }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- FEATURED HERO IMAGE & GALLERY PREVIEW -->
-            <section class="mt-6 overflow-hidden rounded-2xl border border-[#dce8f5] bg-slate-100 shadow-[0_8px_30px_rgba(23,75,120,0.06)] sm:rounded-3xl" aria-label="Foto utama artikel">
-                <div class="group relative aspect-[16/9] w-full overflow-hidden bg-slate-900 sm:aspect-[21/9] lg:max-h-[500px]">
+            <!-- ══ PROPORTIONAL HERO CARD (Text inside photo) ══ -->
+            <section class="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-slate-900 shadow-md" aria-label="Hero artikel">
+                <!-- Background Image & Gradient -->
+                <div class="relative min-h-[320px] sm:min-h-[380px] md:h-[420px] w-full flex flex-col justify-end p-5 sm:p-7 md:p-8">
                     <img
-                        :src="`https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=1600&q=90`"
+                        :src="article.image_url || (article.image?.startsWith?.('http') ? article.image : `https://images.unsplash.com/photo-${article.image}?auto=format&fit=crop&w=1600&q=88`)"
                         :alt="article.title"
                         fetchpriority="high"
-                        class="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        class="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
-                    <!-- Image Caption & Location Tag -->
-                    <div class="absolute inset-x-0 bottom-0 flex flex-col justify-between gap-3 p-4 text-white sm:flex-row sm:items-end sm:p-6">
-                        <p class="max-w-xl text-xs font-medium text-white/90 sm:text-sm">
-                            {{ article.heroCaption || article.excerpt }}
+                    <!-- Soft cinematic gradient overlays for contrast -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+
+                    <!-- Hero Content Inside Photo -->
+                    <div class="relative z-10 max-w-3xl">
+                        <!-- Category & Location Pills -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-[#1677e8] px-3 py-0.5 text-[11px] font-bold text-white shadow-md">
+                                <Compass class="size-3" />
+                                {{ article.category }}
+                            </span>
+                            <span v-if="article.location" class="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/35 px-3 py-0.5 text-[11px] font-medium text-white backdrop-blur-md">
+                                <MapPin class="size-3 text-[#60b4ff]" />
+                                {{ article.location }}
+                            </span>
+                        </div>
+
+                        <!-- Proportional Title -->
+                        <h1 class="mt-3 text-2xl font-black leading-snug tracking-tight text-white drop-shadow-md sm:text-3xl md:text-[34px]">
+                            {{ article.title }}
+                        </h1>
+
+                        <!-- Excerpt (Compact, 1-2 lines) -->
+                        <p v-if="article.excerpt" class="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-white/85 max-w-2xl font-normal drop-shadow">
+                            {{ article.excerpt }}
                         </p>
-                        <button
-                            type="button"
-                            class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white/90 px-4 py-2 text-xs font-bold text-[#173b70] backdrop-blur-md transition hover:bg-white hover:shadow-lg focus-visible:outline-2 focus-visible:outline-white"
-                            @click="openGallery(0)"
-                        >
-                            <Sparkles class="size-4 text-[#1677e8]" />
-                            Buka Galeri Foto ({{ allImages.length }})
-                        </button>
+
+                        <!-- Author, Meta & Action Controls Bar inside Photo -->
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/20 pt-3.5">
+                            <!-- Left: Author & Meta -->
+                            <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="relative shrink-0">
+                                        <img
+                                            :src="article.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'"
+                                            :alt="article.author?.name"
+                                            class="size-8 sm:size-9 rounded-full border border-white/50 object-cover shadow"
+                                        />
+                                        <span class="absolute -bottom-0.5 -right-0.5 grid size-3.5 place-items-center rounded-full bg-[#1677e8] ring-1.5 ring-black">
+                                            <Check class="size-2 stroke-[3] text-white" />
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs sm:text-sm font-bold text-white leading-none">{{ article.author?.name || 'Kontributor TapakLokal' }}</p>
+                                        <p class="mt-0.5 text-[10px] text-white/60 leading-none">{{ article.author?.role || 'Traveler' }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="hidden sm:block h-3.5 w-px bg-white/20"></div>
+
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/80">
+                                    <span class="flex items-center gap-1"><CalendarDays class="size-3 text-[#60b4ff]" />{{ article.date || 'September 2026' }}</span>
+                                    <span class="flex items-center gap-1"><Clock3 class="size-3 text-[#60b4ff]" />{{ article.readTime || '5 menit baca' }}</span>
+                                    <span class="flex items-center gap-1"><Eye class="size-3 text-[#60b4ff]" />{{ article.views || '2.4k dibaca' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Interaction Buttons (Like, Bookmark, Share) -->
+                            <div class="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    class="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/25 bg-black/35 px-3 text-xs font-bold text-white backdrop-blur-md transition-all hover:bg-rose-500/30 hover:border-rose-400/50"
+                                    :class="{ '!border-rose-400 !bg-rose-600/50': isLiked }"
+                                    :aria-label="isLiked ? 'Batal suka' : 'Sukai cerita ini'"
+                                    @click="toggleLike"
+                                >
+                                    <Heart class="size-3.5 transition-all" :class="isLiked ? 'fill-rose-300 text-rose-200' : ''" />
+                                    <span>{{ likeCount }}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/25 bg-black/35 px-3 text-xs font-bold text-white backdrop-blur-md transition-all hover:bg-sky-500/30 hover:border-sky-400/50"
+                                    :class="{ '!border-sky-400 !bg-sky-600/50': isSaved }"
+                                    :aria-label="isSaved ? 'Hapus dari simpanan' : 'Simpan artikel'"
+                                    @click="toggleSave"
+                                >
+                                    <Bookmark class="size-3.5" :class="isSaved ? 'fill-sky-200' : ''" />
+                                    <span class="hidden sm:inline">{{ isSaved ? 'Tersimpan' : 'Simpan' }}</span>
+                                </button>
+                                <div class="relative">
+                                    <button
+                                        type="button"
+                                        class="grid size-8 place-items-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-md transition hover:bg-white/20"
+                                        aria-label="Bagikan artikel"
+                                        @click="isShareOpen = !isShareOpen"
+                                    >
+                                        <Share2 class="size-3.5" />
+                                    </button>
+                                    <div v-if="isShareOpen" class="absolute right-0 bottom-full z-50 mb-2 w-52 rounded-2xl border border-slate-100 bg-white p-2 shadow-2xl">
+                                        <p class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Bagikan Cerita</p>
+                                        <button type="button" class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700" @click="shareViaWhatsApp">
+                                            <span class="grid size-6 place-items-center rounded-full bg-emerald-100 text-emerald-600"><MessageSquare class="size-3.5" /></span>
+                                            WhatsApp
+                                        </button>
+                                        <button type="button" class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-sky-50 hover:text-sky-700" @click="shareViaTwitter">
+                                            <span class="grid size-6 place-items-center rounded-full bg-sky-100 text-sky-600"><Twitter class="size-3.5" /></span>
+                                            Twitter / X
+                                        </button>
+                                        <button type="button" class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700" @click="shareViaFacebook">
+                                            <span class="grid size-6 place-items-center rounded-full bg-blue-100 text-blue-600"><Facebook class="size-3.5" /></span>
+                                            Facebook
+                                        </button>
+                                        <div class="my-1 border-t border-slate-100"></div>
+                                        <button type="button" class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:bg-[#edf7ff] hover:text-[#1677e8]" @click="copyArticleLink">
+                                            <span class="grid size-6 place-items-center rounded-full bg-slate-100 text-slate-600">
+                                                <Check v-if="isCopied" class="size-3.5 text-emerald-600" />
+                                                <Copy v-else class="size-3.5" />
+                                            </span>
+                                            {{ isCopied ? 'Tersalin!' : 'Salin Tautan' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -594,26 +589,6 @@ onBeforeUnmount(() => {
                                 </figcaption>
                             </figure>
 
-                            <!-- Pro-Tips Callout Box -->
-                            <div
-                                v-if="sec.proTip"
-                                class="my-7 rounded-2xl border border-[#cbe3fa] bg-gradient-to-br from-[#eff7ff] to-[#f6faff] p-5 shadow-sm sm:p-6"
-                            >
-                                <div class="flex items-center gap-2.5 text-sm font-extrabold text-[#1677e8]">
-                                    <ShieldCheck class="size-5 text-[#1677e8]" />
-                                    <span>{{ sec.proTip.title }}</span>
-                                </div>
-                                <ul class="mt-3 space-y-2.5">
-                                    <li
-                                        v-for="(tip, tIdx) in sec.proTip.items"
-                                        :key="tIdx"
-                                        class="flex items-start gap-2.5 text-xs font-medium leading-relaxed text-[#2a4d77] sm:text-sm"
-                                    >
-                                        <CheckCircle2 class="mt-0.5 size-4 shrink-0 text-[#1677e8]" />
-                                        <span>{{ tip }}</span>
-                                    </li>
-                                </ul>
-                            </div>
 
                             <!-- Destination Spots Cards -->
                             <div v-if="sec.spots && sec.spots.length > 0" class="my-7 space-y-3">
@@ -651,123 +626,6 @@ onBeforeUnmount(() => {
                         </section>
                     </div>
 
-                    <!-- TOPIC TAGS -->
-                    <div class="mt-10 flex flex-wrap items-center gap-2 border-t border-[#e2edf7] pt-6">
-                        <span class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
-                            <Tag class="size-3.5" />
-                            Topik Terkait:
-                        </span>
-                        <span
-                            v-for="tag in article.tags || ['Wisata Otentik', 'Tips Liburan', 'TapakLokal']"
-                            :key="tag"
-                            class="rounded-full border border-[#dce8f5] bg-white px-3 py-1 text-xs font-semibold text-[#274c77] transition hover:border-[#3E7BEF] hover:bg-[#edf7ff] hover:text-[#3E7BEF]"
-                        >
-                            #{{ tag }}
-                        </span>
-                    </div>
-
-                    <!-- READER REACTION SECTION -->
-                    <section class="mt-8 rounded-2xl border border-[#dce8f5] bg-gradient-to-b from-white to-[#fbfdff] p-6 text-center shadow-[0_8px_24px_rgba(23,75,120,0.04)]" aria-labelledby="reaction-heading">
-                        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1677e8]">TANGGAPAN PEMBACA</p>
-                        <h3 id="reaction-heading" class="mt-1 text-lg font-extrabold text-[#173b70]">Apakah cerita perjalanan ini bermanfaat?</h3>
-                        <p class="mt-1 text-xs text-slate-500">Bantu kami mengetahui artikel seperti apa yang paling kamu sukai.</p>
-                        <div class="mt-5 flex flex-wrap justify-center gap-3">
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#1677e8]"
-                                :class="reactions.helpful.active ? 'border-[#1677e8] bg-[#edf7ff] text-[#1677e8] shadow-sm' : 'border-[#dce8f5] bg-white text-slate-700 hover:border-[#badeff] hover:bg-[#f8fbff]'"
-                                @click="toggleReaction('helpful')"
-                            >
-                                <span class="text-base">❤️</span>
-                                <span>Sangat Membantu</span>
-                                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600" :class="reactions.helpful.active ? 'bg-[#1677e8] text-white' : ''">
-                                    {{ reactions.helpful.count }}
-                                </span>
-                            </button>
-
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#1677e8]"
-                                :class="reactions.inspiring.active ? 'border-[#1677e8] bg-[#edf7ff] text-[#1677e8] shadow-sm' : 'border-[#dce8f5] bg-white text-slate-700 hover:border-[#badeff] hover:bg-[#f8fbff]'"
-                                @click="toggleReaction('inspiring')"
-                            >
-                                <span class="text-base">💡</span>
-                                <span>Menginspirasi</span>
-                                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600" :class="reactions.inspiring.active ? 'bg-[#1677e8] text-white' : ''">
-                                    {{ reactions.inspiring.count }}
-                                </span>
-                            </button>
-
-                            <button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-[#1677e8]"
-                                :class="reactions.wantToGo.active ? 'border-[#1677e8] bg-[#edf7ff] text-[#1677e8] shadow-sm' : 'border-[#dce8f5] bg-white text-slate-700 hover:border-[#badeff] hover:bg-[#f8fbff]'"
-                                @click="toggleReaction('wantToGo')"
-                            >
-                                <span class="text-base">📌</span>
-                                <span>Ingin Kesana</span>
-                                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600" :class="reactions.wantToGo.active ? 'bg-[#1677e8] text-white' : ''">
-                                    {{ reactions.wantToGo.count }}
-                                </span>
-                            </button>
-                        </div>
-                    </section>
-
-                    <!-- AUTHOR BIO CARD -->
-                    <section class="mt-8 rounded-2xl border border-[#dfeaf5] bg-white p-5 shadow-[0_6px_20px_rgba(23,75,120,0.04)] sm:p-6" aria-labelledby="author-bio-heading">
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-                            <img
-                                :src="article.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80'"
-                                :alt="article.author?.name"
-                                class="size-16 rounded-2xl border border-[#cfe2f6] object-cover shadow-sm sm:size-20"
-                            />
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1677e8]">TENTANG PENULIS</span>
-                                    <span class="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                                        <ShieldCheck class="size-3" /> Kontributor Resmi
-                                    </span>
-                                </div>
-                                <h3 id="author-bio-heading" class="mt-1 text-base font-extrabold text-[#173b70] sm:text-lg">
-                                    {{ article.author?.name }}
-                                </h3>
-                                <p class="text-xs font-semibold text-[#1677e8]">{{ article.author?.role }}</p>
-                                <p class="mt-2 text-xs leading-5 text-slate-600 sm:text-sm">
-                                    {{ article.author?.bio }}
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- CONNECTED TRIP BANNER (CTA TO ACTUAL TRIP) -->
-                    <section v-if="article.relatedTrip" class="mt-8 overflow-hidden rounded-2xl border border-[#bcdcfe] bg-gradient-to-r from-[#eff6ff] to-[#f4faff] p-5 shadow-sm sm:p-6">
-                        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                            <div class="flex items-center gap-4">
-                                <img
-                                    :src="article.relatedTrip.image"
-                                    :alt="article.relatedTrip.title"
-                                    class="size-20 shrink-0 rounded-xl object-cover shadow-sm"
-                                />
-                                <div>
-                                    <span class="rounded-full bg-[#1677e8] px-2.5 py-0.5 text-[10px] font-bold uppercase text-white">
-                                        {{ article.relatedTrip.badge || 'Trip Terkait' }}
-                                    </span>
-                                    <h4 class="mt-1 text-sm font-extrabold text-[#173b70] sm:text-base">
-                                        {{ article.relatedTrip.title }}
-                                    </h4>
-                                    <p class="mt-0.5 text-xs text-slate-500">
-                                        Durasi {{ article.relatedTrip.duration }} · Mulai <span class="font-extrabold text-[#1677e8]">{{ article.relatedTrip.price }}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <Link
-                                :href="route('trips.show', { tripType: article.relatedTrip.type, trip: article.relatedTrip.slug })"
-                                class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#1677e8] px-5 text-xs font-bold text-white shadow-[0_6px_16px_rgba(22,119,232,0.22)] transition hover:bg-[#0875d0]"
-                            >
-                                Lihat Detail Trip <ArrowRight class="size-4" />
-                            </Link>
-                        </div>
-                    </section>
 
                     <!-- COMMENTS & DISCUSSION SECTION -->
                     <section class="mt-10 border-t border-[#e2edf7] pt-8" aria-labelledby="comments-heading">
@@ -891,39 +749,6 @@ onBeforeUnmount(() => {
 
                 <!-- RIGHT COLUMN: STICKY SIDEBAR -->
                 <aside class="space-y-6 lg:sticky lg:top-[120px]">
-                    <!-- Quick Destination Facts Card -->
-                    <section class="overflow-hidden rounded-2xl border border-[#dce8f5] bg-white p-5 shadow-[0_6px_22px_rgba(23,75,120,0.04)]" aria-labelledby="quick-facts-heading">
-                        <div class="flex items-center gap-2 border-b border-[#edf4fa] pb-3">
-                            <span class="grid size-7 place-items-center rounded-lg bg-[#edf6ff] text-[#1677e8]">
-                                <MapPinned class="size-4" />
-                            </span>
-                            <h3 id="quick-facts-heading" class="text-sm font-extrabold text-[#173b70]">
-                                Ringkasan Destinasi
-                            </h3>
-                        </div>
-                        <dl class="mt-4 space-y-3 text-xs">
-                            <div>
-                                <dt class="font-semibold text-slate-400">Lokasi Utama</dt>
-                                <dd class="mt-0.5 font-bold text-[#173b70]">{{ article.location || 'Indonesia' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="font-semibold text-slate-400">Waktu Kunjung Terbaik</dt>
-                                <dd class="mt-0.5 font-bold text-[#173b70]">{{ article.quickFacts?.bestTime || 'Mei – Oktober' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="font-semibold text-slate-400">Estimasi Budget Harian</dt>
-                                <dd class="mt-0.5 font-bold text-[#1677e8]">{{ article.quickFacts?.budget || 'Rp 300.000 – 600.000' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="font-semibold text-slate-400">Durasi Ideal</dt>
-                                <dd class="mt-0.5 font-bold text-[#173b70]">{{ article.quickFacts?.duration || '3 – 4 Hari' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="font-semibold text-slate-400">Akses & Transportasi</dt>
-                                <dd class="mt-0.5 font-bold text-[#173b70]">{{ article.quickFacts?.access || 'Kendaraan Sewa / Lokal' }}</dd>
-                            </div>
-                        </dl>
-                    </section>
 
                     <!-- Related Trip Card (Booking Widget) -->
                     <section v-if="article.relatedTrip" class="overflow-hidden rounded-2xl border border-[#d6e8fb] bg-gradient-to-b from-[#f3f9ff] to-white p-5 shadow-[0_8px_24px_rgba(22,119,232,0.06)]">
@@ -964,52 +789,39 @@ onBeforeUnmount(() => {
                     </section>
 
                     <!-- Popular Trending Articles -->
-                    <section class="rounded-2xl border border-[#dce8f5] bg-white p-5 shadow-[0_4px_18px_rgba(23,75,120,0.03)]" aria-labelledby="trending-heading">
-                        <div class="flex items-center justify-between border-b border-[#edf4fa] pb-3">
-                            <h3 id="trending-heading" class="text-sm font-extrabold text-[#173b70]">
-                                Cerita Populer Lainnya
-                            </h3>
+                    <section class="overflow-hidden rounded-2xl border border-[#dce8f5] bg-white shadow-sm" aria-labelledby="trending-heading">
+                        <div class="flex items-center justify-between border-b border-[#edf4fa] px-5 py-3.5">
+                            <h3 id="trending-heading" class="text-sm font-extrabold text-[#173b70]">Artikel Terpopuler</h3>
                             <Link :href="route('blog')" class="text-xs font-bold text-[#1677e8] hover:underline">Semua</Link>
                         </div>
-                        <div class="mt-4 divide-y divide-[#f0f5fa]">
+                        <div class="divide-y divide-[#f0f5fa] px-4">
                             <Link
                                 v-for="(pop, pIndex) in popularArticles"
                                 :key="pop.id"
                                 :href="route('blog.show', { article: pop.id })"
-                                class="group flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+                                class="group flex items-start gap-3 py-3.5"
                             >
-                                <span class="grid size-6 shrink-0 place-items-center rounded-lg bg-[#edf6ff] text-xs font-extrabold text-[#1677e8]">
-                                    0{{ pIndex + 1 }}
-                                </span>
+                                <div class="relative shrink-0">
+                                    <img
+                                        :src="`https://images.unsplash.com/photo-${pop.image}?auto=format&fit=crop&w=120&q=80`"
+                                        :alt="pop.title"
+                                        class="size-14 rounded-xl object-cover"
+                                    />
+                                    <span class="absolute -left-1.5 -top-1.5 grid size-5 place-items-center rounded-full bg-[#1677e8] text-[9px] font-black text-white">{{ pIndex + 1 }}</span>
+                                </div>
                                 <div class="min-w-0 flex-1">
                                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#1677e8]">{{ pop.category }}</span>
-                                    <h4 class="mt-0.5 line-clamp-2 text-xs font-bold text-[#173b70] transition-colors group-hover:text-[#1677e8]">
+                                    <h4 class="mt-0.5 line-clamp-2 text-xs font-bold leading-snug text-[#173b70] transition-colors group-hover:text-[#1677e8]">
                                         {{ pop.title }}
                                     </h4>
-                                    <p class="mt-1 flex items-center gap-2 text-[10px] text-slate-400">
-                                        <span>{{ pop.date }}</span>
-                                        <span>·</span>
-                                        <span>{{ pop.readTime }}</span>
+                                    <p class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
+                                        <Clock3 class="size-3" />{{ pop.readTime }}
                                     </p>
                                 </div>
                             </Link>
                         </div>
                     </section>
 
-                    <!-- Explore Categories Widget -->
-                    <section class="rounded-2xl border border-[#dce8f5] bg-white p-5 shadow-[0_4px_18px_rgba(23,75,120,0.03)]">
-                        <h3 class="text-sm font-extrabold text-[#173b70]">Kategori Cerita</h3>
-                        <div class="mt-3 flex flex-wrap gap-1.5">
-                            <Link
-                                v-for="cat in ['Inspirasi Destinasi', 'Tips Perjalanan', 'Cerita Lokal', 'Panduan Liburan', 'Wisata Alam']"
-                                :key="cat"
-                                :href="route('blog')"
-                                class="rounded-full border border-[#e1eaf5] bg-[#f8fbff] px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-[#1677e8] hover:bg-[#edf6ff] hover:text-[#1677e8]"
-                            >
-                                {{ cat }}
-                            </Link>
-                        </div>
-                    </section>
                 </aside>
             </div>
 
@@ -1031,7 +843,7 @@ onBeforeUnmount(() => {
                     <article
                         v-for="rel in relatedArticles"
                         :key="rel.id"
-                        class="group flex flex-col overflow-hidden rounded-2xl border border-[#e1eaf3] bg-white shadow-[0_3px_12px_rgba(23,75,120,0.04)] transition-all duration-200 hover:border-[#b8dafa] hover:shadow-[0_8px_20px_rgba(23,75,120,0.08)]"
+                        class="group flex flex-col overflow-hidden rounded-2xl border border-[#e1eaf3] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#b8dafa] hover:shadow-[0_12px_28px_rgba(23,75,120,0.1)]"
                     >
                         <Link :href="route('blog.show', { article: rel.id })" class="flex h-full flex-col">
                             <div class="relative aspect-[16/10] w-full overflow-hidden bg-sky-100">
@@ -1041,13 +853,14 @@ onBeforeUnmount(() => {
                                     loading="lazy"
                                     class="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-[#1677e8] shadow-sm">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+                                <span class="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-[#1677e8] shadow-sm">
                                     {{ rel.category }}
                                 </span>
                             </div>
                             <div class="flex flex-1 flex-col p-5">
                                 <div class="flex items-center justify-between text-xs text-slate-400">
-                                    <span>{{ rel.date }}</span>
+                                    <span class="flex items-center gap-1"><CalendarDays class="size-3" />{{ rel.date }}</span>
                                     <span class="flex items-center gap-1"><Clock3 class="size-3" />{{ rel.readTime }}</span>
                                 </div>
                                 <h3 class="mt-2.5 text-base font-bold leading-snug text-[#173b70] transition-colors group-hover:text-[#1677e8]">
@@ -1056,10 +869,11 @@ onBeforeUnmount(() => {
                                 <p class="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">
                                     {{ rel.excerpt }}
                                 </p>
-                                <div class="mt-auto flex items-center justify-between pt-5">
+                                <div class="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
                                     <span class="inline-flex items-center gap-1 text-xs font-bold text-[#1677e8]">
                                         Baca cerita <ArrowRight class="size-3.5 transition-transform group-hover:translate-x-1" />
                                     </span>
+                                    <span class="flex items-center gap-1 text-[10px] text-slate-400"><Eye class="size-3" />{{ rel.views }}</span>
                                 </div>
                             </div>
                         </Link>
@@ -1067,10 +881,7 @@ onBeforeUnmount(() => {
                 </div>
             </section>
 
-            <!-- DESIGN SYSTEM BOTTOM SECTIONS -->
-            <BlogDestinations />
-            <BlogDestinationCta />
-            <BlogNewsletter />
+
         </main>
 
         <!-- GLOBAL TOAST NOTIFICATION -->

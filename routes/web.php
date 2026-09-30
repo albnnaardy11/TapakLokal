@@ -21,7 +21,10 @@ Route::get('/blog/{article}', function (string $article): Response {
             abort(404);
         }
 
-        return Inertia::render('Content', ['content' => $existing]);
+        return Inertia::render('BlogDetail', [
+            'articleId' => $article,
+            'content' => $existing,
+        ]);
     }
 
     if (in_array($article, ['bali', 'islands', 'local'])) {
