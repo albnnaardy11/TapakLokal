@@ -67,23 +67,23 @@ const open = (item) => router.visit(route('content.show', item.slug));
             <!-- 2. Right Side: 2 Asymmetric Rows matching reference image 1:1 -->
             <div class="flex flex-col gap-3.5 sm:gap-4 justify-between h-full">
                 <!-- Row 1 (3 Cards: regular, wide center, regular) -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1fr_1.35fr_1.05fr] gap-3.5 sm:gap-4 h-40 sm:h-44 md:h-44 lg:h-[185px]">
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1fr_1.35fr_1.05fr] gap-3.5 sm:gap-4 h-auto sm:h-44 md:h-44 lg:h-[185px]">
                     <DestinationCard
                         v-for="item in cards.slice(1, 4)"
                         :key="item.id || item.slug || item.name"
                         :destination="item"
-                        class="size-full"
+                        class="size-full min-h-[140px] sm:min-h-0"
                         @select="open(item)"
                     />
                 </div>
 
                 <!-- Row 2 (3 Cards: wide left, compact center, wide right) -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1.25fr_0.95fr_1.2fr] gap-3.5 sm:gap-4 h-40 sm:h-44 md:h-44 lg:h-[185px]">
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[1.25fr_0.95fr_1.2fr] gap-3.5 sm:gap-4 h-auto sm:h-44 md:h-44 lg:h-[185px]">
                     <DestinationCard
                         v-for="item in cards.slice(4, 7)"
                         :key="item.id || item.slug || item.name"
                         :destination="item"
-                        class="size-full"
+                        class="size-full min-h-[140px] sm:min-h-0"
                         @select="open(item)"
                     />
                 </div>

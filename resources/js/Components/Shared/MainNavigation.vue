@@ -159,7 +159,7 @@ const openAuthModal = (mode = 'login') => {
 
                 <!-- Desktop Right Nav -->
                 <div
-                    class="ml-auto hidden items-center gap-1 text-[11px] font-semibold transition-colors duration-500 xl:flex"
+                    class="ml-auto hidden items-center gap-1 text-[11px] font-semibold transition-colors duration-500 lg:flex"
                     :class="isTransparent ? 'text-white/90' : 'text-slate-700'"
                 >
                     <!-- Locale Selector -->
@@ -294,7 +294,7 @@ const openAuthModal = (mode = 'login') => {
                 <!-- Mobile Header Right -->
                 <button
                     type="button"
-                    class="ml-auto mr-2 min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 xl:hidden"
+                    class="ml-auto mr-2 min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 lg:hidden"
                     :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'"
                     @click="openAuthModal('login')"
                 >
@@ -302,7 +302,7 @@ const openAuthModal = (mode = 'login') => {
                 </button>
 
                 <button
-                    class="rounded-lg p-2 transition-all duration-300 xl:hidden"
+                    class="rounded-lg p-2 transition-all duration-300 lg:hidden"
                     :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
                     :aria-expanded="isMobileMenuOpen"
                     aria-label="Buka menu"
@@ -367,21 +367,22 @@ const openAuthModal = (mode = 'login') => {
             </nav>
 
             <!-- Mobile Menu Dropdown -->
-            <div v-if="isMobileMenuOpen" class="border-t border-slate-100 bg-white px-5 py-4 shadow-[0_12px_20px_rgba(15,44,92,0.08)] text-slate-800 lg:hidden">
-                <form class="mb-3" @submit.prevent="submitGlobalSearch">
-                    <label class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-400">
-                        <Search class="size-4 text-[#3E7BEF]" />
-                        <input v-model="globalSearch" class="min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none" placeholder="Cari destinasi..." />
+            <div v-if="isMobileMenuOpen" class="max-h-[calc(100dvh-70px)] overflow-y-auto border-t border-slate-100 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(15,44,92,0.12)] text-slate-800 lg:hidden">
+                <form class="mb-3.5" @submit.prevent="submitGlobalSearch">
+                    <label class="flex h-11 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-slate-400 focus-within:border-[#3E7BEF] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#3E7BEF]/15 transition">
+                        <Search class="size-4.5 text-[#3E7BEF]" />
+                        <input v-model="globalSearch" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-700 outline-none" placeholder="Cari destinasi atau trip..." />
                     </label>
                 </form>
-                <div class="grid grid-cols-2 gap-1.5">
+                <div class="grid grid-cols-2 gap-2">
                     <component
                         :is="item.href ? Link : 'button'"
                         :href="item.href"
                         :aria-current="activeNav === item.label ? 'page' : undefined"
                         v-for="item in navItems"
                         :key="item.label"
-                        class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-600 transition hover:bg-[#edf3ff] hover:text-[#3E7BEF]"
+                        class="flex min-h-11 items-center rounded-xl px-3 py-2 text-left text-sm font-semibold transition"
+                        :class="activeNav === item.label ? 'bg-[#edf3ff] text-[#3E7BEF] font-bold' : 'text-slate-700 hover:bg-[#edf3ff] hover:text-[#3E7BEF]'"
                         @click="selectNavigation(item)"
                     >
                         {{ item.label }}
@@ -389,47 +390,48 @@ const openAuthModal = (mode = 'login') => {
                 </div>
 
                 <!-- Bisnis Section in Mobile Drawer -->
-                <div class="mt-3 border-t border-slate-100 pt-3">
-                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Bisnis</p>
-                    <div class="space-y-1">
+                <div class="mt-4 border-t border-slate-100 pt-3.5">
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">Bisnis & Kemitraan</p>
+                    <div class="space-y-1.5">
                         <Link
                             :href="route('business.partner')"
-                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6] transition"
                             @click="isMobileMenuOpen = false"
                         >
-                            <Handshake class="size-4 text-slate-700" />
-                            <span>Partnership</span>
+                            <Handshake class="size-4.5 text-[#3E7BEF]" />
+                            <span>Partnership Vendor</span>
                         </Link>
                         <Link
                             :href="route('business.corporate')"
-                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6] transition"
                             @click="isMobileMenuOpen = false"
                         >
-                            <Briefcase class="size-4 text-slate-700" />
-                            <span>For Corporates</span>
+                            <Briefcase class="size-4.5 text-[#3E7BEF]" />
+                            <span>For Corporates (B2B)</span>
                         </Link>
                         <Link
                             :href="route('business.affiliate')"
-                            class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6]"
+                            class="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 hover:bg-[#edf3ff] hover:text-[#0066d6] transition"
                             @click="isMobileMenuOpen = false"
                         >
-                            <BadgePercent class="size-4 text-slate-700" />
-                            <span>Affiliate</span>
+                            <BadgePercent class="size-4.5 text-[#3E7BEF]" />
+                            <span>Affiliate Program</span>
                         </Link>
                     </div>
                 </div>
-                <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+
+                <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
                     <span class="text-xs font-medium text-slate-500">Bahasa & Mata Uang</span>
                     <div class="flex items-center gap-1.5">
                         <button
                             v-for="loc in locales"
                             :key="loc.code"
                             type="button"
-                            class="flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-semibold transition"
+                            class="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition"
                             :class="selectedLocale.code === loc.code ? 'border-[#3E7BEF] bg-[#edf3ff] text-[#3E7BEF]' : 'border-slate-200 text-slate-600 hover:bg-slate-50'"
                             @click="selectLocale(loc); isMobileMenuOpen = false"
                         >
-                            <FlagIcon :country="loc.flag" custom-class="h-3 w-4" />
+                            <FlagIcon :country="loc.flag" custom-class="h-3.5 w-4.5" />
                             <span>{{ loc.short }}</span>
                         </button>
                     </div>

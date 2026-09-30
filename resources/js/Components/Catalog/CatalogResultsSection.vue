@@ -1113,6 +1113,24 @@ watch(
     { deep: true }
 );
 
+// Mobile filter drawer state
+const isMobileFilterOpen = ref(false);
+
+const activeFilterCount = computed(() => {
+    let count = selectedTripTypes.value.length + selectedPromos.value.length + selectedFacilities.value.length + selectedStars.value.length + selectedPicks.value.length;
+    if (selectedDateIdea.value) count += 1;
+    if (priceMax.value < 15000000) count += 1;
+    return count;
+});
+
+const applyMobileFilter = () => {
+    isMobileFilterOpen.value = false;
+    const el = document.getElementById('catalog-results-anchor');
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
+
 // Header Title
 const listingSectionTitle = computed(() => {
     if (props.partner?.name) {
@@ -1135,7 +1153,7 @@ const listingSectionTitle = computed(() => {
             <!-- ========================================================= -->
             <!-- LEFT COLUMN: PROMO, MAP & FILTER SIDEBAR (Traveloka Style) -->
             <!-- ========================================================= -->
-            <aside class="space-y-4">
+            <aside class="hidden lg:block space-y-4">
                 
                 <!-- 1. Top Promo Discount Card (Traveloka Blue Gradient) -->
                 <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0055d4] via-[#006ee6] to-[#00aaff] p-4 text-white shadow-[0_8px_24px_rgba(0,100,230,0.22)]">
@@ -1514,13 +1532,27 @@ const listingSectionTitle = computed(() => {
 
                     <!-- Right Controls: Sort by & View Toggle -->
                     <div class="flex items-center gap-3">
+                        <!-- Mobile Filter Button (lg:hidden) -->
+                        <button
+                            type="button"
+                            class="inline-flex lg:hidden items-center gap-2 rounded-xl bg-white border border-slate-200 px-3.5 py-2 text-xs font-bold text-slate-800 shadow-2xs hover:bg-slate-50 active:scale-95 transition"
+                            @click="isMobileFilterOpen = true"
+                        >
+                            <SlidersHorizontal class="size-3.5 text-[#0088ff]" />
+                            <span>Filter</span>
+                            <span v-if="activeFilterCount > 0" class="flex size-4.5 items-center justify-center rounded-full bg-[#0088ff] text-[10px] font-bold text-white">
+                                {{ activeFilterCount }}
+                            </span>
+                        </button>
+
                         <!-- Sort by Dropdown -->
                         <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
-                            <span class="text-slate-400">Sort by:</span>
+                            <span class="hidden sm:inline text-slate-400">Sort by:</span>
                             <div class="relative">
                                 <select
                                     v-model="sortBy"
-                                    class="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-[#0088ff] shadow-2xs focus:outline-none cursor-pointer pr-7"
+                                    class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-[#0088ff] shadow-2xs focus:outline-none cursor-pointer pr-7"
+                                    aria-label="Urutkan hasil"
                                 >
                                     <option value="popular">Paling Populer</option>
                                     <option value="price-asc">Harga Terendah</option>
@@ -1552,6 +1584,46 @@ const listingSectionTitle = computed(() => {
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Mobile Active Filters Chips (Quick Clear) -->
+                <div v-if="activeFilterCount > 0" class="flex flex-wrap items-center gap-1.5 pt-1 lg:hidden">
+                    <span class="text-[11px] font-semibold text-slate-400">Filter Aktif:</span>
+                    <button
+                        v-for="t in selectedTripTypes"
+                        :key="t"
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-200/80 px-2 py-0.5 text-[11px] font-bold text-[#0066d6]"
+                        @click="selectedTripTypes = selectedTripTypes.filter(x => x !== t)"
+                    >
+                        <span>{{ t === 'open-trip' ? 'Open Trip' : t === 'private-trip' ? 'Private Trip' : t }}</span>
+                        <X class="size-3" />
+                    </button>
+                    <button
+                        v-if="selectedDateIdea"
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-200/80 px-2 py-0.5 text-[11px] font-bold text-[#0066d6]"
+                        @click="selectedDateIdea = null"
+                    >
+                        <span>Tanggal: {{ dateIdeas.find(d => d.id === selectedDateIdea)?.label }}</span>
+                        <X class="size-3" />
+                    </button>
+                    <button
+                        v-if="priceMax < 15000000"
+                        type="button"
+                        class="inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-200/80 px-2 py-0.5 text-[11px] font-bold text-[#0066d6]"
+                        @click="priceMax = 15000000"
+                    >
+                        <span>Max IDR {{ formatNumberOnly(priceMax) }}</span>
+                        <X class="size-3" />
+                    </button>
+                    <button
+                        type="button"
+                        class="text-[11px] font-bold text-rose-600 hover:underline px-1"
+                        @click="resetAllFilters"
+                    >
+                        Reset
+                    </button>
                 </div>
 
                 <!-- Trip Cards Section (1:1 Traveloka Card Layout) -->
@@ -1889,5 +1961,223 @@ const listingSectionTitle = computed(() => {
 
         <!-- Explore Promos & Discount Coupons Section (Traveloka Inspired) -->
         <CatalogPromoSection />
+
+        <!-- ==================================================================== -->
+        <!-- MOBILE STICKY FLOATING FILTER BUTTON (1-Thumb Access on Mobile)       -->
+        <!-- ==================================================================== -->
+        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 lg:hidden pointer-events-auto">
+            <button
+                type="button"
+                class="inline-flex items-center gap-2.5 rounded-full bg-[#0088ff] hover:bg-[#0074e0] text-white px-5 py-3 text-xs font-bold shadow-[0_8px_24px_rgba(0,136,255,0.45)] ring-2 ring-white active:scale-95 transition-all cursor-pointer"
+                @click="isMobileFilterOpen = true"
+            >
+                <SlidersHorizontal class="size-4" />
+                <span>Filter & Urutkan</span>
+                <span v-if="activeFilterCount > 0" class="flex size-5 items-center justify-center rounded-full bg-white text-[10.5px] font-black text-[#0088ff]">
+                    {{ activeFilterCount }}
+                </span>
+            </button>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- MOBILE FILTER DRAWER MODAL (Traveloka / Airbnb Style)                -->
+        <!-- ==================================================================== -->
+        <Teleport to="body">
+            <Transition
+                enter-active-class="transition-opacity duration-250 ease-out"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition-opacity duration-200 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+                <div
+                    v-if="isMobileFilterOpen"
+                    class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-900/60 backdrop-blur-xs p-0 sm:p-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Filter Hasil Pencarian"
+                    @click.self="isMobileFilterOpen = false"
+                >
+                    <div
+                        class="w-full sm:max-w-lg max-h-[90dvh] flex flex-col rounded-t-3xl sm:rounded-3xl bg-white shadow-2xl overflow-hidden"
+                    >
+                        <!-- Modal Header -->
+                        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 shrink-0 bg-white">
+                            <div class="flex items-center gap-2">
+                                <SlidersHorizontal class="size-4.5 text-[#0088ff]" />
+                                <h3 class="text-base font-extrabold text-slate-800">Filter Paket Trip</h3>
+                                <span v-if="activeFilterCount > 0" class="rounded-full bg-blue-50 text-[#0088ff] px-2 py-0.5 text-[10px] font-bold">
+                                    {{ activeFilterCount }} aktif
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    class="text-xs font-bold text-[#0088ff] hover:underline"
+                                    @click="resetAllFilters"
+                                >
+                                    Reset
+                                </button>
+                                <button
+                                    type="button"
+                                    class="grid size-8 place-items-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition"
+                                    aria-label="Tutup filter"
+                                    @click="isMobileFilterOpen = false"
+                                >
+                                    <X class="size-4.5" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal Scrollable Content -->
+                        <div class="flex-1 overflow-y-auto p-5 space-y-4 [scrollbar-width:thin]">
+                            <!-- 1. Pilihan Tanggal Trip -->
+                            <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Pilihan Tanggal Trip</h4>
+                                    <span class="text-[10px] text-slate-400 font-medium">Cepat</span>
+                                </div>
+                                <div class="mt-3 grid grid-cols-2 gap-2">
+                                    <button
+                                        v-for="date in dateIdeas"
+                                        :key="date.id"
+                                        type="button"
+                                        class="flex flex-col items-start rounded-xl border p-2.5 text-left transition-all"
+                                        :class="selectedDateIdea === date.id 
+                                            ? 'border-[#0088ff] bg-blue-50/70 text-[#0066d6] ring-1 ring-[#0088ff]' 
+                                            : 'border-slate-200/80 bg-slate-50/50 text-slate-700'"
+                                        @click="selectDateIdea(date.id)"
+                                    >
+                                        <span class="text-xs font-bold">{{ date.label }}</span>
+                                        <span class="mt-0.5 text-[10px] text-slate-500 font-medium">{{ date.dates }}</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 2. Rentang Harga -->
+                            <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Rentang Harga</h4>
+                                        <p class="text-[10.5px] text-slate-400">Per orang, per paket trip</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="text-xs font-bold text-[#0088ff] hover:underline"
+                                        @click="priceMin = 0; priceMax = 15000000"
+                                    >
+                                        Reset
+                                    </button>
+                                </div>
+                                <div class="mt-4 px-1">
+                                    <input
+                                        v-model.number="priceMax"
+                                        type="range"
+                                        min="300000"
+                                        max="15000000"
+                                        step="100000"
+                                        class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0088ff]"
+                                    />
+                                </div>
+                                <div class="mt-3 grid grid-cols-2 gap-2">
+                                    <div class="rounded-xl border border-slate-200/90 bg-slate-50/50 px-3 py-2">
+                                        <span class="block text-[9px] font-bold text-slate-400 uppercase">Min</span>
+                                        <span class="text-xs font-bold text-slate-800">IDR 0</span>
+                                    </div>
+                                    <div class="rounded-xl border border-slate-200/90 bg-slate-50/50 px-3 py-2">
+                                        <span class="block text-[9px] font-bold text-slate-400 uppercase">Max</span>
+                                        <span class="text-xs font-bold text-slate-800">IDR {{ formatNumberOnly(priceMax) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Tipe & Kategori Trip -->
+                            <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">Tipe & Kategori Trip</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedTripTypes" type="checkbox" value="open-trip" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Open Trip (Gabungan Hemat)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedTripTypes" type="checkbox" value="private-trip" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Private Trip (Eksklusif & Bebas)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedTripTypes" type="checkbox" value="snorkeling" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Wisata Bahari & Snorkeling</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedTripTypes" type="checkbox" value="mountain" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Pendakian & Gunung Bromo</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 4. Promo & Diskon -->
+                            <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">Promo & Diskon</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedPromos" type="checkbox" value="for-you" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Promo for You (8% OFF)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedPromos" type="checkbox" value="domestic" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Promo Domestik Spesial</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedPromos" type="checkbox" value="extra" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Extra Cashback TapakPoints</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 5. Fasilitas Trip -->
+                            <div class="rounded-2xl border border-slate-200/90 bg-white p-4">
+                                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">Fasilitas Trip</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedFacilities" type="checkbox" value="transport" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Transportasi AC PP</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedFacilities" type="checkbox" value="meals" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Makan & Konsumsi Termasuk</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedFacilities" type="checkbox" value="snorkeling" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Alat Snorkeling Lengkap</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 text-xs text-slate-700 cursor-pointer">
+                                        <input v-model="selectedFacilities" type="checkbox" value="drone" class="size-4.5 rounded border-slate-300 text-[#0088ff] focus:ring-[#0088ff]" />
+                                        <span class="font-medium">Dokumentasi Drone & GoPro</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Sticky Footer Action -->
+                        <div class="border-t border-slate-100 p-4 bg-white shrink-0 grid grid-cols-2 gap-3">
+                            <button
+                                type="button"
+                                class="rounded-xl border border-slate-200 bg-white py-3 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                                @click="resetAllFilters"
+                            >
+                                Reset Filter
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded-xl bg-[#0088ff] hover:bg-[#0074e0] py-3 text-xs font-bold text-white shadow-md transition active:scale-95"
+                                @click="applyMobileFilter"
+                            >
+                                Terapkan ({{ filteredTrips.length }})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </Teleport>
     </section>
 </template>

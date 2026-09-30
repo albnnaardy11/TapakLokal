@@ -20,7 +20,49 @@ const navigate = key => router.get(route('account.section', key), {}, { preserve
     <div class="min-h-screen overflow-x-hidden bg-[#f7f9fb] text-[#303e4c]">
         <MainNavigation />
         <div class="mx-auto grid max-w-[1220px] gap-5 px-4 py-5 sm:px-5 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-7">
-            <label class="flex flex-col gap-2 text-xs font-semibold lg:hidden">Menu akun<select :value="page.props.sectionKey" class="panel-input" @change="navigate($event.target.value)"><option v-for="[key, label] in menu" :key="key" :value="key">{{ label }}</option></select></label>
+            
+            <!-- Mobile User Profile & Tab Navigation Header (lg:hidden) -->
+            <div class="space-y-3 lg:hidden">
+                <!-- User Profile Header Card -->
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-[#dce5f0] bg-white p-3.5 shadow-2xs">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="grid size-11 shrink-0 place-items-center rounded-full bg-[#3E7BEF] text-base font-bold text-white shadow-xs">
+                            {{ user.name.charAt(0).toUpperCase() }}
+                        </span>
+                        <div class="min-w-0">
+                            <h1 class="truncate text-sm font-bold text-slate-900">{{ user.name }}</h1>
+                            <p class="truncate text-[10.5px] text-slate-400">{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <Link
+                        :href="route('logout')"
+                        method="post"
+                        as="button"
+                        class="rounded-xl border border-rose-200 bg-rose-50/70 p-2 text-rose-600 hover:bg-rose-100 transition shrink-0"
+                        title="Keluar dari akun"
+                        aria-label="Keluar dari akun"
+                    >
+                        <LogOut class="size-4" />
+                    </Link>
+                </div>
+
+                <!-- Horizontal Scrollable Tab Bar (Traveloka / Airbnb Style) -->
+                <nav class="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Menu akun mobile">
+                    <Link
+                        v-for="[key, label, icon] in menu"
+                        :key="key"
+                        :href="route('account.section', key)"
+                        preserve-scroll
+                        class="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-2xs"
+                        :class="page.props.sectionKey === key ? 'bg-[#3E7BEF] text-white ring-2 ring-[#3E7BEF]/30' : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'"
+                    >
+                        <component :is="icon" class="size-3.5 shrink-0" />
+                        <span>{{ label }}</span>
+                    </Link>
+                </nav>
+            </div>
+
+            <!-- Desktop Sticky Sidebar (Unchanged) -->
             <aside class="hidden self-start overflow-hidden rounded-2xl border border-[#dce5f0] bg-white shadow-[0_3px_16px_rgba(15,44,92,0.04)] lg:sticky lg:top-[118px] lg:block lg:max-h-[calc(100dvh-134px)] lg:overflow-y-auto">
                 <div class="p-4"><div class="flex items-center gap-3"><span class="grid size-14 shrink-0 place-items-center rounded-full bg-[#3E7BEF] text-lg font-bold text-white">{{ user.name.charAt(0).toUpperCase() }}</span><div class="min-w-0"><h1 class="truncate text-sm font-bold">{{ user.name }}</h1><p class="mt-1 truncate text-[10px] text-slate-400">{{ user.email }}</p></div></div></div>
                 <nav aria-label="Menu akun" class="px-2.5 pb-3">
@@ -28,6 +70,7 @@ const navigate = key => router.get(route('account.section', key), {}, { preserve
                     <Link :href="route('logout')" method="post" as="button" class="mt-3 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-[13px] font-medium text-rose-500 hover:bg-rose-50"><LogOut class="size-4" />Keluar</Link>
                 </nav>
             </aside>
+
             <main class="min-w-0">
                 <section class="relative isolate mb-5 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-xl bg-[#123b53] px-5 py-5 text-white sm:min-h-[164px] sm:px-6"><img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85" alt="Pegunungan Indonesia" class="absolute inset-0 -z-20 size-full object-cover" /><div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#123b53]/90 via-[#123b53]/35 to-transparent"></div><h2 class="text-lg font-extrabold">Perjalanan baru, cerita baru.</h2><p class="mt-1 text-[11px] text-white/80">Temukan pengalaman tak terlupakan di setiap sudut Indonesia.</p><Link :href="route('catalog')" class="mt-3 inline-flex w-fit items-center gap-3 rounded-full bg-white px-3.5 py-2 text-[10px] font-bold text-[#175a9f]">Jelajahi Destinasi<ChevronRight class="size-3" /></Link></section>
                 <AccountLive :key="page.props.sectionKey" />

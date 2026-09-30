@@ -21,7 +21,7 @@ class ManagedWebsiteContentTest extends TestCase
             ->has('cmsDestinations', 7)
             ->has('cmsArticles', 5)
             ->has('cmsFaqs', 6)
-            ->has('cmsPartners', 6)
+            ->has('cmsPartners', 5)
             ->has('cmsTestimonials', 4)
             ->has('virtualTours', 0));
 

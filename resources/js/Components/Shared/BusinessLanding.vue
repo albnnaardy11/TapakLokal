@@ -23,23 +23,25 @@ function join() {
 
 <template>
     <div class="business-page min-h-screen bg-white font-sans text-slate-800">
-        <header class="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur-md" @keydown.esc="mobileNavigationOpen = false">
-            <nav :aria-label="`Navigasi ${program}`" class="mx-auto flex h-[68px] max-w-[1600px] items-center justify-between gap-4 px-5 sm:px-8">
+        <header class="corporate-header sticky top-0 z-40 bg-white/95 backdrop-blur-md" @keydown.esc="mobileNavigationOpen = false">
+            <nav :aria-label="`Navigasi ${program.toLowerCase()}`" class="mx-auto flex h-[68px] max-w-[1600px] items-center justify-between gap-5 px-5 sm:px-8">
                 <Link :href="route('home')" aria-label="TapakLokal beranda" class="flex shrink-0 items-center gap-3">
-                    <span class="text-[23px] font-extrabold tracking-[-0.065em]">tapak<span class="text-[#009cf0]">lokal</span></span>
-                    <span class="border-l border-slate-200 pl-3 text-[10px] leading-tight font-semibold tracking-wide text-slate-500">FOR<br /><span class="text-xs font-bold text-[#009cf0]">{{ program }}</span></span>
+                    <span class="text-[23px] font-extrabold tracking-[-0.065em] text-slate-800">tapak<span class="text-[#009cf0]">lokal</span></span>
+                    <span class="border-l border-slate-200 pl-3 text-[10px] leading-tight font-semibold tracking-wide text-slate-500">FOR<br /><span class="text-[13px] font-bold text-[#009cf0]">{{ program }}</span></span>
                 </Link>
-                <div class="hidden items-center gap-7 text-xs font-semibold lg:flex"><a v-for="link in links" :key="link.href" :href="link.href" class="py-3 hover:text-[#009cf0]">{{ link.label }}</a></div>
-                <div class="flex items-center gap-3">
-                    <span class="hidden items-center gap-1.5 text-xs text-slate-600 xl:flex"><Globe class="size-4" /> ID</span>
-                    <Link :href="loginHref" class="hidden items-center gap-2 rounded-full bg-sky-50 px-4 py-2.5 text-xs font-bold text-[#075890] sm:inline-flex"><UserRound class="size-4" /> Masuk</Link>
-                    <button class="business-button hidden !px-5 !py-2.5 !text-xs sm:inline-flex" @click="join">{{ cta }}</button>
-                    <button :aria-expanded="mobileNavigationOpen" aria-controls="business-mobile-nav" :aria-label="mobileNavigationOpen ? 'Tutup menu' : 'Buka menu'" class="p-2 lg:hidden" @click="mobileNavigationOpen = !mobileNavigationOpen"><X v-if="mobileNavigationOpen" class="size-6" /><Menu v-else class="size-6" /></button>
+                <div class="hidden items-center gap-7 text-xs font-semibold text-slate-800 lg:flex">
+                    <a v-for="item in links" :key="item.href" :href="item.href" class="py-3 transition hover:text-[#009cf0]">{{ item.label }}</a>
+                </div>
+                <div class="flex shrink-0 items-center gap-3">
+                    <span class="mr-2 hidden items-center gap-1.5 text-xs text-slate-600 xl:flex" aria-label="Bahasa Indonesia"><Globe class="size-4" /> ID</span>
+                    <Link :href="loginHref" class="hidden items-center gap-2 rounded-full bg-[#e1f4ff] px-4 py-2.5 text-xs font-bold text-[#075890] sm:inline-flex"><UserRound class="size-4" /> Masuk</Link>
+                    <button class="corp-button !hidden !bg-[#009cf0] !px-6 !py-2.5 !text-xs sm:!inline-flex" @click="join">{{ cta }}</button>
+                    <button class="rounded-lg p-2 text-[#07345a] lg:hidden" :aria-expanded="mobileNavigationOpen" :aria-controls="`business-mobile-navigation-${program.toLowerCase()}`" :aria-label="mobileNavigationOpen ? `Tutup menu ${program}` : `Buka menu ${program}`" @click="mobileNavigationOpen = !mobileNavigationOpen"><X v-if="mobileNavigationOpen" class="size-6" /><Menu v-else class="size-6" /></button>
                 </div>
             </nav>
-            <nav v-if="mobileNavigationOpen" id="business-mobile-nav" aria-label="Navigasi mobile" class="border-t border-slate-100 px-5 pb-5 lg:hidden">
-                <a v-for="link in links" :key="link.href" :href="link.href" class="block border-b border-slate-100 py-3 text-sm font-semibold" @click="mobileNavigationOpen = false">{{ link.label }}</a>
-                <div class="mt-4 flex gap-3 sm:hidden"><Link :href="loginHref" class="business-button business-button-secondary flex-1">Masuk</Link><button class="business-button flex-1" @click="join">{{ cta }}</button></div>
+            <nav v-if="mobileNavigationOpen" :id="`business-mobile-navigation-${program.toLowerCase()}`" :aria-label="`Navigasi ${program.toLowerCase()} mobile`" class="border-t border-slate-100 bg-white px-5 pb-5 lg:hidden">
+                <a v-for="item in links" :key="item.href" :href="item.href" class="block border-b border-slate-100 py-3 text-sm font-semibold text-slate-700" @click="mobileNavigationOpen = false">{{ item.label }}</a>
+                <div class="mt-4 flex gap-3 sm:hidden"><Link :href="loginHref" class="flex flex-1 items-center justify-center rounded-full bg-sky-50 py-3 text-sm font-semibold text-[#075890]">Masuk</Link><button class="corp-button flex-1 justify-center !py-3" @click="join">{{ cta }}</button></div>
             </nav>
         </header>
         <main>

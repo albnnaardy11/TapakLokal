@@ -203,10 +203,10 @@ class BookingController extends Controller
                 ->where('slug', $trip)
                 ->where('status', 'published')
                 ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
-                ->first()
-                ?? Trip::with('vendor:id,name')->where('type', $tripType)->first()
-                ?? Trip::with('vendor:id,name')->first();
+                ->first();
         }
+
+        abort_unless($record, 404);
 
         return Inertia::render('TripDetail', [
             'tripType' => $tripType,

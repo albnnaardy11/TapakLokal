@@ -6,6 +6,7 @@
 .business-page .business-eyebrow { @apply text-[10px] sm:text-[11px] font-bold tracking-[0.16em] sm:tracking-[0.18em] text-[#007bbd]; }
 .business-page .business-heading { @apply text-2xl sm:text-3xl lg:text-[36px] leading-[1.2] font-bold tracking-[-0.035em] text-[#07345a]; }
 .business-page .business-copy { @apply text-xs sm:text-sm lg:text-base leading-relaxed sm:leading-7 text-slate-500; }
+.business-page .corp-button { @apply inline-flex cursor-pointer items-center gap-3 rounded-full bg-[#0088ff] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0071d6] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-500; }
 .business-page .business-button { @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#009cf0] px-5 py-3 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-bold text-white transition hover:bg-[#007fc5] active:scale-[0.98]; }
 .business-page .business-button-secondary { @apply border border-sky-200 bg-white text-[#075890] hover:bg-sky-50; }
 .business-page .business-text-link { @apply inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#007bbd] hover:text-[#07345a]; }
