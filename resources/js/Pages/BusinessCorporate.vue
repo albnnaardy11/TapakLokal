@@ -71,7 +71,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
     </Head>
     <div class="corporate-page min-h-screen bg-white font-sans text-slate-800">
         <header class="corporate-header sticky top-0 z-40 bg-white/95 backdrop-blur-md" @keydown.esc="mobileNavigationOpen = false">
-            <nav aria-label="Navigasi corporate" class="mx-auto flex h-[68px] max-w-[1600px] items-center justify-between gap-5 px-5 sm:px-8">
+            <nav aria-label="Navigasi corporate" class="mx-auto flex h-[68px] max-w-[1180px] items-center justify-between gap-5 px-5 sm:px-8 xl:px-0">
                 <Link :href="route('home')" aria-label="TapakLokal beranda" class="flex shrink-0 items-center gap-3">
                     <span class="text-[23px] font-extrabold tracking-[-0.065em] text-slate-800">tapak<span class="text-[#009cf0]">lokal</span></span>
                     <span class="border-l border-slate-200 pl-3 text-[10px] leading-tight font-semibold tracking-wide text-slate-500">FOR<br /><span class="text-[13px] font-bold text-[#009cf0]">CORPORATES</span></span>
@@ -92,71 +92,81 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             </nav>
         </header>
         <main>
-            <section id="corporate-hero" class="corporate-hero overflow-hidden">
-                <div class="px-5 pt-6 text-center sm:pt-8 lg:pt-8">
-                    <h1 class="hero-title mx-auto max-w-5xl text-[26px] leading-[1.3] font-bold tracking-[-0.035em] text-[#26292c] sm:text-[34px] lg:text-[38px]">
-                        Cara lebih <span class="hero-handwritten">mudah</span><br />mengatur perjalanan perusahaan
-                    </h1>
-                </div>
-                <div class="my-auto flex flex-col items-center">
-                    <div class="hero-composition" role="img" aria-label="Ilustrasi laptop dan ponsel TapakLokal dengan brief perjalanan, agenda tim, serta perencanaan anggaran.">
-                        <img src="/Assets/Images/corporate-device-mockup.png" alt="" width="1536" height="1024" fetchpriority="high" class="hero-devices" />
-                        <div class="hero-float hero-float-brief" aria-hidden="true">
-                            <p class="hero-card-title">Satu brief,<br />detail perjalanan lebih jelas</p>
-                            <div class="mt-2 sm:mt-3 flex border-b border-slate-100 text-[8px] sm:text-[9px] font-semibold"><span class="flex-1 pb-1.5 sm:pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-1.5 sm:pb-2 text-[#009cf0]">Rencana trip</span></div>
-                            <div class="mt-1.5 sm:mt-2 grid grid-cols-3 gap-1 sm:gap-2 rounded-lg bg-[#f5fafd] p-1.5 sm:p-2 text-[8px] sm:text-[9px] text-center"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong class="truncate">Bali</strong><strong class="truncate">24 orang</strong><strong class="truncate">3 hari</strong></div>
-                        </div>
-                        <div class="hero-float hero-float-agenda" aria-hidden="true">
-                            <p class="hero-card-title">Agenda yang pas untuk tim</p>
-                            <div class="relative mt-2 sm:mt-3 flex items-center justify-center gap-2 sm:gap-3 rounded-lg bg-[#f1fbff] py-2 sm:py-3"><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-base sm:text-xl leading-5 sm:leading-6 text-[#07345a]">3 hari</strong><span class="text-[7px] sm:text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
-                        </div>
-                        <div class="hero-float hero-float-budget" aria-hidden="true">
-                            <p class="hero-card-title">Rencanakan sesuai anggaran Anda</p>
-                            <div class="relative mt-2 sm:mt-3 flex h-24 sm:h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-28 sm:size-32 rounded-full border-[16px] sm:border-[20px] border-[#dcf5ff]"></div><div class="absolute h-14 sm:h-16 w-20 sm:w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-14 sm:h-16 w-20 sm:w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-2.5 sm:p-3 text-white shadow-lg"><Wallet class="size-6 sm:size-7" /><span class="mt-1 block h-1 w-10 sm:w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-4 sm:right-8 size-4 sm:size-5 text-[#83c800]" /></div>
-                        </div>
-                        <div class="hero-float hero-float-ticket" aria-hidden="true">
-                            <p class="hero-card-title">Persetujuan & tiket instan</p>
-                            <div class="mt-2 sm:mt-2.5 rounded-xl border border-sky-100 bg-gradient-to-br from-[#f6fbff] to-[#edf7fe] p-2 sm:p-2.5 shadow-2xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[8px] sm:text-[9px] font-bold text-[#07345a]">E-Tiket & Hotel</span>
-                                    <span class="rounded-full bg-emerald-500 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8px] font-bold text-white shadow-2xs">Siap Digunakan ✓</span>
-                                </div>
-                                <div class="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 rounded-lg bg-white p-1.5 sm:p-2 border border-sky-100 shadow-2xs">
-                                    <span class="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md bg-sky-50 text-[#0088ff] border border-sky-100">
-                                        <Plane class="size-3 sm:size-3.5" />
-                                    </span>
-                                    <div class="min-w-0 flex-1">
-                                        <span class="block truncate text-[9px] sm:text-[10px] font-bold text-slate-700">CGK ⇄ DPS • 24 Tiket</span>
-                                        <span class="block text-[7px] sm:text-[8px] text-emerald-600 font-semibold truncate">Terkonfirmasi otomatis</span>
+            <!-- Hero & Trust Strip Container (Aligned with Navbar left & right) -->
+            <div class="mx-auto max-w-[1180px] px-5 sm:px-8 xl:px-0">
+                <!-- Hero Section (Red zone: wide with flat top blending to navbar, rounded bottom, no borders) -->
+                <section
+                    id="corporate-hero"
+                    class="corporate-hero overflow-hidden rounded-b-[32px] sm:rounded-b-[44px] lg:rounded-b-[54px]"
+                >
+                    <div class="px-5 pt-4 text-center sm:pt-5 lg:pt-6">
+                        <h1 class="hero-title mx-auto max-w-5xl text-[24px] leading-[1.22] font-bold tracking-[-0.035em] text-[#26292c] sm:text-[32px] lg:text-[36px]">
+                            Cara lebih <span class="hero-handwritten">mudah</span><br />mengatur perjalanan perusahaan
+                        </h1>
+                    </div>
+                    <div class="flex flex-col items-center mt-2 pb-4 sm:pb-6">
+                        <div class="hero-composition" role="img" aria-label="Ilustrasi laptop dan ponsel TapakLokal dengan brief perjalanan, agenda tim, serta perencanaan anggaran.">
+                            <img src="/Assets/Images/corporate-device-mockup.png" alt="" width="1536" height="1024" fetchpriority="high" class="hero-devices" />
+                            <div class="hero-float hero-float-brief" aria-hidden="true">
+                                <p class="hero-card-title">Satu brief,<br />detail perjalanan lebih jelas</p>
+                                <div class="mt-2 sm:mt-3 flex border-b border-slate-100 text-[8px] sm:text-[9px] font-semibold"><span class="flex-1 pb-1.5 sm:pb-2 text-slate-400">Kebutuhan tim</span><span class="flex-1 border-b-2 border-[#8fd600] pb-1.5 sm:pb-2 text-[#009cf0]">Rencana trip</span></div>
+                                <div class="mt-1.5 sm:mt-2 grid grid-cols-3 gap-1 sm:gap-2 rounded-lg bg-[#f5fafd] p-1.5 sm:p-2 text-[8px] sm:text-[9px] text-center"><span class="text-slate-400">Destinasi</span><span class="text-slate-400">Peserta</span><span class="text-slate-400">Durasi</span><strong class="truncate">Bali</strong><strong class="truncate">24 orang</strong><strong class="truncate">3 hari</strong></div>
+                            </div>
+                            <div class="hero-float hero-float-agenda" aria-hidden="true">
+                                <p class="hero-card-title">Agenda yang pas untuk tim</p>
+                                <div class="relative mt-2 sm:mt-3 flex items-center justify-center gap-2 sm:gap-3 rounded-lg bg-[#f1fbff] py-2 sm:py-3"><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Aktivitas<br /><strong class="text-[#009cf0]">bersama</strong></span><div class="hero-donut"><span><strong class="block text-base sm:text-xl leading-5 sm:leading-6 text-[#07345a]">3 hari</strong><span class="text-[7px] sm:text-[8px] text-slate-500">Penuh cerita</span></span></div><span class="text-[8px] sm:text-[9px] leading-3.5 sm:leading-4 text-slate-500">Waktu<br /><strong class="text-[#2761a4]">bebas</strong></span></div>
+                            </div>
+                            <div class="hero-float hero-float-budget" aria-hidden="true">
+                                <p class="hero-card-title">Rencanakan sesuai anggaran Anda</p>
+                                <div class="relative mt-2 sm:mt-3 flex h-24 sm:h-28 items-center justify-center overflow-hidden rounded-lg bg-[#effaff]"><div class="absolute size-28 sm:size-32 rounded-full border-[16px] sm:border-[20px] border-[#dcf5ff]"></div><div class="absolute h-14 sm:h-16 w-20 sm:w-24 -translate-x-3 -translate-y-1 rotate-[-17deg] rounded-lg bg-[#94d900]"></div><div class="relative h-14 sm:h-16 w-20 sm:w-24 rotate-[-8deg] rounded-lg bg-[#009ef1] p-2.5 sm:p-3 text-white shadow-lg"><Wallet class="size-6 sm:size-7" /><span class="mt-1 block h-1 w-10 sm:w-12 rounded bg-[#075a9e]"></span></div><Check class="absolute top-2 right-4 sm:right-8 size-4 sm:size-5 text-[#83c800]" /></div>
+                            </div>
+                            <div class="hero-float hero-float-ticket" aria-hidden="true">
+                                <p class="hero-card-title">Persetujuan & tiket instan</p>
+                                <div class="mt-2 sm:mt-2.5 rounded-xl border border-sky-100 bg-gradient-to-br from-[#f6fbff] to-[#edf7fe] p-2 sm:p-2.5 shadow-2xs">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[8px] sm:text-[9px] font-bold text-[#07345a]">E-Tiket & Hotel</span>
+                                        <span class="rounded-full bg-emerald-500 px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8px] font-bold text-white shadow-2xs">Siap Digunakan ✓</span>
+                                    </div>
+                                    <div class="mt-1.5 sm:mt-2 flex items-center gap-1.5 sm:gap-2 rounded-lg bg-white p-1.5 sm:p-2 border border-sky-100 shadow-2xs">
+                                        <span class="flex size-6 sm:size-7 shrink-0 items-center justify-center rounded-md bg-sky-50 text-[#0088ff] border border-sky-100">
+                                            <Plane class="size-3 sm:size-3.5" />
+                                        </span>
+                                        <div class="min-w-0 flex-1">
+                                            <span class="block truncate text-[9px] sm:text-[10px] font-bold text-slate-700">CGK ⇄ DPS • 24 Tiket</span>
+                                            <span class="block text-[7px] sm:text-[8px] text-emerald-600 font-semibold truncate">Terkonfirmasi otomatis</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <p class="mt-3 text-center text-[10px] tracking-wide text-[#4d7e99]">Ilustrasi pengalaman TapakLokal · Sesuaikan perjalanan melalui konsultasi</p>
-                </div>
-                <div class="corporate-trust-strip" aria-label="Trusted by 100+ companies">
-                    <div class="trust-badge">
-                        <svg class="trust-laurel" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
-                            <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                            <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
-                        </svg>
-                        <p>Dipercaya oleh <strong>100+</strong><br />perusahaan</p>
-                        <svg class="trust-laurel -scale-x-100" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
-                            <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
-                            <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
-                        </svg>
-                    </div>
-                    <div class="corporate-logo-marquee" tabindex="0" aria-label="Logo perusahaan. Arahkan kursor atau fokuskan untuk menghentikan animasi.">
-                        <div class="corporate-logo-track">
-                            <div v-for="copy in 3" :key="copy" class="corporate-logo-group" :aria-hidden="copy > 1 ? true : undefined">
-                                <img v-for="logo in corporateLogos" :key="logo.src" :src="logo.src" :alt="copy === 1 ? logo.name : ''" width="150" height="45" class="corporate-company-logo" />
+                </section>
+
+                <!-- Dipercaya Oleh Section (Light sky blue card with distinct contrast) -->
+                <div class="relative z-10 mx-auto w-full max-w-[1040px] px-4 mb-5 sm:mb-7 lg:mb-8">
+                    <div class="corporate-trust-strip rounded-b-[20px] sm:rounded-b-[28px] bg-[#e3f3fc] border border-[#a9d5eb] border-t-0 shadow-[0_12px_28px_-8px_rgba(7,52,90,0.08)]" aria-label="Dipercaya oleh 100+ perusahaan">
+                        <div class="trust-badge text-[#07345a]">
+                            <svg class="trust-laurel text-[#0088ff]" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
+                                <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
+                            </svg>
+                            <p class="text-[#07345a]">Dipercaya oleh <strong class="font-extrabold text-[#0088ff]">100+</strong><br />perusahaan</p>
+                            <svg class="trust-laurel -scale-x-100 text-[#0088ff]" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
+                                <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
+                            </svg>
+                        </div>
+                        <div class="corporate-logo-marquee" tabindex="0" aria-label="Logo perusahaan. Arahkan kursor atau fokuskan untuk menghentikan animasi.">
+                            <div class="corporate-logo-track">
+                                <div v-for="copy in 3" :key="copy" class="corporate-logo-group" :aria-hidden="copy > 1 ? true : undefined">
+                                    <img v-for="logo in corporateLogos" :key="logo.src" :src="logo.src" :alt="copy === 1 ? logo.name : ''" width="150" height="45" class="corporate-company-logo" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-            <section id="solutions" class="corp-container py-14 sm:py-16 lg:py-24">
+            </div>
+            <section id="solutions" class="corp-container pt-2 pb-14 sm:pt-3 sm:pb-16 lg:pt-4 lg:pb-24">
                 <div class="mx-auto max-w-4xl text-center">
                     <h2 class="text-2xl font-extrabold tracking-tight text-[#07345a] sm:text-4xl lg:text-[42px] lg:leading-[1.25]">
                         Kelola Perjalanan Bisnis Tim Anda Bersama
@@ -742,33 +752,34 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 .corp-label { @apply flex flex-col gap-1.5 text-xs font-semibold text-slate-700; }
 .corp-input { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-base sm:text-sm font-normal outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100; }
 .corporate-page section[id] { scroll-margin-top: 96px; }
-.corporate-hero { min-height: calc(100dvh - 68px); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(180deg, #fff 10%, #f5fcff 32%, #c4e9fb 100%); }
+.corporate-hero { min-height: auto; display: flex; flex-direction: column; justify-content: flex-start; background: linear-gradient(180deg, #ffffff 0%, #ffffff 15%, #f1fbff 44%, #ceeafa 100%); }
 .hero-handwritten { position: relative; display: inline-block; color: #009cf0; font-family: 'Segoe Print', 'Bradley Hand', cursive; font-size: 1.25em; font-weight: 700; font-style: italic; line-height: 1.3; letter-spacing: -.065em; }
 .hero-handwritten::after { content: ''; position: absolute; left: 0; right: -3%; bottom: 0; height: 8px; border-top: 4px solid #009cf0; border-radius: 50%; transform: rotate(-3deg); }
-.hero-composition { position: relative; width: min(100% - 40px, 1000px); height: 484px; margin: 20px auto 0; zoom: .8; }
-.hero-devices { position: absolute; z-index: 2; left: 20%; top: 54px; width: 63%; height: auto; }
-.hero-float { position: absolute; z-index: 3; width: 230px; padding: 13px 10px 10px; border: 1px solid #f3f7fa; border-radius: 15px; background: #fff; box-shadow: 0 5px 22px #1b567817; }
-.hero-card-title { text-align: center; font-size: 12px; font-weight: 650; line-height: 1.3; letter-spacing: -.025em; color: #30383d; }
+.hero-composition { position: relative; width: min(100% - 40px, 1000px); height: 450px; margin: 0 auto; zoom: .80; }
+.hero-devices { position: absolute; z-index: 2; left: 20%; top: 48px; width: 63%; height: auto; }
+.hero-float { position: absolute; z-index: 3; width: 224px; padding: 11px 9px 9px; border: 1px solid #f3f7fa; border-radius: 14px; background: #fff; box-shadow: 0 5px 22px #1b567817; }
+.hero-card-title { text-align: center; font-size: 11.5px; font-weight: 650; line-height: 1.3; letter-spacing: -.025em; color: #30383d; }
 .hero-float-brief { left: 6%; top: 0; }
 .hero-float-agenda { right: 1%; top: 2px; }
-.hero-float-budget { left: 0; top: 185px; }
-.hero-float-ticket { left: 83.5%; top: 215px; width: 220px; right: auto; }
-.hero-donut { display: grid; width: 91px; height: 91px; place-items: center; border-radius: 50%; background: conic-gradient(#2566a9 0 28%, #2bc3e8 28% 100%); transform: rotate(-15deg); }
-.hero-donut > span { display: flex; width: 63px; height: 63px; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: #f8fcff; transform: rotate(15deg); }
-.corporate-trust-strip { display: flex; align-items: center; gap: 32px; width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px 24px 30px; color: #5c7b8c; }
-.trust-badge { display: flex; flex-shrink: 0; align-items: center; gap: 3px; text-align: center; font-size: 13px; line-height: 1.15; font-weight: 500; }
-.trust-laurel { height: 48px; width: 25px; opacity: .8; }
+.hero-float-budget { left: 0; top: 172px; }
+.hero-float-ticket { left: 83.5%; top: 202px; width: 216px; right: auto; }
+.hero-donut { display: grid; width: 86px; height: 86px; place-items: center; border-radius: 50%; background: conic-gradient(#2566a9 0 28%, #2bc3e8 28% 100%); transform: rotate(-15deg); }
+.hero-donut > span { display: flex; width: 59px; height: 59px; flex-direction: column; align-items: center; justify-content: center; border-radius: 50%; background: #f8fcff; transform: rotate(15deg); }
+.corporate-trust-strip { display: flex; align-items: center; gap: 26px; width: 100%; margin: 0 auto; padding: 16px 28px 18px; color: #07345a; }
+.trust-badge { display: flex; flex-shrink: 0; align-items: center; gap: 4px; text-align: center; font-size: 12.5px; line-height: 1.15; font-weight: 600; color: #07345a; }
+.trust-laurel { height: 40px; width: 20px; opacity: 1; }
 .corporate-logo-marquee { min-width: 0; flex: 1; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent); }
 .corporate-logo-marquee:focus-visible { outline: 2px solid #0088ff; outline-offset: 4px; }
 .corporate-logo-track { display: flex; width: max-content; animation: corporate-logos-left 28s linear infinite; }
 .corporate-logo-group { display: flex; flex-shrink: 0; align-items: center; gap: 60px; padding-right: 60px; }
-.corporate-company-logo { display: block; width: 150px; height: 45px; object-fit: contain; filter: grayscale(1); opacity: .65; }
+.corporate-company-logo { display: block; width: 135px; height: 38px; object-fit: contain; opacity: .85; transition: opacity .2s; }
+.corporate-company-logo:hover { opacity: 1; }
 .corporate-logo-marquee:hover .corporate-logo-track, .corporate-logo-marquee:focus-within .corporate-logo-track { animation-play-state: paused; }
 @keyframes corporate-logos-left { to { transform: translateX(-33.333333%); } }
 @media (max-width: 767px) {
-    .corporate-trust-strip { flex-direction: column; gap: 12px; padding: 16px 16px 20px; text-align: center; }
+    .corporate-trust-strip { flex-direction: column; gap: 12px; padding: 12px 14px 14px; text-align: center; }
     .trust-badge { justify-content: center; font-size: 11px; }
-    .trust-laurel { height: 32px; width: 16px; }
+    .trust-laurel { height: 30px; width: 15px; }
     .corporate-logo-marquee { width: 100%; }
     .corporate-logo-group { gap: 24px; padding-right: 24px; }
     .corporate-company-logo { width: 95px; height: 30px; }
@@ -824,7 +835,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
         overflow-x: auto;
     }
 }
-@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 720px; height: 406px; margin-top: 30px; zoom: .85; } .hero-float { width: 184px; padding: 10px 8px 8px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 145px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-float-ticket { top: 155px; left: 83%; width: 175px; right: auto; } .hero-devices { top: 65px; left: 18%; width: 67%; } }
+@media (min-width: 768px) and (max-width: 1023px) { .hero-composition { width: 700px; height: 370px; margin-top: 15px; zoom: .8; } .hero-float { width: 175px; padding: 9px 7px 7px; } .hero-card-title { font-size: 10px; } .hero-float-budget { top: 130px; left: 0; } .hero-float-brief { left: 1%; } .hero-float-agenda { right: 0; } .hero-float-ticket { top: 140px; left: 83%; width: 165px; right: auto; } .hero-devices { top: 50px; left: 18%; width: 67%; } }
 @media (max-width: 767px) {
     .corporate-hero { min-height: auto; }
     .hero-title { font-size: clamp(23px, 6vw, 30px); }
