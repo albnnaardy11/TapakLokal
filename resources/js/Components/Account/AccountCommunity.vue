@@ -1,13 +1,16 @@
 <script setup>
 import { computed, nextTick, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import AccountExploreBanner from './AccountExploreBanner.vue';
 import { Bold, ImagePlus, Italic, List, ArrowLeft, CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Heart, MapPin, MessageCircle, Plus, Search, Send, Star, Trash2, Users, X } from 'lucide-vue-next';
 defineProps({ section: { type: String, required: true } });
+const page = usePage();
+const authUser = computed(() => page.props.auth?.user);
 const filter = ref('Semua');
 const search = ref('');
 const favorites = ref([{ id: 1, name: 'Open Trip Bali', type: 'Open Trip', place: 'Bali', price: 'Rp 750.000', image: '1537996194471-e657df975ab4' }, { id: 2, name: 'Private Trip Lombok', type: 'Private Trip', place: 'Lombok', price: 'Rp 1.500.000', image: '1518548419970-58e3b4079ab2' }]);
 const visibleFavorites = computed(() => favorites.value.filter((item) => (filter.value === 'Semua' || item.type === filter.value) && item.name.toLowerCase().includes(search.value.toLowerCase())));
-const travelers = ref([{ id: 1, name: 'Albnnaardy', relation: 'Diri sendiri' }]);
+const travelers = ref([{ id: 1, name: authUser.value?.name || 'Wisatawan', relation: 'Diri sendiri' }]);
 const travelerSearch = ref('');
 const visibleTravelers = computed(() => travelers.value.filter((person) => person.name.toLowerCase().includes(travelerSearch.value.trim().toLowerCase())));
 const travelerName = ref('');

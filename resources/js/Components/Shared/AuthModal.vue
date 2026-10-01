@@ -1,8 +1,9 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
+    AlertCircle,
     ArrowLeft,
     CheckCircle2,
     Compass,
@@ -42,6 +43,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'login-success', 'guest-continue']);
 
+const page = usePage();
+
+const selectedRole = ref('traveler'); // 'traveler' | 'vendor'
 const screen = ref('social'); // 'social' | 'credentials' | 'register'
 const identifier = ref('');
 const password = ref('');
@@ -62,7 +66,7 @@ watch(
             name.value = '';
             passwordConfirmation.value = '';
             notice.value = '';
-            errorMessage.value = '';
+            errorMessage.value = page.props.flash?.error || page.props.errors?.email || page.props.errors?.error || '';
             isLoading.value = false;
         }
     }
@@ -79,19 +83,15 @@ watch(
     }
 );
 
-const handleSocialLogin = (provider) => {
+const handleSocialLogin = (provider = 'Google') => {
     isLoading.value = true;
     errorMessage.value = '';
-    notice.value = `Menghubungkan ke ${provider}...`;
-    setTimeout(() => {
-        isLoading.value = false;
-        notice.value = `Berhasil masuk dengan ${provider}! Mengalihkan...`;
-        setTimeout(() => {
-            emit('login-success', { provider });
-            emit('close');
-            router.visit(typeof route === 'function' ? route('account') : '/account');
-        }, 1000);
-    }, 800);
+
+    const targetUrl = typeof route === 'function'
+        ? route('auth.socialite.redirect', { provider: provider.toLowerCase(), role: selectedRole.value })
+        : `/auth/${provider.toLowerCase()}/redirect?role=${selectedRole.value}`;
+
+    window.location.href = targetUrl;
 };
 
 const handleManualLogin = () => {
@@ -110,13 +110,17 @@ const handleManualLogin = () => {
         },
         {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (res) => {
                 isLoading.value = false;
-                notice.value = 'Berhasil masuk! Mengalihkan...';
-                emit('login-success', { identifier: identifier.value });
-                setTimeout(() => {
-                    emit('close');
-                }, 500);
+                const loggedUser = res.props?.auth?.user;
+                emit('login-success', {
+                    name: loggedUser?.name || identifier.value,
+                    email: loggedUser?.email || identifier.value,
+                    avatar: loggedUser?.avatar || '',
+                    role: loggedUser?.hasPermission ? (loggedUser.hasPermission('vendor.access') ? 'Mitra Bisnis' : 'Wisatawan') : 'Wisatawan',
+                    tier: loggedUser?.tier || 'Bronze Priority',
+                });
+                emit('close');
             },
             onError: (errors) => {
                 isLoading.value = false;
@@ -142,21 +146,26 @@ const handleRegisterSubmit = () => {
             name: name.value,
             email: identifier.value,
             password: password.value,
-            password_confirmation: passwordConfirmation.value,
+            password_confirmation: passwordConfirmation.value || password.value,
+            role: selectedRole.value,
         },
         {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (res) => {
                 isLoading.value = false;
-                notice.value = 'Pendaftaran berhasil! Mengalihkan ke akun...';
-                emit('login-success', { identifier: identifier.value });
-                setTimeout(() => {
-                    emit('close');
-                }, 500);
+                const loggedUser = res.props?.auth?.user;
+                emit('login-success', {
+                    name: name.value || loggedUser?.name,
+                    email: identifier.value || loggedUser?.email,
+                    avatar: loggedUser?.avatar || '',
+                    role: selectedRole.value === 'vendor' ? 'Mitra Bisnis' : 'Wisatawan',
+                    tier: 'Bronze Priority',
+                });
+                emit('close');
             },
             onError: (errors) => {
                 isLoading.value = false;
-                errorMessage.value = errors.name || errors.email || errors.password || 'Pendaftaran gagal. Periksa data Anda.';
+                errorMessage.value = errors.name || errors.email || errors.password || errors.role || 'Pendaftaran gagal. Periksa data Anda.';
             },
             onFinish: () => {
                 isLoading.value = false;
@@ -260,6 +269,26 @@ const continueAsGuest = () => {
 
                         <!-- Modal Body Actions -->
                         <div class="px-6 pb-6 pt-2 sm:px-8 sm:pb-8">
+                            <!-- Role Switcher (Wisatawan vs Mitra Bisnis) -->
+                            <div class="mb-3.5 flex rounded-2xl bg-slate-100 p-1 border border-slate-200/80 select-none">
+                                <button
+                                    type="button"
+                                    class="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 px-2 text-xs font-bold transition-all cursor-pointer"
+                                    :class="selectedRole === 'traveler' ? 'bg-white text-[#0088ff] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                                    @click="selectedRole = 'traveler'"
+                                >
+                                    <span> Wisatawan</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 px-2 text-xs font-bold transition-all cursor-pointer"
+                                    :class="selectedRole === 'vendor' ? 'bg-white text-[#0088ff] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                                    @click="selectedRole = 'vendor'"
+                                >
+                                    <span> Mitra Bisnis</span>
+                                </button>
+                            </div>
+
                             <!-- Google login -->
                             <div class="relative mt-2">
                                 <div v-if="recentlyUsed" class="pointer-events-none absolute -top-[5px] -right-[9px] z-20 select-none">
@@ -331,13 +360,14 @@ const continueAsGuest = () => {
                                 </div>
                             </div>
 
-                            <!-- Status Notice / Feedback -->
+
+                            <!-- Error Alert Feedback -->
                             <div
-                                v-if="notice"
-                                class="mt-4 flex items-center justify-center gap-2 rounded-xl bg-blue-50 border border-blue-200 px-3.5 py-2.5 text-xs font-semibold text-blue-700 animate-fade-in"
+                                v-if="errorMessage"
+                                class="mt-4 flex items-start gap-2.5 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-semibold text-rose-700 animate-fade-in text-left"
                             >
-                                <Sparkles class="size-3.5 shrink-0 animate-spin text-[#0088ff]" />
-                                <span>{{ notice }}</span>
+                                <AlertCircle class="size-4 shrink-0 text-rose-500 mt-0.5" />
+                                <span class="leading-relaxed">{{ errorMessage }}</span>
                             </div>
 
                             <!-- 4. TERMS & PRIVACY NOTICE -->
@@ -505,6 +535,26 @@ const continueAsGuest = () => {
                         </div>
 
                         <form class="p-6 sm:p-8" @submit.prevent="handleRegisterSubmit">
+                            <!-- Role Switcher -->
+                            <div class="mb-4 flex rounded-2xl bg-slate-100 p-1 border border-slate-200/80 select-none">
+                                <button
+                                    type="button"
+                                    class="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 px-2 text-xs font-bold transition-all cursor-pointer"
+                                    :class="selectedRole === 'traveler' ? 'bg-white text-[#0088ff] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                                    @click="selectedRole = 'traveler'"
+                                >
+                                    <span> Wisatawan</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 px-2 text-xs font-bold transition-all cursor-pointer"
+                                    :class="selectedRole === 'vendor' ? 'bg-white text-[#0088ff] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                                    @click="selectedRole = 'vendor'"
+                                >
+                                    <span> Mitra Bisnis</span>
+                                </button>
+                            </div>
+
                             <!-- Error Alert -->
                             <div
                                 v-if="errorMessage"
@@ -515,14 +565,16 @@ const continueAsGuest = () => {
 
                             <!-- Input Name -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-700">Nama Lengkap</label>
+                                <label class="block text-xs font-bold text-slate-700">
+                                    {{ selectedRole === 'vendor' ? 'Nama Bisnis / Penanggung Jawab' : 'Nama Lengkap' }}
+                                </label>
                                 <div class="mt-1.5 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
                                     <User class="size-4 text-[#0088ff] shrink-0" />
                                     <input
                                         v-model="name"
                                         type="text"
                                         required
-                                        placeholder="Nama lengkap Anda"
+                                        :placeholder="selectedRole === 'vendor' ? 'Contoh: Rinjani Trekking Partner' : 'Nama lengkap Anda'"
                                         class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                                     />
                                 </div>
@@ -545,14 +597,14 @@ const continueAsGuest = () => {
 
                             <!-- Input Password -->
                             <div class="mt-3">
-                                <label class="block text-xs font-bold text-slate-700">Kata Sandi (Min. 8 karakter)</label>
+                                <label class="block text-xs font-bold text-slate-700">Kata Sandi (Min. 10 karakter, huruf & angka)</label>
                                 <div class="mt-1.5 flex min-h-[44px] items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 transition focus-within:border-[#0088ff] focus-within:ring-2 focus-within:ring-[#0088ff]/15">
                                     <Lock class="size-4 text-[#0088ff] shrink-0" />
                                     <input
                                         v-model="password"
                                         :type="showPassword ? 'text' : 'password'"
                                         required
-                                        minlength="8"
+                                        minlength="10"
                                         placeholder="Kata sandi baru"
                                         class="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                                     />
@@ -565,7 +617,9 @@ const continueAsGuest = () => {
                                 class="mt-5 flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full bg-[#0088ff] hover:bg-[#0074d9] px-6 text-sm font-bold text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer disabled:opacity-60"
                                 :disabled="isLoading"
                             >
-                                <span v-if="!isLoading">Daftar Sekarang</span>
+                                <span v-if="!isLoading">
+                                    {{ selectedRole === 'vendor' ? 'Daftar sebagai Mitra Bisnis' : 'Daftar Sekarang' }}
+                                </span>
                                 <span v-else class="inline-flex items-center gap-2">
                                     <Sparkles class="size-4 animate-spin" />
                                     Mendaftarkan...

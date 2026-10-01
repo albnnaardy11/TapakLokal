@@ -39,10 +39,24 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => fn () => $request->user() ? [
-                'user' => $request->user()->only(['id', 'name', 'email', 'phone', 'city']),
+                'user' => [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'username' => $request->user()->username,
+                    'phone' => $request->user()->phone,
+                    'city' => $request->user()->city,
+                    'avatar' => $request->user()->avatar,
+                    'points' => $request->user()->points,
+                    'tier' => $request->user()->tier,
+                ],
                 'permissions' => $request->user()->loadMissing('roles.permissions')->roles->flatMap->permissions->pluck('name')->unique()->values(),
             ] : ['user' => null, 'permissions' => []],
-            'flash' => ['success' => fn () => $request->session()->get('success'), 'error' => fn () => $request->session()->get('error')],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'login_success_data' => fn () => $request->session()->get('login_success_data'),
+            ],
             'adminPanel' => function () use ($request): ?array {
                 $key = $request->attributes->get('admin_panel');
                 if (! $key || ! $request->user()) {

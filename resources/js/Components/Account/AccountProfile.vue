@@ -1,21 +1,30 @@
 <script setup>
 import { Camera, Check, Mail, Phone, Plus, ShieldCheck, UserRound, X } from 'lucide-vue-next';
-import { onBeforeUnmount, reactive, ref } from 'vue';
+import { computed, onBeforeUnmount, reactive, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import AccountSecurity from './AccountSecurity.vue';
 import AccountExploreBanner from './AccountExploreBanner.vue';
 
+const page = usePage();
+const authUser = computed(() => page.props.auth?.user);
+
 const tab = ref('Profil');
-const initial = { name: 'albnnaardy', gender: '', birth: '', city: 'Jakarta Timur' };
+const initial = {
+    name: authUser.value?.name || '',
+    gender: authUser.value?.gender || '',
+    birth: authUser.value?.birth || '',
+    city: authUser.value?.city || 'Jakarta Timur',
+};
 const form = reactive({ ...initial });
 const saved = ref({ ...initial });
 const notice = ref('');
-const avatar = ref('');
+const avatar = ref(authUser.value?.avatar || '');
 const photoInput = ref(null);
 const dialog = ref(null);
 const contactType = ref('email');
 const contact = ref('');
-const emails = ref([]);
-const phones = ref([]);
+const emails = ref(authUser.value?.email ? [authUser.value.email] : []);
+const phones = ref(authUser.value?.phone ? [authUser.value.phone] : []);
 const save = () => { saved.value = { ...form }; notice.value = 'Perubahan profil tersimpan untuk pratinjau ini.'; };
 const changePhoto = (event) => {
     const file = event.target.files?.[0];
@@ -47,7 +56,7 @@ onBeforeUnmount(() => { if (avatar.value) { URL.revokeObjectURL(avatar.value); }
             <form class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_4px_20px_rgba(23,75,120,0.04)]" @submit.prevent="save">
                 <div class="border-b border-slate-100 px-4 py-3"><h3 class="text-xs font-bold text-[#183660]">Data pribadi</h3><p class="mt-1 text-xs text-slate-400">Pastikan informasi profilmu selalu terbaru.</p></div>
                 <div class="p-4 sm:p-5">
-                    <div class="mb-5 flex flex-wrap items-center gap-4 rounded-xl border border-blue-100 bg-gradient-to-br from-[#edf4ff] via-[#f0f8ff] to-[#def4f5] p-4"><span class="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-[#078cff] text-xl font-bold text-white"><img v-if="avatar" :src="avatar" alt="Foto profil pratinjau" class="size-full object-cover" /><template v-else>{{ form.name.charAt(0).toUpperCase() || 'A' }}</template></span><div class="min-w-0 flex-1"><p class="break-words text-xs font-bold text-[#183660]">{{ saved.name }}</p><p class="mt-1 text-[11px] text-slate-400">JPG, PNG, atau WebP · Maks. 2 MB</p></div><input ref="photoInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="changePhoto" /><button type="button" class="inline-flex items-center gap-2 rounded-lg border border-[#d9e5f4] bg-white px-3 py-2 text-xs font-semibold text-[#3E7BEF] hover:bg-sky-50" @click="photoInput.click()"><Camera class="size-4" />Ganti foto</button></div>
+                    <div class="mb-5 flex flex-wrap items-center gap-4 rounded-xl border border-blue-100 bg-gradient-to-br from-[#edf4ff] via-[#f0f8ff] to-[#def4f5] p-4"><span class="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-[#078cff] text-xl font-bold text-white"><img v-if="avatar" :src="avatar" alt="Foto profil pratinjau" referrerpolicy="no-referrer" class="size-full object-cover" /><template v-else>{{ form.name.charAt(0).toUpperCase() || 'A' }}</template></span><div class="min-w-0 flex-1"><p class="break-words text-xs font-bold text-[#183660]">{{ saved.name }}</p><p class="mt-1 text-[11px] text-slate-400">JPG, PNG, atau WebP · Maks. 2 MB</p></div><input ref="photoInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="changePhoto" /><button type="button" class="inline-flex items-center gap-2 rounded-lg border border-[#d9e5f4] bg-white px-3 py-2 text-xs font-semibold text-[#3E7BEF] hover:bg-sky-50" @click="photoInput.click()"><Camera class="size-4" />Ganti foto</button></div>
                     <div class="grid gap-4 sm:grid-cols-2">
                         <label class="flex flex-col gap-2 text-xs font-semibold sm:col-span-2">Nama lengkap<input v-model="form.name" required maxlength="100" autocomplete="name" class="h-11 rounded-xl border border-[#e1eaf5] px-3 text-xs font-normal outline-[#078cff]" /><span class="text-[10px] font-normal text-slate-400">Nama ini ditampilkan pada profilmu.</span></label>
                         <label class="flex flex-col gap-2 text-xs font-semibold">Jenis kelamin<select v-model="form.gender" class="h-11 rounded-xl border border-[#e1eaf5] bg-white px-3 text-xs font-normal outline-[#078cff]"><option value="">Pilih jenis kelamin</option><option>Laki-laki</option><option>Perempuan</option><option>Tidak ingin menyebutkan</option></select></label>

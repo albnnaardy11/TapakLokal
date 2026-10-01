@@ -61,7 +61,7 @@ class PlatformAccessTest extends TestCase
 
     public function test_registration_cannot_assign_an_admin_role(): void
     {
-        $this->post('/register', ['name' => 'Traveler', 'email' => 'traveler@example.test', 'password' => 'SecurePass123', 'password_confirmation' => 'SecurePass123', 'role' => 'super_admin', 'status' => 'suspended'])->assertRedirect('/account');
+        $this->post('/register', ['name' => 'Traveler', 'email' => 'traveler@example.test', 'password' => 'SecurePass123', 'password_confirmation' => 'SecurePass123', 'role' => 'super_admin', 'status' => 'suspended'])->assertRedirect('/');
         $user = User::where('email', 'traveler@example.test')->firstOrFail();
         $this->assertAuthenticatedAs($user);
         $this->assertSame(['traveler'], $user->roles->pluck('name')->all());

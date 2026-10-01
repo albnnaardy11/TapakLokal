@@ -15,11 +15,13 @@ import {
     UsersRound,
     X,
 } from 'lucide-vue-next';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 
 import FlagIcon from './FlagIcon.vue';
+
+const page = usePage();
 
 const props = defineProps({
     transparentOnTop: {
@@ -102,6 +104,8 @@ const selectNavigation = (item) => {
 };
 
 import AuthModal from './AuthModal.vue';
+import AccountDropdown from './AccountDropdown.vue';
+import LoginSuccessModal from './LoginSuccessModal.vue';
 
 const submitGlobalSearch = () => router.get(typeof route === 'function' ? route('catalog') : '/cari-trip', { q: globalSearch.value.trim() });
 
@@ -110,8 +114,34 @@ const authModalMode = ref('login');
 const authModalTitle = ref("Masuk untuk mulai perjalananmu");
 const authModalSubtitle = ref("Simpan trip, kelola pesanan, dan dapatkan poin serta kemudahan transaksi.");
 
+const isSuccessModalOpen = ref(false);
+const successUserData = ref(null);
+
+watch(
+    () => page.props.flash?.login_success_data,
+    (data) => {
+        if (data) {
+            successUserData.value = data;
+            isSuccessModalOpen.value = true;
+        }
+    },
+    { immediate: true }
+);
+
+const handleLoginSuccess = (payload) => {
+    isAuthModalOpen.value = false;
+    successUserData.value = {
+        name: payload?.name || page.props.auth?.user?.name || 'Petualang TapakLokal',
+        email: payload?.email || page.props.auth?.user?.email || '',
+        avatar: payload?.avatar || page.props.auth?.user?.avatar || '',
+        role: payload?.role || (page.props.auth?.user?.hasPermission ? (page.props.auth?.user?.hasPermission('vendor.access') ? 'Mitra Bisnis' : 'Wisatawan') : 'Wisatawan'),
+        tier: payload?.tier || page.props.auth?.user?.tier || 'Bronze Priority',
+    };
+    isSuccessModalOpen.value = true;
+};
+
 const openAuthModal = (mode = 'login') => {
-    if (currentPage.props.auth?.user) {
+    if (page.props.auth?.user) {
         router.visit(typeof route === 'function' ? route('account') : '/account');
         return;
     }
@@ -269,35 +299,51 @@ const openAuthModal = (mode = 'login') => {
 
                     <span class="mx-1 h-5 w-px transition-colors duration-500" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
 
-                    <button
-                        type="button"
-                        class="ml-2 rounded-lg px-3 py-2 text-xs font-bold transition-all duration-300"
-                        :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
-                        @click="openAuthModal('login')"
-                    >
-                        {{ currentPage.props.auth?.user ? 'Akun Saya' : 'Masuk' }}
-                    </button>
+                    <!-- Desktop User Profile / Auth State -->
+                    <AccountDropdown
+                        v-if="currentPage.props.auth?.user"
+                        :is-transparent="isTransparent"
+                        class="ml-2"
+                    />
 
-                    <button
-                        v-if="!currentPage.props.auth?.user"
-                        type="button"
-                        class="rounded-lg px-3 py-2 text-xs font-bold text-white shadow-sm transition-all duration-300"
-                        :class="isTransparent ? 'bg-[#0088ff] hover:bg-[#0074e0]' : 'bg-[#3E7BEF] hover:bg-[#2e69d9]'"
-                        @click="openAuthModal('register')"
-                    >
-                        Daftar
-                    </button>
+                    <template v-else>
+                        <button
+                            type="button"
+                            class="ml-2 rounded-lg px-3 py-2 text-xs font-bold transition-all duration-300 cursor-pointer"
+                            :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
+                            @click="openAuthModal('login')"
+                        >
+                            Masuk
+                        </button>
+
+                        <button
+                            type="button"
+                            class="rounded-lg px-3 py-2 text-xs font-bold text-white shadow-sm transition-all duration-300 cursor-pointer"
+                            :class="isTransparent ? 'bg-[#0088ff] hover:bg-[#0074e0]' : 'bg-[#3E7BEF] hover:bg-[#2e69d9]'"
+                            @click="openAuthModal('register')"
+                        >
+                            Daftar
+                        </button>
+                    </template>
                 </div>
 
                 <!-- Mobile Header Right -->
-                <button
-                    type="button"
-                    class="ml-auto mr-2 min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 lg:hidden"
-                    :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'"
-                    @click="openAuthModal('login')"
-                >
-                    {{ currentPage.props.auth?.user ? 'Akun Saya' : 'Masuk' }}
-                </button>
+                <div class="ml-auto mr-1.5 flex items-center lg:hidden">
+                    <AccountDropdown
+                        v-if="currentPage.props.auth?.user"
+                        :compact="true"
+                        :is-transparent="isTransparent"
+                    />
+                    <button
+                        v-else
+                        type="button"
+                        class="min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 cursor-pointer"
+                        :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'"
+                        @click="openAuthModal('login')"
+                    >
+                        Masuk
+                    </button>
+                </div>
 
                 <button
                     class="rounded-lg p-2 transition-all duration-300 lg:hidden"
@@ -443,6 +489,14 @@ const openAuthModal = (mode = 'login') => {
                 :title="authModalTitle"
                 :subtitle="authModalSubtitle"
                 @close="isAuthModalOpen = false"
+                @login-success="handleLoginSuccess"
+            />
+
+            <!-- Traveloka Style Login Success Modal -->
+            <LoginSuccessModal
+                :open="isSuccessModalOpen"
+                :user="successUserData"
+                @close="isSuccessModalOpen = false"
             />
 
             <!-- Toast Notification -->

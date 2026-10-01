@@ -17,7 +17,7 @@ class PlatformContentTest extends TestCase
         $this->actingAs($user)->post('/admin/modules/blog', ['title' => 'Cerita Desa', 'slug' => 'cerita-desa', 'body' => 'Cerita perjalanan masyarakat desa.', 'status' => 'published', 'position' => 0])->assertRedirect();
         $this->assertDatabaseHas('content_pages', ['slug' => 'cerita-desa', 'type' => 'blog', 'status' => 'published']);
         $this->assertDatabaseHas('audit_logs', ['action' => 'record.created', 'entity_type' => 'ContentPage']);
-        $this->get('/blog/cerita-desa')->assertInertia(fn (Assert $page) => $page->component('Content')->where('content.title', 'Cerita Desa'));
+        $this->get('/blog/cerita-desa')->assertInertia(fn (Assert $page) => $page->component('BlogDetail')->where('content.title', 'Cerita Desa'));
     }
 
     public function test_drafts_and_scheduled_content_are_not_publicly_accessible(): void

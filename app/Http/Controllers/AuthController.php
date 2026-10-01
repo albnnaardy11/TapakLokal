@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Models\Trip;
 use App\Models\User;
+use App\Models\Vendor;
 use App\Services\AccessService;
 use App\Services\AuditService;
 use Illuminate\Auth\Events\PasswordReset;
@@ -112,23 +113,60 @@ class AuthController extends Controller
             return to_route('password.change');
         }
 
-        $route = $user->hasPermission('admin.access') ? 'admin.dashboard' : ($user->hasPermission('vendor.access') ? 'vendor.dashboard' : 'account');
+        $route = $user->hasPermission('admin.access')
+            ? route('admin.dashboard')
+            : ($user->hasPermission('vendor.access') ? route('vendor.dashboard') : '/');
 
-        return redirect()->intended(route($route));
+        $loginSuccessData = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar,
+            'role' => $user->hasPermission('vendor.access') ? 'Mitra Bisnis' : 'Wisatawan',
+            'tier' => $user->tier ?? 'Bronze Priority',
+        ];
+
+        return redirect()->intended($route)->with('login_success_data', $loginSuccessData);
     }
 
     public function register(RegistrationRequest $request, AccessService $access): RedirectResponse
     {
-        $user = DB::transaction(function () use ($request, $access) {
+        $role = $request->input('role', 'traveler');
+        $user = DB::transaction(function () use ($request, $access, $role) {
             $user = User::create($request->safe()->only(['name', 'email', 'password']));
-            $access->grant($user, 'traveler');
+
+            if (in_array($role, ['vendor', 'vendor_admin'])) {
+                $access->grant($user, 'vendor_admin');
+                Vendor::create([
+                    'user_id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone ?? '-',
+                    'city' => $user->city ?? 'Indonesia',
+                    'status' => 'pending',
+                ]);
+            } else {
+                $access->grant($user, 'traveler');
+            }
 
             return $user;
         });
+
         Auth::login($user);
         $request->session()->regenerate();
 
-        return to_route('account');
+        $loginSuccessData = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar,
+            'role' => $user->hasPermission('vendor.access') ? 'Mitra Bisnis' : 'Wisatawan',
+            'tier' => $user->tier ?? 'Bronze Priority',
+        ];
+
+        if ($user->hasPermission('vendor.access')) {
+            return to_route('vendor.dashboard')->with('login_success_data', $loginSuccessData);
+        }
+
+        return redirect()->intended('/')->with('login_success_data', $loginSuccessData);
     }
 
     public function destroy(Request $request, AuditService $audit): RedirectResponse

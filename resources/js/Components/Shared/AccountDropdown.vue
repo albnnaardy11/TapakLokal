@@ -1,34 +1,323 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { Award, ChevronDown, ChevronRight, ClipboardList, Coins, Gift, Heart, Headset, LogOut, ReceiptText, UserRound, Users, Wallet } from 'lucide-vue-next';
+import {
+    Award,
+    ChevronDown,
+    ChevronRight,
+    ClipboardList,
+    Coins,
+    Crown,
+    Gift,
+    Heart,
+    Headset,
+    LogOut,
+    MessageSquare,
+    ReceiptText,
+    Settings,
+    Shield,
+    Star,
+    User as UserIcon,
+    Users,
+    Wallet,
+} from 'lucide-vue-next';
 
-defineProps({ compact: { type: Boolean, default: false } });
+const props = defineProps({
+    compact: { type: Boolean, default: false },
+    isTransparent: { type: Boolean, default: false },
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+
 const open = ref(false);
 const root = ref(null);
 const trigger = ref(null);
+
+const points = computed(() => user.value?.points ?? 0);
+const tier = computed(() => user.value?.tier ?? 'Bronze');
+
+// Professional Traveloka Priority standard color palette
+const tierConfig = computed(() => {
+    const t = (tier.value || 'Bronze').toLowerCase();
+    if (t === 'gold') {
+        return {
+            name: 'Gold Priority',
+            gradientBorder: 'linear-gradient(135deg, #C5963E 0%, #9E7321 100%)',
+            glowShadow: '0 2px 8px rgba(197, 150, 62, 0.25)',
+            avatarBg: 'bg-gradient-to-br from-[#0064d2] to-[#0047BA]',
+            badgeBg: 'bg-gradient-to-r from-[#C5963E] to-[#9E7321] text-white font-bold',
+            headerGradient: 'from-[#fef9ee] via-[#fdf3dc] to-[#fae8bf]',
+            textTitle: 'text-[#78350f]',
+            textSub: 'text-[#92400e]',
+            iconColor: 'text-[#9E7321]',
+        };
+    }
+    if (t === 'silver') {
+        return {
+            name: 'Silver Priority',
+            gradientBorder: 'linear-gradient(135deg, #748091 0%, #546071 100%)',
+            glowShadow: '0 2px 8px rgba(116, 128, 145, 0.25)',
+            avatarBg: 'bg-gradient-to-br from-[#0064d2] to-[#0047BA]',
+            badgeBg: 'bg-gradient-to-r from-[#748091] to-[#546071] text-white',
+            headerGradient: 'from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]',
+            textTitle: 'text-slate-800',
+            textSub: 'text-slate-600',
+            iconColor: 'text-[#546071]',
+        };
+    }
+    // Bronze Priority (Traveloka signature warm bronze)
+    return {
+        name: 'Bronze Priority',
+        gradientBorder: 'linear-gradient(135deg, #A86B3E 0%, #874E25 100%)',
+        glowShadow: '0 2px 8px rgba(168, 107, 62, 0.25)',
+        avatarBg: 'bg-gradient-to-br from-[#0064d2] to-[#0047BA]',
+        badgeBg: 'bg-gradient-to-r from-[#A86B3E] to-[#874E25] text-white',
+        headerGradient: 'from-[#fcf6f0] via-[#f8ebe0] to-[#f0d8c2]',
+        textTitle: 'text-[#4a230f]',
+        textSub: 'text-[#7c3f1c]',
+        iconColor: 'text-[#874E25]',
+    };
+});
+
+import BookingPassIcon from './BookingPassIcon.vue';
+import PurchaseListIcon from './PurchaseListIcon.vue';
+
+const handle = computed(() => {
+    if (!user.value) return '@petualang';
+    if (user.value.username) return `@${user.value.username}`;
+    if (user.value.email) return `@${user.value.email.split('@')[0]}`;
+    return '@petualangnyasar';
+});
+
 const groups = [
-    { title: 'AKUN & PEMBAYARAN', items: [['Points', Coins, '0 poin'], ['Akun Saya', UserRound, 'Edit profil'], ['Saldo & Pembayaran', Wallet, ''], ['Daftar Transaksi', ReceiptText, '']] },
-    { title: 'PERJALANANMU', items: [['Pemesanan & Tiket', ClipboardList, ''], ['OT & OP Favorit', Heart, ''], ['Daftar Wisatawan', Users, ''], ['Voucher', Gift, ''], ['Pesan Bantuan', Headset, '']] },
+    {
+        title: 'AKUN & PEMBAYARAN',
+        items: [
+            { key: 'points', label: 'Points', icon: Coins, extra: computed(() => `${points.value} poin`) },
+            { key: 'settings', label: 'Akun Saya', icon: Settings, extra: 'Edit profil' },
+            { key: 'wallet', label: 'Saldo & Pembayaran', icon: Wallet },
+            { key: 'transactions', label: 'Daftar Transaksi', icon: PurchaseListIcon },
+        ],
+    },
+    {
+        title: 'PERJALANANMU',
+        items: [
+            { key: 'bookings', label: 'Pemesanan & Tiket', icon: BookingPassIcon },
+            { key: 'favorites', label: 'OT & OP Favorit', icon: Heart },
+            { key: 'travelers', label: 'Daftar Wisatawan', icon: Users },
+            { key: 'vouchers', label: 'Voucher', icon: Gift },
+            { key: 'support', label: 'Pesan Bantuan', icon: Headset },
+        ],
+    },
 ];
-const close = (restore = false) => { open.value = false; if (restore) { trigger.value?.focus(); } };
-const outside = (event) => { if (! root.value?.contains(event.target)) { close(); } };
+
+const close = (restore = false) => {
+    open.value = false;
+    if (restore) {
+        trigger.value?.focus();
+    }
+};
+
+const outside = (event) => {
+    if (!root.value?.contains(event.target)) {
+        close();
+    }
+};
+
 onMounted(() => document.addEventListener('pointerdown', outside));
 onBeforeUnmount(() => document.removeEventListener('pointerdown', outside));
 </script>
 
 <template>
-    <div ref="root" class="relative" @keydown.esc.stop.prevent="close(true)" @focusout="! $event.currentTarget.contains($event.relatedTarget) && close()">
-        <button ref="trigger" type="button" class="flex items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-[#edf5ff] focus-visible:outline-2 focus-visible:outline-[#078cff]" :aria-expanded="open" aria-label="Menu akun" @click="open = ! open">
-            <span class="grid size-8 place-items-center rounded-full border-2 border-[#B7874B] bg-[#1045a5] text-xs font-bold text-white ring-2 ring-[#f6ead9]">A</span>
-            <template v-if="! compact"><span><span class="block text-[11px] font-bold text-slate-800">albnnaardy</span><span class="block text-[9px] text-slate-400">Bronze Priority</span></span><span class="mx-1 h-6 w-px bg-slate-200"></span><span class="text-center"><span class="block text-sm font-bold text-[#078cff]">0</span><span class="block text-[9px] text-slate-400">points</span></span><ChevronDown class="size-3.5 text-[#078cff] transition-transform duration-200" :class="{ 'rotate-180': open }" /></template>
+    <div
+        v-if="user"
+        ref="root"
+        class="relative inline-block text-left"
+        @keydown.esc.stop.prevent="close(true)"
+        @focusout="!$event.currentTarget.contains($event.relatedTarget) && close()"
+    >
+        <!-- TRIGGER BUTTON (1:1 with Traveloka Priority Member Bar) -->
+        <button
+            ref="trigger"
+            type="button"
+            class="group flex items-center gap-2.5 rounded-2xl py-1 px-2 text-left transition-all duration-200 cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-[#078cff]"
+            :class="[
+                isTransparent
+                    ? 'hover:bg-white/15'
+                    : 'hover:bg-[#edf5ff]/90',
+                open ? (isTransparent ? 'bg-white/20' : 'bg-[#edf5ff]') : '',
+            ]"
+            :aria-expanded="open"
+            aria-label="Menu akun pengguna"
+            @click="open = !open"
+        >
+            <!-- Avatar with Metallic Gradient Border (1 Color Family) -->
+            <div
+                class="relative size-9.5 shrink-0 rounded-full p-[2px] transition-all duration-300 group-hover:scale-105"
+                :style="{
+                    background: tierConfig.gradientBorder,
+                    boxShadow: tierConfig.glowShadow,
+                }"
+            >
+                <div class="size-full rounded-full overflow-hidden bg-white p-[1px]">
+                    <img
+                        v-if="user.avatar"
+                        :src="user.avatar"
+                        :alt="user.name"
+                        referrerpolicy="no-referrer"
+                        class="size-full rounded-full object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex size-full items-center justify-center rounded-full text-white"
+                        :class="tierConfig.avatarBg"
+                    >
+                        <UserIcon class="size-4.5 stroke-[2.2]" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Name & Handle Subtitle -->
+            <div v-if="!compact" class="min-w-0 pr-0.5">
+                <p
+                    class="truncate text-[13px] font-extrabold leading-tight tracking-tight transition-colors duration-200"
+                    :class="isTransparent ? 'text-white' : 'text-slate-900'"
+                >
+                    {{ user.name }}
+                </p>
+                <p
+                    class="truncate text-[11px] font-medium leading-tight transition-colors duration-200"
+                    :class="isTransparent ? 'text-white/80' : 'text-slate-500'"
+                >
+                    {{ handle }}
+                </p>
+            </div>
+
+            <!-- Dropdown Chevron Arrow -->
+            <ChevronDown
+                class="size-3.5 shrink-0 transition-transform duration-200"
+                :class="[
+                    open ? 'rotate-180' : '',
+                    isTransparent ? 'text-white/90' : 'text-[#3E7BEF]',
+                ]"
+            />
         </button>
-        <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="translate-y-2 scale-95 opacity-0" leave-active-class="transition duration-150 ease-in" leave-to-class="translate-y-1 scale-95 opacity-0">
-            <div v-if="open" class="absolute right-0 top-full z-50 mt-2.5 max-h-[calc(100dvh-76px)] w-[286px] max-w-[calc(100vw-24px)] origin-top-right overflow-y-auto rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_14px_42px_rgba(15,44,92,0.18)] [scrollbar-width:thin]" aria-label="Pilihan akun">
-                <div class="bg-gradient-to-br from-[#f7eee4] to-[#eed9c2] px-4 py-4"><p class="text-[15px] font-extrabold text-[#493723]">albnnaardy</p><Link :href="route('account', { section: 'Points' })" class="mt-2 flex items-center gap-2 text-[11px] font-semibold text-[#90623e] hover:text-[#684326]" @click="close()"><Award class="size-3.5" />Bronze Priority<ChevronRight class="ml-auto size-3.5" /></Link></div>
-                <div class="p-2"><div v-for="group in groups" :key="group.title"><p class="px-2.5 pb-1 pt-2.5 text-[8px] font-semibold tracking-wider text-slate-400">{{ group.title }}</p><Link v-for="[label, icon, extra] in group.items" :key="label" :href="route('account', { section: label })" class="group flex min-h-9 items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] font-medium text-[#34475a] transition duration-200 hover:bg-[#edf6ff] hover:text-[#078cff] focus-visible:outline-2 focus-visible:outline-[#078cff]" @click="close()"><component :is="icon" class="size-4 text-[#078cff]" :stroke-width="1.7" /><span class="flex-1">{{ label }}</span><span v-if="extra" class="text-[9px] text-slate-400">{{ extra }}</span><ChevronRight v-else class="size-3 text-slate-300 transition-transform group-hover:translate-x-0.5" /></Link></div></div>
-                <div class="border-t border-slate-100 p-2"><button type="button" disabled class="flex min-h-9 w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] text-slate-400" title="Logout tersedia setelah autentikasi dihubungkan"><LogOut class="size-4" />Keluar<span class="ml-auto text-[8px]">Mode pratinjau</span></button></div>
+
+        <!-- DROPDOWN MENU POPOVER -->
+        <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="translate-y-2 scale-95 opacity-0"
+            leave-active-class="transition duration-150 ease-in"
+            leave-to-class="translate-y-1 scale-95 opacity-0"
+        >
+            <div
+                v-if="open"
+                class="absolute right-0 top-full z-50 mt-2.5 max-h-[calc(100dvh-80px)] w-[290px] max-w-[calc(100vw-24px)] origin-top-right overflow-y-auto rounded-2xl border border-slate-200/90 bg-white shadow-[0_16px_48px_rgba(15,44,92,0.18)] [scrollbar-width:thin]"
+                aria-label="Menu akun"
+            >
+                <!-- Card Header with Tier Metallic Gradient -->
+                <div class="bg-gradient-to-br px-4.5 py-4 border-b border-slate-100" :class="tierConfig.headerGradient">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="size-12 shrink-0 rounded-full p-[2px] shadow-sm"
+                            :style="{
+                                background: tierConfig.gradientBorder,
+                                boxShadow: tierConfig.glowShadow,
+                            }"
+                        >
+                            <div class="size-full rounded-full overflow-hidden bg-white p-[1px]">
+                                <img
+                                    v-if="user.avatar"
+                                    :src="user.avatar"
+                                    :alt="user.name"
+                                    referrerpolicy="no-referrer"
+                                    class="size-full rounded-full object-cover"
+                                />
+                                <div
+                                    v-else
+                                    class="flex size-full items-center justify-center rounded-full text-white"
+                                    :class="tierConfig.avatarBg"
+                                >
+                                    <UserIcon class="size-5.5 stroke-[2.2]" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-[15px] font-black leading-tight" :class="tierConfig.textTitle">
+                                {{ user.name }}
+                            </p>
+                            <p class="truncate text-xs font-medium opacity-85" :class="tierConfig.textSub">
+                                {{ handle }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tier Badge & Point Navigation -->
+                    <Link
+                        :href="route('account.section', 'points')"
+                        class="mt-3 flex items-center justify-between rounded-xl bg-white/85 hover:bg-white px-3 py-2 text-xs font-bold shadow-2xs transition backdrop-blur-xs"
+                        :class="tierConfig.textTitle"
+                        @click="close()"
+                    >
+                        <div class="flex items-center gap-1.5">
+                            <Award class="size-4" :class="tierConfig.iconColor" />
+                            <span>{{ tierConfig.name }}</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[11px] font-extrabold text-[#0066cc]">
+                            <span>{{ points }} Poin</span>
+                            <ChevronRight class="size-3.5 text-slate-400" />
+                        </div>
+                    </Link>
+                </div>
+
+                <!-- Navigation Groups -->
+                <div class="p-2 space-y-1">
+                    <div v-for="group in groups" :key="group.title">
+                        <p class="px-3 pb-1 pt-2.5 text-[9px] font-extrabold tracking-wider text-slate-400 uppercase">
+                            {{ group.title }}
+                        </p>
+                        <Link
+                            v-for="item in group.items"
+                            :key="item.key"
+                            :href="route('account.section', item.key)"
+                            class="group flex min-h-9.5 items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 transition duration-200 hover:bg-[#edf5ff] hover:text-[#0194f3] focus-visible:outline-2 focus-visible:outline-[#0194f3]"
+                            @click="close()"
+                        >
+                            <component
+                                :is="item.icon"
+                                class="size-4.5 text-[#0194f3] transition-transform group-hover:scale-110"
+                                :stroke-width="1.9"
+                            />
+                            <span class="flex-1 truncate font-semibold">{{ item.label }}</span>
+                            <span
+                                v-if="typeof item.extra === 'object' ? item.extra?.value : item.extra"
+                                class="text-[10px] font-bold text-slate-400 group-hover:text-[#0066cc]"
+                            >
+                                {{ typeof item.extra === 'object' ? item.extra?.value : item.extra }}
+                            </span>
+                            <ChevronRight
+                                v-else
+                                class="size-3 text-slate-300 transition-transform group-hover:translate-x-0.5"
+                            />
+                        </Link>
+                    </div>
+                </div>
+
+                <!-- Footer: Logout Action -->
+                <div class="border-t border-slate-100 p-2">
+                    <Link
+                        :href="route('logout')"
+                        method="post"
+                        as="button"
+                        class="flex w-full min-h-9.5 items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-bold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700 cursor-pointer"
+                        @click="close()"
+                    >
+                        <LogOut class="size-4 shrink-0 text-rose-500" />
+                        <span>Keluar</span>
+                    </Link>
+                </div>
             </div>
         </Transition>
     </div>

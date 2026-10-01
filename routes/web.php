@@ -42,6 +42,10 @@ Route::get('/pages/{slug}', function (string $slug): Response {
 
 Route::get('/panduan-aksesibilitas', fn (): Response => Inertia::render('AccessibilityGuide'))->name('accessibility.guide');
 
+Route::get('/tapaklokal-priority/about', fn (): Response => Inertia::render('PriorityAbout'))->name('priority.about');
+Route::redirect('/TapakLokal-priority/about', '/tapaklokal-priority/about');
+Route::redirect('/priority', '/tapaklokal-priority/about');
+
 Route::get('/bantuan', [HelpCenterController::class, 'index'])->name('help.index');
 Route::get('/bantuan/{category}', [HelpCenterController::class, 'category'])->name('help.category');
 Route::get('/bantuan/{category}/{slug}', [HelpCenterController::class, 'article'])->name('help.article');

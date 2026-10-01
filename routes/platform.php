@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TravelerController;
 use App\Http\Controllers\Vendor;
 use App\Http\Middleware\ResolveAdminPanel;
@@ -26,6 +27,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/vendor/login', [AuthController::class, 'vendorStore'])->middleware('throttle:login')->name('vendor.login.store');
     Route::redirect('/register', '/?auth=register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.store');
+    Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('auth.socialite.redirect');
+    Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
     Route::get('/forgot-password', fn () => Inertia::render('Auth/Login', ['mode' => 'forgot']))->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'forgot'])->middleware('throttle:5,1')->name('password.email');
     Route::get('/reset-password/{token}', fn (string $token) => Inertia::render('Auth/Login', ['mode' => 'reset', 'token' => $token, 'email' => request('email')]))->name('password.reset');
