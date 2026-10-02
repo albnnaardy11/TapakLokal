@@ -10,6 +10,7 @@ use App\Models\Trip;
 use App\Models\VirtualTour;
 use App\Services\AuditService;
 use App\Services\BookingService;
+use App\Services\CorporateService;
 use App\Services\PublicContentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -212,6 +213,7 @@ class BookingController extends Controller
             'tripType' => $tripType,
             'trip' => $trip,
             'tripData' => $record,
+            'canBook' => $record->departure_date->greaterThanOrEqualTo(today()) && $record->capacity > $record->reserved_seats,
             'bookingKey' => (string) Str::uuid(),
             'virtualTours' => $record ? VirtualTour::visible()->where('trip_id', $record->id)->orderBy('position')->orderBy('id')->limit(12)->get()->map(fn ($tour) => $tour->presentation()) : [],
             'reviews' => $record ? Review::with('user:id,name')->where('trip_id', $record->id)->where('status', 'published')->latest('id')->limit(10)->get(['id', 'user_id', 'rating', 'body', 'vendor_response', 'created_at']) : [],
@@ -220,19 +222,24 @@ class BookingController extends Controller
 
     public function store(BookingRequest $request, BookingService $service): RedirectResponse
     {
-        return to_route('bookings.show', $service->create($request->user(), $request->validated()));
+        $booking = $service->create($request->user(), $request->validated());
+
+        return $request->boolean('checkout_flow') ? to_route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]) : to_route('bookings.show', $booking);
     }
 
     public function show(Request $request, Booking $booking): Response
     {
-        abort_unless($booking->user_id === $request->user()->id, 404);
+        app(CorporateService::class)->authorizeBooking($request->user(), $booking);
 
         return Inertia::render('Booking', ['booking' => $booking->load(['trip', 'vendor:id,name,phone', 'payment', 'refund']), 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
     }
 
     public function cancel(Request $request, Booking $booking, BookingService $service): RedirectResponse
     {
-        abort_unless($booking->user_id === $request->user()->id, 404);
+        app(CorporateService::class)->authorizeBooking($request->user(), $booking);
+        if ($corporate = $booking->corporateRequest) {
+            return to_route('corporate.workspace', $corporate->corporate_company_id)->with('error', 'Buka detail kegiatan di workspace untuk membatalkan pengajuan dan reservasi perusahaan.');
+        }
         $service->transition($booking, 'cancelled');
 
         return back()->with('success', 'Pesanan dibatalkan.');
@@ -240,7 +247,7 @@ class BookingController extends Controller
 
     public function refund(Request $request, Booking $booking, AuditService $audit): RedirectResponse
     {
-        abort_unless($booking->user_id === $request->user()->id, 404);
+        app(CorporateService::class)->authorizeBooking($request->user(), $booking);
         $data = $request->validate(['reason' => ['required', 'string', 'min:10', 'max:2000']]);
         DB::transaction(function () use ($booking, $data, $request, $audit) {
             $booking = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();

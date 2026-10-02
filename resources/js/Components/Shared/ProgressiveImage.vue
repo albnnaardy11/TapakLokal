@@ -1,9 +1,8 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import { useImageLoading } from '../../Composables/useImageLoading';
+import { ref } from 'vue';
 import { ImageOff } from 'lucide-vue-next';
 
-const props = defineProps({
+defineProps({
     src: {
         type: String,
         required: true,
@@ -34,17 +33,10 @@ const props = defineProps({
     },
 });
 
-const imgRef = ref(null);
-const { isLoaded, hasError, onLoad, onError, checkImage, reset } = useImageLoading();
-
-onMounted(() => {
-    checkImage(imgRef.value);
-});
-
-watch(() => props.src, () => {
-    reset();
-    setTimeout(() => checkImage(imgRef.value), 50);
-});
+const hasError = ref(false);
+const onError = () => {
+    hasError.value = true;
+};
 </script>
 
 <template>
@@ -55,13 +47,6 @@ watch(() => props.src, () => {
             aspectRatio: aspectRatio || undefined,
         }"
     >
-        <!-- Skeleton Placeholder when image is not yet loaded -->
-        <div
-            v-if="!isLoaded && !hasError"
-            class="absolute inset-0 size-full skeleton-shimmer z-0"
-            aria-hidden="true"
-        ></div>
-
         <!-- Error Fallback -->
         <div
             v-if="hasError"
@@ -76,17 +61,11 @@ watch(() => props.src, () => {
         <!-- Real Image -->
         <img
             v-show="!hasError"
-            ref="imgRef"
             :src="src"
             :alt="alt"
             :loading="loading"
             :fetchpriority="fetchpriority"
-            class="transition-opacity duration-300 ease-out"
-            :class="[
-                imageClass,
-                isLoaded ? 'opacity-100' : 'opacity-0',
-            ]"
-            @load="onLoad"
+            :class="[imageClass]"
             @error="onError"
         />
     </div>

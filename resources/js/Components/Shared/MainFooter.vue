@@ -273,7 +273,7 @@ function safeRoute(name, params) {
                                 <Link :href="safeRoute('catalog')" class="transition hover:text-white">Bagi Tagihan Otomatis (Split Bill)</Link>
                             </li>
                             <li>
-                                <Link :href="safeRoute('catalog')" class="transition hover:text-white">Buka Pre-Order (PO) Lokal</Link>
+                                <Link :href="safeRoute('open.preorder')" class="transition hover:text-white">Buka Pre-Order (PO) Lokal</Link>
                             </li>
                             <li>
                                 <Link :href="safeRoute('account')" class="transition hover:text-white">Rekening Bersama & Refund</Link>

@@ -22,7 +22,7 @@ const island = photo('photo-1518548419970-58e3b4079ab2', 1800);
 
 const challenges = [
     { title: 'Temukan surga tersembunyi', text: 'Jelajahi 5 destinasi impian di Indonesia.', image: island, points: 150, value: 3, total: 5, progress: '3 / 5 destinasi', type: 'EKSPLORASI', href: route('explore', 'destination') },
-    { title: 'Berburu rasa lokal', text: 'Kenali 5 kuliner khas dari berbagai daerah.', image: photo('photo-1504674900247-0877df9cc836'), points: 150, value: 3, total: 5, progress: '3 / 5 kuliner', type: 'KULINER', href: route('explore', 'culinary') },
+    { title: 'Berburu rasa lokal', text: 'Kenali 5 kuliner khas dari berbagai daerah.', image: photo('photo-1504674900247-0877df9cc836'), points: 150, value: 3, total: 5, progress: '3 / 5 kuliner', type: 'KULINER', href: route('open.preorder') },
     { title: 'Jadi traveler aktif', text: 'Temukan inspirasi perjalanan selama 7 hari.', image: photo('photo-1464822759023-fed622ff2c3b'), points: 300, value: 4, total: 7, progress: '4 / 7 hari', type: 'KEBIASAAN BAIK', href: route('catalog') },
     { title: 'Kenalan lebih dekat', text: 'Lengkapi profil untuk perjalanan lebih mudah.', image: photo('photo-1488646953014-85cb44e25828'), points: 50, value: 80, total: 100, progress: '80% lengkap', type: 'PROFIL SAYA', href: route('account') },
 ];

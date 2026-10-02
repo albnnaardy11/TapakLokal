@@ -2,6 +2,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
+import OrderConversationForm from '../Components/Shared/OrderConversationForm.vue';
 const props = defineProps({ booking: Object, gatewayReady: Boolean });
 const form = useForm({ reason: '' });
 const action = useForm({});
@@ -51,9 +52,7 @@ const money = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency:
 
                     <template v-if="booking.status === 'awaiting_payment'">
                         <p class="text-[11px] text-slate-400">Batas pembayaran: {{ new Date(booking.expires_at).toLocaleString('id-ID') }}</p>
-                        <button :disabled="action.processing || !gatewayReady" class="panel-primary w-full py-2.5 text-xs font-bold" @click="action.post(route('bookings.checkout', booking.id))">
-                            Lanjut Pembayaran
-                        </button>
+                        <Link :href="route('checkout.payment', { type: 'trip', id: booking.id })" class="panel-primary w-full py-2.5 text-xs font-bold text-center">Lanjut Pembayaran</Link>
                         <p v-if="!gatewayReady" class="text-[11px] leading-5 text-amber-700">Pembayaran online belum aktif. Hubungi dukungan untuk informasi pesanan.</p>
                         <button class="panel-secondary w-full py-2.5 text-xs font-bold" :disabled="action.processing" @click="action.post(route('bookings.cancel', booking.id))">
                             Batalkan Pesanan
@@ -68,7 +67,7 @@ const money = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency:
                 <button :disabled="form.processing" class="panel-secondary mt-3 text-xs font-bold">Kirim Permintaan Refund</button>
             </form>
             <p v-if="booking.refund" class="mt-5 rounded-xl bg-blue-50 p-4 text-xs font-semibold text-blue-700">Status refund: {{ booking.refund.status }}</p>
+            <OrderConversationForm :booking-id="booking.id" :reference="booking.reference" />
         </main>
     </div>
 </template>
-

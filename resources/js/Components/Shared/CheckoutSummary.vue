@@ -1,0 +1,17 @@
+<script setup>
+import { CalendarDays, MapPin, ShoppingBag, Users } from 'lucide-vue-next';
+defineProps({ title: String, vendor: String, image: String, date: String, endDate: String, participants: Number, lines: Array, method: String, address: String, subtotal: Number, discount: { type: Number, default: 0 }, shipping: { type: Number, default: 0 }, total: Number, reference: String });
+const money = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value || 0);
+const day = value => value ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value.slice(0,10) + 'T00:00:00')) : '—';
+</script>
+<template>
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs" aria-labelledby="order-summary-heading">
+        <div class="border-b border-blue-100 bg-[#edf6ff] px-6 py-4"><h2 id="order-summary-heading" class="font-extrabold">Ringkasan pesanan</h2><p v-if="reference" class="mt-1 break-all text-[11px] text-slate-500">{{ reference }}</p></div>
+        <div class="p-6"><div class="flex items-start gap-3"><img v-if="image" :src="image" :alt="title" width="64" height="64" class="size-16 rounded-xl object-cover" /><div v-else class="grid size-12 shrink-0 place-items-center rounded-xl bg-blue-50"><ShoppingBag class="size-5 text-blue-600" /></div><div><h3 class="text-sm font-extrabold leading-6">{{ title }}</h3><p class="mt-1 text-xs text-slate-500">{{ vendor }}</p></div></div>
+            <div v-if="date" class="mt-5 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4 text-xs"><div><p class="text-slate-500">{{ participants ? 'Berangkat' : 'Ambil di tempat' }}</p><p class="mt-1.5 font-bold">{{ day(date) }}</p></div><div v-if="endDate"><p class="text-slate-500">Selesai</p><p class="mt-1.5 font-bold">{{ day(endDate) }}</p></div></div>
+            <p v-if="participants" class="mt-4 flex items-center gap-2 text-xs text-slate-600"><Users class="size-4 text-blue-600" />{{ participants }} peserta</p>
+            <div v-if="lines?.length" class="mt-5 space-y-3"><div v-for="(item,index) in lines" :key="item.id || index" class="flex justify-between gap-3 text-xs"><p class="min-w-0 leading-5"><span class="font-semibold">{{ item.name }}</span><span class="block text-slate-500">{{ item.variant }} · {{ item.quantity }} unit</span></p><span class="shrink-0 font-semibold">{{ money(item.unit_price * item.quantity) }}</span></div></div>
+            <p v-if="method" class="mt-4 flex items-center gap-2 text-xs text-slate-600"><MapPin class="size-4 text-blue-600" />{{ method === 'pickup' ? 'Ambil di tempat' : 'Kirim ke rumah' }}</p><p v-if="address" class="mt-2 whitespace-pre-line text-xs leading-5 text-slate-500">{{ address }}</p>
+            <dl class="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm"><div class="flex justify-between"><dt class="text-slate-500">Subtotal</dt><dd class="font-semibold">{{ money(subtotal) }}</dd></div><div v-if="discount" class="flex justify-between text-emerald-700"><dt>Potongan promo</dt><dd>−{{ money(discount) }}</dd></div><div v-if="method === 'delivery'" class="flex justify-between"><dt class="text-slate-500">Ongkir</dt><dd>{{ money(shipping) }}</dd></div><div class="flex items-center justify-between border-t border-slate-100 pt-4"><dt class="font-bold">Total</dt><dd class="text-xl font-extrabold text-[#0175ea]">{{ money(total) }}</dd></div></dl><slot /></div>
+    </section>
+</template>

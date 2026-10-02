@@ -3,14 +3,9 @@ import { ArrowLeft, ArrowRight, ChevronRight, Star } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import SkeletonBox from '../Skeletons/Base/SkeletonBox.vue';
 
 const props = defineProps({
     items: { type: Array, default: () => [] },
-    isLoading: {
-        type: Boolean,
-        default: false,
-    },
 });
 
 defineEmits(['select']);
@@ -187,34 +182,9 @@ onBeforeUnmount(() => {
     <section
         class="mx-auto mt-10 sm:mt-12 lg:mt-14 max-w-[1180px]"
         aria-labelledby="partner-trips-heading"
-        :aria-busy="isLoading"
     >
-        <!-- Skeleton State -->
-        <div v-if="isLoading" class="relative overflow-hidden rounded-3xl bg-[#1c2e4a] p-6 lg:p-9" aria-hidden="true">
-            <div class="grid grid-cols-1 lg:grid-cols-[38%_minmax(0,1fr)] gap-8 items-center">
-                <div class="space-y-4 text-white">
-                    <div class="h-8 w-3/4 rounded-lg bg-white/30 skeleton-shimmer"></div>
-                    <div class="space-y-2 pt-2">
-                        <div class="h-4 w-full rounded-md bg-white/20 skeleton-shimmer"></div>
-                        <div class="h-4 w-4/5 rounded-md bg-white/20 skeleton-shimmer"></div>
-                    </div>
-                    <div class="h-12 w-48 rounded-xl bg-white/30 skeleton-shimmer mt-6"></div>
-                    <div class="h-9 w-44 rounded-lg bg-white/20 skeleton-shimmer mt-4"></div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div v-for="n in 3" :key="n" class="rounded-2xl bg-white p-3 space-y-3 shadow-md">
-                        <SkeletonBox height="115px" rounded="rounded-xl" />
-                        <SkeletonBox width="80%" height="14px" rounded="rounded-md" />
-                        <SkeletonBox width="50%" height="11px" rounded="rounded-md" />
-                        <SkeletonBox width="60px" height="15px" rounded="rounded-md" />
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Real 1:1 Design State -->
         <div
-            v-else
             class="relative isolate overflow-hidden rounded-3xl bg-[#192b42] p-6 sm:p-8 lg:p-9 shadow-[0_16px_40px_rgba(15,35,65,0.22)]"
             @mouseenter="isHovered = true; pauseAutoplay()"
             @mouseleave="isHovered = false; startAutoplay()"

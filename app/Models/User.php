@@ -82,6 +82,7 @@ class User extends Authenticatable
             'must_change_password' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'payment_preferences' => 'array',
         ];
     }
 }

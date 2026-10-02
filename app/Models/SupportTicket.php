@@ -13,7 +13,7 @@ class SupportTicket extends Model
     /** @use HasFactory<SupportTicketFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'booking_id', 'vendor_id', 'subject', 'category', 'status', 'priority'];
+    protected $fillable = ['user_id', 'booking_id', 'souvenir_order_id', 'vendor_id', 'subject', 'category', 'status', 'priority'];
 
     public function user(): BelongsTo
     {

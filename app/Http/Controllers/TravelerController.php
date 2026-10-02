@@ -8,16 +8,19 @@ use App\Models\Payment;
 use App\Models\Promotion;
 use App\Models\Review;
 use App\Models\RewardEntry;
+use App\Models\SouvenirOrder;
 use App\Models\SupportTicket;
 use App\Models\TravelerProfile;
 use App\Models\Trip;
 use App\Services\AuditService;
+use App\Services\PaymentMethodService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,7 +32,7 @@ class TravelerController extends Controller
         'chat' => 'Chat', 'reviews' => 'Rating & Ulasan', 'support' => 'Pesan Bantuan', 'settings' => 'Akun Saya',
     ];
 
-    public function index(Request $request, ?string $section = null): Response
+    public function index(Request $request, PaymentMethodService $methods, ?string $section = null): Response
     {
         $section ??= array_search($request->input('section'), self::SECTIONS, true) ?: 'bookings';
         abort_unless(isset(self::SECTIONS[$section]), 404);
@@ -48,6 +51,9 @@ class TravelerController extends Controller
 
         return Inertia::render('Account', [
             'liveData' => true, 'sectionKey' => $section, 'sectionLabel' => self::SECTIONS[$section],
+            'paymentMethods' => $methods->catalog(),
+            'paymentPreferences' => $methods->preferences($user),
+            'souvenirOrders' => in_array($section, ['bookings', 'transactions', 'wallet'], true) ? SouvenirOrder::where('user_id', $user->id)->with('items', 'payment', 'vendor:id,name')->latest('id')->paginate(10, ['*'], 'souvenir_page')->withQueryString() : null,
             'records' => $query?->orderByDesc('id')->paginate(10)->withQueryString(),
             'pointBalance' => $section === 'points' ? RewardEntry::where('user_id', $user->id)->sum('points') : null,
             'reviewable' => $section === 'reviews' ? Booking::with('trip:id,title')->where('user_id', $user->id)->where('status', 'completed')->whereNotIn('id', Review::select('booking_id'))->latest('id')->limit(50)->get() : [],
@@ -130,10 +136,14 @@ class TravelerController extends Controller
 
     public function ticket(Request $request): RedirectResponse
     {
-        $data = $request->validate(['subject' => ['required', 'string', 'max:180'], 'category' => ['required', Rule::in(['booking', 'payment', 'account', 'vendor', 'other'])], 'body' => ['required', 'string', 'min:10', 'max:5000'], 'booking_id' => ['nullable', 'integer']]);
+        $data = $request->validate(['subject' => ['required', 'string', 'max:180'], 'category' => ['required', Rule::in(['booking', 'payment', 'account', 'vendor', 'other'])], 'body' => ['required', 'string', 'min:10', 'max:5000'], 'booking_id' => ['nullable', 'integer', 'prohibits:souvenir_order_id'], 'souvenir_order_id' => ['nullable', 'integer', 'prohibits:booking_id']]);
         $booking = empty($data['booking_id']) ? null : Booking::where('user_id', $request->user()->id)->findOrFail($data['booking_id']);
-        $ticket = DB::transaction(function () use ($request, $data, $booking) {
-            $ticket = SupportTicket::create(['user_id' => $request->user()->id, 'booking_id' => $booking?->id, 'vendor_id' => $data['category'] === 'vendor' ? $booking?->vendor_id : null, 'subject' => $data['subject'], 'category' => $data['category']]);
+        $order = empty($data['souvenir_order_id']) ? null : SouvenirOrder::where('user_id', $request->user()->id)->findOrFail($data['souvenir_order_id']);
+        if ($data['category'] === 'vendor' && ! $booking && ! $order) {
+            throw ValidationException::withMessages(['booking_id' => 'Pilih pesanan milik kamu untuk menghubungi vendor.']);
+        }
+        $ticket = DB::transaction(function () use ($request, $data, $booking, $order) {
+            $ticket = SupportTicket::create(['user_id' => $request->user()->id, 'booking_id' => $booking?->id, 'souvenir_order_id' => $order?->id, 'vendor_id' => $data['category'] === 'vendor' ? ($booking?->vendor_id ?? $order?->vendor_id) : null, 'subject' => $data['subject'], 'category' => $data['category']]);
             $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
 
             return $ticket;

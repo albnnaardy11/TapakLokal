@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Booking;
 use App\Models\ContentPage;
 use App\Models\Faq;
 use App\Models\Partner;
+use App\Models\SouvenirOrder;
+use App\Models\SupportMessage;
 use App\Models\User;
+use App\Observers\OrderNotificationObserver;
 use App\Observers\PublicContentObserver;
 use App\Services\AccessService;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -29,6 +33,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Booking::observe(OrderNotificationObserver::class);
+        SouvenirOrder::observe(OrderNotificationObserver::class);
+        SupportMessage::observe(OrderNotificationObserver::class);
         foreach ([ContentPage::class, Faq::class, Partner::class] as $model) {
             $model::observe(PublicContentObserver::class);
         }

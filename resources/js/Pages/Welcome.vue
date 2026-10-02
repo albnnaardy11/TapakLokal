@@ -55,7 +55,7 @@ const reviewsLoading = false;
         <MainNavigation :transparent-on-top="true" />
 
         <!-- Full-Width Edge-to-Edge Hero Section -->
-        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white">
+        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white min-h-[475px] sm:min-h-[495px] lg:min-h-[500px]">
             <!-- Full Width Background Image -->
             <img
                 :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88'"

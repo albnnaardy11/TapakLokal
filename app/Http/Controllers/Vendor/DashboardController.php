@@ -28,7 +28,7 @@ class DashboardController extends Controller
         if ($vendor) {
             $query = match ($section) {
                 'trips' => Trip::where('vendor_id', $vendor->id),
-                'bookings' => Booking::with('trip:id,title')->where('vendor_id', $vendor->id),
+                'bookings' => Booking::with(['trip:id,title', 'corporateRequest:id,booking_id,corporate_company_id', 'corporateRequest.company:id,name'])->where('vendor_id', $vendor->id),
                 'finance' => Payout::where('vendor_id', $vendor->id),
                 'reviews' => Review::with('trip:id,title')->whereHas('trip', fn ($q) => $q->where('vendor_id', $vendor->id)),
                 'support' => SupportTicket::where(fn ($q) => $q->where('user_id', $request->user()->id)->orWhere('vendor_id', $vendor->id)),

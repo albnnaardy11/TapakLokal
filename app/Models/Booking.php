@@ -13,11 +13,16 @@ class Booking extends Model
     /** @use HasFactory<BookingFactory> */
     use HasFactory;
 
-    protected $fillable = ['reference', 'idempotency_key', 'user_id', 'trip_id', 'vendor_id', 'promotion_id', 'participants', 'contact_name', 'contact_phone', 'subtotal', 'discount', 'total', 'platform_fee', 'vendor_amount', 'status', 'expires_at'];
+    protected $fillable = ['contact_email', 'traveler_details', 'special_request', 'reference', 'idempotency_key', 'user_id', 'trip_id', 'vendor_id', 'promotion_id', 'participants', 'contact_name', 'contact_phone', 'subtotal', 'discount', 'total', 'platform_fee', 'vendor_amount', 'status', 'expires_at'];
 
     protected function casts(): array
     {
-        return ['expires_at' => 'datetime', 'participants' => 'integer', 'total' => 'integer', 'subtotal' => 'integer', 'discount' => 'integer', 'platform_fee' => 'integer', 'vendor_amount' => 'integer'];
+        return ['traveler_details' => 'array', 'expires_at' => 'datetime', 'participants' => 'integer', 'total' => 'integer', 'subtotal' => 'integer', 'discount' => 'integer', 'platform_fee' => 'integer', 'vendor_amount' => 'integer'];
+    }
+
+    public function corporateRequest(): HasOne
+    {
+        return $this->hasOne(CorporateRequest::class);
     }
 
     public function user(): BelongsTo

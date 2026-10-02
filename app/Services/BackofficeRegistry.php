@@ -65,6 +65,13 @@ class BackofficeRegistry
         $panels = new AdminPanelService;
         $panel = request()->attributes->get('admin_panel') ?? $panels->home($user);
         $items = [];
+        if (in_array($panel, ['super', 'finance'], true) && $user->hasPermission('finance.view')) {
+            $items[] = ['key' => 'souvenir-finance', 'label' => 'Keuangan oleh-oleh', 'group' => 'Keuangan', 'url' => route('admin.souvenirs.finance')];
+        }
+        if (in_array($panel, ['super', 'operations'], true) && $user->hasPermission('operations.manage')) {
+            $items[] = ['key' => 'corporate', 'label' => 'Corporate & perusahaan', 'group' => 'Operasional', 'url' => route('admin.corporate')];
+            $items[] = ['key' => 'souvenirs', 'label' => 'Moderasi oleh-oleh', 'group' => 'Operasional', 'url' => route('admin.souvenirs')];
+        }
         if (($panel === 'content' || $panel === 'super') && $user->hasPermission('content.view')) {
             $items[] = ['key' => 'virtual-tours', 'label' => 'Panorama 360°', 'group' => 'Content & CMS', 'url' => route('admin.tours.index')];
         }

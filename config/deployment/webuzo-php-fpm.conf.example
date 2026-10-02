@@ -1,0 +1,11 @@
+; Tambahkan nilai pool lewat pengaturan PHP-FPM Webuzo, jangan menimpa konfigurasi panel.
+; Baseline RAM 4 GB, ukur peak RSS worker nyata sebelum mengubah max_children.
+pm = ondemand
+pm.max_children = 6
+pm.process_idle_timeout = 15s
+pm.max_requests = 500
+request_terminate_timeout = 90s
+php_admin_value[memory_limit] = 256M
+php_admin_value[display_errors] = Off
+php_admin_value[log_errors] = On
+; OPcache mengikuti config/deployment/php.ini; jangan membuka Redis/database ke Internet.

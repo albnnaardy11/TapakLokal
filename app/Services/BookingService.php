@@ -26,7 +26,7 @@ class BookingService
             $existing = Booking::where('user_id', $user->id)->where('idempotency_key', $data['idempotency_key'])->first();
             if ($existing) {
                 $code = $existing->promotion_id ? $existing->promotion()->value('code') : null;
-                if ($existing->trip_id !== (int) $data['trip_id'] || $existing->participants !== (int) $data['participants'] || $existing->contact_name !== $data['contact_name'] || $existing->contact_phone !== $data['contact_phone'] || ($code ?? '') !== strtoupper($data['promotion_code'] ?? '')) {
+                if ($existing->trip_id !== (int) $data['trip_id'] || $existing->participants !== (int) $data['participants'] || $existing->contact_name !== $data['contact_name'] || $existing->contact_phone !== $data['contact_phone'] || ($existing->contact_email ?? $user->email) !== ($data['contact_email'] ?? $user->email) || ($existing->traveler_details ?? []) !== ($data['traveler_details'] ?? []) || ($existing->special_request ?? '') !== ($data['special_request'] ?? '') || ($code ?? '') !== strtoupper($data['promotion_code'] ?? '')) {
                     throw ValidationException::withMessages(['idempotency_key' => 'Kunci pemesanan sudah digunakan untuk pesanan berbeda.']);
                 }
 
@@ -60,7 +60,8 @@ class BookingService
             $total = $subtotal - $discount;
             $fee = $markup - $discount;
             $booking = Booking::create([
-                ...collect($data)->only(['participants', 'contact_name', 'contact_phone', 'idempotency_key'])->all(),
+                ...collect($data)->only(['participants', 'contact_name', 'contact_phone', 'idempotency_key', 'traveler_details', 'special_request'])->all(),
+                'contact_email' => $data['contact_email'] ?? $user->email,
                 'user_id' => $user->id, 'trip_id' => $trip->id, 'vendor_id' => $trip->vendor_id,
                 'promotion_id' => $promotion?->id, 'reference' => 'TL-'.Str::upper((string) Str::ulid()),
                 'subtotal' => $subtotal, 'discount' => $discount, 'total' => $total,

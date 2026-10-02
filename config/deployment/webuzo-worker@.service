@@ -1,0 +1,24 @@
+# Ganti WEBUZO_USER dan ABSOLUTE_PHP84 sebelum memasang unit di /etc/systemd/system.
+# Dua instance awal: systemctl enable --now webuzo-worker@1 webuzo-worker@2
+# RAM 4 GB: batas awal, ukur RSS/latensi sebelum menambah worker.
+[Unit]
+Description=TapakLokal Webuzo queue worker %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=WEBUZO_USER
+Group=WEBUZO_USER
+WorkingDirectory=/home/WEBUZO_USER/tapaklokal/current
+ExecStart=ABSOLUTE_PHP84 artisan queue:work redis --queue=default --sleep=2 --tries=6 --timeout=60 --max-time=3600 --memory=192
+Restart=always
+RestartSec=5
+TimeoutStopSec=90
+KillSignal=SIGTERM
+UMask=0027
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

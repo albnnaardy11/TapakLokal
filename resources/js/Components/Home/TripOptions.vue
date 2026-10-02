@@ -2,14 +2,6 @@
 import { ArrowRight } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import TripOptionSkeleton from '../Skeletons/Cards/TripOptionSkeleton.vue';
-
-defineProps({
-    isLoading: {
-        type: Boolean,
-        default: false,
-    },
-});
 
 const tripOptions = [
     {
@@ -39,7 +31,6 @@ const tripOptions = [
     <section
         class="mx-auto mt-8 max-w-[1180px] sm:mt-12 lg:mt-14"
         aria-labelledby="trip-options-heading"
-        :aria-busy="isLoading"
     >
         <div>
             <div>
@@ -49,13 +40,8 @@ const tripOptions = [
             </div>
         </div>
 
-        <!-- Skeleton State -->
-        <div v-if="isLoading" class="mt-5">
-            <TripOptionSkeleton :count="2" />
-        </div>
-
         <!-- Real Content -->
-        <div v-else class="mt-5 grid gap-5 md:grid-cols-2">
+        <div class="mt-5 grid gap-5 md:grid-cols-2">
             <article v-for="trip in tripOptions" :key="trip.id" class="group relative min-h-[240px] overflow-hidden rounded-2xl bg-slate-800 p-6 text-white shadow-[0_10px_24px_rgba(22,53,102,0.12)] transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_18px_34px_rgba(23,105,170,0.20)] sm:min-h-[270px]">
                 <img :src="trip.image" :alt="`${trip.title} bersama TapakLokal`" loading="lazy" class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-r from-[#102129]/80 via-[#102129]/45 to-transparent"></div>

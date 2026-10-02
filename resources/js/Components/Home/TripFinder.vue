@@ -318,9 +318,16 @@ const searchSouvenirs = () => {
         .filter(Boolean)
         .join(' ');
 
-    router.get(route('explore', 'souvenir'), {
+    const categoryNames = {
+        makanan: 'Makanan khas',
+        minuman: 'Kopi & minuman',
+        kerajinan: 'Kain & kerajinan',
+        pakaian: 'Kain & kerajinan',
+    };
+
+    router.get(route('souvenirs.index'), {
         q: searchTerms || undefined,
-        category: souvenirCategory.value || undefined,
+        category: categoryNames[souvenirCategory.value] || undefined,
         date: souvenirDate.value || undefined,
     });
 };
@@ -740,7 +747,7 @@ const searchSouvenirs = () => {
         </p>
 
         <!-- 5. Trusted By / Dipercayai Oleh Bar (Compact Fit Content, Dynamic 2 -> 4 -> 3 -> 1 Logos) -->
-        <div v-if="displayPartners.length > 0" class="mt-4 sm:mt-5 flex justify-center w-full px-2">
+        <div v-if="displayPartners.length > 0" class="mt-5 sm:mt-6 lg:mt-7 flex justify-center w-full px-2">
             <div
                 class="inline-flex max-w-full items-center justify-center gap-2.5 sm:gap-4 rounded-xl sm:rounded-2xl bg-white/95 px-3.5 sm:px-6 py-2 sm:py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md transition-all duration-500 ease-out overflow-hidden"
             >

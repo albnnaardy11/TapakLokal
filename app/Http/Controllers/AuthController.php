@@ -24,19 +24,20 @@ class AuthController extends Controller
 {
     public function create(Request $request): RedirectResponse
     {
+        if ($request->filled('return_to')) {
+            $data = $request->validate(['return_to' => ['string', 'max:255', 'regex:~^/oleh-oleh(?:/produk/[a-zA-Z0-9-]+|/toko/[0-9]+)?$~']]);
+            $request->session()->put('url.intended', $data['return_to']);
+
+            return redirect($data['return_to'].'?auth=login');
+        }
         if ($request->filled('trip')) {
             $request->validate(['trip' => ['integer']]);
             $trip = Trip::where('status', 'published')->find($request->input('trip'));
             if ($trip) {
+                $request->session()->put('url.intended', route('trips.show', [$trip->type, $trip->slug, 'book' => 1]));
+
                 return redirect()->route('trips.show', [$trip->type, $trip->slug, 'auth' => 'login']);
             }
-        }
-
-        $intended = $request->session()->get('url.intended');
-        if ($intended && ! Str::contains($intended, '/login')) {
-            $separator = Str::contains($intended, '?') ? '&' : '?';
-
-            return redirect($intended.$separator.'auth=login');
         }
 
         return redirect('/?auth=login');
@@ -62,6 +63,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => 'Akses ditolak: Akun ini tidak memiliki izin sebagai Administrator Platform.']);
         }
 
+        $request->session()->put('auth_portal', 'admin');
         $audit->record('admin.auth.login', $user);
 
         if ($user->must_change_password) {
@@ -91,6 +93,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => 'Akses ditolak: Akun ini tidak terdaftar sebagai Mitra Vendor Terverifikasi.']);
         }
 
+        $request->session()->put('auth_portal', 'vendor');
         $audit->record('vendor.auth.login', $user);
 
         if ($user->must_change_password) {
@@ -106,6 +109,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => 'Email atau kata sandi tidak sesuai.']);
         }
         $request->session()->regenerate();
+        $request->session()->put('auth_portal', $request->user()->hasPermission('admin.access') ? 'admin' : ($request->user()->hasPermission('vendor.access') ? 'vendor' : 'traveler'));
         $audit->record('auth.login', $request->user());
         $user = $request->user();
 
@@ -152,6 +156,7 @@ class AuthController extends Controller
         });
 
         Auth::login($user);
+        $request->session()->put('auth_portal', $user->hasPermission('vendor.access') ? 'vendor' : 'traveler');
         $request->session()->regenerate();
 
         $loginSuccessData = [
@@ -176,7 +181,13 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return match ($request->input('switch_portal')) {
+            'corporate' => to_route('corporate.login'),
+            'admin' => to_route('admin.login'),
+            'vendor' => to_route('vendor.login'),
+            'traveler' => to_route('login'),
+            default => redirect('/'),
+        };
     }
 
     public function forgot(Request $request): RedirectResponse

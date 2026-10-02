@@ -18,7 +18,8 @@ class MediaController extends Controller
     {
         abort_unless($request->user()->hasPermission('content.manage') || $request->user()->hasPermission('vendor.access'), 403);
         $data = $request->validate(['file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'], 'alt_text' => ['nullable', 'string', 'max:255'], 'visibility' => ['required', Rule::in(['public', 'private'])]]);
-        abort_if($data['visibility'] === 'public' && ! $request->user()->hasPermission('content.manage'), 403);
+        $verifiedVendor = $request->user()->hasPermission('vendor.access') && Vendor::where('user_id', $request->user()->id)->where('status', 'verified')->exists();
+        abort_if($data['visibility'] === 'public' && ! $request->user()->hasPermission('content.manage') && ! $verifiedVendor, 403);
         if ($data['visibility'] === 'public') {
             $request->validate(['file' => ['image', 'mimes:jpg,jpeg,png,webp']]);
         }
@@ -36,7 +37,7 @@ class MediaController extends Controller
             throw $exception;
         }
 
-        return back()->with('success', 'Media tersimpan. ID: '.$media->id.' · '.route('media.show', $media));
+        return back()->with('success', 'Upload berhasil.')->with('uploaded_media', ['id' => $media->id, 'url' => route('media.show', $media, false), 'name' => $media->name, 'visibility' => $media->visibility]);
     }
 
     public function show(Request $request, MediaAsset $media): StreamedResponse

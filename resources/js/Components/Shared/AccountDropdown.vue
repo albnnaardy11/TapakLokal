@@ -272,7 +272,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', outside));
                     </Link>
                 </div>
 
-                <!-- Navigation Groups -->
+                <Link :href="route('souvenirs.orders')" class="mx-2 flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-semibold text-[#0175ea]" @click="close()"><ReceiptText class="size-4" />Pesanan oleh-oleh</Link>
+<!-- Navigation Groups -->
                 <div class="p-2 space-y-1">
                     <div v-for="group in groups" :key="group.title">
                         <p class="px-3 pb-1 pt-2.5 text-[9px] font-extrabold tracking-wider text-slate-400 uppercase">

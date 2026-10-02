@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
     Menu, UserRound, Globe, ArrowRight, ArrowUpRight, CalendarDays, Check,
@@ -40,8 +40,6 @@ const trustedTripVendors = [
 const hoveredRole = ref(null);
 const pinnedRole = ref(null);
 const openFaq = ref(0);
-const consultationDialog = ref(null);
-const brief = ref({ company: '', name: '', destination: '', participants: '', notes: '' });
 const roles = [
     { title: 'Untuk PIC perjalanan', english: 'HR, GA & KOORDINATOR TRIP', subtitle: 'Lebih terencana, lebih tenang.', position: '0%', points: ['Temukan paket sesuai agenda dan anggaran perusahaan', 'Rangkum tanggal dan kebutuhan seluruh peserta', 'Diskusikan detail fasilitas trip sebelum memesan'], summary: 'Dari mengumpulkan kebutuhan hingga menentukan itinerary, semua beres dalam satu brief yang jelas.', label: 'HR, GA & koordinator tim' },
     { title: 'Untuk peserta', english: 'KARYAWAN & PESERTA PERJALANAN', subtitle: 'Fokus pada pengalaman seru.', position: '50%', points: ['Kenali itinerary lengkap dan fasilitas perjalanan', 'Jelajahi destinasi seru bersama pemandu lokal terbaik', 'Sampaikan kebutuhan khusus tim kepada PIC dengan mudah'], summary: 'Lebih banyak ruang untuk rehat, membangun keakraban, dan menikmati destinasi bersama rekan kerja.', label: 'Karyawan & peserta perjalanan' },
@@ -51,16 +49,11 @@ const faqs = [
     { question: 'Apa itu TapakLokal for Corporates?', answer: 'TapakLokal for Corporates adalah solusi perjalanan bisnis dan corporate gathering terpadu dari TapakLokal. Kami membantu perusahaan merencanakan agenda outing, gathering tahunan, business trip, hingga private trip dengan alur yang mudah, transparan, dan hemat anggaran.' },
     { question: 'Layanan apa saja yang bisa didiskusikan dan dipesan?', answer: 'Anda dapat merencanakan company gathering, outing kantor, private trip rombongan, aktivitas team building lokal, hingga penyediaan transportasi, akomodasi, konsumsi, dan pemandu lokal profesional.' },
     { question: 'Apakah ada batas minimum jumlah peserta?', answer: 'Kapasitas peserta sangat fleksibel mulai dari rombongan kecil (tim divisi) hingga gathering skala besar ratusan orang. Cantumkan estimasi jumlah peserta saat konsultasi agar penawaran paket dapat disesuaikan.' },
-    { question: 'Bagaimana dengan sistem persetujuan (approval) dan invoice perusahaan?', answer: 'Kami mendukung kebutuhan administrasi perusahaan, termasuk penerbitan invoice resmi, bukti transaksi digital, e-Faktur Pajak, serta penyesuaian alur persetujuan internal dan skema pembayaran yang disepakati.' },
-    { question: 'Bagaimana skema pembayaran yang tersedia?', answer: 'Tersedia pilihan pembayaran fleksibel mulai dari kartu kredit korporat, transfer bank, hingga skema invoicing dengan termin pembayaran (term of payment) sesuai kesepakatan kerjasama perusahaan.' },
-    { question: 'Bagaimana cara memulai konsultasi perjalanan tim?', answer: 'Klik tombol “Mulai sekarang” atau “Konsultasikan perjalanan”, lengkapi brief singkat kebutuhan tim Anda, lalu kirimkan email ke tim konsultan kami. Kami akan segera menghubungi Anda dengan rekomendasi terbaik.' },
+    { question: 'Bagaimana dengan sistem persetujuan (approval) dan invoice perusahaan?', answer: 'Kami mendukung kebutuhan administrasi perusahaan, melalui riwayat penawaran, persetujuan perusahaan, pembayaran, dan laporan biaya. e-Faktur dan pembayaran tempo belum tersedia.' },
+    { question: 'Bagaimana skema pembayaran yang tersedia?', answer: 'Pembayaran penuh dilakukan melalui metode Midtrans yang aktif pada checkout setelah penawaran disetujui. Finance perusahaan dapat melanjutkan pembayaran dari workspace.' },
+    { question: 'Bagaimana cara memulai konsultasi perjalanan tim?', answer: 'Daftarkan perusahaan dan PIC. Setelah diverifikasi, undang approver dan finance, lalu ajukan kebutuhan perjalanan dari dashboard corporate.' },
 ];
-const emailHref = computed(() => {
-    const body = `Halo tim TapakLokal,\n\nSaya ingin berdiskusi tentang perjalanan perusahaan.\nPerusahaan: ${brief.value.company}\nNama PIC: ${brief.value.name}\nDestinasi: ${brief.value.destination || 'Butuh rekomendasi'}\nJumlah peserta: ${brief.value.participants}\nKebutuhan: ${brief.value.notes}\n\nTerima kasih.`;
-    return `mailto:support@tapaklokal.com?subject=${encodeURIComponent(`Konsultasi corporate — ${brief.value.company}`)}&body=${encodeURIComponent(body)}`;
-});
-function openConsultation() { consultationDialog.value?.showModal(); }
-function prepareEmail() { window.location.href = emailHref.value; }
+function openConsultation() { router.visit(route('corporate.register')); }
 function isFlipped(index) { return hoveredRole.value === index || pinnedRole.value === index; }
 function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRole.value = index; }
 </script>
@@ -81,14 +74,14 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                 </div>
                 <div class="flex shrink-0 items-center gap-3">
                     <span class="mr-2 hidden items-center gap-1.5 text-xs text-slate-600 xl:flex" aria-label="Bahasa Indonesia"><Globe class="size-4" /> ID</span>
-                    <Link :href="route('home', { auth: 'login' })" class="hidden items-center gap-2 rounded-full bg-[#e1f4ff] px-4 py-2.5 text-xs font-bold text-[#075890] sm:inline-flex"><UserRound class="size-4" /> Masuk</Link>
+                    <Link :href="route('corporate.login')" class="hidden items-center gap-2 rounded-full bg-[#e1f4ff] px-4 py-2.5 text-xs font-bold text-[#075890] sm:inline-flex"><UserRound class="size-4" /> Masuk</Link>
                     <button class="corp-button !hidden !bg-[#009cf0] !px-6 !py-2.5 !text-xs sm:!inline-flex" @click="openConsultation">Mulai sekarang</button>
                     <button class="rounded-lg p-2 text-[#07345a] lg:hidden" :aria-expanded="mobileNavigationOpen" aria-controls="corporate-mobile-navigation" :aria-label="mobileNavigationOpen ? 'Tutup menu corporate' : 'Buka menu corporate'" @click="mobileNavigationOpen = !mobileNavigationOpen"><X v-if="mobileNavigationOpen" class="size-6" /><Menu v-else class="size-6" /></button>
                 </div>
             </nav>
             <nav v-if="mobileNavigationOpen" id="corporate-mobile-navigation" aria-label="Navigasi corporate mobile" class="border-t border-slate-100 bg-white px-5 pb-5 lg:hidden">
                 <a v-for="item in corporateLinks" :key="item.href" :href="item.href" class="block border-b border-slate-100 py-3 text-sm font-semibold text-slate-700" @click="mobileNavigationOpen = false">{{ item.label }}</a>
-                <div class="mt-4 flex gap-3 sm:hidden"><Link :href="route('home', { auth: 'login' })" class="flex flex-1 items-center justify-center rounded-full bg-sky-50 py-3 text-sm font-semibold text-[#075890]">Masuk</Link><button class="corp-button flex-1 justify-center !py-3" @click="mobileNavigationOpen = false; openConsultation()">Mulai sekarang</button></div>
+                <div class="mt-4 flex gap-3 sm:hidden"><Link :href="route('corporate.login')" class="flex flex-1 items-center justify-center rounded-full bg-sky-50 py-3 text-sm font-semibold text-[#075890]">Masuk</Link><button class="corp-button flex-1 justify-center !py-3" @click="mobileNavigationOpen = false; openConsultation()">Mulai sekarang</button></div>
             </nav>
         </header>
         <main>
@@ -144,13 +137,13 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
 
                 <!-- Dipercaya Oleh Section (Light sky blue card with distinct contrast) -->
                 <div class="relative z-10 mx-auto w-full max-w-[1040px] px-4 mb-5 sm:mb-7 lg:mb-8">
-                    <div class="corporate-trust-strip rounded-b-[20px] sm:rounded-b-[28px] bg-[#e3f3fc] border border-[#a9d5eb] border-t-0 shadow-[0_12px_28px_-8px_rgba(7,52,90,0.08)]" aria-label="Dipercaya oleh 100+ perusahaan">
+                    <div class="corporate-trust-strip rounded-b-[20px] sm:rounded-b-[28px] bg-[#e3f3fc] border border-[#a9d5eb] border-t-0 shadow-[0_12px_28px_-8px_rgba(7,52,90,0.08)]" aria-label="Perjalanan perusahaan bersama partner lokal">
                         <div class="trust-badge text-[#07345a]">
                             <svg class="trust-laurel text-[#0088ff]" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
                                 <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
                                 <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
                             </svg>
-                            <p class="text-[#07345a]">Dipercaya oleh <strong class="font-extrabold text-[#0088ff]">100+</strong><br />perusahaan</p>
+                            <p class="text-[#07345a]">Perjalanan tim<br /><strong class="font-extrabold text-[#0088ff]">bersama partner lokal</strong></p>
                             <svg class="trust-laurel -scale-x-100 text-[#0088ff]" viewBox="0 0 32 64" fill="currentColor" aria-hidden="true">
                                 <path d="M27 60C8 49 6 23 24 5" fill="none" stroke="currentColor" stroke-width="1.5" />
                                 <path d="M23 10c-5-1-5-6-2-10 4 3 5 7 2 10ZM17 18c-6-1-8-6-6-11 5 2 8 6 6 11ZM12 28C6 27 3 22 4 17c6 1 9 5 8 11ZM10 39C3 37 0 32 1 27c6 2 10 6 9 12ZM14 50C7 50 2 46 2 40c7 1 11 4 12 10ZM22 59C15 62 9 60 7 54c6-2 12 0 15 5ZM19 18c0-6 4-9 10-9-1 5-5 9-10 9ZM14 28c1-6 6-9 11-8-2 5-6 8-11 8ZM13 40c1-6 5-9 11-8-2 5-6 8-11 8ZM17 50c1-6 5-8 11-7-2 5-6 8-11 7Z" />
@@ -420,7 +413,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                             <div>
                                 <h3 class="text-xl font-bold tracking-tight text-[#07345a] sm:text-2xl">Pilihan Pembayaran Fleksibel</h3>
                                 <p class="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
-                                    Pilih metode pembayaran yang paling sesuai untuk perusahaan Anda: sistem invoice tempo (termin pembayaran), kartu kredit korporat, hingga reimbursement otomatis.
+                                    Finance melanjutkan pembayaran setelah penawaran disetujui. Status pembayaran dan laporan biaya terhubung ke workspace perusahaan.
                                 </p>
                             </div>
 
@@ -435,7 +428,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
                                             </div>
                                             <div class="min-w-0">
                                                 <span class="block truncate text-xs font-bold text-slate-800">Invoicing Terpusat (Tempo)</span>
-                                                <span class="block text-[9px] sm:text-[10px] text-slate-500 truncate">Tempo Net 30 & e-Faktur Pajak resmi</span>
+                                                <span class="block text-[9px] sm:text-[10px] text-slate-500 truncate">Penawaran dan rincian biaya kegiatan</span>
                                             </div>
                                         </div>
                                         <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500 px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-white shadow-xs">
@@ -691,53 +684,6 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
             </section>
         </main>
         <MainFooter />
-        <dialog ref="consultationDialog" aria-labelledby="consultation-heading" class="consultation-dialog fixed m-auto max-h-[90dvh] w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-0 text-slate-800 shadow-2xl backdrop:bg-[#032454]/60" @click.self="consultationDialog.close()">
-            <div class="p-5 sm:p-8">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <p class="corp-eyebrow">KONSULTASI PERJALANAN TIM</p>
-                        <h2 id="consultation-heading" class="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-[#07345a]">Ceritakan Rencana Perjalanan Anda.</h2>
-                    </div>
-                    <button aria-label="Tutup konsultasi" class="rounded-full bg-slate-100 p-2 hover:bg-slate-200" @click="consultationDialog.close()">
-                        <X class="size-4" />
-                    </button>
-                </div>
-                <p class="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-5 sm:leading-6 text-slate-500">Isi brief singkat ini agar tim konsultan TapakLokal dapat menyiapkan rekomendasi destinasi, itinerary, dan estimasi anggaran terbaik.</p>
-                <form class="mt-5 sm:mt-6 grid gap-3.5 sm:gap-4" @submit.prevent="prepareEmail">
-                    <label class="corp-label">
-                        Nama Perusahaan
-                        <input v-model="brief.company" required maxlength="150" autocomplete="organization" class="corp-input" placeholder="Contoh: PT Nusantara Maju" />
-                    </label>
-                    <label class="corp-label">
-                        Nama PIC (Penanggung Jawab)
-                        <input v-model="brief.name" required maxlength="100" autocomplete="name" class="corp-input" placeholder="Nama lengkap Anda" />
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
-                        <label class="corp-label">
-                            Destinasi Tujuan
-                            <input v-model="brief.destination" maxlength="100" class="corp-input" placeholder="Contoh: Yogyakarta / Labuan Bajo" />
-                        </label>
-                        <label class="corp-label">
-                            Jumlah Peserta
-                            <input v-model="brief.participants" required type="number" min="1" max="10000" class="corp-input" placeholder="Contoh: 30" />
-                        </label>
-                    </div>
-                    <label class="corp-label">
-                        Tanggal & Kebutuhan Khusus
-                        <textarea v-model="brief.notes" required maxlength="1500" rows="3" class="corp-input resize-y" placeholder="Rencana tanggal pelaksanaan, perkiraan anggaran, agenda outing, gala dinner, atau kebutuhan khusus lainnya..."></textarea>
-                    </label>
-                    <button type="submit" class="corp-button w-full justify-center">
-                        Buka Draf Email Konsultasi
-                        <ArrowUpRight class="size-4" />
-                    </button>
-                    <p class="text-xs leading-5 text-slate-500">
-                        Brief belum dikirim atau disimpan secara publik. Periksa dan kirim melalui aplikasi email Anda ke
-                        <a href="mailto:support@tapaklokal.com" class="text-[#0077df] underline font-semibold">support@tapaklokal.com</a>
-                        .
-                    </p>
-                </form>
-            </div>
-        </dialog>
     </div>
 </template>
 
@@ -915,3 +861,4 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
     animation: particle-travel 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 </style>
+

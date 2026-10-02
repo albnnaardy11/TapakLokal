@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SouvenirCartItem;
+use App\Models\SupportTicket;
 use App\Services\AdminPanelService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -38,6 +40,24 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'navigation' => fn () => $request->user() ? [
+                'cartCount' => SouvenirCartItem::where('user_id', $request->user()->id)->count(),
+                'unreadCount' => $request->user()->unreadNotifications()->count(),
+                'notifications' => $request->user()->notifications()->latest()->orderByDesc('id')->limit(5)->get(['id', 'data', 'read_at', 'created_at']),
+                'messages' => SupportTicket::query()
+                    ->when(! ($request->user()->hasPermission('admin.access') && $request->user()->hasPermission('operations.manage')), fn ($query) => $query->where(function ($scope) use ($request) {
+                        $scope->where('user_id', $request->user()->id);
+                        if ($request->user()->hasPermission('vendor.access') && $request->user()->vendor) {
+                            $scope->orWhere('vendor_id', $request->user()->vendor->id);
+                        }
+                    }))
+                    ->whereIn('status', ['open', 'in_progress'])->latest('id')->limit(5)->get(['id', 'subject', 'status', 'updated_at'])
+                    ->map(fn ($ticket) => [
+                        'id' => $ticket->id, 'sender' => $ticket->subject, 'snippet' => $ticket->status === 'open' ? 'Tiket bantuan terbuka' : 'Sedang ditangani',
+                        'time' => $ticket->updated_at->toIso8601String(),
+                        'url' => route('support.show', $ticket),
+                    ]),
+            ] : ['cartCount' => 0, 'unreadCount' => 0, 'notifications' => []],
             'auth' => fn () => $request->user() ? [
                 'user' => [
                     'id' => $request->user()->id,
@@ -55,6 +75,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                'uploaded_media' => fn () => $request->session()->get('uploaded_media'),
                 'login_success_data' => fn () => $request->session()->get('login_success_data'),
             ],
             'adminPanel' => function () use ($request): ?array {

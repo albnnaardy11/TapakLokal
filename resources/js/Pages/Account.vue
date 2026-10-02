@@ -13,11 +13,11 @@ const page = usePage();
 const groups = [
     { label: 'AKTIVITAS & FINANSIAL', items: [['bookings', 'Pemesanan & Tiket', BookingPassIcon], ['transactions', 'Daftar Transaksi', PurchaseListIcon], ['wallet', 'Saldo & Pembayaran', Wallet], ['points', 'Points', Coins], ['vouchers', 'Voucher', Gift]] },
     { label: 'INTERAKSI & KOMUNITAS', items: [['favorites', 'OT & OP Favorit', Heart], ['travelers', 'Daftar Wisatawan', Users], ['chat', 'Chat', MessageSquare], ['reviews', 'Rating & Ulasan', Star], ['support', 'Pesan Bantuan', Headset]] },
-    { label: 'AKUN', items: [['settings', 'Akun Saya', Settings]] },
+    { label: 'AKUN', items: [['settings', 'Akun Saya', Settings], ['corporate', 'Workspace perusahaan', Users]] },
 ];
 const menu = groups.flatMap(group => group.items);
 const user = computed(() => page.props.auth.user);
-const navigate = key => router.get(route('account.section', key), {}, { preserveScroll: true });
+const navigate = key => router.get(key === 'corporate' ? route('corporate.dashboard') : route('account.section', key), {}, { preserveScroll: true });
 </script>
 <template>
     <Head :title="page.props.sectionLabel" />
@@ -69,7 +69,7 @@ const navigate = key => router.get(route('account.section', key), {}, { preserve
                     <Link
                         v-for="[key, label, icon] in menu"
                         :key="key"
-                        :href="route('account.section', key)"
+                        :href="key === 'corporate' ? route('corporate.dashboard') : route('account.section', key)"
                         preserve-scroll
                         class="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition shadow-2xs"
                         :class="page.props.sectionKey === key ? 'bg-[#0194f3] text-white ring-2 ring-[#0194f3]/30' : 'bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50'"
@@ -117,7 +117,7 @@ const navigate = key => router.get(route('account.section', key), {}, { preserve
                         <Link
                             v-for="[key, label, icon] in group.items"
                             :key="key"
-                            :href="route('account.section', key)"
+                            :href="key === 'corporate' ? route('corporate.dashboard') : route('account.section', key)"
                             preserve-scroll
                             class="group flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium transition-colors"
                             :class="page.props.sectionKey === key ? 'bg-[#0194f3] text-white shadow-sm font-semibold' : 'text-slate-700 hover:bg-[#edf5ff] hover:text-[#0194f3]'"

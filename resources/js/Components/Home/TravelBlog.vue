@@ -3,16 +3,11 @@ import { route } from 'ziggy-js';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, ArrowRight, Clock3, X } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import BlogCardSkeleton from '../Skeletons/Cards/BlogCardSkeleton.vue';
 import ProgressiveImage from '../Shared/ProgressiveImage.vue';
 import EmptyState from '../Shared/EmptyState.vue';
 
 const props = defineProps({
     items: { type: Array, default: () => [] },
-    isLoading: {
-        type: Boolean,
-        default: false,
-    },
 });
 
 const articles = computed(() => props.items);
@@ -78,7 +73,6 @@ onBeforeUnmount(() => observer?.disconnect());
     <section
         class="mx-auto mt-16 max-w-[1180px] sm:mt-20"
         aria-labelledby="travel-blog-heading"
-        :aria-busy="isLoading"
     >
         <!-- Section Header -->
         <div class="flex items-end justify-between gap-5">
@@ -118,13 +112,8 @@ onBeforeUnmount(() => observer?.disconnect());
             </div>
         </div>
 
-        <!-- Section Skeleton State -->
-        <div v-if="isLoading" class="mt-7">
-            <BlogCardSkeleton :count="isBlogPage ? 6 : 4" :layout="isBlogPage ? 'grid' : 'carousel'" />
-        </div>
-
         <!-- Empty State -->
-        <div v-else-if="articles.length === 0" class="mt-7">
+        <div v-if="articles.length === 0" class="mt-7">
             <EmptyState
                 title="Tidak Ada Artikel"
                 message="Belum ada artikel yang tersedia saat ini."

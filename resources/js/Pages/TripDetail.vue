@@ -1,7 +1,8 @@
 <script setup>
-import { Head } from '@inertiajs/vue3';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Coins, Compass, Copy, MapPin, Minus, Navigation, Plus, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { BedDouble, CalendarDays, Camera, CheckCircle2, ChevronLeft, ChevronRight, Clock3, MessageCircle, Compass, Copy, MapPin, Minus, Navigation, Plus, ShieldCheck, Star, Users, Utensils, X, XCircle } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 
 import TripFaq from '../Components/TripDetail/TripFaq.vue';
@@ -14,6 +15,7 @@ const props = defineProps({
     trip: { type: String, required: true },
     tripData: Object,
     bookingKey: String,
+    canBook: Boolean,
     reviews: Array,
 });
 
@@ -31,10 +33,15 @@ const routeSaved = ref(false);
 const selectedFacilityCategory = ref('Semua');
 const preparedPackingItems = ref([]);
 const isCoordinatesCopied = ref(false);
-const travelers = ref(2);
+const page = usePage();
+const travelers = ref(1);
 const bookingMessage = ref('');
-const isBookingModalOpen = ref(false);
-const departureDate = ref('2026-09-19');
+const departureDate = computed(() => props.tripData?.departure_date?.slice(0, 10) || '');
+const seatsAvailable = computed(() => Math.max(0, (props.tripData?.capacity || 0) - (props.tripData?.reserved_seats || 0)));
+const canBook = computed(() => props.canBook && seatsAvailable.value > 0);
+watch(() => [page.props.auth?.user?.id, page.url], () => {
+    if (page.props.auth?.user && page.url.includes('book=1')) { checkAvailability(); }
+});
 
 const openTrip = {
     title: 'Open Trip Tur Pulau Pramuka',
@@ -91,17 +98,13 @@ const detail = computed(() => {
         subtitle: props.tripData.description,
         location: props.tripData.destination,
         price: new Intl.NumberFormat('id-ID').format(props.tripData.selling_price),
-        originalPrice: new Intl.NumberFormat('id-ID').format(props.tripData.price),
+        originalPrice: null,
         label: props.tripData.type === 'private-trip' ? 'Private Trip' : 'Open Trip',
+        date: departureDateLabel.value,
         images: [...new Set([...dynamicImages, ...fallback.images])].slice(0, 4),
     };
 });
-const bookingTotal = computed(() => {
-    const price = Number(detail.value.price.replace(/\D/g, ''));
-
-    return new Intl.NumberFormat('id-ID').format(price * travelers.value);
-});
-const departureDateLabel = computed(() => new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${departureDate.value}T00:00:00`)));
+const departureDateLabel = computed(() => departureDate.value ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${departureDate.value}T00:00:00`)) : 'Jadwal belum tersedia');
 const mapEmbedUrl = computed(() => `https://www.google.com/maps?q=${encodeURIComponent(detail.value.coordinates)}&z=12&output=embed`);
 const mapDirectionsUrl = computed(() => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(detail.value.coordinates)}`);
 const galleryImages = computed(() => [
@@ -154,7 +157,7 @@ const itineraryDays = computed(() => isPrivateTrip.value ? [
     { day: 'Hari ke 2', meals: 'Breakfast', activities: ['Sarapan di homestay', 'Waktu bebas dan persiapan pulang', 'Check-out homestay', 'Penyeberangan kembali ke Dermaga Kaliadem', 'Tiba di Jakarta dan trip selesai'] },
 ]);
 const vendorInfo = computed(() => ({
-    name: 'BRENGGO.ID',
+    name: props.tripData?.vendor?.name || 'Mitra trip',
     logo: '/Assets/Images/logo-vendor/logo-brenggo-tour.jpg',
     website: 'https://www.brenggo-id.com/',
     since: '2016',
@@ -202,16 +205,20 @@ const includes = ['Transportasi pulang-pergi sesuai titik kumpul', 'Akomodasi da
 const excludes = ['Transportasi menuju meeting point', 'Pengeluaran pribadi', 'Makan di luar program', 'Tiket aktivitas opsional', 'Asuransi perjalanan pribadi'];
 
 const updateTravelers = (amount) => {
-    travelers.value = Math.max(1, Math.min(12, travelers.value + amount));
+    travelers.value = Math.max(1, Math.min(50, seatsAvailable.value, travelers.value + amount));
 };
 
 const checkAvailability = () => {
     bookingMessage.value = '';
-    isBookingModalOpen.value = true;
-};
-
-const submitBooking = () => {
-    bookingMessage.value = `Pesanan untuk ${travelers.value} orang pada ${departureDateLabel.value} siap dilanjutkan.`;
+    if (!page.props.auth?.user) {
+        router.visit(route('login', { trip: props.tripData.id }));
+        return;
+    }
+    if (!canBook.value) {
+        bookingMessage.value = 'Jadwal ini sudah berakhir atau kuotanya habis. Pilih jadwal lain di Cari Trip.';
+        return;
+    }
+    router.visit(route('checkout.review.trip', { trip: props.tripData.id, participants: travelers.value }));
 };
 
 const openItinerary = () => {
@@ -279,7 +286,7 @@ const showGalleryImage = (imageIndex) => {
 };
 
 const handleGalleryKeydown = (event) => {
-    if (!isGalleryOpen.value) {
+if (!isGalleryOpen.value) {
         return;
     }
 
@@ -296,7 +303,13 @@ const handleGalleryKeydown = (event) => {
     }
 };
 
-onMounted(() => window.addEventListener('keydown', handleGalleryKeydown));
+onMounted(() => {
+    window.addEventListener('keydown', handleGalleryKeydown);
+    if (page.props.auth?.user && new URLSearchParams(window.location.search).get('book') === '1') {
+        checkAvailability();
+        const url = new URL(window.location.href); url.searchParams.delete('book'); window.history.replaceState({}, '', url.pathname + url.search);
+    }
+});
 onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown));
 </script>
 
@@ -369,7 +382,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
 
                 <aside class="self-start lg:fixed lg:top-[118px] lg:right-[max(2rem,calc((100vw-1220px)/2))] lg:z-20 lg:w-[330px]">
                     <section class="rounded-2xl border border-[#dce7f4] bg-white p-5 shadow-[0_8px_28px_rgba(23,75,120,0.08)]">
-                        <p class="text-xs text-slate-400 line-through">{{ detail.originalPrice }}</p>
+                        <p v-if="detail.originalPrice" class="text-xs text-slate-400 line-through">{{ detail.originalPrice }}</p>
                         <div class="mt-1 flex items-end gap-2">
                             <p class="text-2xl font-extrabold tracking-tight text-[#173b70]">{{ detail.price }}</p>
                             <span class="pb-1 text-[10px] text-slate-500">/ orang</span>
@@ -385,23 +398,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
                             type="button"
                             class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1677e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,119,232,0.25)] transition hover:bg-[#0d68d1]"
                             @click="checkAvailability"
+                            :disabled="!canBook"
                         >
-                            <CalendarDays class="size-4" />Cek ketersediaan
+                            <CalendarDays class="size-4" />{{ !canBook ? 'Jadwal tidak tersedia' : page.props.auth?.user ? 'Pesan trip' : 'Masuk untuk memesan' }}
                         </button>
-                        <a
-                            href="https://wa.me/6281234567890?text=Halo%20Admin%20TapakLokal,%20saya%20tertarik%20dengan%20trip%20ini"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="mt-2.5 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400 bg-white px-4 text-xs font-bold text-emerald-600 transition hover:bg-emerald-50 hover:border-emerald-500 shadow-xs"
-                        >
-                            <svg class="size-4 shrink-0 fill-current" viewBox="0 0 448 512" aria-hidden="true">
-                                <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-                            </svg>
-                            <span>Tanya via WhatsApp</span>
-                        </a>
-                        <p class="mt-3 flex items-center gap-1.5 text-[10px] text-[#1677e8]">
-                            <Coins class="size-3.5 text-amber-500" />Dapatkan hingga 400 poin TapakLokal
-                        </p>
+                        <a v-if="!canBook" :href="route('catalog')" class="mt-3 block text-center text-xs font-bold text-[#1688e8]">Cari jadwal lain</a>
+                        <button type="button" class="mt-3 min-h-11 w-full rounded-xl border border-blue-200 px-4 text-xs font-bold text-[#1688e8]" @click="router.visit(route('account.section', 'support'))">Tanya lewat bantuan</button>
                     </section>
 
                     <section class="mt-4 rounded-2xl border border-[#e1eaf5] bg-white p-4"><div class="flex items-center justify-between"><h2 class="flex items-center gap-2 text-xs font-bold text-[#173b70]"><Compass class="size-4 text-[#1677e8]" />Fasilitas</h2><span class="text-[10px] font-semibold text-[#1677e8]">Lihat semua</span></div><div class="mt-4 grid grid-cols-3 gap-2"><div v-for="facility in facilities" :key="facility.label" class="grid min-h-20 place-items-center rounded-xl bg-[#f7faff] p-2 text-center"><component :is="facility.icon" class="size-5 text-[#1677e8]" /><span class="mt-2 text-[9px] font-medium text-[#56708d]">{{ facility.label }}</span></div></div></section>
@@ -409,14 +411,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
                 </aside>
 
             <div class="lg:col-start-1">
-            <section class="mt-7 rounded-2xl border border-[#dfeaf5] bg-white p-5 shadow-[0_8px_24px_rgba(23,75,120,0.04)] sm:p-6" aria-labelledby="vendor-heading">
-                <div class="grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_auto]">
-                    <div class="flex min-w-0 items-center gap-4"><span class="grid size-16 shrink-0 place-items-center rounded-xl border border-[#e3edf6] bg-white"><img :src="vendorInfo.logo" :alt="`Logo ${vendorInfo.name}`" class="size-12 object-contain" /></span><div class="min-w-0"><p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1688e8]">Diselenggarakan oleh</p><h2 id="vendor-heading" class="mt-1 text-xl font-extrabold tracking-tight"><span class="text-[#f0272e]">BRENGGO</span><span class="text-[#173b70]">.ID</span></h2><p class="mt-1 text-xs text-[#60789c]">Partner perjalanan terverifikasi TapakLokal.</p><p class="mt-2 flex items-center gap-1.5 text-xs"><Star class="size-4 fill-[#f5a000] text-[#f5a000]" /><span class="font-extrabold text-[#173b70]">4.9</span><span class="text-[#7186a2]">dari 1.248 ulasan</span></p></div></div>
-                    <div class="grid grid-cols-1 divide-y divide-[#e5eef7] rounded-xl border border-[#e5eef7] bg-[#fbfdff] sm:grid-cols-3 sm:divide-x sm:divide-y-0"><div class="px-3 py-3"><Clock3 class="size-4 text-[#1688e8]" /><p class="mt-1 whitespace-nowrap text-[11px] font-extrabold text-[#173b70]">Balas &lt; 1 jam</p><p class="mt-0.5 text-[9px] text-[#7186a2]">Respons cepat</p></div><div class="px-3 py-3"><CalendarDays class="size-4 text-[#1688e8]" /><p class="mt-1 whitespace-nowrap text-[11px] font-extrabold text-[#173b70]">Sejak {{ vendorInfo.since }}</p><p class="mt-0.5 text-[9px] text-[#7186a2]">Mitra aktif</p></div><div class="px-3 py-3"><MapPin class="size-4 text-[#1688e8]" /><p class="mt-1 whitespace-nowrap text-[11px] font-extrabold text-[#173b70]">Jakarta</p><p class="mt-0.5 text-[9px] text-[#7186a2]">Lokasi operasional</p></div></div>
-                </div>
-                <div class="mt-5 flex flex-col items-stretch gap-4 border-t border-[#e8f0f7] pt-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"><div><h3 class="text-sm font-extrabold text-[#173b70]">Mengapa memilih vendor ini?</h3><ul class="mt-2 grid gap-x-5 gap-y-2 sm:grid-cols-2"><li v-for="item in ['Tim profesional dan berpengalaman', 'Perlengkapan wisata terstandar', 'Dokumentasi lengkap foto & video', 'Pelayanan ramah dan responsif']" :key="item" class="flex items-center gap-2 text-[11px] text-[#60789c]"><CheckCircle2 class="size-3.5 shrink-0 text-[#1688e8]" />{{ item }}</li></ul></div><a :href="vendorInfo.website" target="_blank" rel="noopener noreferrer" class="group inline-flex min-h-11 items-center justify-center gap-2 rounded-full border-2 border-[#b8dcff] bg-white px-4 py-2 text-xs font-extrabold text-[#1688e8] transition-colors duration-200 hover:border-[#1688e8] hover:bg-[#1688e8] hover:text-white hover:shadow-[0_5px_12px_rgba(22,136,232,0.22)] sm:min-h-0">Lihat semua trip vendor <ChevronRight class="size-4 transition-transform duration-200 group-hover:translate-x-0.5" /></a></div>
+            <section class="mt-7 rounded-2xl border border-[#dfeaf5] bg-white p-6" aria-labelledby="vendor-heading">
+                <p class="text-xs font-bold uppercase tracking-wider text-[#1688e8]">Diselenggarakan oleh</p>
+                <h2 id="vendor-heading" class="mt-2 text-xl font-extrabold text-[#173b70]">{{ vendorInfo.name }}</h2>
+                <p class="mt-2 text-sm text-[#60789c]">Mitra terverifikasi TapakLokal. Hubungi vendor melalui chat dari detail pesanan kamu.</p>
             </section>
-
             <TripPanorama :trip-type="tripType" />
             <TripFaq :trip-type="tripType" />
             <TripReviews :trip-type="tripType" />
@@ -436,55 +435,21 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleGalleryKeydown
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <a
-                        href="https://wa.me/6281234567890?text=Halo%20Admin%20TapakLokal,%20saya%20tertarik%20dengan%20trip%20ini"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="grid size-11 shrink-0 place-items-center rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition shadow-2xs"
-                        aria-label="Tanya via WhatsApp"
-                    >
-                        <svg class="size-4.5 fill-current" viewBox="0 0 448 512" aria-hidden="true">
-                            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-                        </svg>
-                    </a>
+                    <button type="button" class="grid size-11 place-items-center rounded-xl border border-blue-200 text-[#1688e8]" aria-label="Tanya lewat bantuan" @click="router.visit(route('account.section', 'support'))"><MessageCircle class="size-5" /></button>
                     <button
                         type="button"
                         class="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-[#1677e8] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#1677e8]/30 transition hover:bg-[#0d68d1] active:scale-95 cursor-pointer"
                         @click="checkAvailability"
+                        :disabled="!canBook"
                     >
                         <CalendarDays class="size-4" />
-                        <span>Pesan Sekarang</span>
+                        <span>{{ !canBook ? 'Tidak tersedia' : page.props.auth?.user ? 'Pesan trip' : 'Masuk & pesan' }}</span>
                     </button>
                 </div>
             </div>
         </aside>
 
-        <Teleport to="body">
-            <div v-if="isBookingModalOpen" class="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-[#071a32]/55 p-0 sm:p-6 backdrop-blur-xs" role="dialog" aria-modal="true" aria-labelledby="booking-modal-heading" @click.self="isBookingModalOpen = false">
-                <div class="max-h-[92dvh] w-full max-w-4xl overflow-y-auto rounded-t-3xl sm:rounded-2xl bg-white shadow-2xl [scrollbar-width:thin]">
-                    <header class="sticky top-0 z-10 bg-white flex items-center justify-between border-b border-[#e6eef7] px-5 py-4 sm:px-6"><div><p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1688e8]">Pesan trip</p><h2 id="booking-modal-heading" class="mt-1 text-base sm:text-lg font-extrabold text-[#173b70]">Lengkapi detail pesanan</h2></div><button type="button" class="grid size-9 place-items-center rounded-full text-[#60789c] transition hover:bg-[#f1f6fb]" aria-label="Tutup pemesanan" @click="isBookingModalOpen = false"><X class="size-5" /></button></header>
-                    <div class="p-5 sm:p-6"><h3 class="text-center text-sm sm:text-base font-extrabold text-[#173b70]">{{ detail.title }}</h3><p class="mt-1 text-center text-xs text-[#7186a2]">{{ detail.startPoint }} · {{ detail.duration }}</p><div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"><section class="min-w-0"><div class="flex items-center justify-between border-b border-[#e6eef7] pb-3"><div><p class="text-xs font-extrabold text-[#173b70]">Peserta</p><p class="mt-1 text-[11px] text-[#7186a2]">Harga berlaku untuk peserta dewasa.</p></div><span class="rounded-full bg-[#edf7ff] px-2.5 py-1 text-[10px] font-bold text-[#1688e8]">{{ detail.price }} / orang</span></div><div class="mt-4 flex items-center justify-between rounded-xl border border-[#dceaf7] bg-[#fbfdff] p-4"><div><p class="text-sm font-extrabold text-[#173b70]">Dewasa</p><p class="mt-1 text-[11px] text-[#7186a2]">Usia 3 tahun ke atas</p></div><div class="flex items-center gap-3"><button type="button" class="grid size-9 place-items-center rounded-lg bg-[#eef5fc] text-[#1688e8]" aria-label="Kurangi peserta" @click="updateTravelers(-1)"><Minus class="size-4" /></button><span class="w-5 text-center text-sm font-extrabold text-[#173b70]">{{ travelers }}</span><button type="button" class="grid size-9 place-items-center rounded-lg bg-[#e7f4ff] text-[#1688e8]" aria-label="Tambah peserta" @click="updateTravelers(1)"><Plus class="size-4" /></button></div></div><div class="mt-5 rounded-xl border border-[#dceaf7] bg-[#f8fbff] p-4"><p class="text-xs font-extrabold text-[#173b70]">Catatan perjalanan</p><p class="mt-2 text-[11px] leading-5 text-[#60789c]">Pilih tanggal keberangkatan terlebih dahulu. Detail titik kumpul dan e-ticket dikirim setelah pesanan dikonfirmasi.</p></div></section><aside class="rounded-2xl bg-[#f5f9ff] p-4 sm:p-5"><label class="block text-xs font-extrabold text-[#173b70]">Keberangkatan<input v-model="departureDate" type="date" class="mt-2 w-full rounded-xl border border-[#cfe0ef] bg-white px-3 py-2.5 text-xs font-semibold text-[#31577f] outline-none focus:border-[#1688e8] focus:ring-2 focus:ring-[#1688e8]/15" /></label><p class="mt-2 text-[10px] text-[#7186a2]">Pilih tanggal keberangkatan yang tersedia.</p><div class="mt-5 border-y border-[#dce8f3] py-4"><h4 class="text-base font-extrabold text-[#173b70]">Rincian pesanan</h4><dl class="mt-3 space-y-2 text-[11px]"><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Tanggal trip</dt><dd class="text-right font-bold text-[#31577f]">{{ departureDateLabel }}</dd></div><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Durasi</dt><dd class="font-bold text-[#31577f]">{{ detail.duration }}</dd></div><div class="flex justify-between gap-3"><dt class="text-[#7186a2]">Dewasa ×{{ travelers }}</dt><dd class="font-bold text-[#31577f]">Rp {{ bookingTotal }}</dd></div></dl></div><div class="mt-4 flex items-baseline justify-between gap-3"><span class="text-sm font-extrabold text-[#173b70]">Total</span><span class="text-lg font-extrabold text-[#173b70]">Rp {{ bookingTotal }}</span></div><p class="mt-2 flex items-center justify-end gap-1 text-[10px] text-[#d99b00]"><Coins class="size-3.5 text-amber-500" />Dapatkan hingga 400 poin</p>                                    <button type="button" class="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#1688e8] px-4 text-xs font-bold text-white shadow-[0_5px_12px_rgba(22,136,232,0.24)] transition hover:bg-[#0875d0]" @click="submitBooking">
-                                        Pesan sekarang
-                                        <ChevronRight class="size-4" />
-                                    </button>
-                                    <a
-                                        href="https://wa.me/6281234567890?text=Halo%20Admin%20TapakLokal,%20saya%20tertarik%20dengan%20trip%20ini"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-emerald-400 bg-white px-4 text-xs font-bold text-emerald-600 transition hover:bg-emerald-50 hover:border-emerald-500 shadow-xs"
-                                    >
-                                        <svg class="size-4 shrink-0 fill-current" viewBox="0 0 448 512" aria-hidden="true">
-                                            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-                                        </svg>
-                                        <span>Tanya via WhatsApp</span>
-                                    </a>
-                                </aside>
-                            </div>
-                            <p v-if="bookingMessage" role="status" class="mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700">{{ bookingMessage }}</p>
-                        </div>
-                </div>
-            </div>
-        </Teleport>
+        <p v-if="bookingMessage" role="alert" class="mx-auto mb-6 max-w-[1180px] rounded-xl bg-amber-50 p-4 text-sm text-amber-900">{{ bookingMessage }}</p>
 
         <Teleport to="body">
             <div v-if="isGalleryOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#071a32]/92 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Galeri foto perjalanan" @click.self="closeGallery">

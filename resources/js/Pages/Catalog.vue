@@ -16,6 +16,7 @@ const props = defineProps({
     filters: { type: Object, default: () => ({}) },
     cmsDestinations: { type: Array, default: () => [] },
     cmsFaqs: { type: Array, default: () => [] },
+    cmsPartners: { type: Array, default: () => [] },
 });
 
 const filters = reactive({
@@ -44,7 +45,7 @@ const heroTitle = computed(() => {
         <MainNavigation :transparent-on-top="true" />
 
         <!-- Full-Width Edge-to-Edge Hero Section (Clean & Proportional) -->
-        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white">
+        <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white min-h-[475px] sm:min-h-[495px] lg:min-h-[500px]">
             <!-- Full Width Background Image -->
             <img
                 src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=88"
@@ -53,17 +54,17 @@ const heroTitle = computed(() => {
             />
             <div class="absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(8,24,50,0.45)_0%,rgba(12,32,62,0.30)_40%,rgba(10,22,40,0.82)_100%)] pointer-events-none"></div>
 
-            <!-- Centered Hero Content Container (Tight & Proportional) -->
-            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-32 pb-4 sm:px-6 sm:pt-36 sm:pb-5 lg:px-0 lg:pt-36 lg:pb-6 flex flex-col items-center justify-center">
+            <!-- Centered Hero Content Container (Shifted down proportionally) -->
+            <div class="relative z-10 mx-auto max-w-[1180px] px-4 pt-36 pb-4 sm:px-6 sm:pt-40 sm:pb-5 lg:px-0 lg:pt-44 lg:pb-6 flex flex-col items-center justify-center">
                 <!-- Hero Title -->
-                <div class="max-w-3xl text-center text-white drop-shadow-md mb-8 sm:mb-10 lg:mb-11">
+                <div class="max-w-3xl text-center text-white drop-shadow-md mb-6 sm:mb-7 lg:mb-8">
                     <h1 class="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[34px]">
                         {{ heroTitle }}
                     </h1>
                 </div>
 
                 <!-- Integrated Search Component -->
-                <TripFinder :show-service-tabs="false" :initial-category="filters.type" class="w-full" />
+                <TripFinder :show-service-tabs="false" :initial-category="filters.type" :partners="cmsPartners" class="w-full" />
             </div>
         </section>
 

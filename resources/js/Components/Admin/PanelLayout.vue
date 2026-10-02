@@ -45,21 +45,10 @@ const roleLabel = computed(() => {
 });
 const homeUrl = computed(() => (props.vendor ? route('vendor.dashboard') : panel.value?.url || route('admin.dashboard')));
 
-const notifications = ref([
-    { id: 1, title: 'Pemesanan baru terkonfirmasi', time: '5 menit lalu', read: false, type: 'booking' },
-    { id: 2, title: 'Vendor baru menunggu verifikasi KYC', time: '1 jam lalu', read: false, type: 'vendor' },
-    { id: 3, title: 'Review bintang 5 baru ditambahkan', time: '3 jam lalu', read: true, type: 'review' },
-]);
-
-const messages = ref([
-    { id: 1, sender: 'Budi Santoso', snippet: 'Halo admin, tiket booking #TL-4821 sudah bisa di-download?', time: '10m lalu', unread: true },
-    { id: 2, sender: 'Brenggo Tour', snippet: 'Update kuota kursi untuk Open Trip Bromo weekend ini.', time: '2j lalu', unread: true },
-    { id: 3, sender: 'Siti Rahma', snippet: 'Terima kasih atas bantuan proses refundnya!', time: '1h lalu', unread: false },
-]);
-
-const unreadNotifCount = computed(() => notifications.value.filter((n) => !n.read).length);
-const unreadMsgCount = computed(() => messages.value.filter((m) => m.unread).length);
-
+const notifications = computed(() => (page.props.navigation?.notifications || []).map(item => ({ id: item.id, title: item.data.title, time: item.data.reference, read: !!item.read_at, url: item.data.url })));
+const messages = computed(() => page.props.navigation?.messages || []);
+const unreadNotifCount = computed(() => page.props.navigation?.unreadCount || 0);
+const unreadMsgCount = computed(() => 0);
 const toggleProfile = () => {
     showProfileMenu.value = !showProfileMenu.value;
     showNotifications.value = false;
@@ -85,11 +74,11 @@ const closeAllDropdowns = () => {
 };
 
 const markAllNotifsRead = () => {
-    notifications.value.forEach((n) => (n.read = true));
+    router.post(route('notifications.read-all'), {}, { preserveScroll: true });
 };
 
 const markAllMessagesRead = () => {
-    messages.value.forEach((m) => (m.unread = false));
+    showMessages.value = false;
 };
 
 const handleClickOutside = (e) => {
@@ -253,9 +242,10 @@ onBeforeUnmount(() => {
                                 </button>
                             </div>
                             <div class="divide-y divide-slate-50 py-1 max-h-72 overflow-y-auto">
-                                <div
+                                <Link
                                     v-for="item in notifications"
                                     :key="item.id"
+                                    :href="item.url"
                                     class="flex items-start gap-2.5 p-2 rounded-xl transition hover:bg-slate-50"
                                     :class="{ 'bg-blue-50/40': !item.read }"
                                 >
@@ -264,8 +254,10 @@ onBeforeUnmount(() => {
                                         <p class="text-xs font-medium text-slate-800 leading-snug">{{ item.title }}</p>
                                         <p class="mt-0.5 text-[10px] text-slate-400">{{ item.time }}</p>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
+                            <p v-if="!notifications.length" class="p-3 text-xs text-slate-500">Belum ada notifikasi.</p>
+                            <Link :href="route('notifications.index')" class="block p-2 text-xs font-bold text-blue-600">Lihat semua notifikasi</Link>
                         </div>
                     </div>
 
@@ -296,14 +288,15 @@ onBeforeUnmount(() => {
                                     class="text-[10px] font-semibold text-blue-600 hover:text-blue-700"
                                     @click="markAllMessagesRead"
                                 >
-                                    Tandai dibaca
+                                    Tutup
                                 </button>
                             </div>
                             <div class="divide-y divide-slate-50 py-1 max-h-72 overflow-y-auto">
-                                <div
+                                <Link
                                     v-for="msg in messages"
                                     :key="msg.id"
-                                    class="p-2 rounded-xl transition hover:bg-slate-50"
+                                    :href="msg.url"
+                                    class="block p-2 rounded-xl transition hover:bg-slate-50"
                                     :class="{ 'bg-blue-50/40': msg.unread }"
                                 >
                                     <div class="flex items-center justify-between">
@@ -311,8 +304,9 @@ onBeforeUnmount(() => {
                                         <span class="text-[9px] text-slate-400">{{ msg.time }}</span>
                                     </div>
                                     <p class="mt-1 text-[11px] text-slate-500 line-clamp-1 leading-snug">{{ msg.snippet }}</p>
-                                </div>
+                                </Link>
                             </div>
+                            <p v-if="!messages.length" class="p-3 text-xs text-slate-500">Tidak ada tiket bantuan terbuka.</p>
                         </div>
                     </div>
 

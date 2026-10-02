@@ -12,38 +12,48 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
 {
-    /**
-     * Redirect to OAuth provider or simulate in local environment when keys are absent.
-     */
     public function redirect(Request $request, string $provider = 'google'): RedirectResponse
     {
-        abort_unless(in_array($provider, ['google']), 404, 'Provider tidak didukung.');
-
-        $role = $request->query('role', 'traveler');
-        $role = in_array($role, ['vendor', 'vendor_admin']) ? 'vendor' : 'traveler';
+        abort_unless($provider === 'google', 404, 'Provider tidak didukung.');
+        $role = in_array($request->query('role'), ['vendor', 'vendor_admin'], true) ? 'vendor' : ($request->query('role') === 'corporate' ? 'corporate' : 'traveler');
         $request->session()->put('socialite_role', $role);
+        $data = $request->validate(['intended' => ['nullable', 'string', 'max:1000', 'regex:~^/(?!/)[^\\\\]*$~']]);
+        if (! filled(config("services.{$provider}.client_id")) || ! filled(config("services.{$provider}.client_secret")) || Str::contains(config("services.{$provider}.client_id"), 'your-')) {
+            return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors(['email' => 'Login Google belum dikonfigurasi. Gunakan email dan kata sandi akunmu.']);
+        }
+        if ($role === 'corporate') {
+            $data['intended'] = ($data['intended'] ?? '') === '/corporate/register' ? '/corporate/register' : '/corporate/dashboard';
+        }
+        $callback = config("services.{$provider}.redirect");
+        if (is_string($callback) && filter_var($callback, FILTER_VALIDATE_URL)) {
+            $origin = parse_url($callback, PHP_URL_SCHEME).'://'.parse_url($callback, PHP_URL_HOST);
+            if ($port = parse_url($callback, PHP_URL_PORT)) {
+                $origin .= ':'.$port;
+            }
+            if ($origin !== $request->getSchemeAndHttpHost()) {
+                $intended = $data['intended'] ?? $request->session()->get('url.intended');
+                if (is_string($intended) && str_starts_with($intended, $request->getSchemeAndHttpHost().'/')) {
+                    $intended = substr($intended, strlen($request->getSchemeAndHttpHost()));
+                }
+                $query = ['role' => $role];
+                if (is_string($intended) && preg_match('~^/(?!/)[^\\\\]*$~', $intended)) {
+                    $query['intended'] = $intended;
+                }
 
-        if ($request->filled('intended')) {
-            $request->session()->put('url.intended', $request->query('intended'));
+                return redirect($origin.'/auth/google/redirect?'.http_build_query($query));
+            }
+        }
+        $request->session()->put('socialite_role', $role);
+        if (! empty($data['intended'])) {
+            $request->session()->put('url.intended', $data['intended']);
         }
 
-        $clientId = config("services.{$provider}.client_id");
-        $clientSecret = config("services.{$provider}.client_secret");
-
-        // If credentials are configured, use official Socialite redirect
-        if (! empty($clientId) && ! empty($clientSecret) && ! Str::contains($clientId, 'your-')) {
-            return Socialite::driver($provider)
-                ->stateless()
-                ->with(['prompt' => 'select_account'])
-                ->redirect();
-        }
-
-        // Local development simulation fallback if OAuth keys are not configured yet
-        return $this->handleDevSimulation($request, $provider, $role);
+        return Socialite::driver($provider)->with(['prompt' => 'select_account'])->redirect();
     }
 
     /**
@@ -54,25 +64,32 @@ class SocialiteController extends Controller
         abort_unless(in_array($provider, ['google']), 404, 'Provider tidak didukung.');
 
         try {
-            $socialUser = Socialite::driver($provider)->stateless()->user();
+            $socialUser = Socialite::driver($provider)->user();
         } catch (\Throwable $e) {
             Log::error('Socialite callback failed: '.$e->getMessage(), [
                 'provider' => $provider,
                 'exception' => $e,
             ]);
 
-            return redirect('/?auth=login')->withErrors([
-                'email' => 'Gagal menghubungkan dengan Google: '.$e->getMessage(),
-            ])->with('error', 'Gagal menghubungkan dengan Google: '.$e->getMessage());
+            return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors([
+                'email' => 'Login Google gagal diverifikasi. Mulai kembali dan pilih akun Google yang sesuai.',
+            ])->with('error', 'Login Google gagal diverifikasi. Mulai kembali dari tombol Google.');
         }
 
-        $email = $socialUser->getEmail();
+        $email = Str::lower((string) $socialUser->getEmail());
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL) || ! filled($socialUser->getId()) || ($socialUser->getRaw()['email_verified'] ?? false) !== true) {
+            return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors(['email' => 'Identitas Google belum terverifikasi.']);
+        }
         $name = $socialUser->getName() ?? $socialUser->getNickname() ?? 'Pengguna Google';
         $googleId = (string) $socialUser->getId();
         $avatar = $socialUser->getAvatar();
-        $role = $request->session()->pull('socialite_role', 'traveler');
+        $role = $request->session()->get('socialite_role', 'traveler');
 
-        return $this->processUserLogin($request, $name, $email, $googleId, $avatar, $role, $provider, $access, $audit);
+        try {
+            return $this->processUserLogin($request, $name, $email, $googleId, $avatar, $role, $provider, $access, $audit);
+        } catch (ValidationException $exception) {
+            return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors($exception->errors());
+        }
     }
 
     /**
@@ -89,9 +106,15 @@ class SocialiteController extends Controller
         AccessService $access,
         AuditService $audit
     ): RedirectResponse {
-        $user = User::where('google_id', $googleId)
-            ->orWhere('email', $email)
-            ->first();
+        $linked = User::where('google_id', $googleId)->first();
+        $byEmail = User::where('email', $email)->first();
+        if (($linked && $byEmail && $linked->id !== $byEmail->id) || ($linked && Str::lower($linked->email) !== $email) || ($byEmail && $byEmail->google_id && $byEmail->google_id !== $googleId)) {
+            throw ValidationException::withMessages(['email' => 'Identitas Google tidak cocok dengan akun tersimpan. Hubungi bantuan untuk pemeriksaan akun.']);
+        }
+        $user = $linked ?? $byEmail;
+        if ($user && $user->status !== 'active') {
+            throw ValidationException::withMessages(['email' => 'Akun ini tidak aktif. Hubungi bantuan.']);
+        }
 
         if (! $user) {
             $user = DB::transaction(function () use ($name, $email, $googleId, $avatar, $role, $access) {
@@ -145,8 +168,18 @@ class SocialiteController extends Controller
         }
 
         Auth::login($user, true);
+        $request->session()->put('auth_portal', $role === 'corporate' ? 'corporate' : ($user->hasPermission('admin.access') ? 'admin' : ($user->hasPermission('vendor.access') ? 'vendor' : 'traveler')));
         $request->session()->regenerate();
         $audit->record('auth.socialite.'.$provider, $user);
+
+        $request->session()->forget('socialite_role');
+        if ($role === 'corporate') {
+            if ($user->must_change_password) {
+                return to_route('password.change');
+            }
+
+            return redirect()->intended(route('corporate.dashboard'));
+        }
 
         $loginSuccessData = [
             'name' => $user->name,
@@ -165,22 +198,5 @@ class SocialiteController extends Controller
         }
 
         return redirect()->intended('/')->with('login_success_data', $loginSuccessData);
-    }
-
-    /**
-     * Seamless dev simulation when local environment lacks OAuth credentials.
-     */
-    protected function handleDevSimulation(Request $request, string $provider, string $role): RedirectResponse
-    {
-        $access = app(AccessService::class);
-        $audit = app(AuditService::class);
-
-        $isVendor = in_array($role, ['vendor', 'vendor_admin']);
-        $name = $isVendor ? 'Mitra Wisata Nusantara' : 'Traveler Google';
-        $email = $isVendor ? 'mitra.google@tapaklokal.test' : 'traveler.google@tapaklokal.test';
-        $googleId = $isVendor ? 'google_vendor_dev_1001' : 'google_traveler_dev_1002';
-        $avatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80';
-
-        return $this->processUserLogin($request, $name, $email, $googleId, $avatar, $role, $provider, $access, $audit);
     }
 }

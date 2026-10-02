@@ -37,6 +37,9 @@ class FinanceService
         try {
             $booking = $booking->fresh();
             $payment = Payment::where('booking_id', $booking->id)->firstOrFail();
+            if ($payment->method) {
+                throw ValidationException::withMessages(['payment' => 'Lanjutkan instruksi pembayaran pada halaman pembayaran pesanan.']);
+            }
             if ($booking->status !== 'awaiting_payment' || $booking->expires_at->isPast()) {
                 throw ValidationException::withMessages(['payment' => 'Pesanan tidak dapat dibayar.']);
             }

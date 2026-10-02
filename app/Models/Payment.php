@@ -12,11 +12,11 @@ class Payment extends Model
     /** @use HasFactory<PaymentFactory> */
     use HasFactory;
 
-    protected $fillable = ['booking_id', 'reference', 'amount', 'status', 'provider', 'provider_reference', 'checkout_url', 'paid_at', 'reconciled_at'];
+    protected $fillable = ['method', 'instructions', 'booking_id', 'reference', 'amount', 'status', 'provider', 'provider_reference', 'checkout_url', 'paid_at', 'reconciled_at'];
 
     protected function casts(): array
     {
-        return ['paid_at' => 'datetime', 'reconciled_at' => 'datetime', 'amount' => 'integer'];
+        return ['instructions' => 'array', 'paid_at' => 'datetime', 'reconciled_at' => 'datetime', 'amount' => 'integer'];
     }
 
     public function booking(): BelongsTo

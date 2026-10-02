@@ -1,0 +1,3 @@
+# Masukkan command setelah field jadwal lewat Webuzo Enduser > Cron Job.
+# Ganti WEBUZO_USER dan ABSOLUTE_PHP84. Jangan pasang scheduler systemd bersamaan cron ini.
+* * * * * cd /home/WEBUZO_USER/tapaklokal/current && ABSOLUTE_PHP84 artisan schedule:run >> /home/WEBUZO_USER/tapaklokal/shared/storage/logs/scheduler.log 2>&1

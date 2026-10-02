@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\VirtualTourController;
 use App\Http\Controllers\Admin\WorkflowController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SocialiteController;
 use App\Http\Controllers\TravelerController;
@@ -18,17 +20,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+Route::post('/login', [AuthController::class, 'store'])->middleware('throttle:login')->name('login.store');
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('auth.socialite.redirect');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
-    Route::post('/login', [AuthController::class, 'store'])->middleware('throttle:login')->name('login.store');
+
     Route::get('/admin/login', [AuthController::class, 'adminCreate'])->name('admin.login');
     Route::post('/admin/login', [AuthController::class, 'adminStore'])->middleware('throttle:login')->name('admin.login.store');
     Route::get('/vendor/login', [AuthController::class, 'vendorCreate'])->name('vendor.login');
     Route::post('/vendor/login', [AuthController::class, 'vendorStore'])->middleware('throttle:login')->name('vendor.login.store');
     Route::redirect('/register', '/?auth=register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1')->name('register.store');
-    Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('auth.socialite.redirect');
-    Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
+
     Route::get('/forgot-password', fn () => Inertia::render('Auth/Login', ['mode' => 'forgot']))->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'forgot'])->middleware('throttle:5,1')->name('password.email');
     Route::get('/reset-password/{token}', fn (string $token) => Inertia::render('Auth/Login', ['mode' => 'reset', 'token' => $token, 'email' => request('email')]))->name('password.reset');
@@ -41,6 +46,15 @@ Route::get('/virtual-tours/{tour}/image', [VirtualTourController::class, 'image'
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'webhook'])->middleware('throttle:120,1')->name('payments.webhook');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/checkout/review/trip/{trip}', [CheckoutController::class, 'reviewTrip'])->name('checkout.review.trip');
+    Route::get('/checkout/review/souvenir/{vendor}', [CheckoutController::class, 'reviewSouvenir'])->whereNumber('vendor')->name('checkout.review.souvenir');
+    Route::get('/checkout/{type}/{id}', [CheckoutController::class, 'payment'])->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.payment');
+    Route::post('/checkout/{type}/{id}', [CheckoutController::class, 'charge'])->middleware('throttle:5,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.charge');
+    Route::post('/checkout/{type}/{id}/status', [CheckoutController::class, 'check'])->middleware('throttle:5,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.check');
+    Route::put('/account/payment-methods', [CheckoutController::class, 'preferences'])->middleware('throttle:20,1')->name('account.payment-methods');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->middleware('throttle:30,1')->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'read'])->middleware('throttle:60,1')->name('notifications.read');
     Route::get('/password/change', fn () => Inertia::render('Auth/ChangePassword'))->name('password.change');
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
     Route::post('/media', [MediaController::class, 'store'])->middleware('throttle:20,1')->name('media.store');
@@ -54,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/favorites/{trip}', [TravelerController::class, 'favorite'])->name('favorites.store');
     Route::delete('/favorites/{favorite}', [TravelerController::class, 'removeFavorite'])->name('favorites.destroy');
     Route::post('/reviews', [TravelerController::class, 'review'])->name('reviews.store');
-    Route::post('/support', [TravelerController::class, 'ticket'])->name('support.store');
+    Route::post('/support', [TravelerController::class, 'ticket'])->middleware('throttle:30,1')->name('support.store');
     Route::get('/support/{ticket}', [TravelerController::class, 'conversation'])->name('support.show');
     Route::post('/support/{ticket}/messages', [TravelerController::class, 'reply'])->middleware('throttle:30,1')->name('support.reply');
     Route::post('/bookings', [BookingController::class, 'store'])->middleware('throttle:20,1')->name('bookings.store');

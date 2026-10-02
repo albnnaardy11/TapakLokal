@@ -5,7 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="referrer" content="no-referrer">
 
-        <title inertia>{{ config('app.name', 'TapakLokal') }}</title>
+        @php
+            $privatePage = request()->is('admin*', 'vendor*', 'account*', 'bookings*', 'support*', 'oleh-oleh/keranjang*', 'oleh-oleh/pesanan*', 'login', 'register', '*password*', 'auth/*');
+            $seo = $seo ?? ['title' => config('app.name', 'TapakLokal'), 'description' => 'Temukan perjalanan, oleh-oleh, dan pengalaman lokal bersama mitra TapakLokal.', 'canonical' => url()->current(), 'robots' => $privatePage ? 'noindex,nofollow' : 'index,follow'];
+        @endphp
+        <title inertia>{{ $seo['title'] }} - TapakLokal</title>
+        <meta name="description" content="{{ $seo['description'] }}" inertia="description">
+        <meta name="robots" content="{{ $seo['robots'] }}" inertia="robots">
+        <link rel="canonical" href="{{ $seo['canonical'] }}" inertia="canonical">
+        <meta property="og:title" content="{{ $seo['title'] }}" inertia="og:title">
+        <meta property="og:description" content="{{ $seo['description'] }}" inertia="og:description">
+        <meta property="og:url" content="{{ $seo['canonical'] }}" inertia="og:url">
+        <meta property="og:type" content="website" inertia="og:type">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

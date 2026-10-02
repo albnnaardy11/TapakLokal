@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('bookings:expire')->everyMinute()->withoutOverlapping()->onOneServer();
 Schedule::command('payments:reconcile')->everyFiveMinutes()->withoutOverlapping()->onOneServer();
+Schedule::command('souvenirs:maintain')->everyMinute()->withoutOverlapping()->onOneServer();
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

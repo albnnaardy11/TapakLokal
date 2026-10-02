@@ -20,6 +20,7 @@ import { Link, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 
 import FlagIcon from './FlagIcon.vue';
+import OrderNavigation from './OrderNavigation.vue';
 
 const page = usePage();
 
@@ -41,7 +42,13 @@ const props = defineProps({
 const isMobileMenuOpen = ref(false);
 const openPopover = ref(null);
 const currentPage = usePage();
-const activeNav = computed(() => (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') ? 'Cerita Perjalanan' : currentPage.component === 'Welcome' ? 'Beranda' : null);
+const activeNav = computed(() => {
+    if (currentPage.component === 'Blog' || currentPage.component === 'BlogDetail') return 'Cerita Perjalanan';
+    if (currentPage.component === 'Welcome') return 'Beranda';
+    if (currentPage.component === 'Catalog') return 'Cari Trip';
+    if (['OpenPreorder', 'SouvenirMarketplace'].includes(currentPage.component)) return 'Open Preorder';
+    return null;
+});
 const globalSearch = ref('');
 const notification = ref('');
 
@@ -87,7 +94,7 @@ const selectLocale = (loc) => {
 const navItems = [
     { label: 'Beranda', href: '/', description: 'Kembali ke halaman utama' },
     { label: 'Cari Trip', href: typeof route === 'function' ? route('catalog') : '/cari-trip', description: 'Open trip dan private trip pilihan' },
-    { label: 'Kuliner Lokal', href: typeof route === 'function' ? route('explore', 'culinary') : '/explore/culinary', description: 'Produk lokal pilihan dari berbagai daerah' },
+    { label: 'Open Preorder', href: typeof route === 'function' ? route('open.preorder') : '/open-preorder', description: 'Pre-order produk dan kuliner khas daerah' },
     { label: 'Cerita Perjalanan', href: typeof route === 'function' ? route('blog') : '/blog', description: 'Inspirasi dan panduan untuk perjalananmu' },
 ];
 
@@ -300,6 +307,7 @@ const openAuthModal = (mode = 'login') => {
                     <span class="mx-1 h-5 w-px transition-colors duration-500" :class="isTransparent ? 'bg-white/20' : 'bg-slate-200'"></span>
 
                     <!-- Desktop User Profile / Auth State -->
+                    <OrderNavigation :is-transparent="isTransparent" />
                     <AccountDropdown
                         v-if="currentPage.props.auth?.user"
                         :is-transparent="isTransparent"
@@ -329,6 +337,7 @@ const openAuthModal = (mode = 'login') => {
 
                 <!-- Mobile Header Right -->
                 <div class="ml-auto mr-1.5 flex items-center lg:hidden">
+                    <OrderNavigation :is-transparent="isTransparent" />
                     <AccountDropdown
                         v-if="currentPage.props.auth?.user"
                         :compact="true"

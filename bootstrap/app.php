@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureActiveUser;
+use App\Http\Middleware\EnsurePortalSession;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,10 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn (Request $request) => match (true) {
             $request->is('admin*') => route('admin.login'),
             $request->is('vendor*') => route('vendor.login'),
+            $request->is('corporate*') => route('corporate.login'),
             default => route('login'),
         });
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            EnsurePortalSession::class,
             EnsureActiveUser::class,
         ]);
     })
