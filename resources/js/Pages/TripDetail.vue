@@ -1,4 +1,5 @@
 <script setup>
+import { tripPackageFacilities } from '../Composables/tripPackageDetails';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -163,26 +164,7 @@ const vendorInfo = computed(() => ({
     since: '2016',
     location: isPrivateTrip.value ? 'Labuan Bajo, NTT' : 'Jakarta, Indonesia',
 }));
-const facilityDetails = computed(() => isPrivateTrip.value ? [
-    { category: 'Transportasi', title: 'Kapal privat selama perjalanan', note: 'Sesuai rute dan jumlah peserta yang dipilih.' },
-    { category: 'Transportasi', title: 'Penjemputan dari hotel area Labuan Bajo', note: 'Untuk lokasi yang tercakup dalam area layanan.' },
-    { category: 'Akomodasi', title: 'Kabin kapal atau homestay', note: 'Sesuai pilihan paket perjalanan.' },
-    { category: 'Makan', title: 'Makan sesuai itinerary', note: 'Sarapan, makan siang, dan makan malam sesuai program.' },
-    { category: 'Aktivitas', title: 'Tiket aktivitas utama', note: 'Termasuk aktivitas yang tercantum pada itinerary.' },
-    { category: 'Aktivitas', title: 'Alat snorkeling', note: 'Masker, snorkel, dan pelampung tersedia.' },
-    { category: 'Layanan', title: 'Pemandu lokal berpengalaman', note: 'Mendampingi rombongan selama aktivitas utama.' },
-    { category: 'Layanan', title: 'Dokumentasi perjalanan', note: 'Dokumentasi dasar untuk momen pilihan trip.' },
-] : [
-    { category: 'Transportasi', title: 'Penyeberangan kapal pulang-pergi', note: 'Dermaga Kaliadem menuju Kepulauan Seribu.' },
-    { category: 'Transportasi', title: 'Transportasi lokal sesuai rute', note: 'Untuk perpindahan yang tercantum pada itinerary.' },
-    { category: 'Akomodasi', title: 'Homestay selama 1 malam', note: 'Kamar dan fasilitas dasar sesuai paket.' },
-    { category: 'Makan', title: 'Makan 3 kali', note: 'Makan siang, makan malam, dan sarapan.' },
-    { category: 'Makan', title: 'Air mineral selama perjalanan', note: 'Tersedia pada aktivitas utama.' },
-    { category: 'Aktivitas', title: 'Kapal hopping island & snorkeling', note: 'Termasuk perjalanan menuju spot aktivitas.' },
-    { category: 'Aktivitas', title: 'Alat snorkeling', note: 'Masker, snorkel, dan pelampung tersedia.' },
-    { category: 'Layanan', title: 'Guide lokal dan P3K', note: 'Pendampingan dan perlengkapan pertolongan pertama.' },
-    { category: 'Layanan', title: 'Dokumentasi eksklusif', note: 'Dokumentasi pilihan selama trip berlangsung.' },
-]);
+const facilityDetails = computed(() => tripPackageFacilities(props.tripData || {}, isPrivateTrip.value));
 const facilityCategories = computed(() => ['Semua', ...new Set(facilityDetails.value.map((facility) => facility.category))]);
 const filteredFacilityDetails = computed(() => selectedFacilityCategory.value === 'Semua'
     ? facilityDetails.value

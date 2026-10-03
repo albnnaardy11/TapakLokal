@@ -16,6 +16,7 @@ use App\Services\AuditService;
 use App\Services\PaymentMethodService;
 use App\Services\PhoneNumberService;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -112,7 +113,7 @@ class TravelerController extends Controller
         return back()->with('success', 'Kata sandi berhasil diubah.');
     }
 
-    public function traveler(Request $request, ?TravelerProfile $traveler = null): RedirectResponse
+    public function traveler(Request $request, ?TravelerProfile $traveler = null): RedirectResponse|JsonResponse
     {
         if ($traveler) {
             abort_unless($traveler->user_id === $request->user()->id, 404);
@@ -121,7 +122,11 @@ class TravelerController extends Controller
         if ($traveler) {
             $traveler->update($data);
         } else {
-            TravelerProfile::create([...$data, 'user_id' => $request->user()->id]);
+            $traveler = TravelerProfile::create([...$data, 'user_id' => $request->user()->id]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['traveler' => $traveler->only(['id', 'name', 'birth_date', 'phone', 'emergency_contact'])]);
         }
 
         return back()->with('success', 'Data wisatawan tersimpan.');
@@ -163,7 +168,7 @@ class TravelerController extends Controller
         return back()->with('success', 'Terima kasih, ulasan berhasil dikirim.');
     }
 
-    public function ticket(Request $request): RedirectResponse
+    public function ticket(Request $request): RedirectResponse|JsonResponse
     {
         $data = $request->validate(['subject' => ['required', 'string', 'max:180'], 'category' => ['required', Rule::in(['booking', 'payment', 'account', 'vendor', 'other'])], 'body' => ['required', 'string', 'min:10', 'max:5000'], 'booking_id' => ['nullable', 'integer', 'prohibits:souvenir_order_id'], 'souvenir_order_id' => ['nullable', 'integer', 'prohibits:booking_id']]);
         $booking = empty($data['booking_id']) ? null : Booking::where('user_id', $request->user()->id)->findOrFail($data['booking_id']);
@@ -178,6 +183,10 @@ class TravelerController extends Controller
             return $ticket;
         });
 
+        if ($request->expectsJson()) {
+            return response()->json(['ticket' => $ticket], 201);
+        }
+
         return to_route('support.show', $ticket);
     }
 
@@ -187,14 +196,20 @@ class TravelerController extends Controller
         abort_unless($ticket->user_id === $request->user()->id || $request->user()->hasPermission('operations.view') || $isVendor, 404);
     }
 
-    public function conversation(Request $request, SupportTicket $ticket): Response
+    public function conversation(Request $request, SupportTicket $ticket): Response|JsonResponse
     {
         $this->authorizeTicket($request, $ticket);
 
-        return Inertia::render('Conversation', ['ticket' => $ticket, 'messages' => $ticket->messages()->with('user:id,name')->latest('id')->paginate(30)]);
+        $data = ['ticket' => $ticket, 'messages' => $ticket->messages()->with('user:id,name')->latest('id')->paginate(30)];
+
+        if ($request->expectsJson()) {
+            return response()->json($data);
+        }
+
+        return Inertia::render('Conversation', $data);
     }
 
-    public function reply(Request $request, SupportTicket $ticket): RedirectResponse
+    public function reply(Request $request, SupportTicket $ticket): RedirectResponse|JsonResponse
     {
         $this->authorizeTicket($request, $ticket);
         $isAssignedVendor = $request->user()->hasPermission('vendor.access') && $ticket->vendor_id && $request->user()->vendor?->id === $ticket->vendor_id;
@@ -203,7 +218,11 @@ class TravelerController extends Controller
         }
         abort_if($ticket->status === 'closed', 422, 'Percakapan sudah ditutup.');
         $data = $request->validate(['body' => ['required', 'string', 'max:5000']]);
-        $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
+        $message = $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message->load('user:id,name')], 201);
+        }
 
         return back()->with('success', 'Pesan terkirim.');
     }

@@ -1,12 +1,20 @@
 <script setup>
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage, usePoll } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import Pagination from '../Components/Admin/Pagination.vue';
-import { computed } from 'vue';
+import { computed, onMounted, onBeforeUnmount } from 'vue';
 defineProps({ ticket: Object, messages: Object });
 const page = usePage();
 const form = useForm({ body: '' });
+const refreshConversation = () => {
+    if (document.visibilityState === 'visible' && !form.processing) {
+        router.reload({ only: ['ticket', 'messages'], preserveScroll: true });
+    }
+};
+usePoll(2000, { only: ['ticket', 'messages'], preserveScroll: true });
+onMounted(() => window.addEventListener('focus', refreshConversation));
+onBeforeUnmount(() => window.removeEventListener('focus', refreshConversation));
 const backUrl = computed(() => {
     const permissions = page.props.auth?.permissions || [];
     if (permissions.includes('admin.access') && permissions.includes('operations.view')) return route('admin.resources.index', 'support');

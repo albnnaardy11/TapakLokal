@@ -15,6 +15,7 @@ use App\Services\CorporateService;
 use App\Services\PaymentInstructionService;
 use App\Services\PaymentMethodService;
 use App\Services\SouvenirCommerceService;
+use App\Services\SplitPaymentService;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -60,6 +61,8 @@ class CheckoutController extends Controller
             'gatewayReady' => filled(config('platform.midtrans_server_key')), 'serverNow' => now()->toIso8601String(),
             'promotions' => $order instanceof Booking ? app(BookingService::class)->availablePromotions($order) : [],
             'appliedPromotion' => $order instanceof Booking ? $order->promotion()->first(['code', 'name']) : null,
+            'splitShares' => $order instanceof Booking ? app(SplitPaymentService::class)->listing($order) : [],
+            'splitBillAvailable' => ! config('platform.midtrans_production') && $order instanceof Booking && ! $order->corporateRequest()->exists() && $order->participants > 1 && count($order->traveler_details ?? []) === $order->participants,
         ]);
     }
 

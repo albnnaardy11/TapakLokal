@@ -12,6 +12,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\SplitPaymentController;
 use App\Http\Controllers\TravelerController;
 use App\Http\Controllers\Vendor;
 use App\Http\Middleware\ResolveAdminPanel;
@@ -44,8 +45,13 @@ Route::redirect('/jelajah', '/cari-trip');
 Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
 Route::get('/virtual-tours/{tour}/image', [VirtualTourController::class, 'image'])->whereNumber('tour')->name('tours.image');
 Route::post('/payments/midtrans/notification', [PaymentController::class, 'webhook'])->middleware('throttle:120,1')->name('payments.webhook');
+Route::get('/pay/share/{token}', [SplitPaymentController::class, 'show'])->middleware('throttle:60,1')->name('split.pay');
+Route::post('/pay/share/{token}/status', [SplitPaymentController::class, 'check'])->middleware('throttle:120,1')->name('split.status');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/bookings/{booking}/split', [SplitPaymentController::class, 'create'])->middleware('throttle:5,1')->name('split.create');
+    Route::post('/bookings/{booking}/split/status', [SplitPaymentController::class, 'ownerStatus'])->middleware('throttle:10,1')->name('split.owner.status');
+    Route::post('/bookings/{booking}/split/{share}/charge', [SplitPaymentController::class, 'charge'])->middleware('throttle:60,1')->name('split.charge');
     Route::get('/checkout/review/trip/{trip}', [CheckoutController::class, 'reviewTrip'])->name('checkout.review.trip');
     Route::get('/checkout/review/souvenir/{vendor}', [CheckoutController::class, 'reviewSouvenir'])->whereNumber('vendor')->name('checkout.review.souvenir');
     Route::get('/checkout/{type}/{id}', [CheckoutController::class, 'payment'])->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.payment');

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ReconcilePayment;
+use App\Jobs\ReconcilePaymentShare;
 use App\Jobs\ReconcileSouvenirPayment;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\PaymentShare;
 use App\Models\SouvenirPayment;
 use App\Services\CorporateService;
 use App\Services\FinanceService;
@@ -32,7 +34,9 @@ class PaymentController extends Controller
         $data = $request->validate(['order_id' => ['required', 'string', 'max:100'], 'status_code' => ['required', 'string', 'max:3'], 'gross_amount' => ['required', 'string', 'max:32'], 'signature_key' => ['required', 'string', 'max:128']]);
         $key = config('platform.midtrans_server_key');
         abort_unless($key && hash_equals(hash('sha512', $data['order_id'].$data['status_code'].$data['gross_amount'].$key), $data['signature_key']), 403);
-        if (SouvenirPayment::where('reference', $data['order_id'])->exists()) {
+        if (PaymentShare::where('reference', $data['order_id'])->exists()) {
+            ReconcilePaymentShare::dispatch($data['order_id']);
+        } elseif (SouvenirPayment::where('reference', $data['order_id'])->exists()) {
             ReconcileSouvenirPayment::dispatch($data['order_id']);
         } else {
             abort_unless(Payment::where('reference', $data['order_id'])->exists(), 404);

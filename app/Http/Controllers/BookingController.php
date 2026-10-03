@@ -235,7 +235,10 @@ class BookingController extends Controller
             $booking = $service->transition($booking, 'expired');
         }
 
-        return Inertia::render('Booking', ['booking' => $booking->load(['trip', 'vendor:id,name,phone', 'payment', 'refund']), 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
+        $booking->load(['trip', 'vendor:id,name,phone', 'payment', 'refund']);
+        $vendorLogo = collect(self::$popularPartners)->first(fn (array $partner) => strcasecmp($partner['name'], (string) $booking->vendor?->name) === 0)['logo'] ?? null;
+
+        return Inertia::render('Booking', ['booking' => $booking, 'vendorLogo' => $vendorLogo, 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
     }
 
     public function cancel(Request $request, Booking $booking, BookingService $service): RedirectResponse

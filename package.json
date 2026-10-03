@@ -22,5 +22,9 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "@emoji-mart/data": "^1.2.1",
+        "emoji-mart": "^5.6.0"
     }
 }
