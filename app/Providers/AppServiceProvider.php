@@ -12,8 +12,12 @@ use App\Models\User;
 use App\Observers\OrderNotificationObserver;
 use App\Observers\PublicContentObserver;
 use App\Services\AccessService;
+use App\Services\PhoneNumberService;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -33,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(Login::class, function (Login $event): void {
+            if ($event->guard === 'web' && request()->hasSession() && $event->user->getAuthPassword()) {
+                request()->session()->put('password_hash_web', Auth::guard('web')->hashPasswordForCookie($event->user->getAuthPassword()));
+            }
+        });
         Booking::observe(OrderNotificationObserver::class);
         SouvenirOrder::observe(OrderNotificationObserver::class);
         SupportMessage::observe(OrderNotificationObserver::class);
@@ -42,6 +51,14 @@ class AppServiceProvider extends ServiceProvider
         foreach (collect((new AccessService)->rolePermissions())->flatten()->unique() as $permission) {
             Gate::define($permission, fn (User $user) => $user->hasPermission($permission));
         }
-        RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip()));
+        RateLimiter::for('login', function (Request $request): array {
+            $identifier = $request->input('phone', $request->input('email', ''));
+            $identifier = is_string($identifier) ? (PhoneNumberService::normalize($identifier) ?? strtolower(trim($identifier))) : '';
+
+            return [
+                Limit::perMinute(30)->by('login-ip|'.$request->ip()),
+                Limit::perMinute(5)->by('login-identifier|'.hash('sha256', $identifier).'|'.$request->ip()),
+            ];
+        });
     }
 }

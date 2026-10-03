@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Services\AccessService;
 use App\Services\AuditService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,8 @@ class SocialiteController extends Controller
         abort_unless($provider === 'google', 404, 'Provider tidak didukung.');
         $role = in_array($request->query('role'), ['vendor', 'vendor_admin'], true) ? 'vendor' : ($request->query('role') === 'corporate' ? 'corporate' : 'traveler');
         $request->session()->put('socialite_role', $role);
-        $data = $request->validate(['intended' => ['nullable', 'string', 'max:1000', 'regex:~^/(?!/)[^\\\\]*$~']]);
+        $data = $request->validate(['intended' => ['nullable', 'string', 'max:1000', 'regex:~^/(?!/)[^\\\\]*$~'], 'remember' => ['sometimes', 'boolean']]);
+        $request->session()->put('socialite_remember', $request->boolean('remember'));
         if (! filled(config("services.{$provider}.client_id")) || ! filled(config("services.{$provider}.client_secret")) || Str::contains(config("services.{$provider}.client_id"), 'your-')) {
             return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors(['email' => 'Login Google belum dikonfigurasi. Gunakan email dan kata sandi akunmu.']);
         }
@@ -41,6 +43,9 @@ class SocialiteController extends Controller
                     $intended = substr($intended, strlen($request->getSchemeAndHttpHost()));
                 }
                 $query = ['role' => $role];
+                if ($request->boolean('remember')) {
+                    $query['remember'] = 1;
+                }
                 if (is_string($intended) && preg_match('~^/(?!/)[^\\\\]*$~', $intended)) {
                     $query['intended'] = $intended;
                 }
@@ -66,9 +71,9 @@ class SocialiteController extends Controller
         try {
             $socialUser = Socialite::driver($provider)->user();
         } catch (\Throwable $e) {
-            Log::error('Socialite callback failed: '.$e->getMessage(), [
+            Log::warning('auth.oauth.failed', [
                 'provider' => $provider,
-                'exception' => $e,
+                'exception_type' => $e::class,
             ]);
 
             return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors([
@@ -89,6 +94,15 @@ class SocialiteController extends Controller
             return $this->processUserLogin($request, $name, $email, $googleId, $avatar, $role, $provider, $access, $audit);
         } catch (ValidationException $exception) {
             return redirect($request->session()->get('socialite_role') === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors($exception->errors());
+        } catch (QueryException $exception) {
+            Log::warning('auth.oauth.persistence_failed', ['provider' => $provider, 'exception_type' => $exception::class]);
+            if (Auth::check()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+
+            return redirect($role === 'corporate' ? route('corporate.login') : '/?auth=login')->withErrors(['email' => 'Login Google belum dapat diselesaikan. Silakan coba kembali.']);
         }
     }
 
@@ -107,7 +121,11 @@ class SocialiteController extends Controller
         AuditService $audit
     ): RedirectResponse {
         $linked = User::where('google_id', $googleId)->first();
-        $byEmail = User::where('email', $email)->first();
+        $emailUsers = User::whereRaw('lower(email) = ?', [$email])->limit(2)->get();
+        if ($emailUsers->count() > 1) {
+            throw ValidationException::withMessages(['email' => 'Identitas Google tidak cocok dengan akun tersimpan. Hubungi bantuan untuk pemeriksaan akun.']);
+        }
+        $byEmail = $emailUsers->first();
         if (($linked && $byEmail && $linked->id !== $byEmail->id) || ($linked && Str::lower($linked->email) !== $email) || ($byEmail && $byEmail->google_id && $byEmail->google_id !== $googleId)) {
             throw ValidationException::withMessages(['email' => 'Identitas Google tidak cocok dengan akun tersimpan. Hubungi bantuan untuk pemeriksaan akun.']);
         }
@@ -167,7 +185,7 @@ class SocialiteController extends Controller
             }
         }
 
-        Auth::login($user, true);
+        Auth::login($user, (bool) $request->session()->pull('socialite_remember', false));
         $request->session()->put('auth_portal', $role === 'corporate' ? 'corporate' : ($user->hasPermission('admin.access') ? 'admin' : ($user->hasPermission('vendor.access') ? 'vendor' : 'traveler')));
         $request->session()->regenerate();
         $audit->record('auth.socialite.'.$provider, $user);

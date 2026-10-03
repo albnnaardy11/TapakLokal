@@ -40,22 +40,49 @@ const filtered = computed(() => transactions.value.filter(item => state(item) !=
                 <div class="mt-5 flex flex-col justify-between gap-4 sm:flex-row"><div class="flex min-w-0 items-start gap-4"><img v-if="item.image" :src="item.image" :alt="item.title" class="size-20 shrink-0 rounded-xl object-cover" loading="lazy" /><div><h3 class="text-sm font-extrabold">{{ item.title }}</h3><p class="mt-2 text-xs leading-6 text-slate-500">{{ item.description || item.vendor || 'Perjalanan bersama mitra TapakLokal' }}</p></div></div><div class="shrink-0 border-t border-slate-100 pt-3 sm:min-w-40 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5"><p class="text-xs text-slate-500">Total pembayaran</p><p class="mt-1 text-lg font-extrabold">{{ money(item.payment.amount) }}</p></div></div>
                 <div class="mt-5 flex flex-wrap items-center justify-end gap-3"><button type="button" @click="showDetail(item)" class="inline-flex min-h-11 items-center px-3 text-xs font-bold text-[#3e7bef] hover:underline">Lihat Detail Transaksi</button><Link :href="route(item.kind === 'trip' ? 'catalog' : 'souvenirs.index')" class="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#3e7bef] px-6 text-xs font-bold text-white transition hover:bg-[#2866d4]">{{ item.kind === 'trip' ? 'Jelajahi Trip' : 'Belanja Lagi' }}</Link></div>
             </article>
-            <div v-if="!filtered.length" class="rounded-xl border border-[#e2eaf5] bg-white px-6 py-10 sm:py-12">
-                <div class="mx-auto flex max-w-xl flex-col items-center gap-6 text-center sm:flex-row sm:gap-8 sm:text-left">
-                    <svg viewBox="0 0 220 180" fill="none" class="h-40 w-48 shrink-0" role="img" aria-labelledby="travel-history-art"><title id="travel-history-art">Catatan perjalanan dengan peta pegunungan dan tiket</title>
-                        <path d="M20 148H201" stroke="#dce6f4" stroke-width="2" stroke-linecap="round" />
-                        <path d="M35 132V45L83 33L133 47L176 35V126L133 138L83 124L35 132Z" fill="#f3f7fd" stroke="#9cb9e3" stroke-width="2" stroke-linejoin="round" />
-                        <path d="M83 34V124M133 47V138" stroke="#c4d5ed" stroke-width="2" />
-                        <path d="M47 97L68 65L89 94L110 72L130 101" stroke="#17345e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M61 76L68 65L76 76" stroke="#3e7bef" stroke-width="2.5" stroke-linejoin="round" />
-                        <path d="M54 114C85 102 94 128 118 116C133 108 139 83 157 74" stroke="#3e7bef" stroke-width="2" stroke-dasharray="4 6" stroke-linecap="round" />
-                        <path d="M158 47C149 47 143 53 143 61C143 72 158 85 158 85C158 85 173 72 173 61C173 53 167 47 158 47Z" fill="#3e7bef" /><circle cx="158" cy="61" r="5" fill="white" />
-                        <rect x="104" y="110" width="90" height="43" rx="7" fill="white" stroke="#17345e" stroke-width="2" />
-                        <path d="M167 112V151" stroke="#9cb9e3" stroke-width="2" stroke-dasharray="3 4" /><path d="M117 124H150M117 134H139" stroke="#3e7bef" stroke-width="3" stroke-linecap="round" />
-                        <path d="M180 121V141M175 124V139M185 124V139" stroke="#17345e" stroke-width="2" />
-                        <circle cx="46" cy="24" r="5" stroke="#9cb9e3" stroke-width="2" /><path d="M191 71H201M196 66V76" stroke="#9cb9e3" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                    <div><p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#3e7bef]">Catatan perjalananmu</p><h3 class="mt-2 text-lg font-extrabold leading-7 text-[#17345e]">{{ transactions.length ? 'Belum ada hasil yang cocok' : 'Perjalanan selesai, kenangan tersimpan' }}</h3><p class="mt-3 text-xs leading-6 text-slate-500">{{ transactions.length ? 'Coba ubah kata pencarian, tanggal, atau produk untuk menemukan transaksi yang kamu cari.' : 'Riwayat transaksi akan muncul di sini setelah perjalananmu selesai. Pesanan yang masih menunggu pembayaran tersedia di menu tagihan.' }}</p><button v-if="transactions.length" type="button" class="mt-5 min-h-10 rounded-lg border border-[#3e7bef] px-4 text-xs font-bold text-[#3e7bef] hover:bg-[#edf4ff]" @click="reset">Reset filter</button><Link v-else :href="route('catalog')" class="mt-5 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#3e7bef] px-4 text-xs font-bold text-white hover:bg-[#2866d4]">Temukan perjalanan berikutnya</Link></div>
+            <div v-if="!filtered.length" class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white p-8 sm:p-12 shadow-[0_4px_24px_rgba(23,75,120,0.04)]">
+                <div class="mx-auto flex max-w-lg flex-col items-center justify-center text-center">
+                    <img
+                        src="/Assets/Images/account/notfound.svg"
+                        alt="Tidak ada transaksi"
+                        class="mx-auto h-48 w-auto max-w-full object-contain sm:h-56"
+                        loading="lazy"
+                    />
+                    <div class="mt-6 max-w-md">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#3e7bef]">
+                            Catatan perjalananmu
+                        </p>
+                        <h3 class="mt-2 text-lg font-extrabold leading-snug text-[#17345e] sm:text-xl">
+                            {{ transactions.length ? 'Belum ada hasil yang cocok' : 'Perjalanan selesai, kenangan tersimpan' }}
+                        </h3>
+                        <p class="mt-3 text-xs leading-6 text-slate-500">
+                            {{ transactions.length ? 'Coba ubah kata pencarian, tanggal, atau produk untuk menemukan transaksi yang kamu cari.' : 'Riwayat transaksi akan muncul di sini setelah perjalananmu selesai. Pesanan yang masih menunggu pembayaran tersedia di menu tagihan.' }}
+                        </p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                        <button
+                            v-if="transactions.length"
+                            type="button"
+                            class="min-h-11 rounded-xl border border-[#3e7bef] bg-[#edf4ff] px-6 text-xs font-bold text-[#3e7bef] transition hover:bg-[#dcecff]"
+                            @click="reset"
+                        >
+                            Reset filter
+                        </button>
+                        <template v-else>
+                            <Link
+                                :href="route('catalog')"
+                                class="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#3e7bef] px-6 text-xs font-bold text-white shadow-xs transition hover:bg-[#2866d4]"
+                            >
+                                Temukan perjalanan berikutnya
+                            </Link>
+                            <Link
+                                :href="route('souvenirs.index')"
+                                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#cbdcf8] bg-white px-5 text-xs font-bold text-[#3e7bef] transition hover:bg-[#edf4ff]"
+                            >
+                                Beli Oleh-Oleh
+                            </Link>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>

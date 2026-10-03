@@ -51,6 +51,8 @@ const identifier = ref('');
 const password = ref('');
 const name = ref('');
 const passwordConfirmation = ref('');
+const phone = ref('');
+const remember = ref(false);
 const showPassword = ref(false);
 const notice = ref('');
 const errorMessage = ref('');
@@ -65,6 +67,8 @@ watch(
             password.value = '';
             name.value = '';
             passwordConfirmation.value = '';
+            phone.value = '';
+            remember.value = false;
             notice.value = '';
             errorMessage.value = page.props.flash?.error || page.props.errors?.email || page.props.errors?.error || '';
             isLoading.value = false;
@@ -84,17 +88,19 @@ watch(
 );
 
 const handleSocialLogin = (provider = 'Google') => {
+    if (isLoading.value) return;
     isLoading.value = true;
     errorMessage.value = '';
 
     const targetUrl = typeof route === 'function'
-        ? route('auth.socialite.redirect', { provider: provider.toLowerCase(), role: selectedRole.value })
-        : `/auth/${provider.toLowerCase()}/redirect?role=${selectedRole.value}`;
+        ? route('auth.socialite.redirect', { provider: provider.toLowerCase(), role: selectedRole.value, remember: remember.value ? 1 : 0 })
+        : `/auth/${provider.toLowerCase()}/redirect?role=${selectedRole.value}&remember=${remember.value ? 1 : 0}`;
 
     window.location.href = targetUrl;
 };
 
 const handleManualLogin = () => {
+    if (isLoading.value) return;
     isLoading.value = true;
     errorMessage.value = '';
     notice.value = '';
@@ -104,9 +110,9 @@ const handleManualLogin = () => {
     router.post(
         loginRoute,
         {
-            email: identifier.value,
+            ...(identifier.value.includes('@') ? { email: identifier.value } : { phone: identifier.value }),
             password: password.value,
-            remember: true,
+            remember: remember.value,
         },
         {
             preserveScroll: true,
@@ -124,7 +130,7 @@ const handleManualLogin = () => {
             },
             onError: (errors) => {
                 isLoading.value = false;
-                errorMessage.value = errors.email || errors.password || 'Email atau kata sandi tidak sesuai.';
+                errorMessage.value = errors.email || errors.phone || errors.password || 'Email atau kata sandi tidak sesuai.';
             },
             onFinish: () => {
                 isLoading.value = false;
@@ -134,6 +140,7 @@ const handleManualLogin = () => {
 };
 
 const handleRegisterSubmit = () => {
+    if (isLoading.value) return;
     isLoading.value = true;
     errorMessage.value = '';
     notice.value = '';
@@ -145,8 +152,9 @@ const handleRegisterSubmit = () => {
         {
             name: name.value,
             email: identifier.value,
+            phone: phone.value,
             password: password.value,
-            password_confirmation: passwordConfirmation.value || password.value,
+            password_confirmation: passwordConfirmation.value,
             role: selectedRole.value,
         },
         {
@@ -165,7 +173,7 @@ const handleRegisterSubmit = () => {
             },
             onError: (errors) => {
                 isLoading.value = false;
-                errorMessage.value = errors.name || errors.email || errors.password || errors.role || 'Pendaftaran gagal. Periksa data Anda.';
+                errorMessage.value = errors.name || errors.email || errors.phone || errors.password || errors.role || 'Pendaftaran gagal. Periksa data Anda.';
             },
             onFinish: () => {
                 isLoading.value = false;
@@ -199,7 +207,7 @@ const continueAsGuest = () => {
                 @click.self="emit('close')"
             >
                 <div
-                    class="relative w-full max-w-[440px] overflow-hidden rounded-[28px] sm:rounded-[32px] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.25)] border border-slate-100 transition-all transform duration-300"
+                    class="relative w-full max-w-[440px] max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[28px] sm:rounded-[32px] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.25)] border border-slate-100 transition-all transform duration-300"
                 >
                     <!-- Close Button -->
                     <button
@@ -289,6 +297,7 @@ const continueAsGuest = () => {
                                 </button>
                             </div>
 
+                            <label class="mb-3 flex items-center gap-2 text-xs text-slate-600"><input v-model="remember" type="checkbox" :disabled="isLoading" />Ingat saya</label>
                             <!-- Google login -->
                             <div class="relative mt-2">
                                 <div v-if="recentlyUsed" class="pointer-events-none absolute -top-[5px] -right-[9px] z-20 select-none">
@@ -336,7 +345,7 @@ const continueAsGuest = () => {
                                     type="button"
                                     class="flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-sm font-bold text-slate-800 shadow-xs transition-all duration-200 hover:border-slate-300 hover:bg-slate-50/90 active:scale-[0.99] cursor-pointer"
                                     :disabled="isLoading"
-                                    @click="handleSocialLogin('Facebook')"
+                                    @click="errorMessage = 'Login Facebook belum tersedia. Gunakan Google, email, atau nomor HP.'"
                                 >
                                     <svg class="size-4.5 shrink-0" viewBox="0 0 24 24">
                                         <circle cx="12" cy="12" r="12" fill="#1877F2"/>
@@ -471,6 +480,7 @@ const continueAsGuest = () => {
                                 </div>
                             </div>
 
+                            <div class="mt-4 flex items-center justify-between gap-3 text-xs"><label class="flex items-center gap-2 text-slate-600"><input v-model="remember" type="checkbox" :disabled="isLoading" />Ingat saya</label><a :href="route('password.request')" class="font-semibold text-[#0088ff]">Lupa kata sandi?</a></div>
                             <!-- Submit Button -->
                             <button
                                 type="submit"
@@ -595,6 +605,7 @@ const continueAsGuest = () => {
                                 </div>
                             </div>
 
+                            <label class="mt-3 block text-xs font-bold text-slate-700">Nomor HP (opsional)<input v-model="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="0812… atau +62…" class="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-[#0088ff]" /></label>
                             <!-- Input Password -->
                             <div class="mt-3">
                                 <label class="block text-xs font-bold text-slate-700">Kata Sandi (Min. 10 karakter, huruf & angka)</label>
@@ -611,6 +622,7 @@ const continueAsGuest = () => {
                                 </div>
                             </div>
 
+                            <label class="mt-3 block text-xs font-bold text-slate-700">Konfirmasi kata sandi<input v-model="passwordConfirmation" :type="showPassword ? 'text' : 'password'" required autocomplete="new-password" maxlength="128" class="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-[#0088ff]" /></label>
                             <!-- Submit Button -->
                             <button
                                 type="submit"

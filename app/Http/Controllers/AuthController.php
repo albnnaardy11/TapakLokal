@@ -9,7 +9,9 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Services\AccessService;
 use App\Services\AuditService;
+use App\Services\PhoneNumberService;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,7 +52,7 @@ class AuthController extends Controller
 
     public function adminStore(LoginRequest $request, AuditService $audit): RedirectResponse
     {
-        if (! Auth::attempt([...$request->safe()->only(['email', 'password']), 'status' => 'active'], $request->boolean('remember'))) {
+        if (! Auth::attempt($request->credentials(), $request->boolean('remember'))) {
             throw ValidationException::withMessages(['email' => 'Email atau kata sandi admin tidak sesuai.']);
         }
         $request->session()->regenerate();
@@ -80,7 +82,7 @@ class AuthController extends Controller
 
     public function vendorStore(LoginRequest $request, AuditService $audit): RedirectResponse
     {
-        if (! Auth::attempt([...$request->safe()->only(['email', 'password']), 'status' => 'active'], $request->boolean('remember'))) {
+        if (! Auth::attempt($request->credentials(), $request->boolean('remember'))) {
             throw ValidationException::withMessages(['email' => 'Email atau kata sandi vendor tidak sesuai.']);
         }
         $request->session()->regenerate();
@@ -105,7 +107,7 @@ class AuthController extends Controller
 
     public function store(LoginRequest $request, AuditService $audit): RedirectResponse
     {
-        if (! Auth::attempt([...$request->safe()->only(['email', 'password']), 'status' => 'active'], $request->boolean('remember'))) {
+        if (! Auth::attempt($request->credentials(), $request->boolean('remember'))) {
             throw ValidationException::withMessages(['email' => 'Email atau kata sandi tidak sesuai.']);
         }
         $request->session()->regenerate();
@@ -134,27 +136,34 @@ class AuthController extends Controller
 
     public function register(RegistrationRequest $request, AccessService $access): RedirectResponse
     {
+        $data = $request->safe()->only(['name', 'email', 'password']);
+        if ($request->filled('phone')) {
+            $data['phone'] = PhoneNumberService::forAccount($request->validated('phone'));
+        }
         $role = $request->input('role', 'traveler');
-        $user = DB::transaction(function () use ($request, $access, $role) {
-            $user = User::create($request->safe()->only(['name', 'email', 'password']));
+        try {
+            $user = DB::transaction(function () use ($data, $access, $role) {
+                $user = User::create($data);
 
-            if (in_array($role, ['vendor', 'vendor_admin'])) {
-                $access->grant($user, 'vendor_admin');
-                Vendor::create([
-                    'user_id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'phone' => $user->phone ?? '-',
-                    'city' => $user->city ?? 'Indonesia',
-                    'status' => 'pending',
-                ]);
-            } else {
-                $access->grant($user, 'traveler');
-            }
+                if (in_array($role, ['vendor', 'vendor_admin'])) {
+                    $access->grant($user, 'vendor_admin');
+                    Vendor::create([
+                        'user_id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'phone' => $user->phone ?? '-',
+                        'city' => $user->city ?? 'Indonesia',
+                        'status' => 'pending',
+                    ]);
+                } else {
+                    $access->grant($user, 'traveler');
+                }
 
-            return $user;
-        });
-
+                return $user;
+            });
+        } catch (UniqueConstraintViolationException $exception) {
+            throw ValidationException::withMessages(['email' => 'Alamat email atau nomor HP tidak tersedia.']);
+        }
         Auth::login($user);
         $request->session()->put('auth_portal', $user->hasPermission('vendor.access') ? 'vendor' : 'traveler');
         $request->session()->regenerate();
@@ -192,15 +201,25 @@ class AuthController extends Controller
 
     public function forgot(Request $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
+        $request->validate(['email' => ['required', 'email', 'max:255']]);
         Password::sendResetLink($request->only('email'));
 
         return back()->with('success', 'Jika email terdaftar, tautan pemulihan akan dikirim.');
     }
 
+    public function destroyOtherDevices(Request $request, AuditService $audit): RedirectResponse
+    {
+        $data = $request->validate(['current_password' => ['required', 'string', 'max:128', 'current_password']]);
+        Auth::logoutOtherDevices($data['current_password']);
+        $request->session()->regenerate();
+        $audit->record('auth.logout_other_devices', $request->user());
+
+        return back()->with('success', 'Perangkat lain akan diminta masuk kembali. Sesi ini tetap aktif.');
+    }
+
     public function reset(Request $request): RedirectResponse
     {
-        $request->validate(['token' => ['required'], 'email' => ['required', 'email'], 'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::min(10)->letters()->numbers()]]);
+        $request->validate(['token' => ['required', 'string'], 'email' => ['required', 'email', 'max:255'], 'password' => ['required', 'string', 'confirmed', 'max:128', \Illuminate\Validation\Rules\Password::min(10)->letters()->numbers()]]);
         $status = Password::reset($request->only('email', 'password', 'password_confirmation', 'token'), function (User $user, string $password) {
             $user->forceFill(['password' => $password, 'remember_token' => Str::random(60), 'must_change_password' => false])->save();
             event(new PasswordReset($user));

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CanonicalLocalHost;
 use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\EnsurePortalSession;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -7,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\AuthenticateSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->prepend(CanonicalLocalHost::class);
         $middleware->validateCsrfTokens(except: ['payments/midtrans/notification']);
         $middleware->redirectGuestsTo(fn (Request $request) => match (true) {
             $request->is('admin*') => route('admin.login'),
@@ -23,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             default => route('login'),
         });
         $middleware->web(append: [
+            AuthenticateSession::class,
             HandleInertiaRequests::class,
             EnsurePortalSession::class,
             EnsureActiveUser::class,

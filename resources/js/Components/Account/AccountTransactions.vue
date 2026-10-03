@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import { route } from 'ziggy-js';
 import { Clock3 } from 'lucide-vue-next';
 import Pagination from '../Admin/Pagination.vue';
@@ -10,8 +11,37 @@ const filter = ref(props.pendingOnly ? 'pending' : 'all');
 const copied = ref('');
 const now = ref(Date.now());
 let tick = null;
-onMounted(() => { tick = setInterval(() => { now.value = Date.now(); }, 1000); });
-onBeforeUnmount(() => { if (tick) clearInterval(tick); });
+let polling = null;
+let disposed = false;
+const checking = ref(false);
+const statusMessage = ref('');
+const checkPayments = async (automatic = false) => {
+    if (checking.value || document.visibilityState !== 'visible') return;
+    const pending = transactions.value.filter(item => item.payment.status === 'pending' && item.payment.method).slice(0, 10);
+    if (!pending.length) return;
+    checking.value = true;
+    let changed = false;
+    let failed = false;
+    for (const item of pending) {
+        if (disposed) break;
+        try {
+            const { data } = await axios.post(route('checkout.check', { type: item.kind, id: item.id }), { automatic: true }, { headers: { Accept: 'application/json' }, timeout: 8000 });
+            changed ||= data.payment?.status !== item.payment.status;
+        } catch {
+            failed = true;
+        }
+    }
+    checking.value = false;
+    if (disposed) return;
+    if (!automatic) statusMessage.value = failed ? 'Status belum dapat diperiksa. Coba lagi sebentar.' : changed ? 'Status pembayaran diperbarui.' : 'Pembayaran masih menunggu konfirmasi.';
+    if (changed) router.reload({ only: ['records', 'souvenirOrders'], preserveScroll: true });
+};
+onMounted(() => {
+    tick = setInterval(() => { now.value = Date.now(); }, 1000);
+    checkPayments(true);
+    polling = setInterval(() => checkPayments(true), 30000);
+});
+onBeforeUnmount(() => { disposed = true; if (tick) clearInterval(tick); if (polling) clearInterval(polling); });
 const getRemaining = expiresAt => expiresAt ? Math.max(0, Math.floor((Date.parse(expiresAt) - now.value) / 1000)) : 0;
 const getCountdownParts = expiresAt => {
     const sec = getRemaining(expiresAt);
@@ -54,6 +84,10 @@ const copy = async value => { try { await navigator.clipboard.writeText(String(v
 </script>
 <template>
     <section class="space-y-6 text-[#17345e]" aria-label="Daftar transaksi akun">
+        <div v-if="transactions.some(item => item.payment.status === 'pending' && item.payment.method)" class="flex flex-wrap items-center justify-end gap-3">
+            <p v-if="statusMessage" role="status" class="text-xs text-slate-500">{{ statusMessage }}</p>
+            <button type="button" :disabled="checking" @click="checkPayments(false)" class="min-h-10 rounded-lg border border-[#3e7bef] bg-white px-4 text-xs font-bold text-[#3e7bef] disabled:opacity-50">{{ checking ? 'Memeriksa pembayaran…' : 'Cek Status Pembayaran' }}</button>
+        </div>
         <div v-if="!pendingOnly" class="rounded-2xl border border-[#dce6f4] bg-white p-5">
             <p class="text-sm font-bold">Riwayat pembayaranmu</p><p class="mt-1 text-xs leading-5 text-slate-500">Kelola pembayaran perjalanan dan produk lokal dalam satu tempat.</p>
             <div class="mt-4 flex flex-wrap gap-2" aria-label="Filter status transaksi"><button v-for="[value, label] in [['all', 'Semua'], ['pending', 'Menunggu pembayaran'], ['paid', 'Berhasil'], ['expired', 'Kedaluwarsa'], ['cancelled', 'Dibatalkan']]" :key="value" type="button" :aria-pressed="filter === value" class="min-h-10 rounded-lg border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-[#3e7bef]" :class="filter === value ? 'border-[#3e7bef] bg-[#edf4ff] text-[#3e7bef]' : 'border-slate-200 text-slate-500 hover:border-blue-200'" @click="filter = value">{{ label }}</button></div>
@@ -87,7 +121,52 @@ const copy = async value => { try { await navigator.clipboard.writeText(String(v
                 </div>
             </article>
         </section>
-        <div v-if="!groups.length" class="rounded-2xl border border-dashed border-[#dce6f4] bg-white p-10 text-center"><p class="text-sm font-bold">Belum ada tagihan atau transaksi untuk status ini</p><p class="mt-2 text-xs leading-6 text-slate-500">Aktivitas akunmu akan muncul di sini setelah pesanan dibuat.</p></div>
+        <div v-if="!groups.length" class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white p-8 sm:p-12 shadow-[0_4px_24px_rgba(23,75,120,0.04)]">
+            <div class="mx-auto flex max-w-lg flex-col items-center justify-center text-center">
+                <img
+                    src="/Assets/Images/account/notfound.svg"
+                    alt="Tidak ada tagihan menunggu pembayaran"
+                    class="mx-auto h-48 w-auto max-w-full object-contain sm:h-56"
+                    loading="lazy"
+                />
+                <div class="mt-6 max-w-md">
+                    <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-[#3e7bef]">
+                        {{ pendingOnly || filter === 'pending' ? 'Menunggu Pembayaran' : 'Tagihan & Transaksi' }}
+                    </p>
+                    <h3 class="mt-2 text-lg font-extrabold leading-snug text-[#17345e] sm:text-xl">
+                        {{ pendingOnly || filter === 'pending' ? 'Tidak ada tagihan menunggu pembayaran' : 'Belum ada transaksi untuk status ini' }}
+                    </h3>
+                    <p class="mt-3 text-xs leading-6 text-slate-500">
+                        {{ pendingOnly || filter === 'pending'
+                            ? 'Semua transaksi sudah dibayar atau belum ada pesanan baru yang dibuat. Kamu dapat memesan paket trip atau oleh-oleh lokal kapan saja.'
+                            : 'Aktivitas akunmu akan muncul di sini setelah pesanan dibuat atau status transaksi diperbarui.' }}
+                    </p>
+                </div>
+                <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                    <button
+                        v-if="!pendingOnly && filter !== 'all'"
+                        type="button"
+                        class="min-h-11 rounded-xl border border-[#3e7bef] bg-[#edf4ff] px-5 text-xs font-bold text-[#3e7bef] transition hover:bg-[#dcecff]"
+                        @click="filter = 'all'"
+                    >
+                        Tampilkan Semua Transaksi
+                    </button>
+                    <Link
+                        :href="route('catalog')"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#3e7bef] px-6 text-xs font-bold text-white shadow-xs transition hover:bg-[#2866d4]"
+                    >
+                        Temukan perjalanan berikutnya
+                    </Link>
+                    <Link
+                        v-if="pendingOnly || filter === 'pending'"
+                        :href="route('souvenirs.index')"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#cbdcf8] bg-white px-5 text-xs font-bold text-[#3e7bef] transition hover:bg-[#edf4ff]"
+                    >
+                        Beli Oleh-Oleh
+                    </Link>
+                </div>
+            </div>
+        </div>
         <div v-if="page.props.records?.last_page > 1" class="rounded-xl border border-[#dce6f4] bg-white p-3"><Pagination :records="page.props.records" /></div>
         <div v-if="page.props.souvenirOrders?.last_page > 1" class="rounded-xl border border-[#dce6f4] bg-white p-3"><Pagination :records="page.props.souvenirOrders" /></div>
         <dialog ref="paymentDialog" aria-labelledby="payment-guide-heading" class="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-2xl bg-white p-0 text-[#17345e] shadow-2xl backdrop:bg-slate-900/50" @click.self="paymentDialog.close()">

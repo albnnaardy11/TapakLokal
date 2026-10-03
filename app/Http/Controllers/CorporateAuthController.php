@@ -37,7 +37,7 @@ class CorporateAuthController extends Controller
 
     public function store(LoginRequest $request, AuditService $audit): RedirectResponse
     {
-        if (! Auth::attempt([...$request->safe()->only(['email', 'password']), 'status' => 'active'], $request->boolean('remember'))) {
+        if (! Auth::attempt($request->credentials(), $request->boolean('remember'))) {
             throw ValidationException::withMessages(['email' => 'Email atau kata sandi tidak sesuai. Gunakan akun yang menerima undangan perusahaan.']);
         }
         $request->session()->regenerate();

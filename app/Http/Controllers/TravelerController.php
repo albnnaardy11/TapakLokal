@@ -14,6 +14,8 @@ use App\Models\TravelerProfile;
 use App\Models\Trip;
 use App\Services\AuditService;
 use App\Services\PaymentMethodService;
+use App\Services\PhoneNumberService;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -83,7 +85,14 @@ class TravelerController extends Controller
     public function profile(Request $request, AuditService $audit): RedirectResponse
     {
         $data = $request->validate(['name' => ['required', 'string', 'max:100'], 'phone' => ['nullable', 'string', 'max:30'], 'city' => ['nullable', 'string', 'max:100']]);
-        $request->user()->update($data);
+        if (! empty($data['phone'])) {
+            $data['phone'] = PhoneNumberService::forAccount($data['phone'], $request->user()->id);
+        }
+        try {
+            $request->user()->update($data);
+        } catch (UniqueConstraintViolationException $exception) {
+            throw ValidationException::withMessages(['phone' => 'Nomor HP tidak tersedia.']);
+        }
         $audit->record('profile.updated', $request->user());
 
         return back()->with('success', 'Profil berhasil disimpan.');
@@ -91,7 +100,7 @@ class TravelerController extends Controller
 
     public function password(Request $request, AuditService $audit): RedirectResponse
     {
-        $data = $request->validate(['current_password' => ['required', 'current_password'], 'password' => ['required', 'confirmed', 'different:current_password', Password::min(10)->letters()->numbers()]]);
+        $data = $request->validate(['current_password' => ['required', 'string', 'current_password'], 'password' => ['required', 'string', 'max:128', 'confirmed', 'different:current_password', Password::min(10)->letters()->numbers()]]);
         $required = $request->user()->must_change_password;
         $request->user()->forceFill(['password' => $data['password'], 'must_change_password' => false, 'remember_token' => Str::random(60)])->save();
         $request->session()->regenerate();

@@ -10,7 +10,7 @@ const mode = ref('login');
 const showPassword = ref(false);
 const form = useForm({ name: '', email: '', password: '', password_confirmation: '', remember: false, consent: false, next: props.destination });
 const title = computed(() => mode.value === 'register' ? 'Buat akun corporate' : mode.value === 'forgot' ? 'Pulihkan akses akun' : 'Selamat datang kembali');
-const googleUrl = computed(() => route('auth.socialite.redirect', {provider:'google', role:'corporate', intended: props.destination === 'register' ? '/corporate/register' : '/corporate/dashboard'}));
+const googleUrl = computed(() => route('auth.socialite.redirect', {provider:'google', role:'corporate', remember: form.remember ? 1 : 0, intended: props.destination === 'register' ? '/corporate/register' : '/corporate/dashboard'}));
 function changeMode(value) { mode.value = value; form.clearErrors(); form.reset('password', 'password_confirmation'); }
 function submit() {
     const endpoint = mode.value === 'register' ? 'corporate.account.store' : mode.value === 'forgot' ? 'password.email' : 'corporate.login.store';

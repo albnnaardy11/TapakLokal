@@ -12,6 +12,18 @@ use Tests\TestCase;
 
 class PortalSessionIsolationTest extends TestCase
 {
+    public function test_google_login_on_an_active_traveler_session_returns_to_existing_account(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->withSession(['auth_portal' => 'traveler'])
+            ->get('/auth/google/redirect?role=traveler&remember=1')
+            ->assertRedirect(route('account'));
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertNull($user->fresh()->google_id);
+    }
+
     public function test_traveler_cannot_open_owned_corporate_workspace_or_submit_actions(): void
     {
         $user = User::factory()->create();

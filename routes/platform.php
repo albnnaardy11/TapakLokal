@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::post('/login', [AuthController::class, 'store'])->middleware('throttle:login')->name('login.store');
-Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->name('auth.socialite.redirect');
-Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])->middleware('throttle:30,1')->name('auth.socialite.redirect');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])->middleware('throttle:30,1')->name('auth.socialite.callback');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'create'])->name('login');
@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [TravelerController::class, 'index'])->name('account');
     Route::get('/account/{section}', [TravelerController::class, 'index'])->name('account.section');
     Route::patch('/account/profile', [TravelerController::class, 'profile'])->name('account.profile');
+    Route::post('/account/logout-other-devices', [AuthController::class, 'destroyOtherDevices'])->middleware('throttle:5,1')->name('account.logout-other-devices');
     Route::put('/account/password', [TravelerController::class, 'password'])->middleware('throttle:5,1')->name('account.password');
     Route::post('/account/travelers', [TravelerController::class, 'traveler'])->name('travelers.store');
     Route::patch('/account/travelers/{traveler}', [TravelerController::class, 'traveler'])->name('travelers.update');

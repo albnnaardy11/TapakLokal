@@ -12,7 +12,7 @@ class EnsurePortalSession
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() || $request->routeIs('logout', 'password.change', 'account.password')) {
+        if (! $request->user() || $request->routeIs('logout', 'password.change', 'account.password', 'account.logout-other-devices')) {
             return $next($request);
         }
         $current = $request->session()->get('auth_portal', $request->user()->hasPermission('admin.access') ? 'admin' : ($request->user()->hasPermission('vendor.access') ? 'vendor' : 'traveler'));
@@ -24,7 +24,15 @@ class EnsurePortalSession
 
             return Inertia::render('Auth/PortalSessionConflict', ['currentPortal' => $current, 'targetPortal' => $target])->toResponse($request)->setStatusCode(403);
         }
-        if ($request->routeIs('login.store', 'register.store', 'corporate.login.store', 'corporate.account.store', 'admin.login.store', 'vendor.login.store', 'auth.socialite.redirect', 'auth.socialite.callback')) {
+        if ($request->routeIs('auth.socialite.redirect')) {
+            return redirect()->route(match ($current) {
+                'admin' => 'admin.dashboard',
+                'vendor' => 'vendor.dashboard',
+                'corporate' => 'corporate.dashboard',
+                default => 'account',
+            });
+        }
+        if ($request->routeIs('login.store', 'register.store', 'corporate.login.store', 'corporate.account.store', 'admin.login.store', 'vendor.login.store', 'auth.socialite.callback')) {
             abort(403, 'Keluar terlebih dahulu sebelum masuk menggunakan akun lain.');
         }
 

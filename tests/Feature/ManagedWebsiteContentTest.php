@@ -52,6 +52,7 @@ class ManagedWebsiteContentTest extends TestCase
         $this->actingAs($contentAdmin)->delete('/admin/content/modules/blog/'.$article->id)->assertRedirect('/admin/content/modules/blog');
         $this->assertSoftDeleted('content_pages', ['id' => $article->id]);
 
+        $this->post('/logout')->assertRedirect('/');
         $vendor = User::where('email', config('demo.vendor_email'))->firstOrFail();
         $trip = Trip::where('slug', 'pulau-pramuka')->firstOrFail();
         $this->actingAs($vendor)->delete('/vendor/trips/'.$trip->id)->assertRedirect('/vendor/trips');
