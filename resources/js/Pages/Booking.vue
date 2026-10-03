@@ -1,73 +1,59 @@
 <script setup>
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
-import OrderConversationForm from '../Components/Shared/OrderConversationForm.vue';
 const props = defineProps({ booking: Object, gatewayReady: Boolean });
 const form = useForm({ reason: '' });
 const action = useForm({});
 const page = usePage();
+const photoDialog = ref(null);
+const now = ref(Date.now());
+let countdownInterval;
+const secondsRemaining = computed(() => Math.max(0, Math.floor((Date.parse(props.booking.expires_at) - now.value) / 1000)));
+const timer = computed(() => [
+    { label: 'Jam', value: String(Math.floor(secondsRemaining.value / 3600)).padStart(2, '0') },
+    { label: 'Menit', value: String(Math.floor(secondsRemaining.value / 60) % 60).padStart(2, '0') },
+    { label: 'Detik', value: String(secondsRemaining.value % 60).padStart(2, '0') },
+]);
+onMounted(() => { countdownInterval = window.setInterval(() => { now.value = Date.now(); }, 1000); });
+onBeforeUnmount(() => window.clearInterval(countdownInterval));
+const itinerary = computed(() => (props.booking.trip.itinerary || '').split(/\n+/).map(line => line.trim()).filter(Boolean));
+const currentStep = computed(() => ['paid', 'confirmed', 'ongoing', 'completed'].includes(props.booking.status) ? 3 : props.booking.status === 'awaiting_payment' ? 2 : 1);
+const statusLabels = { awaiting_payment: 'Menunggu pembayaran', pending: 'Belum dibayar', paid: 'Pembayaran terverifikasi', confirmed: 'Trip dikonfirmasi', ongoing: 'Trip berlangsung', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Batas pembayaran berakhir', failed: 'Pembayaran gagal', reconciliation_required: 'Pembayaran sedang diperiksa', refunded: 'Dana dikembalikan' };
 const money = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+const date = value => value ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' }).format(new Date(value)) : '—';
+const deadline = value => value ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' }).format(new Date(value)) + ' WIB' : '—';
 </script>
 <template>
     <Head :title="booking.reference" />
     <div class="min-h-screen overflow-x-hidden bg-[#f7f9fb] text-[#303e4c]">
         <MainNavigation />
-        <main class="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-9">
-            <Link :href="route('account')" class="inline-flex items-center text-xs font-bold text-[#3E7BEF] hover:underline">
-                ← Kembali ke pemesanan
-            </Link>
-            
-            <div class="mt-4">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-[#17345e] leading-tight">{{ booking.trip.title }}</h1>
-                <p class="mt-1 text-xs text-slate-400 font-mono">{{ booking.reference }}</p>
+        <header class="relative isolate overflow-hidden bg-[#17345e] text-white">
+            <img v-if="booking.trip.image_url" :src="booking.trip.image_url" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover" /><div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#102b4e]/95 via-[#102b4e]/70 to-[#102b4e]/30"></div>
+            <div class="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-9"><Link :href="route('account.section', 'bookings')" class="text-[11px] text-white/70 hover:text-white">Pemesanan &amp; tiket / Detail pesanan</Link><div class="mt-3 flex flex-wrap items-end justify-between gap-5"><div><h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl">{{ booking.trip.title }}</h1><p class="mt-3 text-xs text-white/85">{{ booking.trip.destination }}<span class="mx-3 text-white/40">|</span>Diselenggarakan oleh <strong>{{ booking.vendor.name }}</strong></p></div><div class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm"><p class="text-[10px] text-white/70">Kode pesanan</p><p class="mt-1 break-all text-xs font-semibold">{{ booking.reference }}</p></div></div></div>
+        </header>
+        <main class="mx-auto max-w-6xl px-4 pb-10 sm:px-6">
+            <nav aria-label="Tahapan pesanan" class="mx-auto flex max-w-3xl items-center gap-3 py-6 sm:gap-5"><template v-for="(label, index) in ['Detail pesanan', 'Pembayaran', 'Konfirmasi']" :key="label"><div v-if="index" class="h-px flex-1 bg-[#d5e1f2]"></div><div class="flex items-center gap-2 text-[11px] sm:text-xs" :aria-current="currentStep === index + 1 ? 'step' : undefined"><span class="grid size-7 shrink-0 place-items-center rounded-full border font-bold" :class="currentStep >= index + 1 ? 'border-[#3e7bef] bg-[#3e7bef] text-white' : 'border-[#bacce5] bg-white text-[#17345e]'">{{ index + 1 }}</span><span class="text-[#17345e]">{{ label }}</span></div></template></nav>
+            <p v-if="page.props.flash?.success" role="status" class="mt-5 rounded-lg bg-[#edf4ff] p-4 text-xs text-[#285db3]">{{ page.props.flash.success }}</p><p v-for="(error, key) in page.props.errors" :key="key" role="alert" class="mt-3 text-xs text-rose-600">{{ error }}</p>
+            <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+                <div class="space-y-4">
+                    <section class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white">
+                        <div class="flex flex-col gap-5 p-5 sm:flex-row sm:p-6"><button v-if="booking.trip.image_url" type="button" class="relative shrink-0 overflow-hidden rounded-lg sm:w-40" aria-label="Lihat foto destinasi" @click="photoDialog.showModal()"><img :src="booking.trip.image_url" :alt="booking.trip.title" class="h-40 w-full object-cover sm:h-36" /><span class="absolute bottom-2 right-2 rounded bg-[#17345e]/80 px-2 py-1 text-[10px] font-semibold text-white">Lihat foto</span></button><div class="flex-1"><p class="mb-2 text-xs font-bold text-[#3e7bef]">{{ booking.trip.type === 'open-trip' ? 'Open Trip' : 'Private Trip' }}</p><p class="text-xs font-semibold text-[#3e7bef]">{{ booking.trip.destination || 'Perjalanan lokal' }}</p><h2 class="mt-2 text-lg font-bold text-[#17345e]">{{ booking.trip.title }}</h2><p class="mt-2 text-xs text-slate-500">Diselenggarakan oleh <strong class="font-semibold text-[#17345e]">{{ booking.vendor.name }}</strong></p><p class="mt-3 text-xs leading-6 text-slate-500">{{ date(booking.trip.departure_date) }} – {{ date(booking.trip.end_date) }} · {{ booking.participants }} peserta</p></div></div>
+                    </section>
+                    <section class="rounded-2xl border border-[#dce6f4] bg-white p-5 sm:p-6"><h2 class="text-base font-bold text-[#17345e]">Informasi keberangkatan</h2><dl class="mt-5 grid gap-5 md:grid-cols-3"><div><dt class="text-[11px] text-slate-500">Titik kumpul</dt><dd class="mt-2 text-xs font-bold leading-6 text-[#17345e]">{{ booking.trip.meeting_point }}</dd></div><div class="md:border-l md:border-[#e8eef7] md:pl-5"><dt class="text-[11px] text-slate-500">Jadwal keberangkatan</dt><dd class="mt-2 text-xs font-bold leading-6 text-[#17345e]">{{ date(booking.trip.departure_date) }}</dd><p class="mt-1 text-[10px] leading-5 text-slate-500">Konfirmasi jam berkumpul dengan mitra.</p></div><div class="md:border-l md:border-[#e8eef7] md:pl-5"><dt class="text-[11px] text-slate-500">Kontak mitra perjalanan</dt><dd class="mt-2 text-xs font-bold leading-6 text-[#17345e]">{{ booking.vendor.phone || 'Hubungi melalui pesan' }}</dd><a v-if="booking.vendor.phone" :href="'tel:' + booking.vendor.phone" class="mt-2 inline-flex min-h-8 items-center rounded-md border border-[#cbdcf8] px-3 text-[10px] font-semibold text-[#3e7bef]">Hubungi mitra</a></div></dl></section>
+                    <section class="rounded-2xl border border-[#dce6f4] bg-white p-5 sm:p-6"><details open><summary class="cursor-pointer text-base font-bold text-[#17345e]">Rencana perjalanan</summary><ol class="mt-5"><li v-for="(line, index) in itinerary" :key="index" class="relative ml-2 border-l border-[#d5e1f2] pb-4 pl-6 text-xs leading-6 text-slate-600 last:border-transparent last:pb-0"><span class="absolute -left-[5px] top-2 size-2 rounded-full bg-[#3e7bef]"></span>{{ line }}</li></ol></details></section>
+                    <section class="rounded-2xl border border-[#dce6f4] bg-white p-5 sm:p-6"><h2 class="text-base font-bold text-[#17345e]">Informasi tambahan</h2><div class="mt-5 grid gap-4 sm:grid-cols-3"><div><h3 class="text-xs font-bold">Termasuk</h3><p class="mt-3 text-xs leading-6 text-slate-500">{{ Array.isArray(booking.trip.experience?.included) ? booking.trip.experience.included.join(', ') : 'Konfirmasi fasilitas paket dengan mitra perjalanan.' }}</p></div><div><h3 class="text-xs font-bold">Tidak termasuk</h3><p class="mt-3 text-xs leading-6 text-slate-500">{{ Array.isArray(booking.trip.experience?.excluded) ? booking.trip.experience.excluded.join(', ') : 'Tanyakan rincian biaya di luar paket kepada mitra.' }}</p></div><div class="rounded-lg bg-[#f5f8ff] p-3"><h3 class="text-xs font-bold">Catatan pesanan</h3><p class="mt-2 text-xs leading-6 text-slate-500">{{ booking.special_request || 'Periksa titik kumpul dan jadwal sebelum berangkat. Konfirmasikan kebutuhan khusus kepada mitra.' }}</p></div></div></section>
+                </div>
+                <div class="space-y-4 lg:sticky lg:top-6"><aside class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white"><div class="border-b border-[#e8eef7] px-6 py-5"><h2 class="text-base font-bold text-[#17345e]">Ringkasan pembayaran</h2></div><div class="p-6"><div class="mb-5 flex items-center gap-3 border-b border-[#e8eef7] pb-4"><img v-if="booking.trip.image_url" :src="booking.trip.image_url" alt="" class="h-14 w-18 rounded-lg object-cover" /><div><p class="text-xs font-bold text-[#17345e]">{{ booking.trip.title }}</p><p class="mt-1 text-[10px] leading-5 text-slate-500">{{ date(booking.trip.departure_date) }} · {{ booking.participants }} peserta</p></div></div><dl class="space-y-4 text-xs"><div v-if="booking.discount" class="flex justify-between"><dt class="text-slate-500">Potongan promo</dt><dd class="font-semibold text-[#3e7bef]">−{{ money(booking.discount) }}</dd></div><div class="flex items-center justify-between" :class="booking.discount ? 'border-t border-[#e8eef7] pt-4' : ''"><dt class="font-bold text-[#17345e]">Total pembayaran</dt><dd class="text-xl font-extrabold text-[#17345e]">{{ money(booking.total) }}</dd></div></dl><template v-if="booking.status === 'awaiting_payment'"><p class="mt-5 text-xs leading-6 text-slate-500">Selesaikan pembayaran sebelum<br /><strong class="text-[#17345e]">{{ deadline(booking.expires_at) }}</strong></p><div class="mt-3 flex items-center gap-2" role="timer" aria-label="Sisa waktu pembayaran"><div v-for="part in timer" :key="part.label" class="flex-1 text-center"><span class="block rounded-lg bg-[#edf4ff] py-3 font-mono text-xl font-bold tabular-nums text-[#285db3]">{{ part.value }}</span><span class="mt-1.5 block text-[10px] text-slate-500">{{ part.label }}</span></div></div><p v-if="!secondsRemaining" role="status" class="mt-3 text-xs text-rose-600">Batas pembayaran sudah berakhir.</p><Link :href="route('checkout.payment', { type: 'trip', id: booking.id })" class="mt-4 flex min-h-12 items-center justify-center rounded-lg bg-[#3e7bef] text-sm font-bold text-white transition hover:bg-[#2866d4]">Lanjut Pembayaran</Link><button type="button" class="mt-3 min-h-11 w-full rounded-lg border border-[#dce6f4] text-xs font-semibold text-slate-500 hover:bg-slate-50 disabled:opacity-50" :disabled="action.processing" @click="action.post(route('bookings.cancel', booking.id))">{{ action.processing ? 'Membatalkan…' : 'Batalkan Pesanan' }}</button><p v-if="!gatewayReady" class="mt-4 text-xs leading-5 text-amber-700">Pembayaran online belum aktif. Hubungi dukungan untuk informasi pesanan.</p></template><template v-else-if="['cancelled', 'expired'].includes(booking.status)"><p class="mt-4 text-xs leading-6 text-slate-500">Reservasi sudah dilepas. Jangan bayar kode pembayaran pesanan ini.</p><Link :href="route('checkout.review.trip', booking.trip_id)" class="mt-4 flex min-h-11 items-center justify-center rounded-lg bg-[#3e7bef] text-xs font-bold text-white">Buat pesanan baru</Link></template></div></aside><section class="rounded-2xl border border-[#dce6f4] bg-white p-5"><h2 class="text-sm font-bold text-[#17345e]">Butuh bantuan?</h2><p class="mt-2 text-xs leading-6 text-slate-500">Tim TapakLokal membantu pertanyaan tentang pesanan dan pembayaranmu.</p><Link :href="route('account.section', 'support')" class="mt-4 flex min-h-10 items-center justify-between border-t border-[#e8eef7] pt-3 text-xs font-bold text-[#3e7bef]">Hubungi bantuan <span aria-hidden="true">→</span></Link></section></div>
             </div>
-
-            <p v-if="page.props.flash?.success" class="mt-4 rounded-xl bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700">{{ page.props.flash.success }}</p>
-            <p v-for="(error, key) in page.props.errors" :key="key" class="mt-3 text-xs font-semibold text-rose-600">{{ error }}</p>
-
-            <div class="mt-6 grid items-start gap-5 md:grid-cols-[1fr_320px]">
-                <section class="panel-surface p-5 sm:p-6">
-                    <dl class="grid gap-4 sm:grid-cols-2">
-                        <div v-for="(value, label) in { Status: booking.status, Peserta: booking.participants + ' orang', Berangkat: booking.trip.departure_date.slice(0,10), Selesai: booking.trip.end_date.slice(0,10), 'Titik kumpul': booking.trip.meeting_point, Vendor: booking.vendor.name, 'Kontak vendor': booking.vendor.phone, 'Nama pemesan': booking.contact_name }" :key="label" class="rounded-xl bg-slate-50/70 p-3 border border-slate-100">
-                            <dt class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ label }}</dt>
-                            <dd class="mt-1 text-xs sm:text-sm font-bold text-slate-800 break-words">{{ value }}</dd>
-                        </div>
-                    </dl>
-                    
-                    <h2 class="mt-6 text-sm font-extrabold text-slate-800 border-t border-slate-100 pt-5">Itinerary & Fasilitas</h2>
-                    <p class="mt-2.5 whitespace-pre-wrap text-xs leading-6 text-slate-600">{{ booking.trip.itinerary }}</p>
-                </section>
-
-                <aside class="panel-surface p-5 space-y-4">
-                    <h2 class="text-sm font-extrabold text-slate-800 border-b border-slate-100 pb-3">Rincian Pembayaran</h2>
-                    <dl class="space-y-2.5 text-xs">
-                        <div class="flex justify-between text-slate-500"><dt>Subtotal</dt><dd class="font-semibold text-slate-700">{{ money(booking.subtotal) }}</dd></div>
-                        <div class="flex justify-between text-slate-500"><dt>Diskon</dt><dd class="font-semibold text-emerald-600">-{{ money(booking.discount) }}</dd></div>
-                        <div class="flex justify-between border-t border-slate-100 pt-3 text-sm font-extrabold text-slate-900"><dt>Total Pembayaran</dt><dd class="text-[#3E7BEF]">{{ money(booking.total) }}</dd></div>
-                    </dl>
-                    <div class="rounded-xl bg-blue-50/70 p-3 border border-blue-100 text-xs text-slate-700">
-                        <span class="font-bold text-[#3E7BEF]">Status Pembayaran:</span> {{ booking.payment?.status || 'Belum dibayar' }}
-                    </div>
-
-                    <template v-if="booking.status === 'awaiting_payment'">
-                        <p class="text-[11px] text-slate-400">Batas pembayaran: {{ new Date(booking.expires_at).toLocaleString('id-ID') }}</p>
-                        <Link :href="route('checkout.payment', { type: 'trip', id: booking.id })" class="panel-primary w-full py-2.5 text-xs font-bold text-center">Lanjut Pembayaran</Link>
-                        <p v-if="!gatewayReady" class="text-[11px] leading-5 text-amber-700">Pembayaran online belum aktif. Hubungi dukungan untuk informasi pesanan.</p>
-                        <button class="panel-secondary w-full py-2.5 text-xs font-bold" :disabled="action.processing" @click="action.post(route('bookings.cancel', booking.id))">
-                            Batalkan Pesanan
-                        </button>
-                    </template>
-                </aside>
-            </div>
-
             <form v-if="['paid', 'confirmed', 'ongoing', 'completed'].includes(booking.status) && !booking.refund" class="panel-surface mt-5 p-5 sm:p-6" @submit.prevent="form.post(route('bookings.refund', booking.id))">
                 <h2 class="text-sm font-extrabold text-slate-800">Ajukan Pengembalian Dana (Refund)</h2>
                 <textarea v-model="form.reason" required minlength="10" rows="3" class="panel-input mt-3 text-xs" placeholder="Jelaskan alasan pengajuan pengembalian dana"></textarea>
                 <button :disabled="form.processing" class="panel-secondary mt-3 text-xs font-bold">Kirim Permintaan Refund</button>
             </form>
             <p v-if="booking.refund" class="mt-5 rounded-xl bg-blue-50 p-4 text-xs font-semibold text-blue-700">Status refund: {{ booking.refund.status }}</p>
-            <OrderConversationForm :booking-id="booking.id" :reference="booking.reference" />
+            <dialog ref="photoDialog" aria-label="Foto destinasi" class="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-3xl rounded-xl bg-white p-3 backdrop:bg-slate-900/70" @click.self="photoDialog.close()"><button type="button" class="mb-3 min-h-10 px-3 text-xs font-bold text-[#17345e]" @click="photoDialog.close()">Tutup foto ×</button><img :src="booking.trip.image_url" :alt="booking.trip.title" class="max-h-[75dvh] w-full rounded-lg object-contain" /></dialog>
         </main>
     </div>
 </template>

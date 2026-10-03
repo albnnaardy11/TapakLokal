@@ -227,9 +227,13 @@ class BookingController extends Controller
         return $request->boolean('checkout_flow') ? to_route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]) : to_route('bookings.show', $booking);
     }
 
-    public function show(Request $request, Booking $booking): Response
+    public function show(Request $request, Booking $booking, BookingService $service): Response
     {
         app(CorporateService::class)->authorizeBooking($request->user(), $booking);
+
+        if ($booking->status === 'awaiting_payment' && $booking->expires_at->isPast()) {
+            $booking = $service->transition($booking, 'expired');
+        }
 
         return Inertia::render('Booking', ['booking' => $booking->load(['trip', 'vendor:id,name,phone', 'payment', 'refund']), 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
     }

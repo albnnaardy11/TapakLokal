@@ -11,6 +11,7 @@ use App\Models\TravelerProfile;
 use App\Models\Trip;
 use App\Models\User;
 use App\Services\BookingService;
+use App\Services\FinanceService;
 use App\Services\SouvenirCommerceService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -103,6 +104,145 @@ class CheckoutFlowTest extends TestCase
         $this->post(route('checkout.check', ['type' => 'trip', 'id' => $booking->id]), ['status' => 'settlement'])->assertRedirect();
         Queue::assertPushed(ReconcilePayment::class, fn ($job) => $job->reference === $booking->reference);
         $this->assertSame('pending', $booking->payment->fresh()->status);
+    }
+
+    public function test_local_status_poll_verifies_payment_without_a_queue_worker_or_webhook(): void
+    {
+        $booking = $this->booking();
+        config(['platform.payment_queue_connection' => 'sync']);
+        Http::preventStrayRequests();
+        Http::fake(['https://api.sandbox.midtrans.com/v2/'.$booking->reference.'/status' => Http::response([
+            'order_id' => $booking->reference, 'transaction_status' => 'settlement',
+            'transaction_id' => 'sandbox-settled', 'gross_amount' => $booking->total.'.00',
+        ])]);
+
+        $this->actingAs($booking->user)
+            ->from(route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]))
+            ->post(route('checkout.check', ['type' => 'trip', 'id' => $booking->id]), ['automatic' => true, 'status' => 'pending'])
+            ->assertRedirect(route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]))
+            ->assertSessionMissing('success');
+
+        $this->assertSame('paid', $booking->fresh()->status);
+        $this->assertSame('paid', $booking->payment->fresh()->status);
+        Http::assertSentCount(1);
+    }
+
+    public function test_checkout_cancellation_releases_unpaid_reservation_once_and_rejects_other_users(): void
+    {
+        $booking = $this->booking();
+        $booking->payment()->update(['method' => 'bca', 'instructions' => ['va_number' => '1234567890']]);
+        Http::preventStrayRequests();
+        Http::fake();
+        $url = route('checkout.cancel', ['type' => 'trip', 'id' => $booking->id]);
+
+        $this->actingAs(User::factory()->create())->post($url)->assertNotFound();
+        $this->actingAs($booking->user)->post($url)->assertRedirect(route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]));
+        $this->post($url)->assertRedirect();
+
+        $this->assertSame('cancelled', $booking->fresh()->status);
+        $this->assertSame('cancelled', $booking->payment->fresh()->status);
+        $this->assertSame(0, $booking->trip->fresh()->reserved_seats);
+        Http::assertNothingSent();
+    }
+
+    public function test_paid_checkout_cannot_be_cancelled(): void
+    {
+        $booking = $this->booking();
+        $booking->update(['status' => 'paid']);
+        $booking->payment()->update(['status' => 'paid']);
+
+        $this->actingAs($booking->user)->post(route('checkout.cancel', ['type' => 'trip', 'id' => $booking->id]))->assertSessionHasErrors('status');
+
+        $this->assertSame('paid', $booking->fresh()->status);
+        $this->assertSame(1, $booking->trip->fresh()->reserved_seats);
+    }
+
+    public function test_late_payment_after_checkout_cancellation_requires_reconciliation_without_restoring_seats(): void
+    {
+        $booking = $this->booking();
+        $this->actingAs($booking->user)->post(route('checkout.cancel', ['type' => 'trip', 'id' => $booking->id]))->assertRedirect();
+        app(FinanceService::class)->applyStatus([
+            'order_id' => $booking->reference, 'transaction_status' => 'settlement',
+            'transaction_id' => 'late-cancelled', 'gross_amount' => $booking->total.'.00',
+        ]);
+
+        $this->assertSame('cancelled', $booking->fresh()->status);
+        $this->assertSame('reconciliation_required', $booking->payment->fresh()->status);
+        $this->assertSame(0, $booking->trip->fresh()->reserved_seats);
+    }
+
+    public function test_souvenir_checkout_cancellation_releases_stock_once(): void
+    {
+        $this->freezeTime();
+        $user = User::factory()->create();
+        $product = SouvenirProduct::factory()->create();
+        SouvenirCartItem::create(['user_id' => $user->id, 'souvenir_product_id' => $product->id, 'variant' => 'Biji utuh', 'quantity' => 1]);
+        $order = app(SouvenirCommerceService::class)->createOrder($user, ['vendor_id' => $product->vendor_id, 'idempotency_key' => (string) Str::uuid(), 'contact_name' => 'Pembeli', 'contact_phone' => '081234567890', 'contact_email' => $user->email, 'method' => 'pickup', 'pickup_date' => now()->addDays(3)->toDateString()]);
+        $url = route('checkout.cancel', ['type' => 'souvenir', 'id' => $order->id]);
+
+        $this->actingAs($user)->post($url)->assertRedirect();
+        $this->post($url)->assertRedirect();
+
+        $this->assertSame('cancelled', $order->fresh()->status);
+        $this->assertSame('cancelled', $order->payment->status);
+        $this->assertSame(0, $product->fresh()->reserved_stock);
+        $this->assertSame(20, $product->fresh()->stock);
+    }
+
+    public function test_expired_checkout_and_booking_details_share_a_closed_payment_and_release_seats_once(): void
+    {
+        $booking = $this->booking();
+        $this->travel(31)->minutes();
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $this->actingAs($booking->user)->get(route('checkout.payment', ['type' => 'trip', 'id' => $booking->id]))
+            ->assertOk()->assertInertia(fn (Assert $page) => $page->where('order.status', 'expired')->where('order.payment.status', 'expired'));
+        $this->get(route('bookings.show', $booking))->assertOk()->assertInertia(fn (Assert $page) => $page->where('booking.status', 'expired'));
+
+        $this->assertSame(0, $booking->trip->fresh()->reserved_seats);
+        Http::assertNothingSent();
+    }
+
+    public function test_background_status_check_returns_verified_data_without_redirecting(): void
+    {
+        $booking = $this->booking();
+        config(['platform.payment_queue_connection' => 'sync']);
+        Http::preventStrayRequests();
+        Http::fake(['https://api.sandbox.midtrans.com/v2/'.$booking->reference.'/status' => Http::response([
+            'order_id' => $booking->reference, 'transaction_status' => 'settlement',
+            'transaction_id' => 'background-settled', 'gross_amount' => $booking->total.'.00',
+        ])]);
+
+        $this->actingAs($booking->user)->postJson(route('checkout.check', ['type' => 'trip', 'id' => $booking->id]), ['automatic' => true])
+            ->assertOk()->assertJsonPath('status', 'paid')->assertJsonPath('payment.status', 'paid');
+        $this->assertSame('paid', $booking->fresh()->status);
+        Http::assertSentCount(1);
+    }
+
+    public function test_unavailable_gateway_returns_a_recoverable_status_error_without_changing_payment(): void
+    {
+        $booking = $this->booking();
+        config(['platform.payment_queue_connection' => 'sync']);
+        Http::preventStrayRequests();
+        Http::fake(['https://api.sandbox.midtrans.com/*' => Http::failedConnection()]);
+
+        $this->actingAs($booking->user)->postJson(route('checkout.check', ['type' => 'trip', 'id' => $booking->id]), ['automatic' => true])
+            ->assertStatus(503)->assertJsonPath('message', 'Midtrans belum dapat dihubungi. Pesanan tetap tersimpan; coba periksa status lagi nanti.');
+        $this->assertSame('pending', $booking->payment->fresh()->status);
+    }
+
+    public function test_rejected_sandbox_key_explains_the_failure_without_creating_instructions(): void
+    {
+        $booking = $this->booking();
+        Http::preventStrayRequests();
+        Http::fake(['https://api.sandbox.midtrans.com/*' => Http::response(['error' => 'Unauthorized'], 401)]);
+
+        $this->actingAs($booking->user)->post(route('checkout.charge', ['type' => 'trip', 'id' => $booking->id]), ['method' => 'bca'])
+            ->assertSessionHasErrors(['payment' => 'Midtrans menolak kunci sandbox. Hubungi bantuan untuk memperbaiki konfigurasi pembayaran; pesanan belum dibayar.']);
+        $this->assertNull($booking->payment->fresh()->instructions);
+        $this->assertSame('pending', $booking->payment->fresh()->status);
+        Http::assertSentCount(1);
     }
 
     public function test_souvenir_review_and_account_share_the_actual_order(): void

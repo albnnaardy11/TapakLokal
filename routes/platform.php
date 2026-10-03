@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/{type}/{id}', [CheckoutController::class, 'payment'])->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.payment');
     Route::post('/checkout/{type}/{id}', [CheckoutController::class, 'charge'])->middleware('throttle:5,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.charge');
     Route::post('/checkout/{type}/{id}/status', [CheckoutController::class, 'check'])->middleware('throttle:5,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.check');
+    Route::post('/checkout/{type}/{id}/cancel', [CheckoutController::class, 'cancel'])->middleware('throttle:10,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.cancel');
+    Route::put('/checkout/{type}/{id}/promo', [CheckoutController::class, 'promotion'])->middleware('throttle:10,1')->whereIn('type', ['trip', 'souvenir'])->whereNumber('id')->name('checkout.promotion');
     Route::put('/account/payment-methods', [CheckoutController::class, 'preferences'])->middleware('throttle:20,1')->name('account.payment-methods');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->middleware('throttle:30,1')->name('notifications.read-all');

@@ -2,7 +2,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { computed } from 'vue';
-import { Award, Coins, Gift, Heart, Headset, LogOut, MessageSquare, Settings, Star, Users, Wallet, ChevronRight } from 'lucide-vue-next';
+import { Award, Clock3, Coins, Gift, Heart, Headset, LogOut, MessageSquare, Settings, Star, Users, Wallet } from 'lucide-vue-next';
 import MainNavigation from '../Components/Shared/MainNavigation.vue';
 import PriorityBar from '../Components/Shared/PriorityBar.vue';
 import AccountLive from '../Components/Account/AccountLive.vue';
@@ -11,7 +11,7 @@ import PurchaseListIcon from '../Components/Shared/PurchaseListIcon.vue';
 
 const page = usePage();
 const groups = [
-    { label: 'AKTIVITAS & FINANSIAL', items: [['bookings', 'Pemesanan & Tiket', BookingPassIcon], ['transactions', 'Daftar Transaksi', PurchaseListIcon], ['wallet', 'Saldo & Pembayaran', Wallet], ['points', 'Points', Coins], ['vouchers', 'Voucher', Gift]] },
+    { label: 'AKTIVITAS & FINANSIAL', items: [['bookings', 'Pemesanan & Tiket', BookingPassIcon], ['payments', 'Menunggu Pembayaran', Clock3], ['transactions', 'Daftar Transaksi', PurchaseListIcon], ['wallet', 'Metode Pembayaran', Wallet], ['points', 'Points', Coins], ['vouchers', 'Voucher', Gift]] },
     { label: 'INTERAKSI & KOMUNITAS', items: [['favorites', 'OT & OP Favorit', Heart], ['travelers', 'Daftar Wisatawan', Users], ['chat', 'Chat', MessageSquare], ['reviews', 'Rating & Ulasan', Star], ['support', 'Pesan Bantuan', Headset]] },
     { label: 'AKUN', items: [['settings', 'Akun Saya', Settings], ['corporate', 'Workspace perusahaan', Users]] },
 ];
@@ -136,7 +136,6 @@ const navigate = key => router.get(key === 'corporate' ? route('corporate.dashbo
             </aside>
 
             <main class="min-w-0">
-                <section class="relative isolate mb-5 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-xl bg-[#123b53] px-5 py-5 text-white sm:min-h-[164px] sm:px-6"><img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85" alt="Pegunungan Indonesia" class="absolute inset-0 -z-20 size-full object-cover" /><div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#123b53]/90 via-[#123b53]/35 to-transparent"></div><h2 class="text-lg font-extrabold">Perjalanan baru, cerita baru.</h2><p class="mt-1 text-[11px] text-white/80">Temukan pengalaman tak terlupakan di setiap sudut Indonesia.</p><Link :href="route('catalog')" class="mt-3 inline-flex w-fit items-center gap-3 rounded-full bg-white px-3.5 py-2 text-[10px] font-bold text-[#175a9f]">Jelajahi Destinasi<ChevronRight class="size-3" /></Link></section>
                 <AccountLive :key="page.props.sectionKey" />
             </main>
         </div>

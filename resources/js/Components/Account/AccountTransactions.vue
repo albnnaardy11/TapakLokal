@@ -1,80 +1,110 @@
 <script setup>
-import { ChevronLeft, ChevronRight, Clock3, CreditCard, QrCode, Search, Store, X } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
-import AccountExploreBanner from './AccountExploreBanner.vue';
-
-const query = ref('');
-const order = ref('Semua Pesanan');
-const date = ref('');
-const category = ref('Semua');
-const dialog = ref(null);
-const selected = ref(null);
-const action = ref('');
-const transactions = [
-    { id: 'AP082114607882', method: 'Offline Store', provider: 'Alfamart', amount: 'Rp 1.102.888', category: 'Open Trip', date: '2026-07-30', deadline: '31 Jul, 09:34', name: 'Open Trip Bali' },
-    { id: 'X3171820106138', method: 'Metode Pembayaran', provider: 'QRIS', amount: 'Rp 702.888', category: 'Open PO', date: '2026-07-30', deadline: '31 Jul, 09:34', name: 'Oleh-oleh lokal' },
-    ...['Karimunjawa', 'Ranu Kumbolo', 'Prambanan', 'Pulau Pramuka', 'Merbabu', 'Dieng', 'Labuan Bajo', 'Bromo', 'Raja Ampat', 'Lombok'].map((destination, index) => ({
-        id: `DEMO-TX-${String(index + 3).padStart(3, '0')}`,
-        provider: index % 2 === 0 ? 'QRIS' : 'Alfamart',
-        amount: `Rp ${(450000 + index * 125000).toLocaleString('id-ID')}`,
-        category: index % 3 === 0 ? 'Open PO' : 'Open Trip',
-        date: '2026-07-30', deadline: '31 Jul, 09:34',
-        name: index % 3 === 0 ? `Oleh-oleh ${destination}` : `Open Trip ${destination}`,
-    })),
-];
-const results = computed(() => transactions.filter((item) => (category.value === 'Semua' || item.category === category.value) && (order.value === 'Semua Pesanan' || item.category === order.value) && (! date.value || item.date === date.value) && `${item.id} ${item.provider} ${item.name}`.toLowerCase().includes(query.value.trim().toLowerCase())));
-const currentPage = ref(1);
-const pageSize = 5;
-const scrollArea = ref(null);
-const pageCount = computed(() => Math.max(1, Math.ceil(results.value.length / pageSize)));
-const start = computed(() => (currentPage.value - 1) * pageSize);
-const visibleTransactions = computed(() => results.value.slice(start.value, start.value + pageSize));
-const goToPage = (number) => {
-    currentPage.value = Math.max(1, Math.min(number, pageCount.value));
-    scrollArea.value?.scrollTo({ top: 0 });
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
+import { Clock3 } from 'lucide-vue-next';
+import Pagination from '../Admin/Pagination.vue';
+const props = defineProps({ pendingOnly: Boolean });
+const page = usePage();
+const filter = ref(props.pendingOnly ? 'pending' : 'all');
+const copied = ref('');
+const now = ref(Date.now());
+let tick = null;
+onMounted(() => { tick = setInterval(() => { now.value = Date.now(); }, 1000); });
+onBeforeUnmount(() => { if (tick) clearInterval(tick); });
+const getRemaining = expiresAt => expiresAt ? Math.max(0, Math.floor((Date.parse(expiresAt) - now.value) / 1000)) : 0;
+const getCountdownParts = expiresAt => {
+    const sec = getRemaining(expiresAt);
+    return [
+        { label: 'Jam', value: String(Math.floor(sec / 3600)).padStart(2, '0') },
+        { label: 'Menit', value: String(Math.floor((sec % 3600) / 60)).padStart(2, '0') },
+        { label: 'Detik', value: String(sec % 60).padStart(2, '0') },
+    ];
 };
-watch([query, order, date, category], () => goToPage(1));
-const reset = () => { query.value = ''; order.value = 'Semua Pesanan'; date.value = ''; category.value = 'Semua'; };
-const show = (item, mode) => { selected.value = item; action.value = mode; dialog.value.showModal(); };
+const paymentDialog = ref(null);
+const selectedPayment = ref(null);
+const showPayment = item => { selectedPayment.value = item; copied.value = ''; paymentDialog.value.showModal(); };
+const paymentGuide = computed(() => {
+    const item = selectedPayment.value;
+    if (!item) return [];
+    if (['alfamart', 'indomaret'].includes(item.payment.method)) return [
+        'Datang ke ' + (item.payment.method === 'indomaret' ? 'Indomaret' : 'Alfamart / Alfamidi') + ' sebelum batas pembayaran.',
+        'Sampaikan pembayaran Midtrans kepada kasir dan tunjukkan kode pembayaran pesanan ini.',
+        'Periksa nominal yang disebutkan kasir. Konfirmasikan biaya tambahan gerai jika ada sebelum membayar.',
+        'Selesaikan pembayaran dan simpan struk sebagai bukti transaksi.'
+    ];
+    if (item.payment.method === 'bca') return ['Salin nomor virtual account pesanan ini.', 'Buka aplikasi atau ATM BCA dan pilih BCA Virtual Account.', 'Masukkan nomor virtual account, lalu periksa penerima dan nominal.', 'Konfirmasikan pembayaran dan simpan bukti transaksi.'];
+    if (item.payment.method === 'mandiri') return ['Catat kode perusahaan dan kode pembayaran pesanan.', 'Buka kanal pembayaran Mandiri dan pilih pembayaran tagihan / multipayment.', 'Masukkan kedua kode sesuai kolom yang tersedia, lalu periksa nominal.', 'Konfirmasikan pembayaran sebelum batas waktu dan simpan bukti transaksi.'];
+    if (item.payment.instructions?.qr_url) return ['Buka aplikasi bank atau dompet digital yang mendukung QR pembayaran ini.', 'Pindai QR dari perangkat lain atau gunakan gambar QR melalui galeri jika didukung.', 'Periksa nama penerima dan jumlah tagihan sebelum mengonfirmasi.', 'Selesaikan pembayaran dan simpan bukti transaksi.'];
+    return ['Buka instruksi pembayaran pesanan melalui tombol di bawah.', 'Periksa penerima dan nominal sebelum mengonfirmasi pembayaran.', 'Selesaikan pembayaran sebelum batas waktu dan simpan bukti transaksi.'];
+});
+const money = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value || 0);
+const date = (value, time = false) => value ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric', ...(time ? { hour: '2-digit', minute: '2-digit' } : {}), timeZone: 'Asia/Jakarta' }).format(new Date(value)) + (time ? ' WIB' : '') : '—';
+const transactions = computed(() => [
+    ...(page.props.records?.data || []).map(payment => ({ key: `trip-${payment.id}`, kind: 'trip', id: payment.booking_id, title: 'Perjalanan', reference: payment.booking?.reference || payment.reference, created: payment.created_at, expires: payment.booking?.expires_at, payment })),
+    ...(page.props.souvenirOrders?.data || []).map(order => ({ key: `souvenir-${order.id}`, kind: 'souvenir', id: order.id, title: order.vendor?.name || 'Oleh-oleh', description: order.items?.map(item => item.name).join(', '), reference: order.reference, created: order.created_at, expires: order.expires_at, payment: order.payment || { status: order.status, amount: order.total } })),
+].sort((a, b) => Date.parse(b.created) - Date.parse(a.created)));
+const state = item => item.payment.status === 'pending' && item.expires && Date.parse(item.expires) <= now.value ? 'expired' : item.payment.status;
+const labels = { pending: 'Menunggu pembayaran', paid: 'Pembayaran berhasil', expired: 'Kedaluwarsa', cancelled: 'Dibatalkan', failed: 'Pembayaran gagal', refunded: 'Dikembalikan' };
+const groups = computed(() => [...new Set(transactions.value.map(state))].sort((a, b) => a === 'pending' ? -1 : b === 'pending' ? 1 : 0).map(status => ({ status, label: labels[status] || status, items: transactions.value.filter(item => state(item) === status && (!props.pendingOnly || status === 'pending') && (filter.value === 'all' || filter.value === status)) })).filter(group => group.items.length));
+const method = item => page.props.paymentMethods?.find(method => method.id === item.payment.method);
+const codes = item => Object.entries(item.payment.instructions || {}).filter(([key]) => ['payment_code', 'va_number', 'bill_key', 'biller_code'].includes(key));
+const codeLabels = { payment_code: 'Kode pembayaran', va_number: 'Nomor virtual account', bill_key: 'Kode pembayaran', biller_code: 'Kode perusahaan' };
+const copy = async value => { try { await navigator.clipboard.writeText(String(value)); copied.value = 'Kode pembayaran berhasil disalin.'; } catch { copied.value = 'Salin kode pembayaran secara manual.'; } };
 </script>
-
 <template>
-    <section aria-labelledby="transactions-heading">
-        <h2 id="transactions-heading" class="text-sm font-extrabold text-[#183660]">Daftar Transaksi</h2>
-        <p class="mt-1 text-[11px] leading-5 text-slate-500">Lihat rincian pesanan dan kelola pembayaran perjalananmu.</p>
-
-        <div class="mt-4 rounded-2xl border border-[#e1eaf5] bg-white p-4 shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
-            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr]">
-                <label class="flex flex-col gap-2 text-[11px] font-semibold text-slate-500"><span>Cari transaksi</span><span class="flex h-10 items-center gap-2 rounded-xl border border-[#e1eaf5] px-3 transition focus-within:border-[#078cff] focus-within:ring-2 focus-within:ring-sky-100"><Search class="size-4 shrink-0 text-[#078cff]" aria-hidden="true" /><input v-model="query" type="search" placeholder="Nama pesanan atau kode" class="min-w-0 flex-1 bg-transparent text-xs font-normal text-slate-700 outline-none" /></span></label>
-                <label class="flex flex-col gap-2 text-[11px] font-semibold text-slate-500"><span>Jenis pesanan</span><select v-model="order" class="h-10 min-w-0 rounded-xl border border-[#e1eaf5] bg-white px-3 text-xs font-normal text-slate-700 outline-[#078cff]"><option>Semua Pesanan</option><option>Open Trip</option><option>Open PO</option></select></label>
-                <label class="flex flex-col gap-2 text-[11px] font-semibold text-slate-500"><span>Tanggal pembayaran</span><input v-model="date" type="date" class="h-10 min-w-0 rounded-xl border border-[#e1eaf5] bg-white px-3 text-xs font-normal text-slate-700 outline-[#078cff]" /></label>
-            </div>
-            <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4"><button v-for="item in ['Semua', 'Open Trip', 'Open PO', 'Pengembalian Uang']" :key="item" type="button" class="min-h-8 rounded-full border px-3 py-1.5 text-[10px] font-semibold transition duration-200 hover:border-[#078cff] focus-visible:outline-2 focus-visible:outline-[#078cff]" :class="category === item ? 'border-[#3E7BEF] bg-[#3E7BEF] text-white shadow-[0_3px_9px_rgba(62,123,239,0.2)]' : 'border-[#e2e8f0] bg-white text-slate-500'" :aria-pressed="category === item" @click="category = item">{{ item }}</button><button type="button" class="ml-auto px-2 py-2 text-[11px] font-semibold text-[#078cff] hover:underline" @click="reset">Reset filter</button></div>
+    <section class="space-y-6 text-[#17345e]" aria-label="Daftar transaksi akun">
+        <div v-if="!pendingOnly" class="rounded-2xl border border-[#dce6f4] bg-white p-5">
+            <p class="text-sm font-bold">Riwayat pembayaranmu</p><p class="mt-1 text-xs leading-5 text-slate-500">Kelola pembayaran perjalanan dan produk lokal dalam satu tempat.</p>
+            <div class="mt-4 flex flex-wrap gap-2" aria-label="Filter status transaksi"><button v-for="[value, label] in [['all', 'Semua'], ['pending', 'Menunggu pembayaran'], ['paid', 'Berhasil'], ['expired', 'Kedaluwarsa'], ['cancelled', 'Dibatalkan']]" :key="value" type="button" :aria-pressed="filter === value" class="min-h-10 rounded-lg border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-[#3e7bef]" :class="filter === value ? 'border-[#3e7bef] bg-[#edf4ff] text-[#3e7bef]' : 'border-slate-200 text-slate-500 hover:border-blue-200'" @click="filter = value">{{ label }}</button></div>
         </div>
-
-        <div class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_4px_20px_rgba(23,75,120,0.04)]"><div class="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3"><h3 class="text-xs font-semibold text-[#183660]">{{ category === 'Pengembalian Uang' ? 'Pengembalian Uang' : 'Menunggu Pembayaran' }}</h3><span class="rounded-full bg-[#e9f1fc] px-2 py-0.5 text-[10px] font-semibold text-[#3E7BEF]">{{ results.length }}</span></div>
-        <div ref="scrollArea" tabindex="0" role="region" aria-label="Daftar transaksi, dapat digulir" class="max-h-[420px] space-y-3 overflow-y-auto overscroll-contain bg-[#f8fafc] p-3 focus-visible:outline-2 focus-visible:outline-[#3E7BEF] [scrollbar-width:thin] [scrollbar-color:#b9d5fa_transparent] sm:p-4">
-            <article v-for="item in visibleTransactions" :key="item.id" class="overflow-hidden rounded-xl border border-[#e1eaf5] bg-white transition duration-200 hover:border-[#bdd7f5] hover:shadow-[0_5px_20px_rgba(23,75,120,0.05)]">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf2f8] px-4 py-3"><div class="flex items-center gap-3"><span class="grid size-9 shrink-0 place-items-center rounded-xl bg-[#edf5ff] text-[#3E7BEF]"><CreditCard class="size-[18px]" aria-hidden="true" /></span><div><h4 class="text-xs font-bold text-[#183660]">{{ item.name }}</h4><p class="mt-0.5 text-[10px] text-slate-400">{{ item.category }} · Menunggu pembayaran</p></div></div><span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1.5 text-[10px] font-medium text-red-700"><Clock3 class="size-3" aria-hidden="true" />Bayar sebelum {{ item.deadline }}</span></div>
-                <div class="grid gap-4 px-4 py-4 sm:grid-cols-[1fr_1fr_auto]">
-                    <div><p class="mb-2 text-[10px] text-slate-400">Metode pembayaran</p><div class="flex items-center gap-2.5"><span class="grid size-9 shrink-0 place-items-center rounded-lg border border-slate-100 text-[#3E7BEF]"><QrCode v-if="item.provider === 'QRIS'" class="size-5" /><Store v-else class="size-5" /></span><div><p class="text-xs font-bold text-[#233b55]">{{ item.provider }}</p><p class="mt-0.5 text-[10px] text-slate-400">{{ item.provider === 'QRIS' ? 'Pembayaran QR' : 'Gerai retail' }}</p></div></div></div>
-                    <div><p class="mb-2 text-[10px] text-slate-400">{{ item.provider === 'QRIS' ? 'NMID' : 'Kode pembayaran' }}</p><p class="break-all font-mono text-xs font-medium leading-9 text-[#34475a]">{{ item.id }}</p></div>
-                    <div class="sm:text-right"><p class="mb-2 text-[10px] text-slate-400">Total pembayaran</p><p class="text-sm font-bold leading-9 tabular-nums text-[#3E7BEF]">{{ item.amount }}</p></div>
+        <p v-if="copied" role="status" class="text-xs font-semibold text-[#3e7bef]">{{ copied }}</p>
+        <section v-for="group in groups" :key="group.status" class="space-y-3">
+            <h3 class="flex items-center gap-2 text-sm font-bold">{{ group.label }}<span class="rounded-full bg-[#edf4ff] px-2 py-0.5 text-xs text-[#3e7bef]">{{ group.items.length }}</span></h3>
+            <article v-for="item in group.items" :key="item.key" class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white shadow-xs">
+                <header class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+                    <div><div class="flex flex-wrap items-center gap-3"><h4 class="text-sm font-bold">{{ item.title }}</h4><span class="text-xs text-slate-500">{{ date(item.created) }}</span></div><p class="mt-1.5 break-all text-[11px] text-slate-400">{{ item.reference }}</p><p v-if="item.description" class="mt-1 text-xs text-slate-500">{{ item.description }}</p></div>
+                    <div v-if="group.status === 'pending' && item.expires" class="flex flex-col items-end gap-1.5 sm:flex-row sm:items-center sm:gap-3.5">
+                        <div class="hidden text-right sm:block">
+                            <p class="text-[11px] font-semibold text-rose-500">Bayar sebelum</p>
+                            <p class="text-[11px] font-bold text-slate-700">{{ date(item.expires, true) }}</p>
+                        </div>
+                        <div class="flex items-start gap-1.5" role="timer" aria-label="Sisa waktu pembayaran">
+                            <div v-for="part in getCountdownParts(item.expires)" :key="part.label" class="text-center">
+                                <span class="grid size-9 place-items-center rounded-xl border border-rose-200 bg-rose-50 font-mono text-base font-extrabold text-rose-600 shadow-2xs">{{ part.value }}</span>
+                                <span class="mt-1 block text-[10px] font-medium text-slate-500">{{ part.label }}</span>
+                            </div>
+                        </div>
+                    </div><span v-else class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold">{{ group.label }}</span>
+                </header>
+                <div class="p-5 sm:p-6">
+                    <div class="grid gap-5 lg:grid-cols-[1fr_1fr_auto]">
+                        <div class="flex items-center gap-3"><img v-if="method(item)?.logo" :src="method(item).logo" :alt="method(item).name" width="72" height="40" class="h-10 w-18 shrink-0 object-contain" /><div><p class="text-xs text-slate-500">Metode pembayaran</p><p class="mt-1 text-sm font-bold">{{ method(item)?.name || 'Belum dipilih' }}</p></div></div>
+                        <div class="border-t border-slate-100 pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-5"><template v-if="codes(item).length"><div v-for="[key, value] in codes(item)" :key="key" class="mb-2 last:mb-0"><p class="text-xs text-slate-500">{{ codeLabels[key] }}</p><button type="button" :aria-label="`Salin ${codeLabels[key]}`" class="mt-1 break-all text-left text-sm font-extrabold hover:text-[#3e7bef] focus-visible:outline-2 focus-visible:outline-[#3e7bef]" @click="copy(value)">{{ value }}</button></div><p class="mt-2 text-[10px] text-slate-400">Tekan kode untuk menyalin</p></template><template v-else><p class="text-xs text-slate-500">Informasi pembayaran</p><p class="mt-1 text-sm font-semibold">{{ item.payment.instructions?.qr_url ? 'Pembayaran QR' : group.status === 'pending' ? 'Buat instruksi pembayaran' : group.label }}</p></template></div>
+                        <div class="border-t border-slate-100 pt-4 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-5"><p class="text-xs text-slate-500">Total pembayaran</p><p class="mt-1 text-lg font-extrabold">{{ money(item.payment.amount) }}</p></div>
+                    </div>
+                    <div class="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end"><Link :href="route(item.kind === 'trip' ? 'bookings.show' : 'souvenirs.orders.show', item.id)" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#3e7bef] px-6 text-sm font-bold text-[#3e7bef] transition hover:bg-[#edf4ff]">Lihat Detail</Link><button v-if="group.status === 'pending'" type="button" @click="showPayment(item)" class="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#3e7bef] px-6 text-sm font-bold text-white transition hover:bg-[#2866d4]">Lihat Cara Bayar</button></div>
                 </div>
-                <div class="flex flex-wrap justify-end gap-2 border-t border-[#edf2f8] bg-[#fbfcfe] px-4 py-3"><button type="button" class="min-h-9 rounded-lg border border-[#d3e1f3] bg-white px-4 text-[11px] font-semibold text-[#3E7BEF] transition hover:border-[#078cff] hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-[#078cff]" @click="show(item, 'instructions')">{{ item.provider === 'QRIS' ? 'Lihat QRIS' : 'Lihat cara bayar' }}</button><button type="button" class="min-h-9 rounded-lg bg-[#078cff] px-4 text-[11px] font-semibold text-white transition hover:bg-[#0878db] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" @click="show(item, 'status')">Cek status bayar</button></div>
             </article>
-            <div v-if="! results.length" class="rounded-2xl border border-dashed border-[#dce5f0] bg-white px-5 py-10 text-center"><Search class="mx-auto mb-3 size-7 text-sky-300" /><p class="text-sm font-semibold text-slate-600">Tidak ada transaksi ditemukan</p><p class="mt-2 text-xs text-slate-400">Coba kata kunci lain atau atur ulang filter pencarian.</p><button class="mt-4 text-xs font-semibold text-[#078cff] hover:underline" @click="reset">Reset filter</button></div>
-        </div>
-        <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-3">
-            <p class="text-[10px] text-slate-500" aria-live="polite">Menampilkan {{ results.length ? start + 1 : 0 }}–{{ Math.min(start + pageSize, results.length) }} dari {{ results.length }} transaksi</p>
-            <nav aria-label="Halaman transaksi" class="flex items-center gap-1">
-                <button type="button" aria-label="Transaksi halaman sebelumnya" :disabled="currentPage === 1" class="grid size-8 place-items-center rounded-full text-[#3E7BEF] hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-30" @click="goToPage(currentPage - 1)"><ChevronLeft class="size-4" /></button>
-                <button v-for="number in pageCount" :key="number" type="button" :aria-label="`Halaman transaksi ${number}`" :aria-current="currentPage === number ? 'page' : undefined" class="grid size-8 place-items-center rounded-full text-xs font-semibold" :class="currentPage === number ? 'bg-[#3E7BEF] text-white' : 'text-slate-500 hover:bg-blue-50'" @click="goToPage(number)">{{ number }}</button>
-                <button type="button" aria-label="Transaksi halaman berikutnya" :disabled="currentPage === pageCount" class="grid size-8 place-items-center rounded-full text-[#3E7BEF] hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-30" @click="goToPage(currentPage + 1)"><ChevronRight class="size-4" /></button>
-            </nav>
-        </footer></div>
-        <p class="mt-3 text-[9px] text-slate-400">Data pembayaran contoh untuk pratinjau tampilan.</p>
-        <AccountExploreBanner />
-        <dialog ref="dialog" class="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-6 text-slate-700 backdrop:bg-slate-900/50" aria-labelledby="payment-detail-heading"><template v-if="selected"><div class="flex justify-between gap-4"><h2 id="payment-detail-heading" class="text-base font-bold">{{ action === 'status' ? 'Status Pembayaran' : `Pembayaran ${selected.provider}` }}</h2><button autofocus aria-label="Tutup rincian pembayaran" @click="dialog.close()"><X class="size-5" /></button></div><p class="mt-4 text-sm">{{ selected.name }} · {{ selected.amount }}</p><p class="mt-2 text-xs text-slate-500">{{ selected.id }}</p><p class="mt-5 rounded-xl bg-sky-50 p-4 text-sm leading-6">{{ action === 'status' ? 'Menunggu pembayaran. Status ini adalah data contoh dan belum terhubung ke penyedia pembayaran.' : selected.provider === 'QRIS' ? 'Kode QR pembayaran belum tersedia karena integrasi QRIS belum diaktifkan.' : 'Panduan dan kode pembayaran asli akan tersedia setelah integrasi penyedia pembayaran diaktifkan. Jangan gunakan kode contoh ini untuk membayar.' }}</p></template></dialog>
+        </section>
+        <div v-if="!groups.length" class="rounded-2xl border border-dashed border-[#dce6f4] bg-white p-10 text-center"><p class="text-sm font-bold">Belum ada tagihan atau transaksi untuk status ini</p><p class="mt-2 text-xs leading-6 text-slate-500">Aktivitas akunmu akan muncul di sini setelah pesanan dibuat.</p></div>
+        <div v-if="page.props.records?.last_page > 1" class="rounded-xl border border-[#dce6f4] bg-white p-3"><Pagination :records="page.props.records" /></div>
+        <div v-if="page.props.souvenirOrders?.last_page > 1" class="rounded-xl border border-[#dce6f4] bg-white p-3"><Pagination :records="page.props.souvenirOrders" /></div>
+        <dialog ref="paymentDialog" aria-labelledby="payment-guide-heading" class="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-2xl bg-white p-0 text-[#17345e] shadow-2xl backdrop:bg-slate-900/50" @click.self="paymentDialog.close()">
+            <div v-if="selectedPayment" class="flex max-h-[90dvh] flex-col">
+                <header class="flex shrink-0 items-center justify-between border-b border-[#e2eaf5] px-6 py-5"><div><p class="text-[10px] font-bold uppercase tracking-wider text-[#3e7bef]">TapakLokal</p><h2 id="payment-guide-heading" class="mt-1 text-xl font-extrabold">Cara Pembayaran</h2></div><button type="button" aria-label="Tutup cara pembayaran" class="size-10 rounded-lg text-2xl hover:bg-[#edf4ff]" @click="paymentDialog.close()">×</button></header>
+                <div class="overflow-y-auto p-6">
+                    <div class="flex items-center justify-between gap-4"><h3 class="text-base font-bold">{{ method(selectedPayment)?.name || 'Metode belum dipilih' }}</h3><img v-if="method(selectedPayment)?.logo" :src="method(selectedPayment).logo" :alt="method(selectedPayment).name" class="h-9 w-20 object-contain" /></div>
+                    <p class="mt-2 break-all text-[11px] text-slate-400">{{ selectedPayment.reference }}</p>
+                    <div class="mt-5 space-y-4 rounded-xl border border-[#dce6f4] bg-[#f5f8ff] p-4"><div v-for="[key, value] in codes(selectedPayment)" :key="key"><p class="text-xs text-slate-500">{{ codeLabels[key] }}</p><div class="mt-1 flex items-center justify-between gap-3"><p class="break-all text-lg font-extrabold">{{ value }}</p><button type="button" class="min-h-9 px-2 text-xs font-bold text-[#3e7bef]" @click="copy(value)">Salin</button></div></div><div class="flex items-center justify-between gap-3"><span class="text-xs text-slate-500">Total pembayaran</span><strong class="text-lg">{{ money(selectedPayment.payment.amount) }}</strong></div><p v-if="selectedPayment.expires" class="border-t border-[#dce6f4] pt-3 text-xs leading-5 text-slate-500">Bayar sebelum <strong class="text-[#17345e]">{{ date(selectedPayment.expires, true) }}</strong></p></div>
+                    <p v-if="copied" role="status" class="mt-3 text-xs text-[#3e7bef]">{{ copied }}</p>
+                    <img v-if="selectedPayment.payment.instructions?.qr_url" :src="selectedPayment.payment.instructions.qr_url" alt="QR pembayaran pesanan" class="mx-auto mt-5 size-52 object-contain" />
+                    <details open class="mt-6 border-y border-[#e2eaf5] py-4"><summary class="cursor-pointer text-sm font-bold">Instruksi Pembayaran</summary><ol class="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-slate-500"><li v-for="step in paymentGuide" :key="step">{{ step }}</li></ol></details>
+                    <div class="mt-5"><h4 class="text-xs font-bold">Simpan bukti pembayaranmu</h4><p class="mt-2 text-xs leading-6 text-slate-500">Gunakan kode atau QR pesanan ini. Status diperbarui setelah pembayaran terverifikasi.</p></div>
+                    <Link v-if="!codes(selectedPayment).length && !selectedPayment.payment.instructions?.qr_url" :href="route('checkout.payment', { type: selectedPayment.kind, id: selectedPayment.id })" class="mt-5 flex min-h-11 items-center justify-center rounded-lg border border-[#3e7bef] text-sm font-bold text-[#3e7bef]">Buka pembayaran pesanan</Link>
+                </div>
+                <footer class="shrink-0 border-t border-[#e2eaf5] p-4"><button type="button" class="min-h-11 w-full rounded-lg bg-[#3e7bef] text-sm font-bold text-white hover:bg-[#2866d4]" @click="paymentDialog.close()">Mengerti</button></footer>
+            </div>
+        </dialog>
     </section>
 </template>

@@ -129,4 +129,18 @@ class PaymentGatewayTest extends TestCase
         Queue::assertPushed(ReconcilePayment::class, 1);
         Queue::assertPushed(ReconcilePayment::class, fn ($job) => $job->reference === $booking->reference);
     }
+
+    public function test_scheduled_reconciliation_keeps_checking_closed_payments_for_late_settlement(): void
+    {
+        config(['platform.midtrans_server_key' => 'test-secret']);
+        $cancelled = Payment::factory()->create(['status' => 'cancelled', 'created_at' => now()->subMinutes(2), 'reconciled_at' => now()->subMinutes(10)]);
+        $expired = Payment::factory()->create(['status' => 'expired', 'created_at' => now()->subMinutes(2), 'reconciled_at' => now()->subMinutes(10)]);
+        Queue::fake([ReconcilePayment::class]);
+
+        $this->artisan('payments:reconcile', ['--limit' => 2])->assertSuccessful();
+
+        Queue::assertPushed(ReconcilePayment::class, 2);
+        Queue::assertPushed(ReconcilePayment::class, fn ($job) => $job->reference === $cancelled->reference);
+        Queue::assertPushed(ReconcilePayment::class, fn ($job) => $job->reference === $expired->reference);
+    }
 }

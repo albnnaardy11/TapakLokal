@@ -46,7 +46,7 @@ class ReconcileSouvenirPayment implements ShouldBeUnique, ShouldQueue
 
             return;
         }
-        $response = Http::withBasicAuth(config('platform.midtrans_server_key'), '')->acceptJson()->connectTimeout(5)->timeout(15)->get($finance->apiBase().'/v2/'.rawurlencode($this->reference).'/status');
+        $response = Http::withBasicAuth(config('platform.midtrans_server_key'), '')->acceptJson()->connectTimeout(2)->timeout(5)->get($finance->apiBase().'/v2/'.rawurlencode($this->reference).'/status');
         if ($response->status() === 404 || (string) $response->json('status_code') === '404') {
             $payment->update(['reconciled_at' => now()]);
 

@@ -184,6 +184,9 @@ class SouvenirCommerceService
     {
         $this->lockedOrder($order->id, function (SouvenirOrder $order, $products) use ($status, $tracking): void {
             $payment = SouvenirPayment::where('souvenir_order_id', $order->id)->lockForUpdate()->firstOrFail();
+            if ($order->status === $status || ($status === 'expired' && $order->status !== 'awaiting_payment')) {
+                return;
+            }
             if (! in_array($status, ['cancelled', 'expired'], true) && $payment->status !== 'paid') {
                 throw ValidationException::withMessages(['status' => 'Pembayaran belum terverifikasi atau memerlukan pemeriksaan keuangan.']);
             }
@@ -196,6 +199,9 @@ class SouvenirCommerceService
             }
             if ($order->status === 'awaiting_payment') {
                 $this->releaseStock($order, $products);
+            }
+            if (in_array($status, ['cancelled', 'expired'], true) && $payment->status === 'pending') {
+                $payment->update(['status' => $status]);
             }
             $order->update(['status' => $status, 'tracking_number' => $tracking ?: $order->tracking_number, 'completed_at' => $status === 'completed' ? now() : null]);
             if ($status === 'completed') {

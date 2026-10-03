@@ -68,6 +68,9 @@ class PaymentInstructionService
                 report($exception);
                 $this->reject('Penyedia pembayaran belum merespons. Coba kembali pada pesanan yang sama.');
             }
+            if ($response->status() === 401 || (string) $response->json('status_code') === '401') {
+                $this->reject('Midtrans menolak kunci sandbox. Hubungi bantuan untuk memperbaiki konfigurasi pembayaran; pesanan belum dibayar.');
+            }
             if (! $response->successful() || ! in_array((string) $response->json('status_code'), ['200', '201'], true)) {
                 $this->reject('Metode ini belum dapat digunakan. Hubungi bantuan atau coba kembali pada pesanan yang sama.');
             }
@@ -96,7 +99,7 @@ class PaymentInstructionService
 
     private function client(): PendingRequest
     {
-        return Http::withBasicAuth(config('platform.midtrans_server_key'), '')->acceptJson()->connectTimeout(4)->timeout(12);
+        return Http::withBasicAuth(config('platform.midtrans_server_key'), '')->acceptJson()->connectTimeout(2)->timeout(6);
     }
 
     /** @param array<string, mixed> $data */

@@ -10,6 +10,7 @@ use App\Models\RewardEntry;
 use App\Models\Trip;
 use App\Models\User;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -50,8 +51,7 @@ class BookingService
                 if (! $promotion || $promotion->status !== 'published' || $promotion->starts_at->startOfDay()->isFuture() || $promotion->ends_at->endOfDay()->isPast() || $promotion->used_count >= $promotion->usage_limit || $subtotal < $promotion->minimum_amount) {
                     throw ValidationException::withMessages(['promotion_code' => 'Voucher tidak berlaku atau kuota habis.']);
                 }
-                $discount = $promotion->type === 'percent' ? intdiv($subtotal * $promotion->value, 100) : $promotion->value;
-                $discount = min($discount, $promotion->maximum_discount ?? $subtotal, $markup);
+                $discount = $this->promotionDiscount($promotion, $subtotal, $markup);
                 if ($discount < 1) {
                     throw ValidationException::withMessages(['promotion_code' => 'Voucher belum dapat digunakan untuk trip ini.']);
                 }
@@ -76,6 +76,69 @@ class BookingService
         });
     }
 
+    /** @return array<int, array<string, mixed>> */
+    public function availablePromotions(Booking $booking): array
+    {
+        return Promotion::where('status', 'published')->whereDate('starts_at', '<=', today())->whereDate('ends_at', '>=', today())
+            ->whereColumn('used_count', '<', 'usage_limit')->orderBy('ends_at')->limit(30)->get()
+            ->map(function (Promotion $promotion) use ($booking): array {
+                $discount = $this->promotionDiscount($promotion, $booking->subtotal, $booking->subtotal - $booking->vendor_amount);
+
+                return [
+                    'code' => $promotion->code, 'name' => $promotion->name, 'type' => $promotion->type,
+                    'value' => $promotion->value, 'discount' => $discount, 'minimum_amount' => $promotion->minimum_amount,
+                    'maximum_discount' => $promotion->maximum_discount, 'ends_at' => $promotion->ends_at->endOfDay()->toIso8601String(),
+                    'eligible' => $booking->subtotal >= $promotion->minimum_amount && $discount > 0,
+                ];
+            })->all();
+    }
+
+    public function updatePromotion(Booking $booking, ?string $code): void
+    {
+        $lock = Cache::lock('payment:checkout:'.$booking->id, 90);
+        if (! $lock->get()) {
+            throw ValidationException::withMessages(['promotion_code' => 'Pembayaran sedang disiapkan. Tunggu sebelum mengubah promo.']);
+        }
+        try {
+            DB::transaction(function () use ($booking, $code): void {
+                Trip::whereKey($booking->trip_id)->lockForUpdate()->firstOrFail();
+                $current = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+                $payment = Payment::where('booking_id', $current->id)->lockForUpdate()->firstOrFail();
+                if ($current->status !== 'awaiting_payment' || $current->expires_at->isPast() || $payment->status !== 'pending' || $payment->method || $payment->checkout_url || $payment->instructions) {
+                    throw ValidationException::withMessages(['promotion_code' => 'Promo hanya dapat diubah sebelum kode pembayaran dibuat.']);
+                }
+                $code = $code ? strtoupper(trim($code)) : null;
+                $promotions = Promotion::where(function ($query) use ($current, $code): void {
+                    $query->where('code', $code)->orWhere('id', $current->promotion_id);
+                })->orderBy('id')->lockForUpdate()->get();
+                $promotion = $code ? $promotions->firstWhere('code', $code) : null;
+                if ($code && (! $promotion || $promotion->status !== 'published' || $promotion->starts_at->startOfDay()->isFuture() || $promotion->ends_at->endOfDay()->isPast() || ($promotion->used_count >= $promotion->usage_limit && $current->promotion_id !== $promotion->id) || $current->subtotal < $promotion->minimum_amount)) {
+                    throw ValidationException::withMessages(['promotion_code' => 'Promo tidak berlaku, minimum transaksi belum terpenuhi, atau kuota sudah habis.']);
+                }
+                $discount = $promotion ? $this->promotionDiscount($promotion, $current->subtotal, $current->subtotal - $current->vendor_amount) : 0;
+                if ($promotion && $discount < 1) {
+                    throw ValidationException::withMessages(['promotion_code' => 'Promo belum dapat digunakan untuk trip ini.']);
+                }
+                if ($current->promotion_id !== $promotion?->id) {
+                    $promotions->firstWhere('id', $current->promotion_id)?->decrement('used_count');
+                    $promotion?->increment('used_count');
+                }
+                $current->update(['promotion_id' => $promotion?->id, 'discount' => $discount, 'total' => $current->subtotal - $discount, 'platform_fee' => $current->subtotal - $current->vendor_amount - $discount]);
+                $payment->update(['amount' => $current->total]);
+                $this->audit->record('booking.promotion_updated', $current, ['promotion_code' => $code, 'discount' => $discount]);
+            }, 3);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function promotionDiscount(Promotion $promotion, int $subtotal, int $markup): int
+    {
+        $discount = $promotion->type === 'percent' ? intdiv($subtotal * $promotion->value, 100) : $promotion->value;
+
+        return max(0, min($discount, $promotion->maximum_discount ?? $subtotal, $markup));
+    }
+
     public function transition(Booking $booking, string $target): Booking
     {
         return DB::transaction(function () use ($booking, $target) {
@@ -88,6 +151,9 @@ class BookingService
                 'ongoing' => ['completed'],
             ];
             if ($booking->status === $target) {
+                return $booking;
+            }
+            if ($target === 'expired' && $booking->status !== 'awaiting_payment') {
                 return $booking;
             }
             if ($target === 'expired' && $booking->expires_at->isFuture()) {
@@ -105,6 +171,7 @@ class BookingService
             $before = $booking->status;
             $booking->update(['status' => $target]);
             if (in_array($target, ['cancelled', 'expired'], true)) {
+                Payment::where('booking_id', $booking->id)->where('status', 'pending')->update(['status' => $target]);
                 $trip->decrement('reserved_seats', $booking->participants);
                 if ($booking->promotion_id) {
                     Promotion::whereKey($booking->promotion_id)->decrement('used_count');

@@ -7,6 +7,7 @@ import {
     ChevronDown,
     ChevronRight,
     ClipboardList,
+    Clock3,
     Coins,
     Crown,
     Gift,
@@ -95,10 +96,11 @@ const groups = [
     {
         title: 'AKUN & PEMBAYARAN',
         items: [
+            { key: 'payments', label: 'Menunggu Pembayaran', icon: Clock3 },
+            { key: 'transactions', label: 'Daftar Transaksi', icon: PurchaseListIcon },
+            { key: 'wallet', label: 'Metode Pembayaran', icon: Wallet },
             { key: 'points', label: 'Points', icon: Coins, extra: computed(() => `${points.value} poin`) },
             { key: 'settings', label: 'Akun Saya', icon: Settings, extra: 'Edit profil' },
-            { key: 'wallet', label: 'Saldo & Pembayaran', icon: Wallet },
-            { key: 'transactions', label: 'Daftar Transaksi', icon: PurchaseListIcon },
         ],
     },
     {

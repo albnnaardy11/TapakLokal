@@ -146,9 +146,14 @@ class SouvenirController extends Controller
         return Inertia::render('SouvenirOrders', ['orders' => SouvenirOrder::where('user_id', $request->user()->id)->with('items', 'payment', 'vendor:id,name')->latest('id')->cursorPaginate(20)]);
     }
 
-    public function orderShow(Request $request, SouvenirOrder $order): Response
+    public function orderShow(Request $request, SouvenirOrder $order, SouvenirCommerceService $service): Response
     {
         abort_unless($order->user_id === $request->user()->id, 404);
+
+        if ($order->status === 'awaiting_payment' && $order->expires_at->isPast()) {
+            $service->transition($order, 'expired');
+            $order->refresh();
+        }
 
         return Inertia::render('SouvenirOrders', ['order' => $order->load('items', 'payment', 'vendor:id,name'), 'paymentEnabled' => filled(config('platform.midtrans_server_key'))]);
     }

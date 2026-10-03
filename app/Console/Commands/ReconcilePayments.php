@@ -25,7 +25,7 @@ class ReconcilePayments extends Command
 
             return self::INVALID;
         }
-        $payments = Payment::where('status', 'pending')->where('reconciled_at', '<=', now()->subMinutes(5))
+        $payments = Payment::whereIn('status', ['pending', 'cancelled', 'expired'])->where('reconciled_at', '<=', now()->subMinutes(5))
             ->whereBetween('created_at', [now()->subDays(3), now()->subMinute()])
             ->orderBy('reconciled_at')->orderBy('id')->limit($limit)->get(['id', 'reference']);
         foreach ($payments as $payment) {

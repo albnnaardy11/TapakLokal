@@ -31,7 +31,7 @@ class MaintainSouvenirOrders extends Command
             }
         }
         if (config('platform.midtrans_server_key')) {
-            foreach (SouvenirPayment::where('status', 'pending')->where('reconciled_at', '<=', now()->subMinutes(5))->where('created_at', '>=', now()->subDays(3))->orderBy('reconciled_at')->limit($limit)->get(['reference']) as $payment) {
+            foreach (SouvenirPayment::whereIn('status', ['pending', 'cancelled', 'expired'])->where('reconciled_at', '<=', now()->subMinutes(5))->where('created_at', '>=', now()->subDays(3))->orderBy('reconciled_at')->limit($limit)->get(['reference']) as $payment) {
                 ReconcileSouvenirPayment::dispatch($payment->reference);
             }
         }

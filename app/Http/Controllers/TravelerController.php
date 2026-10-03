@@ -27,7 +27,7 @@ use Inertia\Response;
 class TravelerController extends Controller
 {
     public const SECTIONS = [
-        'bookings' => 'Pemesanan & Tiket', 'transactions' => 'Daftar Transaksi', 'wallet' => 'Saldo & Pembayaran',
+        'bookings' => 'Pemesanan & Tiket', 'payments' => 'Menunggu Pembayaran', 'transactions' => 'Daftar Transaksi', 'wallet' => 'Metode Pembayaran',
         'points' => 'Points', 'vouchers' => 'Voucher', 'favorites' => 'OT & OP Favorit', 'travelers' => 'Daftar Wisatawan',
         'chat' => 'Chat', 'reviews' => 'Rating & Ulasan', 'support' => 'Pesan Bantuan', 'settings' => 'Akun Saya',
     ];
@@ -39,7 +39,7 @@ class TravelerController extends Controller
         $user = $request->user();
         $query = match ($section) {
             'bookings' => Booking::with('trip:id,title,image_url,departure_date,destination')->where('user_id', $user->id),
-            'transactions', 'wallet' => Payment::with('booking:id,reference,user_id')->whereHas('booking', fn ($q) => $q->where('user_id', $user->id)),
+            'transactions', 'payments' => Payment::with('booking:id,reference,user_id,expires_at')->whereHas('booking', fn ($q) => $q->where('user_id', $user->id)),
             'points' => RewardEntry::where('user_id', $user->id),
             'vouchers' => Promotion::where('status', 'published')->whereDate('starts_at', '<=', today())->whereDate('ends_at', '>=', today()),
             'favorites' => Favorite::with('trip:id,title,image_url,destination,price,status')->where('user_id', $user->id),
@@ -49,12 +49,32 @@ class TravelerController extends Controller
             default => null,
         };
 
+        $transactions = null;
+        if ($section === 'transactions') {
+            $tripRows = DB::table('payments')->join('bookings', 'bookings.id', '=', 'payments.booking_id')
+                ->where('bookings.user_id', $user->id)->where('bookings.status', 'completed')
+                ->where(function ($query) {
+                    $query->where('payments.status', '!=', 'pending')->orWhere('bookings.expires_at', '<=', now());
+                })->select('payments.id', 'payments.created_at')->selectRaw("'trip' as kind");
+            $souvenirRows = DB::table('souvenir_orders')->where('user_id', $user->id)->where('status', 'completed')
+                ->where(function ($query) {
+                    $query->where('status', '!=', 'awaiting_payment')->orWhere('expires_at', '<=', now());
+                })->select('id', 'created_at')->selectRaw("'souvenir' as kind");
+            $transactions = DB::query()->fromSub($tripRows->unionAll($souvenirRows), 'transactions')
+                ->orderByDesc('created_at')->orderBy('kind')->orderByDesc('id')->paginate(3)->withQueryString();
+            $rows = $transactions->getCollection();
+            $payments = Payment::with('booking.trip', 'booking.vendor')->whereIn('id', $rows->where('kind', 'trip')->pluck('id'))->get()->keyBy('id');
+            $orders = SouvenirOrder::with('items', 'payment', 'vendor:id,name')->whereIn('id', $rows->where('kind', 'souvenir')->pluck('id'))->get()->keyBy('id');
+            $transactions->setCollection($rows->map(fn ($row) => ['kind' => $row->kind, 'record' => $row->kind === 'trip' ? $payments->get($row->id) : $orders->get($row->id)]));
+        }
+
         return Inertia::render('Account', [
             'liveData' => true, 'sectionKey' => $section, 'sectionLabel' => self::SECTIONS[$section],
             'paymentMethods' => $methods->catalog(),
             'paymentPreferences' => $methods->preferences($user),
-            'souvenirOrders' => in_array($section, ['bookings', 'transactions', 'wallet'], true) ? SouvenirOrder::where('user_id', $user->id)->with('items', 'payment', 'vendor:id,name')->latest('id')->paginate(10, ['*'], 'souvenir_page')->withQueryString() : null,
-            'records' => $query?->orderByDesc('id')->paginate(10)->withQueryString(),
+            'transactions' => $transactions,
+            'souvenirOrders' => in_array($section, ['bookings', 'payments'], true) ? SouvenirOrder::where('user_id', $user->id)->with('items', 'payment', 'vendor:id,name')->latest('id')->paginate(10, ['*'], 'souvenir_page')->withQueryString() : null,
+            'records' => $section === 'transactions' ? null : $query?->orderByDesc('id')->paginate(10)->withQueryString(),
             'pointBalance' => $section === 'points' ? RewardEntry::where('user_id', $user->id)->sum('points') : null,
             'reviewable' => $section === 'reviews' ? Booking::with('trip:id,title')->where('user_id', $user->id)->where('status', 'completed')->whereNotIn('id', Review::select('booking_id'))->latest('id')->limit(50)->get() : [],
         ]);
