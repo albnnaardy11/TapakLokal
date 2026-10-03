@@ -1,4 +1,5 @@
 <script setup>
+import TicketScanner from '../../Components/Shared/TicketScanner.vue';
 import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
@@ -18,7 +19,7 @@ const transition = (item, status) => { statusForm.status = status; statusForm.pu
 </script>
 <template>
     <PanelLayout :title="sections[section] || 'Overview Partner'" subtitle="Kelola perjalanan dan layanan lokal, dari satu workspace." :navigation="navigation" vendor>
-        <template #actions><Link v-if="section === 'trips' && vendor?.status === 'verified'" :href="route('vendor.trips.create')" class="panel-primary">Tambah trip / jadwal</Link></template>
+        <TicketScanner v-if="section === 'bookings' && vendor?.status === 'verified'" /><template #actions><Link v-if="section === 'trips' && vendor?.status === 'verified'" :href="route('vendor.trips.create')" class="panel-primary">Tambah trip / jadwal</Link></template>
         <div v-if="!vendor || vendor.status !== 'verified'" class="mb-6 rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm leading-6 text-amber-800">Status mitra: <strong>{{ vendor?.status || 'belum terdaftar' }}</strong>. Lengkapi profil dan dokumen agar tim operasional dapat meninjau bisnis kamu.</div>
         <template v-if="section === 'profile' || !vendor"><p v-for="(error,key) in form.errors" :key="key" role="alert" class="mb-3 text-sm text-red-700">{{ error }}</p><p v-for="(error,key) in upload.errors" :key="key" role="alert" class="mb-3 text-sm text-red-700">{{ error }}</p>
             <form class="panel-surface max-w-3xl p-6" @submit.prevent="form.put(route('vendor.profile.save'))"><h2 class="mb-5 font-bold">Identitas bisnis</h2><div class="grid gap-4 sm:grid-cols-2"><label v-for="(label, key) in { name: 'Nama bisnis', city: 'Kota', email: 'Email bisnis', phone: 'Nomor kontak' }" :key="key" class="text-xs font-semibold">{{ label }}<input v-model="form[key]" :type="key === 'email' ? 'email' : key === 'document_id' ? 'number' : 'text'" :required="key !== 'document_id'" class="panel-input mt-2" /></label><label class="text-xs font-semibold sm:col-span-2">Deskripsi<textarea v-model="form.description" rows="4" class="panel-input mt-2"></textarea></label></div><button :disabled="form.processing" class="panel-primary mt-5">Simpan profil</button></form>

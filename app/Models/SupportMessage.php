@@ -12,7 +12,12 @@ class SupportMessage extends Model
     /** @use HasFactory<SupportMessageFactory> */
     use HasFactory;
 
-    protected $fillable = ['support_ticket_id', 'user_id', 'body'];
+    protected $fillable = ['support_ticket_id', 'user_id', 'body', 'is_automatic', 'read_at'];
+
+    protected function casts(): array
+    {
+        return ['is_automatic' => 'boolean', 'read_at' => 'datetime'];
+    }
 
     public function user(): BelongsTo
     {

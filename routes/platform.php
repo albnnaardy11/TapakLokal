@@ -118,6 +118,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'can:admin.access'])
     });
 });
 Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'can:vendor.access'])->group(function () {
+    Route::get('/tickets/{booking}', [Vendor\TicketController::class, 'show'])->middleware(['signed', 'throttle:60,1'])->name('tickets.show');
+    Route::post('/tickets/{booking}', [Vendor\TicketController::class, 'checkIn'])->middleware(['signed', 'throttle:10,1'])->name('tickets.check-in');
     Route::get('/', [Vendor\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/trips/create', [Vendor\TripController::class, 'create'])->name('trips.create');
     Route::post('/trips', [Vendor\TripController::class, 'store'])->name('trips.store');

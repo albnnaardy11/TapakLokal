@@ -6,6 +6,7 @@ import { ArrowUpRight, Plus, Search, Upload, X } from 'lucide-vue-next';
 import PanelLayout from '../../Components/Admin/PanelLayout.vue';
 import Pagination from '../../Components/Admin/Pagination.vue';
 import Fields from '../../Components/Admin/Fields.vue';
+import AccountChat from '../../Components/Account/AccountChat.vue';
 
 const props = defineProps({
     module: String,
@@ -81,6 +82,7 @@ const label = (value) => value.replaceAll('_', ' ');
                 <span>Upload media</span>
             </button>
         </template>
+        <AccountChat v-if="module === 'support'" admin-mode :can-reply="canManage" class="mb-6" />
 
         <!-- Form Create/Upload -->
         <section v-if="creating" class="mb-6 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">

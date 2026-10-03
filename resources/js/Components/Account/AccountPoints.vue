@@ -1,91 +1,104 @@
 <script setup>
-import { Award, Coins, Gift, Hourglass, Sparkles, X } from 'lucide-vue-next';
+import { Award, ArrowDownLeft, ArrowUpRight, ArrowRight, Coins, Info, Wallet, CircleCheck, History, RotateCcw, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import AccountExploreBanner from './AccountExploreBanner.vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
+import Pagination from '../Admin/Pagination.vue';
 
-const activeTab = ref('Aktif');
+const page = usePage();
 const dialog = ref(null);
-const dialogTitle = ref('');
-const dialogText = ref('');
-const history = [
-    { id: 'PT-006', status: 'Aktif', type: 'redeem', title: 'Tukar Poin — Voucher Diskon 20% Open Trip', date: '28 Jul 2026', amount: -800, description: 'Penukaran poin untuk voucher perjalanan Open Trip.', voucher: 'Diskon 20% Open Trip', code: 'OT-DEMO-20', voucherStatus: 'Voucher Aktif' },
-    { id: 'PT-005', status: 'Aktif', type: 'earn', title: 'Poin Diperoleh — Open Trip Curug Nangka Bogor', date: '20 Jul 2026', amount: 390, description: 'Bonus poin dari perjalanan yang telah selesai.' },
-    { id: 'PT-004', status: 'Aktif', type: 'redeem', title: 'Tukar Poin — Voucher Diskon 15% Kuliner Hidden Gem', date: '15 Jul 2026', amount: -300, description: 'Penukaran poin untuk menikmati kuliner lokal.', voucher: 'Diskon 15% Kuliner Hidden Gem', code: 'FOOD-DEMO-15', voucherStatus: 'Voucher Aktif' },
-    { id: 'PT-003', status: 'Aktif', type: 'earn', title: 'Poin Diperoleh — Private Trip Raja Ampat', date: '10 Jul 2026', amount: 810, description: 'Bonus poin dari perjalanan yang telah selesai.', expiring: 10 },
-    { id: 'PT-002', status: 'Tertunda', type: 'earn', title: 'Poin Perjalanan — Open Trip Bromo', date: '02 Agu 2026', amount: 150, description: 'Poin menunggu penyelesaian perjalanan dan belum masuk saldo.' },
-    { id: 'PT-001', status: 'Dibatalkan', type: 'earn', title: 'Poin Perjalanan — Open Trip Bali', date: '05 Jul 2026', amount: 75, description: 'Poin dibatalkan karena pemesanan dibatalkan. Tidak memengaruhi saldo.' },
-];
-const completed = history.filter((item) => item.status === 'Aktif');
-const balance = completed.reduce((total, item) => total + item.amount, 0);
-const visibleHistory = computed(() => history.filter((item) => item.status === activeTab.value));
-const formatPoints = (value) => new Intl.NumberFormat('id-ID').format(value);
-const statistics = [
-    { label: 'Total Didapat', value: formatPoints(completed.filter((item) => item.amount > 0).reduce((total, item) => total + item.amount, 0)), unit: 'pts', icon: Coins },
-    { label: 'Sudah Ditukar', value: formatPoints(-completed.filter((item) => item.amount < 0).reduce((total, item) => total + item.amount, 0)), unit: 'pts', icon: Gift },
-    { label: 'Segera Kedaluwarsa', value: completed.reduce((total, item) => total + (item.expiring || 0), 0), unit: 'pts', icon: Hourglass },
-    { label: 'Anggota Sejak', value: '2025', unit: '', icon: Award },
-];
-const showInfo = (title, text) => {
-    dialogTitle.value = title;
-    dialogText.value = text;
-    dialog.value.showModal();
-};
+const summary = computed(() => page.props.pointSummary || {});
+const records = computed(() => page.props.records);
+const number = value => new Intl.NumberFormat('id-ID').format(Number(value || 0));
+const date = value => new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Jakarta' }).format(new Date(value));
+const tabs = [{ key: 'all', label: 'Semua aktivitas' }, { key: 'earned', label: 'Poin masuk' }, { key: 'deducted', label: 'Poin berkurang' }];
+const filter = activity => router.get(route('account.section', 'points'), { activity }, { preserveScroll: true, preserveState: true });
+const statistics = computed(() => [
+    { label: 'Total diperoleh', value: number(summary.value.earned), unit: 'poin', icon: ArrowDownLeft, note: 'Akumulasi poin yang masuk' },
+    { label: 'Total pengurangan', value: number(summary.value.deducted), unit: 'poin', icon: ArrowUpRight, note: 'Termasuk penyesuaian refund' },
+    { label: 'Anggota sejak', value: summary.value.memberSince || '—', unit: '', icon: Award, note: 'Awal perjalananmu bersama kami' },
+]);
 </script>
 
 <template>
-    <section aria-labelledby="points-heading">
-        <h2 id="points-heading" class="text-sm font-extrabold text-[#183660]">Points Saya</h2><p class="mt-1 text-[11px] leading-5 text-slate-500">Pantau perolehan poin dan hadiah dari setiap perjalananmu.</p>
-        <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <div class="relative isolate overflow-hidden rounded-2xl border border-[#3185ef] bg-gradient-to-br from-[#1649ac] via-[#1679df] to-[#26bfda] p-6 text-white shadow-[0_8px_24px_rgba(30,106,198,0.16)]">
-                <div class="pointer-events-none absolute -right-12 -top-16 -z-10 size-60 rounded-full border-[28px] border-white/10" aria-hidden="true"></div>
-                <div class="pointer-events-none absolute -bottom-24 right-8 -z-10 size-56 rounded-full border border-white/20" aria-hidden="true"></div>
-                <span class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-[10px] font-semibold tracking-wide"><Coins class="size-4 text-sky-100" aria-hidden="true" />TAPAKLOKAL POINTS</span>
-                <p class="mt-5 text-4xl font-extrabold tracking-tight">{{ formatPoints(balance) }}</p>
-                <p class="mt-1 text-xs text-sky-100">Total poin tersedia</p>
-                <button class="mt-5 rounded-xl bg-white px-4 py-2.5 text-[10px] font-bold text-[#3E7BEF] transition hover:bg-sky-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Tentang Points', 'Poin dan statistik pada halaman ini adalah contoh tampilan. Saldo, perolehan, masa berlaku, dan riwayat akan mengikuti data akun setelah sistem points terhubung.')">Tentang Points</button>
+    <section class="space-y-5 text-[#17345e]" aria-labelledby="points-heading">
+        <header class="flex items-center justify-between gap-4">
+            <div><h2 id="points-heading" class="text-xl font-extrabold tracking-tight">Points Saya</h2><p class="mt-1 text-xs leading-5 text-slate-500">Setiap perjalanan membawa cerita. Setiap poin punya nilainya.</p></div>
+            <span class="hidden rounded-full border border-[#dce6f4] bg-white px-3 py-2 text-[10px] font-bold text-[#3e7bef] sm:inline-flex">TAPAK REWARDS</span>
+        </header>
+
+        <div class="grid overflow-hidden rounded-2xl border border-[#dce6f4] shadow-sm md:grid-cols-[1.1fr_1fr]">
+            <div class="relative isolate overflow-hidden bg-linear-to-br from-[#17345e] via-[#1768ce] to-[#0099ef] p-6 text-white sm:p-7">
+                <div aria-hidden="true" class="pointer-events-none absolute -right-16 -top-16 -z-10 size-64 rounded-full border-[35px] border-white/10"></div>
+                <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 right-12 -z-10 size-56 rounded-full border border-white/20"></div>
+                <div class="flex items-baseline gap-2"><p class="text-5xl font-extrabold tracking-tight tabular-nums">{{ number(page.props.pointBalance) }}</p><span class="text-sm text-blue-100">poin</span></div>
+                <p class="mt-2 text-xs text-blue-100">Saldo poin kamu saat ini</p>
+                <button type="button" class="mt-6 inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/40 bg-white/10 px-4 text-xs font-semibold transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" @click="dialog.showModal()"><Info class="size-4" />Tentang Points</button>
             </div>
-            <div class="relative isolate flex flex-col items-start overflow-hidden rounded-2xl border border-[#c7e5f5] bg-gradient-to-br from-[#eaf3ff] via-[#e4f6ff] to-[#bceeea] p-6 text-[#183660] shadow-[0_8px_24px_rgba(30,106,198,0.06)]">
-                <div class="pointer-events-none absolute -right-14 -bottom-24 -z-10 size-64 rounded-full border-[30px] border-white/35" aria-hidden="true"></div>
-                <div class="pointer-events-none absolute -top-12 -right-8 -z-10 size-40 rounded-full bg-white/35" aria-hidden="true"></div>
-                <span class="mb-3 grid size-9 place-items-center rounded-xl border border-white/80 bg-white/70 text-[#1685da]"><Sparkles class="size-5" aria-hidden="true" /></span>
-                <h3 class="max-w-52 text-sm font-bold leading-tight">Perjalanan seru,<br />hadiahnya juga!</h3>
-                <p class="mt-2 max-w-56 text-xs leading-5 text-slate-500">Pelajari cara mendapatkan dan menukarkan poin untuk perjalanan berikutnya.</p>
-                <button class="mt-4 rounded-xl bg-[#078cff] px-4 py-2.5 text-[10px] font-bold text-white transition hover:bg-[#0878db] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Panduan Points', 'Rincian program, aktivitas yang menghasilkan poin, dan pilihan penukaran akan tersedia saat program points diaktifkan. Belum ada penambahan atau penukaran poin pada pratinjau ini.')">Pelajari</button>
+            <div class="flex flex-col items-start justify-center bg-[#edf5ff] p-6 sm:p-7">
+                <h3 class="text-lg font-extrabold leading-snug">Jelajahi lebih jauh,<br />kumpulkan lebih banyak.</h3>
+                <p class="mt-3 max-w-xs text-xs leading-6 text-slate-500">Selesaikan perjalananmu dan dapatkan poin yang tercatat otomatis di akunmu.</p>
+                <Link :href="route('points.guide')" class="mt-5 inline-flex min-h-10 items-center gap-3 rounded-lg bg-[#3e7bef] px-4 text-xs font-bold text-white transition-colors hover:bg-[#2866d4]">Pelajari lebih lanjut <ArrowRight class="size-4" /></Link>
             </div>
         </div>
 
-        <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div v-for="(stat, index) in statistics" :key="stat.label" class="group relative isolate overflow-hidden rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none" :class="['border-blue-100 bg-gradient-to-br from-white to-blue-50', 'border-cyan-100 bg-gradient-to-br from-white to-cyan-50', 'border-rose-100 bg-gradient-to-br from-white to-rose-50', 'border-indigo-100 bg-gradient-to-br from-white to-indigo-50'][index]">
-                <div aria-hidden="true" class="pointer-events-none absolute -bottom-9 -right-8 -z-10 size-28 rounded-full border-[18px] opacity-40" :class="['border-blue-100', 'border-cyan-100', 'border-rose-100', 'border-indigo-100'][index]"></div>
-                <div class="flex items-center gap-2.5"><span class="grid size-9 shrink-0 place-items-center rounded-xl border border-white/80 shadow-sm" :class="['bg-blue-100 text-blue-600', 'bg-cyan-100 text-cyan-700', 'bg-rose-100 text-rose-600', 'bg-indigo-100 text-indigo-600'][index]"><component :is="stat.icon" class="size-4" aria-hidden="true" /></span><p class="text-[10px] font-semibold leading-4 text-slate-600">{{ stat.label }}</p></div>
-                <p class="mt-4 flex items-baseline gap-1.5 text-2xl font-extrabold tracking-tight text-[#183660]">{{ stat.value }}<span class="text-[10px] font-medium tracking-normal text-slate-400">{{ stat.unit }}</span></p>
-                <p class="mt-1.5 text-[9px] leading-4 text-slate-500">{{ ['Poin dari perjalananmu', 'Ditukar menjadi hadiah', 'Gunakan sebelum berakhir', 'Awal cerita perjalananmu'][index] }}</p>
+        <div class="grid gap-3 sm:grid-cols-3">
+            <div v-for="stat in statistics" :key="stat.label" class="rounded-2xl border border-[#dce6f4] bg-white p-5 shadow-xs">
+                <div class="flex items-center gap-2"><span class="grid size-8 shrink-0 place-items-center rounded-lg bg-[#edf5ff] text-[#3e7bef]"><component :is="stat.icon" class="size-4" /></span><p class="text-xs font-medium text-slate-500">{{ stat.label }}</p></div>
+                <p class="mt-4 text-2xl font-extrabold tabular-nums">{{ stat.value }} <span class="text-xs font-normal text-slate-400">{{ stat.unit }}</span></p>
+                <p class="mt-1 text-[10px] leading-5 text-slate-500">{{ stat.note }}</p>
             </div>
         </div>
 
-        <div class="mt-4 overflow-hidden rounded-2xl border border-[#e1eaf5] bg-white shadow-[0_4px_20px_rgba(23,75,120,0.04)]">
-            <h3 class="border-b border-slate-100 px-4 py-3 text-xs font-semibold text-[#183660]">Riwayat Points</h3>
-            <div class="flex gap-1 overflow-x-auto border-b border-slate-100 p-3" role="tablist" aria-label="Status points"><button v-for="tab in ['Aktif', 'Tertunda', 'Kedaluwarsa', 'Dibatalkan']" :id="`points-tab-${tab}`" :key="tab" role="tab" :aria-selected="activeTab === tab" aria-controls="points-history" class="min-h-8 shrink-0 rounded-full px-3 py-1.5 text-[10px] font-semibold transition-colors hover:text-[#078cff] focus-visible:outline-2 focus-visible:outline-[#078cff]" :class="activeTab === tab ? 'bg-[#3E7BEF] text-white shadow-sm' : 'bg-[#f8fafc] text-slate-500'" @click="activeTab = tab">{{ tab }}</button></div>
-            <div v-if="visibleHistory.length" id="points-history" role="tabpanel" :aria-labelledby="`points-tab-${activeTab}`" class="max-h-[420px] space-y-3 overflow-y-auto overscroll-contain bg-[#f8fafc] p-3 sm:p-4 [scrollbar-width:thin] [scrollbar-color:#b9d5fa_transparent]">
-                <article v-for="item in visibleHistory" :key="item.id" class="flex gap-3 rounded-xl border border-[#e1eaf5] bg-white p-4 transition-colors hover:border-[#aacbff]">
-                    <span class="grid size-8 shrink-0 place-items-center rounded-lg" :class="item.type === 'earn' ? 'bg-sky-50 text-[#078cff]' : 'bg-teal-50 text-[#3E7BEF]'"><Coins v-if="item.type === 'earn'" class="size-4" /><Gift v-else class="size-4" /></span>
+        <section class="overflow-hidden rounded-2xl border border-[#dce6f4] bg-white shadow-xs" aria-labelledby="points-history-title">
+            <header class="flex flex-wrap items-center justify-between gap-2 px-5 pt-5"><h3 id="points-history-title" class="text-sm font-bold">Riwayat Points</h3><span class="text-[11px] text-slate-400">{{ number(records?.total) }} aktivitas tercatat</span></header>
+            <nav aria-label="Filter riwayat poin" class="mt-4 flex gap-2 overflow-x-auto border-b border-[#e8eef7] px-5 pb-4">
+                <button v-for="tab in tabs" :key="tab.key" type="button" :aria-pressed="page.props.pointFilter === tab.key" class="min-h-10 shrink-0 rounded-lg border px-4 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3e7bef]" :class="page.props.pointFilter === tab.key ? 'border-[#3e7bef] bg-[#edf4ff] text-[#3e7bef]' : 'border-[#e1e9f3] text-slate-500 hover:border-[#3e7bef] hover:bg-[#f5f8ff]'" @click="filter(tab.key)">{{ tab.label }}</button>
+            </nav>
+            <div v-if="records?.data?.length" class="divide-y divide-[#edf1f7]">
+                <article v-for="entry in records.data" :key="entry.id" class="flex items-start gap-3 p-5 transition-colors hover:bg-[#f8fbff] sm:gap-4">
+                    <span class="grid size-10 shrink-0 place-items-center rounded-xl" :class="entry.points > 0 ? 'bg-[#edf5ff] text-[#3e7bef]' : 'bg-orange-50 text-orange-600'"><component :is="entry.points > 0 ? ArrowDownLeft : ArrowUpRight" class="size-5" /></span>
                     <div class="min-w-0 flex-1">
-                        <div class="flex flex-wrap justify-between gap-2"><div class="flex flex-wrap gap-1.5"><span class="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-medium text-amber-700">{{ item.type === 'earn' ? 'Poin masuk' : 'Tukar poin' }}</span><span class="rounded-full bg-[#edf6ff] px-2 py-0.5 text-[9px] text-[#078cff]">{{ item.status === 'Aktif' ? (item.voucherStatus || 'Selesai') : item.status }}</span></div><time class="text-[10px] text-slate-400">{{ item.date }}</time></div>
-                        <div class="mt-2 flex items-start justify-between gap-3"><h4 class="text-xs font-bold leading-5 text-[#25364d]">{{ item.title }}</h4><span class="shrink-0 text-sm font-bold tabular-nums" :class="item.status !== 'Aktif' ? 'text-slate-400' : item.amount > 0 ? 'text-[#078cff]' : 'text-rose-500'">{{ item.amount > 0 ? '+' : '−' }}{{ formatPoints(Math.abs(item.amount)) }} <span class="text-[9px] font-normal">pts</span></span></div>
-                        <p class="mt-1 text-[11px] leading-5 text-slate-400">{{ item.description }}</p>
-                        <button v-if="item.voucher" class="mt-3 flex w-full items-center gap-2 rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2.5 text-left transition hover:bg-blue-100/70 focus-visible:outline-2 focus-visible:outline-[#3E7BEF]" @click="showInfo(item.voucher, `Kode ${item.code} adalah voucher contoh dari riwayat penukaran. Belum dapat digunakan untuk transaksi nyata.`)"><Gift class="size-4 shrink-0 text-[#3E7BEF]" /><span class="flex-1 text-[10px] font-semibold text-[#183660]">{{ item.voucher }}</span><span class="rounded border border-blue-200 bg-white px-1.5 py-1 font-mono text-[9px] text-[#3E7BEF]">{{ item.code }}</span></button>
+                        <div class="flex flex-wrap items-center justify-between gap-2"><span class="text-[10px] font-semibold" :class="entry.points > 0 ? 'text-[#3e7bef]' : 'text-orange-600'">{{ entry.points > 0 ? 'Poin diperoleh' : 'Pengurangan poin' }}</span><time :datetime="entry.created_at" class="text-[10px] text-slate-400">{{ date(entry.created_at) }}</time></div>
+                        <div class="mt-2 flex flex-wrap items-start justify-between gap-2"><h4 class="text-xs font-bold leading-6">{{ entry.description || 'Penyesuaian poin' }}</h4><p class="shrink-0 text-base font-extrabold tabular-nums" :class="entry.points > 0 ? 'text-[#3e7bef]' : 'text-orange-600'">{{ entry.points > 0 ? '+' : '' }}{{ number(entry.points) }} <span class="text-[10px] font-normal">poin</span></p></div>
+                        <p class="mt-1 break-all text-[10px] text-slate-400">Referensi: {{ entry.reference }}</p>
+                        <Link v-if="entry.booking_id" :href="route('bookings.show', entry.booking_id)" class="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#3e7bef] hover:underline">Lihat perjalanan <ArrowRight class="size-3" /></Link>
                     </div>
                 </article>
             </div>
-            <div v-else id="points-history" role="tabpanel" :aria-labelledby="`points-tab-${activeTab}`" class="flex min-h-[220px] flex-col items-center justify-center px-6 py-10 text-center">
-                <div class="relative mb-4 grid size-16 place-items-center rounded-full bg-[#eef7ff]" aria-hidden="true"><Coins class="size-8 text-[#3E7BEF]" :stroke-width="1.4" /><span class="absolute -right-2 bottom-0 grid size-10 place-items-center rounded-xl bg-white text-teal-500 shadow-[0_4px_20px_rgba(23,75,120,0.04)]"><Sparkles class="size-5" /></span><span class="absolute left-0 top-2 size-3 rounded-full bg-teal-200"></span></div>
-                <h4 class="text-sm font-bold text-[#25364d]">{{ activeTab === 'Aktif' ? 'Belum Ada Aktivitas Points' : `Belum Ada Points ${activeTab}` }}</h4>
-                <p class="mt-2 max-w-72 text-xs leading-5 text-slate-400">{{ activeTab === 'Aktif' ? 'Riwayat perolehan dan penggunaan poinmu akan muncul di sini.' : `Tidak ada riwayat poin dengan status ${activeTab.toLowerCase()} saat ini.` }}</p>
-                <button class="mt-5 rounded-lg bg-[#078cff] px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-[#0878db] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3E7BEF]" @click="showInfo('Tukar Points', 'Pilihan hadiah dan penukaran belum tersedia. Saldo contoh tidak dapat ditukarkan dan tidak akan berubah.')">Tukar Points</button>
+            <div v-else class="flex flex-col items-center px-6 py-12 text-center">
+                <span class="grid size-16 place-items-center rounded-2xl bg-[#edf5ff] text-[#3e7bef]"><Coins class="size-8" /></span>
+                <h4 class="mt-4 text-sm font-bold">{{ page.props.pointFilter === 'all' ? 'Perjalanan berikutnya, poin pertamamu' : 'Belum ada aktivitas di kategori ini' }}</h4>
+                <p class="mt-2 max-w-sm text-xs leading-6 text-slate-500">Poin dari perjalanan yang selesai akan tercatat di sini. Semua perubahan saldo dapat kamu pantau melalui riwayat ini.</p>
             </div>
-        </div>
-        <p class="mt-3 text-[9px] text-slate-400">Pratinjau desain · Saldo dan statistik adalah data contoh.</p>
-        <AccountExploreBanner />
-        <dialog ref="dialog" class="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-6 text-slate-700 shadow-xl backdrop:bg-slate-900/50" aria-labelledby="points-info-title"><div class="flex items-center justify-between gap-3"><h2 id="points-info-title" class="text-base font-bold">{{ dialogTitle }}</h2><button autofocus class="rounded-full p-2 hover:bg-slate-100" aria-label="Tutup informasi points" @click="dialog.close()"><X class="size-4" /></button></div><p class="mt-4 text-sm leading-6 text-slate-500">{{ dialogText }}</p></dialog>
+            <div v-if="records?.last_page > 1" class="border-t border-[#edf1f7] p-4"><Pagination :records="records" /></div>
+        </section>
+        <p class="flex items-start gap-2 text-[11px] leading-5 text-slate-500"><Info class="mt-0.5 size-4 shrink-0 text-[#3e7bef]" />Saldo mengikuti aktivitas poin yang tercatat. Pengembalian dana dapat mengurangi poin yang sebelumnya diperoleh.</p>
+        <dialog ref="dialog" aria-labelledby="points-info-title" aria-describedby="points-info-description" class="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-2xl border border-[#dce6f4] bg-white p-0 text-[#17345e] shadow-2xl backdrop:bg-slate-900/50 backdrop:backdrop-blur-sm" @click.self="dialog.close()">
+            <div class="flex max-h-[90dvh] flex-col">
+                <header class="flex shrink-0 items-center justify-between gap-4 border-b border-[#edf1f7] px-5 py-4 sm:px-7">
+                    <h2 id="points-info-title" class="text-base font-extrabold">Tentang Tapak Points</h2>
+                    <button type="button" autofocus aria-label="Tutup informasi poin" class="grid size-9 shrink-0 place-items-center rounded-full text-slate-400 transition-colors hover:bg-[#edf5ff] hover:text-[#3e7bef] focus-visible:outline-2 focus-visible:outline-[#3e7bef]" @click="dialog.close()"><X class="size-5" /></button>
+                </header>
+                <div class="min-h-0 overflow-y-auto overscroll-contain px-5 pb-6 sm:px-7">
+                    <div aria-hidden="true" class="relative mx-auto my-6 flex h-32 w-48 items-center justify-center">
+                        <div class="absolute size-32 rounded-full bg-[#edf5ff]"></div>
+                        <div class="absolute bottom-0 h-3 w-32 rounded-[50%] bg-[#dcecff]"></div>
+                        <div class="relative grid h-20 w-24 -rotate-12 place-items-center rounded-2xl border border-[#6ba6ff] bg-linear-to-br from-[#0099ef] to-[#2866d4] text-white shadow-lg shadow-blue-200/70"><Wallet class="size-12" :stroke-width="1.5" /></div>
+                        <span class="absolute right-7 top-0 grid size-11 rotate-12 place-items-center rounded-full border-4 border-amber-100 bg-amber-300 text-amber-700 shadow-sm"><Coins class="size-6" /></span>
+                        <span class="absolute left-5 top-4 grid size-8 -rotate-12 place-items-center rounded-full border-2 border-amber-100 bg-amber-300 text-amber-700"><Coins class="size-5" /></span>
+                    </div>
+                    <div class="text-center"><h3 class="text-xl font-extrabold tracking-tight">Perjalananmu punya nilai lebih.</h3><p id="points-info-description" class="mx-auto mt-3 max-w-sm text-xs leading-6 text-slate-500">Tapak Points adalah apresiasi untuk setiap perjalanan yang kamu selesaikan bersama TapakLokal.</p></div>
+                    <ul class="mt-6 space-y-4">
+                        <li class="flex items-start gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf5ff] text-[#3e7bef]"><CircleCheck class="size-5" /></span><div><h4 class="text-xs font-bold leading-5">Selesaikan perjalanan, dapatkan poin</h4><p class="mt-1 text-xs leading-5 text-slate-500">Poin masuk otomatis setelah status perjalanan selesai.</p></div></li>
+                        <li class="flex items-start gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf5ff] text-[#3e7bef]"><Coins class="size-5" /></span><div><h4 class="text-xs font-bold leading-5">Setiap Rp10.000 menghasilkan 1 poin</h4><p class="mt-1 text-xs leading-5 text-slate-500">Dihitung dari total pesanan dan dibulatkan ke bawah. Contoh: Rp250.000 menghasilkan 25 poin.</p></div></li>
+                        <li class="flex items-start gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf5ff] text-[#3e7bef]"><History class="size-5" /></span><div><h4 class="text-xs font-bold leading-5">Semua aktivitas tercatat</h4><p class="mt-1 text-xs leading-5 text-slate-500">Lihat perolehan dan perubahan saldo kapan saja di Riwayat Points.</p></div></li>
+                        <li class="flex items-start gap-3"><span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf5ff] text-[#3e7bef]"><RotateCcw class="size-5" /></span><div><h4 class="text-xs font-bold leading-5">Saldo menyesuaikan pengembalian dana</h4><p class="mt-1 text-xs leading-5 text-slate-500">Poin dari pesanan yang mendapat refund dapat ditarik kembali.</p></div></li>
+                    </ul>
+                    <div class="mt-6 flex items-start gap-2.5 rounded-xl border border-[#dce6f4] bg-[#f5f9ff] p-3.5"><Info class="mt-0.5 size-4 shrink-0 text-[#3e7bef]" /><p class="text-[11px] leading-5 text-slate-500">Penukaran dan masa kedaluwarsa poin belum tersedia saat ini.</p></div>
+                </div>
+                <footer class="shrink-0 border-t border-[#edf1f7] bg-white px-5 py-4 sm:px-7"><button type="button" class="min-h-11 w-full rounded-lg bg-[#3e7bef] px-5 text-sm font-bold text-white transition-colors hover:bg-[#2866d4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3e7bef]" @click="dialog.close()">Mengerti</button></footer>
+            </div>
+        </dialog>
     </section>
 </template>

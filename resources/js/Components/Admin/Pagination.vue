@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
 const props = defineProps({
+    hideCounter: Boolean,
     records: {
         type: Object,
         default: () => ({}),
@@ -44,7 +45,7 @@ const cleanLabel = (text) => {
         class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100/90 pt-5 pb-2 select-none"
     >
         <!-- Result Counter -->
-        <div class="text-xs text-slate-500 font-medium order-2 sm:order-1">
+        <div v-if="!hideCounter" class="text-xs text-slate-500 font-medium order-2 sm:order-1">
             Menampilkan
             <span class="font-bold text-slate-800">{{ (records.from ?? 1).toLocaleString('id-ID') }}</span>
             –
@@ -56,7 +57,7 @@ const cleanLabel = (text) => {
 
         <!-- Navigation Controls -->
         <nav
-            class="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2"
+            class="flex items-center gap-1.5 sm:gap-2 order-1 sm:order-2" :class="hideCounter ? 'sm:ml-auto' : ''"
             aria-label="Navigasi Halaman"
         >
             <!-- Previous Button -->

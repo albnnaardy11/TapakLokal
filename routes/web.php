@@ -15,6 +15,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 Route::get('/blog', [PublicContentController::class, 'blog'])->name('blog');
+Route::get('/tapak-points', fn (): Response => Inertia::render('PointsGuide'))->name('points.guide');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap/{type}/{part}.xml', [SitemapController::class, 'page'])->whereIn('type', ['static', 'products', 'trips', 'content'])->whereNumber('part')->name('sitemap.page');

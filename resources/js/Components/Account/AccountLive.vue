@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { Link, useForm, usePage, usePoll } from '@inertiajs/vue3';
+import { Link, router, useForm, usePage, usePoll } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import Pagination from '../Admin/Pagination.vue';
 import AccountChat from './AccountChat.vue';
+import AccountPoints from './AccountPoints.vue';
+import AccountExploreBanner from './AccountExploreBanner.vue';
 import AccountWallet from './AccountWallet.vue';
 import AccountTransactions from './AccountTransactions.vue';
 import AccountTransactionHistory from './AccountTransactionHistory.vue';
@@ -15,6 +17,9 @@ watch(section, value => {
     else chatPolling.stop();
 }, { immediate: true });
 const records = computed(() => page.props.records);
+const bookingKind = computed(() => page.props.bookingFilters?.kind || 'all');
+const bookingState = computed(() => page.props.bookingFilters?.state || 'all');
+const filterBookings = (kind, state) => router.get(route('account.section', 'bookings'), { kind, state }, { preserveScroll: true, preserveState: true });
 const form = useForm({ name: '', birth_date: '', phone: '', emergency_contact: '' });
 const travelerId = ref(null);
 const showTraveler = ref(false);
@@ -28,8 +33,16 @@ const saveTraveler = () => travelerId.value ? form.patch(route('travelers.update
 </script>
 <template>
     <div>
+        <AccountExploreBanner v-if="section === 'bookings'" compact />
+        <section v-if="section === 'bookings'" class="mb-5">
+            <div class="flex items-start justify-between gap-3"><div><h2 class="text-lg font-extrabold text-[#17345e]">Pemesanan Saya</h2><p class="mt-1 text-[11px] text-slate-500">Kelola seluruh perjalanan dan tiket yang sudah kamu pesan.</p></div></div>
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <nav aria-label="Jenis pesanan" class="flex gap-2"><button v-for="(label, key) in { all: 'Semua', trip: 'Open Trip', po: 'Open PO' }" :key="key" type="button" :aria-pressed="bookingKind === key" class="rounded-full px-4 py-2 text-[11px] font-semibold" :class="bookingKind === key ? 'bg-[#0099ef] text-white' : 'bg-white text-slate-500 hover:bg-blue-50'" @click="filterBookings(key, bookingState)">{{ label }}</button></nav>
+                <nav aria-label="Status pesanan" class="flex rounded-full bg-[#edf5fc] p-1"><button v-for="(label, key) in { all: 'Semua', active: 'Berlangsung', completed: 'Selesai', cancelled: 'Batal' }" :key="key" type="button" :aria-pressed="bookingState === key" class="rounded-full px-3 py-1.5 text-[10px] font-semibold" :class="bookingState === key ? 'bg-white text-[#0175ea] shadow-xs' : 'text-slate-500'" @click="filterBookings(bookingKind, key)">{{ label }}</button></nav>
+            </div>
+        </section>
         <p v-if="page.props.flash?.success" role="status" class="mb-4 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-700">{{ page.props.flash.success }}</p><p v-for="(error, key) in page.props.errors" :key="key" role="alert" class="mb-3 text-xs text-rose-600">{{ error }}</p>
-        <div v-if="section === 'points'" class="mb-5 rounded-2xl bg-[#3e7bef] p-6 text-white"><p class="text-xs text-blue-100">Tapak Points tersedia</p><p class="mt-3 text-4xl font-bold">{{ page.props.pointBalance }}</p><p class="mt-3 text-xs text-blue-100">Poin diperoleh dari perjalanan selesai dan tercatat pada riwayat.</p></div>
+        <AccountPoints v-if="section === 'points'" />
         <AccountChat v-if="section === 'chat'" />
         <AccountWallet v-if="section === 'wallet'" />
         <AccountTransactions v-if="section === 'payments'" pending-only />
@@ -41,16 +54,16 @@ const saveTraveler = () => travelerId.value ? form.patch(route('travelers.update
         <template v-if="section === 'travelers'"><button class="panel-primary mb-4" @click="editTraveler(null)">Tambah wisatawan</button><form v-if="showTraveler" class="panel-surface mb-5 p-5" @submit.prevent="saveTraveler"><div class="grid gap-4 sm:grid-cols-2"><label v-for="(label, key) in { name: 'Nama lengkap', birth_date: 'Tanggal lahir (opsional)', phone: 'Nomor kontak', emergency_contact: 'Kontak darurat' }" :key="key" class="text-xs font-semibold">{{ label }}<input v-model="form[key]" :type="key === 'birth_date' ? 'date' : 'text'" :required="key !== 'birth_date'" class="panel-input mt-2" /></label></div><button :disabled="form.processing" class="panel-primary mt-4">Simpan wisatawan</button><button type="button" class="panel-secondary ml-2" @click="showTraveler = false">Batal</button></form></template>
         <form v-if="section === 'support'" class="panel-surface mb-5 p-5" @submit.prevent="ticket.post(route('support.store'))"><h3 class="mb-4 text-sm font-bold">Mulai percakapan</h3><div class="grid gap-4 sm:grid-cols-2"><input v-model="ticket.subject" required placeholder="Subjek" aria-label="Subjek" class="panel-input" /><select v-model="ticket.category" aria-label="Kategori" class="panel-input"><option value="booking">Pemesanan</option><option value="payment">Pembayaran</option><option value="account">Akun</option><option value="vendor">Hubungi vendor</option><option value="other">Lainnya</option></select><input v-model="ticket.booking_id" type="number" placeholder="ID pesanan terkait (opsional)" aria-label="ID pesanan" class="panel-input" /><textarea v-model="ticket.body" required minlength="10" placeholder="Ceritakan kebutuhanmu…" aria-label="Pesan" rows="3" class="panel-input sm:col-span-2"></textarea></div><button :disabled="ticket.processing" class="panel-primary mt-4">Kirim pesan</button></form>
         <form v-if="section === 'reviews' && page.props.reviewable.length" class="panel-surface mb-5 p-5" @submit.prevent="review.post(route('reviews.store'), { onSuccess: () => review.reset() })"><h3 class="mb-4 text-sm font-bold">Bagikan pengalaman perjalanan</h3><select v-model="review.booking_id" required class="panel-input" aria-label="Pilih perjalanan"><option disabled value="">Pilih perjalanan selesai</option><option v-for="booking in page.props.reviewable" :key="booking.id" :value="booking.id">{{ booking.trip.title }} · {{ booking.reference }}</option></select><label class="mt-4 block text-xs">Rating<select v-model="review.rating" class="panel-input mt-2"><option v-for="n in 5" :key="n" :value="n">{{ n }} bintang</option></select></label><textarea v-model="review.body" required minlength="10" rows="3" class="panel-input mt-4" placeholder="Bagaimana perjalananmu?" aria-label="Ulasan"></textarea><button :disabled="review.processing" class="panel-primary mt-4">Kirim ulasan</button></form>
-        <h3 v-if="section === 'bookings'" class="mb-3 text-sm font-bold">Perjalanan</h3>
-        <section v-if="records && !['transactions', 'payments', 'chat'].includes(section)" class="panel-surface overflow-hidden">
+        <h3 v-if="section === 'bookings' && bookingKind !== 'po'" class="mb-3 text-sm font-bold">Perjalanan</h3>
+        <section v-if="records && !['transactions', 'payments', 'chat', 'points'].includes(section) && !(section === 'bookings' && bookingKind === 'po')" class="panel-surface overflow-hidden">
             <article v-for="item in records.data" :key="item.id" class="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 sm:gap-4 border-b border-slate-100 p-4 sm:p-5 last:border-b-0">
                 <img v-if="item.trip?.image_url" :src="item.trip.image_url" :alt="item.trip.title" loading="lazy" class="h-28 sm:h-20 w-full sm:w-28 rounded-xl object-cover shrink-0" />
                 <div class="min-w-0 flex-1 w-full"><p class="text-sm font-bold text-[#183660]">{{ item.trip?.title || item.name || item.subject || item.reference || item.description }}</p><p v-if="item.reference" class="mt-1 text-[10px] text-slate-400 font-mono">{{ item.reference }}</p><p class="mt-1.5 whitespace-pre-wrap text-xs leading-5 text-slate-500">{{ item.body || item.phone || item.status || item.code || item.description }}</p><p v-if="item.total || item.amount" class="mt-2 text-sm font-semibold text-blue-600">{{ money(item.total || item.amount) }}</p><p v-if="item.points !== undefined" class="mt-2 text-sm font-bold" :class="item.points < 0 ? 'text-rose-500' : 'text-emerald-600'">{{ item.points > 0 ? '+' : '' }}{{ item.points }} points</p><p v-if="section === 'vouchers'" class="mt-2 text-xs text-blue-600 font-medium">Kode {{ item.code }} · {{ item.type === 'percent' ? item.value + '%' : money(item.value) }} · minimum {{ money(item.minimum_amount) }}</p><p v-if="item.rating" class="mt-2 text-xs text-amber-600 font-bold">{{ item.rating }} / 5 bintang</p></div>
                 <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-end"><Link v-if="['bookings', 'transactions', 'wallet'].includes(section) && item.status === 'awaiting_payment' || ['transactions', 'wallet'].includes(section) && item.status === 'pending'" :href="route('checkout.payment', { type: 'trip', id: item.booking_id || item.id })" class="panel-primary">Lanjut bayar</Link><Link v-if="section === 'bookings'" :href="route('bookings.show', item.id)" class="panel-secondary text-center flex-1 sm:flex-initial">Detail & tiket</Link><Link v-if="['transactions', 'wallet'].includes(section)" :href="route('bookings.show', item.booking_id)" class="panel-secondary text-center flex-1 sm:flex-initial">Detail</Link><Link v-if="['chat', 'support'].includes(section)" :href="route('support.show', item.id)" class="panel-secondary text-center flex-1 sm:flex-initial">Buka</Link><button v-if="section === 'travelers'" class="panel-secondary" @click="editTraveler(item)">Edit</button><Link v-if="section === 'travelers'" :href="route('travelers.destroy', item.id)" method="delete" as="button" class="panel-secondary">Hapus</Link><Link v-if="section === 'favorites'" :href="route('favorites.destroy', item.id)" method="delete" as="button" class="panel-secondary">Hapus favorit</Link></div>
             </article>
-            <div v-if="!records.data.length" class="px-5 py-12 text-center"><p class="text-sm font-semibold text-slate-500">Belum ada data</p><p class="mt-2 text-xs text-slate-400">Aktivitasmu akan muncul di sini setelah tersimpan.</p></div><Pagination :records="records" />
+            <div v-if="!records.data.length" class="px-5 py-12 text-center"><p class="text-sm font-semibold text-slate-500">Belum ada data</p><p class="mt-2 text-xs text-slate-400">Aktivitasmu akan muncul di sini setelah tersimpan.</p></div><Pagination :records="records" :hide-counter="section === 'bookings'" />
         </section>
-        <section v-if="page.props.souvenirOrders && !['transactions', 'payments', 'chat'].includes(section)" class="mt-7">
+        <section v-if="page.props.souvenirOrders && !['transactions', 'payments', 'chat', 'points'].includes(section) && bookingKind !== 'trip'" class="mt-7">
             <div class="mb-3 flex items-center justify-between"><h3 class="text-sm font-bold">Oleh-oleh & produk lokal</h3><Link :href="route('souvenirs.index')" class="text-xs font-semibold text-blue-600">Jelajahi etalase</Link></div>
             <div class="panel-surface overflow-hidden">
                 <article v-for="order in page.props.souvenirOrders.data" :key="order.id" class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5 last:border-0">
@@ -58,7 +71,7 @@ const saveTraveler = () => travelerId.value ? form.patch(route('travelers.update
                     <div class="flex gap-2"><Link v-if="order.status === 'awaiting_payment' && order.payment?.status === 'pending'" :href="route('checkout.payment', { type: 'souvenir', id: order.id })" class="panel-primary">Lanjut bayar</Link><Link :href="route('souvenirs.orders.show', order.id)" class="panel-secondary">Detail pesanan</Link></div>
                 </article>
                 <p v-if="!page.props.souvenirOrders.data.length" class="p-8 text-center text-xs text-slate-500">Belum ada pesanan oleh-oleh.</p>
-                <Pagination :records="page.props.souvenirOrders" />
+                <Pagination :records="page.props.souvenirOrders" :hide-counter="section === 'bookings'" />
             </div>
         </section>
     </div>

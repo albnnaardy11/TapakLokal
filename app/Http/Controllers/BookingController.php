@@ -15,6 +15,7 @@ use App\Services\PublicContentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -238,7 +239,10 @@ class BookingController extends Controller
         $booking->load(['trip', 'vendor:id,name,phone', 'payment', 'refund']);
         $vendorLogo = collect(self::$popularPartners)->first(fn (array $partner) => strcasecmp($partner['name'], (string) $booking->vendor?->name) === 0)['logo'] ?? null;
 
-        return Inertia::render('Booking', ['booking' => $booking, 'vendorLogo' => $vendorLogo, 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
+        $ticketUrl = in_array($booking->status, ['paid', 'confirmed', 'ongoing'], true) && $booking->payment?->status === 'paid'
+            ? URL::temporarySignedRoute('vendor.tickets.show', $booking->trip->end_date->copy()->endOfDay()->addDay(), ['booking' => $booking->id]) : null;
+
+        return Inertia::render('Booking', ['booking' => $booking, 'ticketUrl' => $ticketUrl, 'vendorLogo' => $vendorLogo, 'gatewayReady' => (bool) config('platform.midtrans_server_key')]);
     }
 
     public function cancel(Request $request, Booking $booking, BookingService $service): RedirectResponse

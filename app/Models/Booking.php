@@ -17,7 +17,7 @@ class Booking extends Model
 
     protected function casts(): array
     {
-        return ['traveler_details' => 'array', 'expires_at' => 'datetime', 'participants' => 'integer', 'total' => 'integer', 'subtotal' => 'integer', 'discount' => 'integer', 'platform_fee' => 'integer', 'vendor_amount' => 'integer'];
+        return ['traveler_details' => 'array', 'checked_in_at' => 'datetime', 'expires_at' => 'datetime', 'participants' => 'integer', 'total' => 'integer', 'subtotal' => 'integer', 'discount' => 'integer', 'platform_fee' => 'integer', 'vendor_amount' => 'integer'];
     }
 
     public function corporateRequest(): HasOne

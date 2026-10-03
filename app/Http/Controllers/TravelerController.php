@@ -52,14 +52,37 @@ class TravelerController extends Controller
             default => null,
         };
 
+        $bookingFilters = $section === 'bookings' ? $request->validate(['kind' => ['nullable', Rule::in(['all', 'trip', 'po'])], 'state' => ['nullable', Rule::in(['all', 'active', 'completed', 'cancelled'])]]) : [];
+        $orderStatuses = match ($bookingFilters['state'] ?? 'all') {
+            'active' => ['awaiting_payment', 'paid', 'confirmed', 'ongoing', 'processing', 'shipped', 'ready_for_pickup'],
+            'completed' => ['completed'],
+            'cancelled' => ['cancelled', 'expired'],
+            default => [],
+        };
+        if ($section === 'bookings' && $orderStatuses) {
+            $query->whereIn('status', $orderStatuses);
+        }
+        $pointSummary = null;
+        $pointFilter = 'all';
+        if ($section === 'points') {
+            $pointFilter = $request->validate(['activity' => ['nullable', Rule::in(['all', 'earned', 'deducted'])]])['activity'] ?? 'all';
+            $pointSummary = [
+                'earned' => (int) (clone $query)->where('points', '>', 0)->sum('points'),
+                'deducted' => abs((int) (clone $query)->where('points', '<', 0)->sum('points')),
+                'memberSince' => $user->created_at->format('Y'),
+            ];
+            if ($pointFilter !== 'all') {
+                $query->where('points', $pointFilter === 'earned' ? '>' : '<', 0);
+            }
+        }
         $transactions = null;
         if ($section === 'transactions') {
             $tripRows = DB::table('payments')->join('bookings', 'bookings.id', '=', 'payments.booking_id')
-                ->where('bookings.user_id', $user->id)->where('bookings.status', 'completed')
+                ->where('bookings.user_id', $user->id)
                 ->where(function ($query) {
                     $query->where('payments.status', '!=', 'pending')->orWhere('bookings.expires_at', '<=', now());
                 })->select('payments.id', 'payments.created_at')->selectRaw("'trip' as kind");
-            $souvenirRows = DB::table('souvenir_orders')->where('user_id', $user->id)->where('status', 'completed')
+            $souvenirRows = DB::table('souvenir_orders')->where('user_id', $user->id)
                 ->where(function ($query) {
                     $query->where('status', '!=', 'awaiting_payment')->orWhere('expires_at', '<=', now());
                 })->select('id', 'created_at')->selectRaw("'souvenir' as kind");
@@ -76,9 +99,12 @@ class TravelerController extends Controller
             'paymentMethods' => $methods->catalog(),
             'paymentPreferences' => $methods->preferences($user),
             'transactions' => $transactions,
-            'souvenirOrders' => in_array($section, ['bookings', 'payments'], true) ? SouvenirOrder::where('user_id', $user->id)->with('items', 'payment', 'vendor:id,name')->latest('id')->paginate(10, ['*'], 'souvenir_page')->withQueryString() : null,
-            'records' => $section === 'transactions' ? null : $query?->orderByDesc('id')->paginate(10)->withQueryString(),
+            'bookingFilters' => $bookingFilters,
+            'souvenirOrders' => in_array($section, ['bookings', 'payments'], true) ? SouvenirOrder::where('user_id', $user->id)->when($orderStatuses, fn ($query) => $query->whereIn('status', $orderStatuses))->with('items', 'payment', 'vendor:id,name')->latest('id')->paginate($section === 'bookings' ? 5 : 10, ['*'], 'souvenir_page')->withQueryString() : null,
+            'records' => $section === 'transactions' ? null : $query?->orderByDesc('id')->paginate($section === 'bookings' ? 5 : 10)->withQueryString(),
             'pointBalance' => $section === 'points' ? RewardEntry::where('user_id', $user->id)->sum('points') : null,
+            'pointSummary' => $pointSummary,
+            'pointFilter' => $pointFilter,
             'reviewable' => $section === 'reviews' ? Booking::with('trip:id,title')->where('user_id', $user->id)->where('status', 'completed')->whereNotIn('id', Review::select('booking_id'))->latest('id')->limit(50)->get() : [],
         ]);
     }
@@ -170,7 +196,7 @@ class TravelerController extends Controller
 
     public function ticket(Request $request): RedirectResponse|JsonResponse
     {
-        $data = $request->validate(['subject' => ['required', 'string', 'max:180'], 'category' => ['required', Rule::in(['booking', 'payment', 'account', 'vendor', 'other'])], 'body' => ['required', 'string', 'min:10', 'max:5000'], 'booking_id' => ['nullable', 'integer', 'prohibits:souvenir_order_id'], 'souvenir_order_id' => ['nullable', 'integer', 'prohibits:booking_id']]);
+        $data = $request->validate(['subject' => ['required', 'string', 'max:180'], 'category' => ['required', Rule::in(['booking', 'payment', 'account', 'vendor', 'other'])], 'body' => ['required', 'string', 'max:5000'], 'booking_id' => ['nullable', 'integer', 'prohibits:souvenir_order_id'], 'souvenir_order_id' => ['nullable', 'integer', 'prohibits:booking_id']]);
         $booking = empty($data['booking_id']) ? null : Booking::where('user_id', $request->user()->id)->findOrFail($data['booking_id']);
         $order = empty($data['souvenir_order_id']) ? null : SouvenirOrder::where('user_id', $request->user()->id)->findOrFail($data['souvenir_order_id']);
         if ($data['category'] === 'vendor' && ! $booking && ! $order) {
@@ -179,6 +205,9 @@ class TravelerController extends Controller
         $ticket = DB::transaction(function () use ($request, $data, $booking, $order) {
             $ticket = SupportTicket::create(['user_id' => $request->user()->id, 'booking_id' => $booking?->id, 'souvenir_order_id' => $order?->id, 'vendor_id' => $data['category'] === 'vendor' ? ($booking?->vendor_id ?? $order?->vendor_id) : null, 'subject' => $data['subject'], 'category' => $data['category']]);
             $ticket->messages()->create(['user_id' => $request->user()->id, 'body' => $data['body']]);
+            if ($data['category'] !== 'vendor') {
+                $ticket->messages()->create(['user_id' => $request->user()->id, 'is_automatic' => true, 'body' => 'Halo! Selamat datang di bantuan TapakLokal 😊 Apa yang bisa kami bantu? Ceritakan kendala atau pengaduanmu dan sertakan kode pesanan jika ada. Tim kami akan membalas pesanmu di chat ini.']);
+            }
 
             return $ticket;
         });
@@ -200,7 +229,25 @@ class TravelerController extends Controller
     {
         $this->authorizeTicket($request, $ticket);
 
+        if ($request->user()->id === $ticket->user_id && ! $ticket->vendor_id && $ticket->status !== 'closed') {
+            DB::transaction(function () use ($ticket): void {
+                $lockedTicket = SupportTicket::lockForUpdate()->findOrFail($ticket->id);
+                if ($lockedTicket->messages()->where('is_automatic', true)->exists() || $lockedTicket->messages()->where('user_id', '!=', $lockedTicket->user_id)->exists() || ! $lockedTicket->messages()->exists()) {
+                    return;
+                }
+                $lockedTicket->messages()->create(['user_id' => $lockedTicket->user_id, 'is_automatic' => true, 'body' => 'Halo! Selamat datang di bantuan TapakLokal 😊 Apa yang bisa kami bantu? Ceritakan kendala atau pengaduanmu dan sertakan kode pesanan jika ada. Tim kami akan membalas pesanmu di chat ini.']);
+            });
+        }
+
         $data = ['ticket' => $ticket, 'messages' => $ticket->messages()->with('user:id,name')->latest('id')->paginate(30)];
+        $readMessages = $data['messages']->getCollection()->filter(function ($message) use ($request, $ticket) {
+            return ! $message->is_automatic && ! $message->read_at && ($request->user()->id === $ticket->user_id ? $message->user_id !== $ticket->user_id : $message->user_id === $ticket->user_id);
+        });
+        if ($readMessages->isNotEmpty()) {
+            $readAt = now();
+            $ticket->messages()->whereIn('id', $readMessages->modelKeys())->whereNull('read_at')->update(['read_at' => $readAt]);
+            $readMessages->each(fn ($message) => $message->read_at = $readAt);
+        }
 
         if ($request->expectsJson()) {
             return response()->json($data);
