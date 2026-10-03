@@ -1,22 +1,66 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
-    ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2,
+    ArrowRight, ArrowUpRight, CalendarDays, Check, CheckCircle2, ChevronDown,
     Clock, Compass, FileText, LayoutDashboard, MapPin,
-    ShieldCheck, Sparkles, Star, Store, Users, Wallet, X
+    ShieldCheck, Sparkles, Star, Store, TentTree, Users, Wallet, X, Eye, EyeOff
 } from 'lucide-vue-next';
 import BusinessLanding from '../Components/Shared/BusinessLanding.vue';
 
 const registrationDialog = ref(null);
 const selectedTrack = ref('trip');
-const brief = ref({ business: '', name: '', city: '', contact: '', notes: '' });
+const isTrackDropdownOpen = ref(false);
+const trackDropdownRef = ref(null);
+
+const partnershipOptions = [
+    {
+        value: 'trip',
+        label: 'Vendor trip wisata',
+        description: 'Open trip, private tour & pemandu lokal',
+        icon: TentTree,
+    },
+    {
+        value: 'souvenir',
+        label: 'Oleh-oleh & kuliner',
+        description: 'Makanan khas, cinderamata & kerajinan lokal',
+        icon: Store,
+    },
+];
+
+const currentTrackOption = computed(() => {
+    return partnershipOptions.find(opt => opt.value === selectedTrack.value) || partnershipOptions[0];
+});
+
+function selectTrack(value) {
+    selectedTrack.value = value;
+    isTrackDropdownOpen.value = false;
+}
+
+function handleDropdownClickOutside(event) {
+    if (trackDropdownRef.value && !trackDropdownRef.value.contains(event.target)) {
+        isTrackDropdownOpen.value = false;
+    }
+}
+
+onMounted(() => {
+    document.addEventListener('click', handleDropdownClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleDropdownClickOutside);
+});
+
+const brief = useForm({ business: '', name: '', city: '', email: '', phone: '', password: '', password_confirmation: '', notes: '' });
+const submitted = ref(false);
+const passwordVisible = ref(false);
+const confirmationVisible = ref(false);
 const links = [{ href: '#kemitraan', label: 'Pilihan Kemitraan' }, { href: '#manfaat', label: 'Solusi Bisnis' }, { href: '#cara-bergabung', label: 'Cara Bergabung' }, { href: '#faq', label: 'Tanya Jawab' }];
 const tracks = [
     {
         id: 'trip',
-        icon: Compass,
+        icon: TentTree,
         badge: 'JALUR VENDOR WISATA',
         label: 'Operator Trip & Wisata',
         tagline: 'Open Trip & Private Tour',
@@ -110,17 +154,39 @@ const steps = [
 const faqs = [
     { q: 'Siapa yang dapat mengajukan kemitraan?', a: 'Operator open trip dan private trip, penyedia pengalaman wisata, serta pelaku usaha oleh-oleh, kuliner, dan kerajinan lokal dapat mengajukan minat. Tim kemitraan akan mendiskusikan kesesuaian layanan dan kesiapan usaha Anda.' },
     { q: 'Apa yang perlu disiapkan untuk bergabung?', a: 'Siapkan nama usaha, nama penanggung jawab, wilayah operasional, kontak yang dapat dihubungi, dan gambaran paket atau produk Anda. Kelengkapan legalitas dan dokumen pendukung akan dibahas saat peninjauan.' },
-    { q: 'Apakah mengirim formulir langsung mengaktifkan akun vendor?', a: 'Belum. Formulir menyiapkan email pengajuan minat untuk tim TapakLokal. Anda perlu mengirimkannya melalui aplikasi email. Aktivasi dan akses portal vendor mengikuti hasil peninjauan tim.' },
+    { q: 'Apakah mengirim formulir langsung mengaktifkan akun vendor?', a: 'Belum. Pengajuan tersimpan dan ditinjau oleh admin pengelola vendor. Tim menghubungi kontak yang Anda cantumkan. Aktivasi akun vendor dilakukan terpisah setelah verifikasi.' },
     { q: 'Bagaimana biaya kerja sama dan pencairan dana?', a: 'Biaya layanan, pembagian hasil, serta jadwal pencairan dibahas bersama tim dan mengikuti ketentuan kerja sama yang disepakati. Pastikan Anda memahami ketentuannya sebelum mengaktifkan penawaran.' },
     { q: 'Saya sudah menjadi vendor. Bagaimana cara masuk?', a: 'Gunakan tombol Masuk pada navigasi untuk membuka portal vendor dengan akun yang telah diberikan kepada Anda.' },
 ];
 function openRegistration(type = selectedTrack.value) {
     selectedTrack.value = type;
+    isTrackDropdownOpen.value = false;
     registrationDialog.value?.showModal();
 }
-function prepareEmail() {
-    const body = `Halo tim TapakLokal,\n\nSaya ingin mengajukan kemitraan.\nKategori: ${selectedTrack.value === 'trip' ? 'Vendor Trip' : 'Oleh-oleh & Kuliner'}\nUsaha: ${brief.value.business}\nPIC: ${brief.value.name}\nKota: ${brief.value.city}\nKontak: ${brief.value.contact}\nTentang usaha: ${brief.value.notes}\n\nTerima kasih.`;
-    window.location.href = `mailto:support@tapaklokal.com?subject=${encodeURIComponent(`Pengajuan kemitraan — ${brief.value.business}`)}&body=${encodeURIComponent(body)}`;
+function closeRegistration() {
+    passwordVisible.value = false;
+    confirmationVisible.value = false;
+    registrationDialog.value?.close();
+}
+function handleDialogBackdrop(event) {
+    if (event.target === registrationDialog.value) {
+        const rect = registrationDialog.value.getBoundingClientRect();
+        const clickedInside =
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width;
+        if (!clickedInside) {
+            closeRegistration();
+        }
+    }
+}
+function submitApplication() {
+    submitted.value = false;
+    brief.transform(data => ({ ...data, track: selectedTrack.value })).post(route('vendor-applications.store'), {
+        preserveScroll: true,
+        onSuccess: () => { submitted.value = true; brief.reset(); },
+    });
 }
 </script>
 
@@ -344,32 +410,168 @@ function prepareEmail() {
         </section>
 
         <template #dialogs>
-            <dialog ref="registrationDialog" aria-labelledby="partner-dialog-title" aria-describedby="partner-dialog-description" class="fixed inset-0 m-auto w-[calc(100%-24px)] sm:w-[calc(100%-32px)] max-w-lg rounded-2xl border-0 p-5 sm:p-8 shadow-2xl" @click="event => { if (event.target === registrationDialog) registrationDialog.close(); }">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <p class="business-eyebrow">KENALKAN USAHA ANDA</p>
-                        <h2 id="partner-dialog-title" class="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold text-[#07345a]">Mulai percakapan kemitraan</h2>
+            <dialog
+                ref="registrationDialog"
+                aria-labelledby="partner-dialog-title"
+                aria-describedby="partner-dialog-description"
+                style="overflow: hidden !important;"
+                class="fixed inset-0 m-auto w-[calc(100%-24px)] sm:w-[calc(100%-32px)] max-w-lg !overflow-hidden rounded-3xl sm:rounded-[32px] border-0 p-0 bg-white shadow-[0_25px_60px_-15px_rgba(7,52,90,0.35)] backdrop:bg-slate-900/60 backdrop:backdrop-blur-xs open:flex flex-col max-h-[min(90vh,760px)]"
+                @click="handleDialogBackdrop"
+                @cancel="closeRegistration"
+            >
+                <form class="flex flex-col h-full max-h-[min(90vh,760px)] overflow-hidden" @submit.prevent="submitApplication">
+                    <!-- Fixed Header inside modal card -->
+                    <div class="px-6 pt-6 sm:px-8 sm:pt-7 pb-2 shrink-0 bg-white">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="business-eyebrow">KENALKAN USAHA ANDA</p>
+                                <h2 id="partner-dialog-title" class="mt-1.5 sm:mt-2 text-xl sm:text-2xl font-bold text-[#07345a]">Ajukan kemitraan TapakLokal</h2>
+                            </div>
+                            <button
+                                type="button"
+                                aria-label="Tutup formulir"
+                                class="grid size-9 shrink-0 place-items-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+                                @click="closeRegistration"
+                            >
+                                <X class="size-5" />
+                            </button>
+                        </div>
+                        <p id="partner-dialog-description" class="mt-2 text-xs sm:text-sm leading-relaxed sm:leading-6 text-slate-500">
+                            Lengkapi data usaha Anda. Pengajuan akan dikirim langsung ke admin pengelola vendor untuk ditinjau.
+                        </p>
                     </div>
-                    <button aria-label="Tutup formulir" class="rounded-full p-2 hover:bg-slate-100 transition-colors" @click="registrationDialog.close()">
-                        <X class="size-5" />
-                    </button>
-                </div>
-                <p id="partner-dialog-description" class="mt-2.5 sm:mt-3 text-xs sm:text-sm leading-relaxed sm:leading-6 text-slate-500">
-                    Isi detail berikut untuk menyiapkan email ke tim kami. Pengajuan baru terkirim setelah Anda mengirim email dari aplikasi email Anda.
-                </p>
-                <form class="mt-5 sm:mt-6 space-y-3.5 sm:space-y-4" @submit.prevent="prepareEmail">
-                    <label class="block text-xs font-semibold">Jenis kemitraan<select v-model="selectedTrack" class="business-input mt-1.5 sm:mt-2"><option value="trip">Vendor trip wisata</option><option value="souvenir">Oleh-oleh & kuliner</option></select></label>
-                    <label class="block text-xs font-semibold">Nama usaha<input v-model="brief.business" required maxlength="120" autocomplete="organization" class="business-input mt-1.5 sm:mt-2" /></label>
-                    <div class="grid gap-3 sm:gap-4 sm:grid-cols-2">
-                        <label class="block text-xs font-semibold">Nama penanggung jawab<input v-model="brief.name" required maxlength="100" autocomplete="name" class="business-input mt-1.5 sm:mt-2" /></label>
-                        <label class="block text-xs font-semibold">Kota operasional<input v-model="brief.city" required maxlength="100" autocomplete="address-level2" class="business-input mt-1.5 sm:mt-2" /></label>
+
+                    <!-- Scrollable Form Body: Inset so scrollbar is strictly inside modal card and never extends past rounded corners -->
+                    <div class="partner-modal-scroll flex-1 overflow-y-auto pl-6 sm:pl-8 pr-5 sm:pr-7 py-2 space-y-3.5 sm:space-y-4">
+                        <!-- Custom Styled Dropdown for Jenis Kemitraan -->
+                        <div ref="trackDropdownRef" class="relative">
+                            <label id="partnership-track-label" class="block text-xs font-semibold text-slate-700">
+                                Jenis kemitraan
+                            </label>
+                            <button
+                                type="button"
+                                aria-haspopup="listbox"
+                                :aria-expanded="isTrackDropdownOpen"
+                                aria-labelledby="partnership-track-label"
+                                class="mt-1.5 sm:mt-2 flex w-full items-center justify-between gap-3 rounded-xl border bg-white px-3.5 py-2.5 sm:py-3 text-left transition-all"
+                                :class="isTrackDropdownOpen ? 'border-sky-500 ring-2 ring-sky-100 shadow-sm' : 'border-slate-200 hover:border-sky-300'"
+                                @click="isTrackDropdownOpen = !isTrackDropdownOpen"
+                            >
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span
+                                        class="grid size-8 shrink-0 place-items-center rounded-lg"
+                                        :class="selectedTrack === 'trip' ? 'bg-sky-50 text-sky-600' : 'bg-amber-50 text-amber-600'"
+                                    >
+                                        <component :is="currentTrackOption.icon" class="size-4" />
+                                    </span>
+                                    <div class="min-w-0">
+                                        <p class="truncate text-xs sm:text-sm font-bold text-[#07345a]">
+                                            {{ currentTrackOption.label }}
+                                        </p>
+                                        <p class="truncate text-[11px] text-slate-400">
+                                            {{ currentTrackOption.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <ChevronDown
+                                    class="size-4 shrink-0 text-slate-400 transition-transform duration-200"
+                                    :class="{ 'rotate-180 text-sky-600': isTrackDropdownOpen }"
+                                />
+                            </button>
+
+                            <!-- Custom Dropdown Menu -->
+                            <Transition
+                                enter-active-class="transition duration-150 ease-out"
+                                enter-from-class="opacity-0 -translate-y-1 scale-[0.98]"
+                                enter-to-class="opacity-100 translate-y-0 scale-100"
+                                leave-active-class="transition duration-100 ease-in"
+                                leave-from-class="opacity-100 translate-y-0 scale-100"
+                                leave-to-class="opacity-0 -translate-y-1 scale-[0.98]"
+                            >
+                                <div
+                                    v-if="isTrackDropdownOpen"
+                                    role="listbox"
+                                    class="absolute left-0 top-full z-50 mt-1.5 w-full rounded-2xl border border-sky-100 bg-white p-1.5 shadow-[0_16px_40px_-8px_rgba(7,52,90,0.18)] ring-1 ring-black/5"
+                                >
+                                    <div class="space-y-1">
+                                        <button
+                                            v-for="opt in partnershipOptions"
+                                            :key="opt.value"
+                                            type="button"
+                                            role="option"
+                                            :aria-selected="selectedTrack === opt.value"
+                                            class="group flex w-full items-center justify-between gap-3 rounded-xl p-2.5 text-left transition-all"
+                                            :class="selectedTrack === opt.value ? 'bg-sky-50/80 text-sky-950 font-medium' : 'text-slate-700 hover:bg-slate-50'"
+                                            @click="selectTrack(opt.value)"
+                                        >
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <span
+                                                    class="grid size-9 shrink-0 place-items-center rounded-xl transition-transform group-hover:scale-105"
+                                                    :class="opt.value === 'trip' ? 'bg-sky-100 text-sky-600' : 'bg-amber-100 text-amber-700'"
+                                                >
+                                                    <component :is="opt.icon" class="size-4.5" />
+                                                </span>
+                                                <div class="min-w-0">
+                                                    <p class="text-xs sm:text-sm font-bold text-[#07345a]">
+                                                        {{ opt.label }}
+                                                    </p>
+                                                    <p class="text-[11px] text-slate-500">
+                                                        {{ opt.description }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <span v-if="selectedTrack === opt.value" class="grid size-6 shrink-0 place-items-center rounded-full bg-sky-600 text-white shadow-xs">
+                                                <Check class="size-3.5 stroke-[2.5]" />
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </Transition>
+                        </div>
+
+                        <label class="block text-xs font-semibold">Nama usaha<input v-model="brief.business" required maxlength="120" autocomplete="organization" class="business-input mt-1.5 sm:mt-2" /></label>
+                        <div class="grid gap-3 sm:gap-4 sm:grid-cols-2">
+                            <label class="block text-xs font-semibold">Nama penanggung jawab<input v-model="brief.name" required maxlength="100" autocomplete="name" class="business-input mt-1.5 sm:mt-2" /></label>
+                            <label class="block text-xs font-semibold">Kota operasional<input v-model="brief.city" required maxlength="100" autocomplete="address-level2" class="business-input mt-1.5 sm:mt-2" /></label>
+                        </div>
+                        <label class="block text-xs font-semibold">Alamat Gmail<input v-model="brief.email" type="email" required maxlength="150" autocomplete="email" placeholder="nama@gmail.com" class="business-input mt-1.5 sm:mt-2" /><span class="mt-1 block text-[11px] font-normal text-slate-500">Wajib menggunakan alamat @gmail.com.</span></label><label class="block text-xs font-semibold">Nomor telepon<input v-model="brief.phone" type="tel" required maxlength="16" autocomplete="tel" placeholder="081234567890" class="business-input mt-1.5 sm:mt-2" /></label>
+                        <label class="block text-xs font-semibold">Password untuk login<span class="relative mt-2 block"><input v-model="brief.password" :type="passwordVisible ? 'text' : 'password'" required minlength="10" autocomplete="new-password" class="business-input !pr-14 [&::-ms-reveal]:hidden" /><button type="button" :aria-label="passwordVisible ? 'Sembunyikan password' : 'Tampilkan password'" :aria-pressed="passwordVisible" class="absolute inset-y-0 right-1 my-auto grid size-11 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-sky-50 hover:text-[#0099ef] focus-visible:outline-2 focus-visible:outline-[#0099ef]" @click="passwordVisible = !passwordVisible"><component :is="passwordVisible ? EyeOff : Eye" class="size-5" /></button></span><span class="mt-1 block text-[11px] font-normal text-slate-500">Minimal 10 karakter, mengandung huruf dan angka. Login vendor aktif setelah verifikasi admin.</span></label><label class="block text-xs font-semibold">Konfirmasi password<span class="relative mt-2 block"><input v-model="brief.password_confirmation" :type="confirmationVisible ? 'text' : 'password'" required minlength="10" autocomplete="new-password" class="business-input !pr-14 [&::-ms-reveal]:hidden" /><button type="button" :aria-label="confirmationVisible ? 'Sembunyikan konfirmasi password' : 'Tampilkan konfirmasi password'" :aria-pressed="confirmationVisible" class="absolute inset-y-0 right-1 my-auto grid size-11 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-sky-50 hover:text-[#0099ef] focus-visible:outline-2 focus-visible:outline-[#0099ef]" @click="confirmationVisible = !confirmationVisible"><component :is="confirmationVisible ? EyeOff : Eye" class="size-5" /></button></span></label><label class="block text-xs font-semibold">Ceritakan paket atau produk Anda<textarea v-model="brief.notes" rows="3" maxlength="1500" class="business-input mt-1.5 sm:mt-2"></textarea></label>
                     </div>
-                    <label class="block text-xs font-semibold">Email atau nomor telepon<input v-model="brief.contact" required maxlength="150" class="business-input mt-1.5 sm:mt-2" /></label>
-                    <label class="block text-xs font-semibold">Ceritakan paket atau produk Anda<textarea v-model="brief.notes" rows="3" maxlength="1500" class="business-input mt-1.5 sm:mt-2"></textarea></label>
-                    <button type="submit" class="business-button inline-flex w-full mt-2">Siapkan email pengajuan <ArrowUpRight class="size-4" /></button>
-                    <p class="text-center text-[11px] sm:text-xs leading-5 text-slate-500">Tujuan: support@tapaklokal.com</p>
+
+                    <!-- Fixed Footer inside modal card -->
+                    <div class="px-6 pb-6 pt-3 sm:px-8 sm:pb-7 shrink-0 bg-white">
+                        <p v-if="submitted" role="status" class="mb-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">Pengajuan dan akun berhasil dibuat. Gunakan Gmail dan password tadi untuk login vendor setelah verifikasi admin.</p><p v-for="(error, field) in brief.errors" :key="field" role="alert" class="mb-2 text-xs text-rose-600">{{ error }}</p><button type="submit" :disabled="brief.processing" class="business-button inline-flex w-full disabled:opacity-60">
+                            {{ brief.processing ? 'Mengirim…' : 'Kirim pengajuan' }} <ArrowUpRight class="size-4" />
+                        </button>
+                        <p class="mt-2 text-center text-[11px] sm:text-xs leading-5 text-slate-500">
+                            Ditinjau oleh admin pengelola vendor TapakLokal
+                        </p>
+                    </div>
                 </form>
             </dialog>
         </template>
     </BusinessLanding>
 </template>
+
+<style scoped>
+.partner-modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+.partner-modal-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.partner-modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 20px 0;
+}
+.partner-modal-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+.partner-modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+</style>

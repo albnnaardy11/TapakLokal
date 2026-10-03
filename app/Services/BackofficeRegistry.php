@@ -27,6 +27,7 @@ class BackofficeRegistry
         }
 
         return $modules + [
+            'vendor-applications' => $module('Pengajuan Mitra', 'Operations', Models\VendorApplication::class, 'operations', ['business', 'name', 'city', 'status'], ['status' => $select('Status pengajuan', ['pending', 'reviewing', 'approved', 'rejected']), 'review_note' => ['label' => 'Catatan peninjauan', 'type' => 'textarea', 'required' => false]], ['create' => false, 'detail' => ['track', 'email', 'phone', 'contact', 'notes', 'created_at']]),
             'faqs' => $module('FAQ', 'Content & CMS', Models\Faq::class, 'content', ['question', 'category', 'status', 'position'], ['category' => $text('Kategori'), 'question' => $text('Pertanyaan'), 'answer' => $area('Jawaban'), 'status' => $status, 'position' => $number('Urutan')]),
             'partners' => $module('Kerja Sama & Partner', 'Content & CMS', Models\Partner::class, 'content', ['name', 'website_url', 'status', 'position'], ['name' => $text('Nama partner'), 'image_url' => $url('URL logo', true), 'website_url' => $url('Website'), 'status' => $status, 'position' => $number('Urutan')]),
             'media' => $module('Media Library', 'Content & CMS', Models\MediaAsset::class, 'content', ['name', 'mime_type', 'size', 'visibility']),

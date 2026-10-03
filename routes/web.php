@@ -8,6 +8,7 @@ use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\PublicContentController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SouvenirController;
+use App\Http\Controllers\VendorApplicationController;
 use App\Models\ContentPage;
 use App\Models\VirtualTour;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 Route::get('/blog', [PublicContentController::class, 'blog'])->name('blog');
+Route::post('/bisnis/pengajuan-mitra', [VendorApplicationController::class, 'store'])->middleware('throttle:5,1')->name('vendor-applications.store');
+Route::post('/bisnis/pengajuan-mitra', [VendorApplicationController::class, 'store'])->middleware('throttle:5,1')->name('vendor-applications.store');
 Route::get('/tapak-points', fn (): Response => Inertia::render('PointsGuide'))->name('points.guide');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');

@@ -8,6 +8,7 @@ use App\Models\Payout;
 use App\Models\Refund;
 use App\Models\Trip;
 use App\Models\Vendor;
+use App\Services\AccessService;
 use App\Services\AuditService;
 use App\Services\BookingService;
 use Illuminate\Http\RedirectResponse;
@@ -69,6 +70,9 @@ class WorkflowController extends Controller
             }
             if ($module === 'vendors') {
                 $item->verification_note = $request->input('note');
+                if ($action === 'verify') {
+                    app(AccessService::class)->grant($item->user, 'vendor_admin');
+                }
             }
             $before = $item->status;
             $item->status = $target;
