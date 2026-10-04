@@ -37,7 +37,14 @@ const tickCountdown = () => {
     }
 };
 
-const tripProducts = [
+const props = defineProps({
+    items: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const defaultTripProducts = [
     {
         id: 1,
         title: 'Open Trip Bromo Sunrise & Savana',
@@ -130,9 +137,32 @@ const tripProducts = [
     },
 ];
 
+const tripProducts = computed(() => {
+    if (props.items && props.items.length > 0) {
+        const liveProducts = props.items.map((t, idx) => ({
+            id: t.id || `live-${idx}`,
+            title: t.title,
+            category: t.type === 'private-trip' ? 'Private Trip' : 'Open Trip',
+            location: t.destination || 'Indonesia',
+            duration: '3H 2M',
+            slotsLeft: `Sisa ${Math.max(1, (t.capacity || 12) - (t.reserved_seats || 0))} Kursi`,
+            price: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(t.selling_price || t.price || 250000),
+            originalPrice: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.round((t.selling_price || t.price || 250000) * 1.3)),
+            discount: '25%',
+            rating: '4.9',
+            type: t.type || 'open-trip',
+            slug: t.slug,
+            image: t.image_url || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=640&q=85',
+        }));
+        const liveSlugs = new Set(liveProducts.map(p => p.slug));
+        const filteredDefaults = defaultTripProducts.filter(p => !liveSlugs.has(p.slug));
+        return [...liveProducts, ...filteredDefaults];
+    }
+    return defaultTripProducts;
+});
+
 const pageCount = computed(() => {
-    // 6 items total, each page scrolls by 2-3 items
-    return 3;
+    return Math.max(1, Math.ceil(tripProducts.value.length / 2));
 });
 const pagePositions = computed(() => Array.from({ length: pageCount.value }, (_, index) => index));
 

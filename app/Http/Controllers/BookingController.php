@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Refund;
 use App\Models\Review;
 use App\Models\Trip;
+use App\Models\Vendor;
 use App\Models\VirtualTour;
 use App\Services\AuditService;
 use App\Services\BookingService;
@@ -41,7 +42,7 @@ class BookingController extends Controller
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -130,6 +131,24 @@ class BookingController extends Controller
     public function partner(Request $request, string $partner): Response
     {
         $partnerData = self::$popularPartners[$partner] ?? null;
+        $vendorRecord = null;
+        if ($partnerData) {
+            $vendorRecord = Vendor::where('status', 'verified')->where('name', 'like', '%'.$partnerData['name'].'%')->first();
+        } else {
+            $vendorRecord = Vendor::where('status', 'verified')->where(function ($q) use ($partner) {
+                $q->where('name', 'like', '%'.$partner.'%')
+                    ->orWhere('id', is_numeric($partner) ? (int) $partner : -1);
+            })->first();
+            if ($vendorRecord) {
+                $partnerData = [
+                    'id' => Str::slug($vendorRecord->name),
+                    'name' => $vendorRecord->name,
+                    'logo' => $vendorRecord->logo_url ?? '/Assets/Images/logo-vendor/default.webp',
+                    'city' => $vendorRecord->city ?? 'Indonesia',
+                    'tagline' => $vendorRecord->description ?? 'Mitra Resmi Terverifikasi TapakLokal',
+                ];
+            }
+        }
         abort_unless($partnerData, 404);
 
         $filters = $request->validate([
@@ -140,12 +159,13 @@ class BookingController extends Controller
         ]);
 
         $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+            ->when($vendorRecord, fn ($query, $v) => $query->where('vendor_id', $v->id))
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -177,7 +197,7 @@ class BookingController extends Controller
             ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->orderBy('departure_date')->orderBy('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 

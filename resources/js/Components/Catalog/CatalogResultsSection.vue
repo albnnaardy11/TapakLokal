@@ -891,10 +891,14 @@ const allAvailableTrips = computed(() => {
             t.image_url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=800&q=80',
         ],
+        isDbTrip: true,
     }));
 
-    // If dbTrips exist, merge with curated items ensuring unique ids/slugs
+    // If dbTrips exist, prioritize them and only add non-duplicate curated items
     if (dbTrips.length > 0) {
+        if (props.partner) {
+            return dbTrips;
+        }
         const slugs = new Set(dbTrips.map(d => d.slug));
         const nonDuplicateCurated = curatedTripsData.filter(c => !slugs.has(c.slug));
         return [...dbTrips, ...nonDuplicateCurated];
@@ -1017,10 +1021,16 @@ const filteredTrips = computed(() => {
 
         return true;
     }).sort((a, b) => {
+        if (a.isDbTrip && !b.isDbTrip) return -1;
+        if (!a.isDbTrip && b.isDbTrip) return 1;
+
         if (sortBy.value === 'price-asc') return a.price - b.price;
         if (sortBy.value === 'price-desc') return b.price - a.price;
         if (sortBy.value === 'rating-desc') return b.rating - a.rating;
-        if (sortBy.value === 'popular') return b.reviewCount - a.reviewCount;
+        if (sortBy.value === 'popular') {
+            if (a.isDbTrip && b.isDbTrip) return 0;
+            return b.reviewCount - a.reviewCount;
+        }
         return 0;
     });
 });

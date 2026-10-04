@@ -14,6 +14,7 @@ import TripCatalogFaq from '../Components/Home/TripCatalogFaq.vue';
 const props = defineProps({
     trips: { type: Object, default: () => ({ data: [] }) },
     filters: { type: Object, default: () => ({}) },
+    featuredTrips: { type: Array, default: () => [] },
     cmsDestinations: { type: Array, default: () => [] },
     cmsFaqs: { type: Array, default: () => [] },
     cmsPartners: { type: Array, default: () => [] },
@@ -74,7 +75,7 @@ const heroTitle = computed(() => {
             <TripOptions class="!mt-0" />
 
             <!-- Flash Sale Section -->
-            <FlashSale class="!mt-12 sm:!mt-16" />
+            <FlashSale :items="featuredTrips?.length ? featuredTrips : trips?.data" class="!mt-12 sm:!mt-16" />
 
             <!-- Popular Trip Partner Logos Section (1:1 with Airline Reference Layout) -->
             <PopularTripPartners class="!mt-14 sm:!mt-18" />

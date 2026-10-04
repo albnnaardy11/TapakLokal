@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowLeft, ArrowRight, ChevronRight, Star } from 'lucide-vue-next';
+import { ArrowLeft, ArrowRight, Award, ChevronRight, Star } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -214,19 +214,17 @@ onBeforeUnmount(() => {
                     </div>
 
                     <div class="mt-8 space-y-4">
-                        <!-- Vendor Badge Card matching 1:1 design -->
-                        <div class="inline-flex items-center gap-3 rounded-xl bg-white px-4 py-2.5 shadow-lg max-w-[230px]">
-                            <img
-                                src="/Assets/Images/logo-vendor/logo-brenggo-tour.jpg"
-                                alt="Logo BRENGGO.ID"
-                                class="h-9 w-9 rounded-md object-contain shrink-0"
-                            />
+                        <!-- Vendor Verified Badge -->
+                        <div class="inline-flex items-center gap-3 rounded-xl bg-white px-4 py-2.5 shadow-lg max-w-[240px]">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 text-[#0088ff] shrink-0">
+                                <Award class="size-5 text-[#0088ff]" />
+                            </div>
                             <div class="min-w-0">
-                                <p class="text-sm font-black uppercase tracking-wider text-slate-900 leading-none">
-                                    BRENGGO<span class="text-[#dc2626]">.ID</span>
+                                <p class="text-xs font-black uppercase tracking-wider text-slate-900 leading-none">
+                                    Mitra Terverifikasi
                                 </p>
-                                <p class="mt-1 text-[9px] font-semibold text-slate-500 leading-tight truncate">
-                                    Liburan Asik Bersama Kami
+                                <p class="mt-1 text-[9px] font-semibold text-emerald-600 leading-tight truncate flex items-center gap-1">
+                                    <span class="inline-block size-1.5 rounded-full bg-emerald-500"></span> 100% KYC Approved
                                 </p>
                             </div>
                         </div>
@@ -283,15 +281,13 @@ onBeforeUnmount(() => {
                                     {{ trip.price }}
                                 </p>
 
-                                <!-- Card Footer: Vendor Logo + Star Rating -->
+                                <!-- Card Footer: Vendor Name + Star Rating -->
                                 <div class="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-[10px]">
-                                    <div class="flex items-center gap-1.5 font-bold uppercase tracking-wide text-[#dc2626]">
-                                        <img
-                                            src="/Assets/Images/logo-vendor/logo-brenggo-tour.jpg"
-                                            alt=""
-                                            class="size-3.5 rounded-full object-contain"
-                                        />
-                                        <span>{{ trip.vendor.name }}</span>
+                                    <div class="flex items-center gap-1.5 font-bold uppercase tracking-wide text-slate-700">
+                                        <div class="flex size-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[8px] font-black text-sky-700">
+                                            {{ (trip.vendor?.name || 'M').charAt(0) }}
+                                        </div>
+                                        <span class="truncate max-w-[110px]">{{ trip.vendor.name }}</span>
                                     </div>
                                     <div class="flex items-center gap-1 font-bold text-slate-700">
                                         <Star class="size-3.5 fill-[#facc15] text-[#facc15]" aria-hidden="true" />
