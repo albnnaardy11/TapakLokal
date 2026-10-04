@@ -77,9 +77,9 @@ onBeforeUnmount(() => observer?.disconnect());
         <!-- Section Header -->
         <div class="flex items-end justify-between gap-5">
             <div>
-                <p class="text-xs font-bold tracking-[0.14em] text-[#0175ea]">REKOMENDASI CERITA</p>
+                <p class="text-xs font-bold tracking-[0.14em] text-[#0066cc]">REKOMENDASI CERITA</p>
                 <h2 id="travel-blog-heading" class="mt-2 text-2xl font-extrabold leading-tight tracking-tight text-[#172c50] sm:text-3xl">
-                    Temukan cerita untuk <span class="text-[#0175ea]">perjalananmu</span>
+                    Temukan cerita untuk <span class="text-[#0066cc]">perjalananmu</span>
                 </h2>
                 <p class="mt-2.5 text-sm text-slate-500">
                     Inspirasi dan panduan praktis dari pemandu lokal sebelum kamu berangkat.
@@ -88,11 +88,11 @@ onBeforeUnmount(() => observer?.disconnect());
 
             <!-- Carousel Nav Buttons -->
             <div v-if="!isBlogPage" class="hidden shrink-0 items-center gap-3 sm:flex">
-                <span class="text-xs font-medium text-slate-400">{{ articles.length }} cerita</span>
+                <span class="text-xs font-medium text-slate-500">{{ articles.length }} cerita</span>
                 <div class="flex gap-2">
                     <button
                         type="button"
-                        class="grid size-10 place-items-center rounded-full border border-sky-100 bg-white text-[#0175ea] shadow-xs transition hover:bg-sky-50 disabled:opacity-30 disabled:pointer-events-none"
+                        class="grid size-10 place-items-center rounded-full border border-sky-100 bg-white text-[#0066cc] shadow-xs transition hover:bg-sky-50 disabled:opacity-30 disabled:pointer-events-none"
                         :disabled="page === 0"
                         aria-label="Artikel sebelumnya"
                         @click="move(page - 1)"
@@ -101,7 +101,7 @@ onBeforeUnmount(() => observer?.disconnect());
                     </button>
                     <button
                         type="button"
-                        class="grid size-10 place-items-center rounded-full bg-[#0175ea] text-white shadow-xs transition hover:bg-[#005fb8] disabled:opacity-30 disabled:pointer-events-none"
+                        class="grid size-10 place-items-center rounded-full bg-[#0066cc] text-white shadow-xs transition hover:bg-[#005fb8] disabled:opacity-30 disabled:pointer-events-none"
                         :disabled="page === positions.length - 1"
                         aria-label="Artikel berikutnya"
                         @click="move(page + 1)"
@@ -136,7 +136,6 @@ onBeforeUnmount(() => observer?.disconnect());
                 <Link
                     :href="route('blog.show', { article: article.slug })"
                     class="flex h-full flex-col text-left outline-none focus-visible:ring-2 focus-visible:ring-[#0175ea]"
-                    :aria-label="`Baca ${article.title}`"
                 >
                     <!-- Cinematic Image 16:10 with Location Badge -->
                     <div class="relative aspect-[16/10] w-full overflow-hidden bg-sky-100">
@@ -152,17 +151,17 @@ onBeforeUnmount(() => observer?.disconnect());
                     <!-- Card Body: Clean & Consistent with Site Design System -->
                     <div class="flex flex-1 flex-col p-4 sm:p-4.5">
                         <!-- Date & Reading Time -->
-                        <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400">
+                        <div class="flex items-center gap-2 text-[11px] font-medium text-slate-500">
                             <span>{{ formatPublishedDate(article.published_at) }}</span>
                             <span class="text-slate-300">•</span>
                             <span class="inline-flex items-center gap-1">
-                                <Clock3 class="size-3 text-slate-400" />
+                                <Clock3 class="size-3 text-slate-500" />
                                 {{ article.metadata?.readTime || '4 mnt baca' }}
                             </span>
                         </div>
 
                         <!-- Title: 2 lines clamp, crisp typography -->
-                        <h3 class="mt-2 text-sm font-bold leading-snug text-[#172c50] transition-colors duration-200 group-hover:text-[#0175ea] line-clamp-2">
+                        <h3 class="mt-2 text-sm font-bold leading-snug text-[#172c50] transition-colors duration-200 group-hover:text-[#0066cc] line-clamp-2">
                             {{ article.title }}
                         </h3>
                     </div>
@@ -183,7 +182,7 @@ onBeforeUnmount(() => observer?.disconnect());
             >
                 <span
                     class="h-2 rounded-full transition-all"
-                    :class="page === index ? 'w-6 bg-[#0175ea]' : 'w-2 bg-slate-200 hover:bg-sky-300'"
+                    :class="page === index ? 'w-6 bg-[#0066cc]' : 'w-2 bg-slate-200 hover:bg-sky-300'"
                 ></span>
             </button>
         </nav>
@@ -197,7 +196,7 @@ onBeforeUnmount(() => observer?.disconnect());
         >
             <div v-if="selectedArticle" class="p-6 sm:p-9">
                 <div class="flex items-center justify-between gap-4">
-                    <span class="text-xs font-bold text-[#0175ea]">{{ selectedArticle.category }}</span>
+                    <span class="text-xs font-bold text-[#0066cc]">{{ selectedArticle.category }}</span>
                     <button
                         type="button"
                         autofocus

@@ -18,9 +18,18 @@
         <meta property="og:url" content="{{ $seo['canonical'] }}" inertia="og:url">
         <meta property="og:type" content="website" inertia="og:type">
 
+        @if (($page['component'] ?? null) === 'Welcome')
+            @php
+                $heroSection = collect($page['props']['cmsSections'] ?? [])->firstWhere('slug', 'hero');
+                $heroImage = $heroSection['image_url'] ?? 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88';
+            @endphp
+            <link rel="preload" as="image" href="{{ $heroImage }}" fetchpriority="high">
+            <link rel="modulepreload" href="{{ Vite::asset('resources/js/Pages/Welcome.vue') }}">
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&amp;display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @routes

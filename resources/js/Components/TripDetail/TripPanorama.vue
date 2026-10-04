@@ -61,33 +61,45 @@ const showSpot = (index) => {
                     </button>
                 </div>
 
-                <div class="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Pilih spot panorama">
+                <div class="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="Pilih spot panorama rute trip">
                     <button
                         v-for="(spot, index) in (tours.length ? tours : spots)"
                         :key="spot.id || spot.name"
                         type="button"
-                        class="group/thumb relative h-14 w-24 shrink-0 overflow-hidden rounded-lg border-2 text-left transition sm:h-16 sm:w-28"
+                        role="tab"
+                        :aria-selected="selectedSpot === index"
+                        :aria-label="`Lihat panorama spot ${spot.title || spot.name}`"
+                        class="group/thumb relative h-14 w-24 shrink-0 overflow-hidden rounded-lg border-2 text-left transition sm:h-16 sm:w-28 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1688e8] focus-visible:ring-offset-1"
                         :class="selectedSpot === index ? 'border-[#1688e8] shadow-[0_4px_12px_rgba(22,136,232,0.18)]' : 'border-transparent opacity-70 hover:opacity-100'"
-                        :aria-pressed="selectedSpot === index"
                         @click="showSpot(index)"
                     >
-                        <img :src="spot.image_url || spot.image" :alt="spot.title || spot.name" class="size-full object-cover" />
-                        <span class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></span>
-                        <span class="absolute bottom-2 left-2 right-2 truncate text-[9px] font-bold text-white">{{ spot.title || spot.name }}</span>
+                        <img
+                            :src="spot.thumbnail_url || spot.image_url || spot.image"
+                            :alt="`Thumbnail spot ${spot.title || spot.name}`"
+                            width="112"
+                            height="64"
+                            loading="lazy"
+                            decoding="async"
+                            class="size-full object-cover"
+                        />
+                        <span class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none"></span>
+                        <span class="absolute bottom-2 left-2 right-2 truncate text-[9px] font-bold text-white pointer-events-none">{{ spot.title || spot.name }}</span>
                     </button>
                 </div>
             </div>
 
-            <aside class="border-t border-[#e5eef7] bg-[#f6faff] p-4 sm:p-5 lg:border-l lg:border-t-0">
+            <aside class="border-t border-[#e5eef7] bg-[#f6faff] p-4 sm:p-5 lg:border-l lg:border-t-0" aria-label="Daftar titik itinerary">
                 <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#1688e8]">Spot dalam itinerary</p>
                 <h3 class="mt-1 text-[15px] font-extrabold text-[#173b70]">Pilih sudut yang ingin dilihat</h3>
                 <p class="mt-1.5 text-[10px] leading-4 text-[#60789c]">Pilih titik itinerary untuk berpindah panorama.</p>
-                <div class="mt-4 space-y-1.5">
+                <div class="mt-4 space-y-1.5" role="list">
                     <button
                         v-for="(spot, index) in spots"
                         :key="spot.name"
                         type="button"
-                        class="flex w-full items-center gap-2.5 rounded-lg border p-2 text-left transition"
+                        role="listitem"
+                        :aria-label="`Pilih spot nomor ${index + 1}: ${spot.name}`"
+                        class="flex w-full items-center gap-2.5 rounded-lg border p-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1688e8]"
                         :class="selectedSpot === index ? 'border-[#8ec9f7] bg-white shadow-[0_4px_12px_rgba(22,102,171,0.08)]' : 'border-transparent bg-transparent hover:border-[#d9e9f6] hover:bg-white'"
                         :aria-pressed="selectedSpot === index"
                         @click="showSpot(index)"
@@ -95,6 +107,7 @@ const showSpot = (index) => {
                         <span
                             class="grid size-6 shrink-0 place-items-center rounded-full text-[9px] font-extrabold"
                             :class="selectedSpot === index ? 'bg-[#1688e8] text-white' : 'bg-[#e7f3ff] text-[#1688e8]'"
+                            aria-hidden="true"
                         >
                             0{{ index + 1 }}
                         </span>
@@ -102,7 +115,7 @@ const showSpot = (index) => {
                             <span class="block truncate text-xs font-bold text-[#173b70]">{{ spot.name }}</span>
                             <span class="mt-0.5 block text-[10px] text-[#7186a2]">{{ spot.label }}</span>
                         </span>
-                        <ArrowRight class="size-4 shrink-0" :class="selectedSpot === index ? 'text-[#1688e8]' : 'text-[#b1c0cf]'" />
+                        <ArrowRight class="size-4 shrink-0" :class="selectedSpot === index ? 'text-[#1688e8]' : 'text-[#b1c0cf]'" aria-hidden="true" />
                     </button>
                 </div>
             </aside>

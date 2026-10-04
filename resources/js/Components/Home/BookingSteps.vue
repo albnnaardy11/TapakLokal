@@ -26,17 +26,17 @@ const steps = [
             <div class="min-w-0 px-5 py-8 sm:p-8">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <p class="text-[10px] font-bold tracking-[0.12em] text-[#078cff]">RENCANAKAN PERJALANANMU</p>
+                        <p class="text-[10px] font-bold tracking-[0.12em] text-[#0066cc]">RENCANAKAN PERJALANANMU</p>
                         <h2 id="booking-steps-heading" class="mt-2 text-2xl font-extrabold tracking-tight text-[#172c50]">Cara booking trip</h2>
                         <p class="mt-2 text-sm text-slate-500">Mudah dan praktis, dalam lima langkah.</p>
                     </div>
-                    <button type="button" class="group inline-flex items-center gap-2 rounded-full bg-[#edf6ff] px-4 py-2.5 text-xs font-bold text-[#078cff] transition duration-300 hover:bg-[#078cff] hover:text-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff] motion-reduce:transition-none" @click="$emit('explore')">Mulai cari trip<ArrowRight class="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" /></button>
+                    <button type="button" class="group inline-flex items-center gap-2 rounded-full bg-[#edf6ff] px-4 py-2.5 text-xs font-bold text-[#0066cc] transition duration-300 hover:bg-[#078cff] hover:text-white active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff] motion-reduce:transition-none" @click="$emit('explore')">Mulai cari trip<ArrowRight class="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" /></button>
                 </div>
 
                 <ol class="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
                     <li v-for="(step, index) in steps" :key="step.title" class="group relative rounded-2xl border border-[#e8eff8] bg-[#f8fbff] p-4 transition duration-300 ease-out hover:-translate-y-1 hover:border-[#b9ddff] hover:bg-white hover:shadow-[0_8px_20px_rgba(23,100,180,0.08)] motion-reduce:transform-none motion-reduce:transition-none">
-                        <span class="absolute right-3 top-3 text-[10px] font-bold tabular-nums text-[#8aa9c6]">0{{ index + 1 }}</span>
-                        <span class="mb-4 grid size-11 place-items-center rounded-xl bg-[#e3f1ff] text-[#078cff] transition-colors duration-300 group-hover:bg-[#078cff] group-hover:text-white motion-reduce:transition-none"><component :is="step.icon" class="size-5" :stroke-width="1.8" aria-hidden="true" /></span>
+                        <span class="absolute right-3 top-3 text-[10px] font-bold tabular-nums text-[#526581]">0{{ index + 1 }}</span>
+                        <span class="mb-4 grid size-11 place-items-center rounded-xl bg-[#e3f1ff] text-[#0066cc] transition-colors duration-300 group-hover:bg-[#078cff] group-hover:text-white motion-reduce:transition-none"><component :is="step.icon" class="size-5" :stroke-width="1.8" aria-hidden="true" /></span>
                         <h3 class="text-xs font-bold leading-5 text-[#172c50]">{{ step.title }}</h3>
                         <p class="mt-1.5 text-[11px] leading-[18px] text-slate-500">{{ step.description }}</p>
                     </li>

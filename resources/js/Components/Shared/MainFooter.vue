@@ -64,7 +64,7 @@ function safeRoute(name, params) {
                     </div>
                     <button
                         type="submit"
-                        class="h-10 shrink-0 rounded-md bg-[#ff5e1f] px-4 text-xs font-bold text-white shadow-sm transition hover:bg-[#e64f12] active:scale-95"
+                        class="h-10 shrink-0 rounded-md bg-[#c2410c] px-4 text-xs font-bold text-white shadow-sm transition hover:bg-[#e64f12] active:scale-95"
                     >
                         Langganan Newsletter
                     </button>
@@ -84,10 +84,10 @@ function safeRoute(name, params) {
                         <!-- Brand Logo (Traveloka Style with Blue Bird/Compass) -->
                         <Link href="/" class="inline-flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-white sm:justify-start">
                             <span class="text-2xl font-black tracking-tight text-white">
-                                tapak<span class="text-[#0194f3]">lokal</span>
+                                tapak<span class="text-[#38bdf8]">lokal</span>
                             </span>
                             <!-- Swift Bird Icon matching Traveloka silhouette -->
-                            <svg class="size-6 text-[#0194f3]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <svg class="size-6 text-[#0066cc]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M21.7 4.2c-.4-.3-1-.2-1.3.2l-5.6 7.4-4.8-2.7c-.5-.3-1.1-.1-1.4.4l-6 10c-.3.5-.1 1.1.4 1.4.2.1.4.1.6.1.4 0 .7-.2.9-.5l5.2-8.6 4.9 2.8c.4.2.9.2 1.3-.1l6.8-9c.3-.4.2-1-.1-1.4zM22.5 2.5c-.7-.4-1.6-.2-2 .5l-3.2 5.5 3.8 2.2 2-6.5c.3-.8-.1-1.4-.6-1.7z" opacity="0.9" />
                             </svg>
                         </Link>
@@ -96,7 +96,7 @@ function safeRoute(name, params) {
                         <div class="mt-6 flex w-full justify-center sm:justify-start">
                             <Link
                                 :href="safeRoute('vendor.login')"
-                                class="inline-flex items-center gap-2 rounded-full bg-[#0194f3] px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#0080d3] active:scale-95"
+                                class="inline-flex items-center gap-2 rounded-full bg-[#0066cc] px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#0080d3] active:scale-95"
                             >
                                 <Handshake class="size-3.5" />
                                 <span>Partner with Tapak Lokal</span>
@@ -130,7 +130,7 @@ function safeRoute(name, params) {
                                 >
                                     <!-- Tapak Lokal Wallet -->
                                     <div v-if="partner.isWallet" class="flex items-center gap-1">
-                                        <Wallet class="size-3 text-[#0194f3]" />
+                                        <Wallet class="size-3 text-[#0066cc]" />
                                         <span class="text-[8.5px] font-black text-[#032454] leading-none">Wallet</span>
                                     </div>
 

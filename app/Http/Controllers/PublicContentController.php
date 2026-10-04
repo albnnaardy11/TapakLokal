@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Promotion;
+use App\Models\Trip;
 use App\Services\PublicContentService;
+use App\Services\TripImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PublicContentController extends Controller
 {
@@ -17,6 +21,19 @@ class PublicContentController extends Controller
         return Inertia::render('Welcome', [
             'appName' => config('app.name', 'TapakLokal'),
             ...$this->content->homepage(),
+        ]);
+    }
+
+    public function tripThumbnail(Trip $trip, TripImageService $images): StreamedResponse
+    {
+        abort_unless($trip->status === 'published' && $trip->vendor()->where('status', 'verified')->exists(), 404);
+
+        $path = $images->thumbnail($trip);
+        abort_unless($path, 404);
+
+        return Storage::disk('public')->response($path, 'trip-thumbnail.webp', [
+            'Cache-Control' => 'public, max-age=3600',
+            'Content-Type' => 'image/webp',
         ]);
     }
 

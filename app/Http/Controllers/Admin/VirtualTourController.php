@@ -64,9 +64,24 @@ class VirtualTourController extends Controller
         return to_route('admin.tours.index')->with('success', 'Panorama tersimpan. Penempatan mengikuti status publikasi halaman tujuan.');
     }
 
-    public function image(VirtualTour $tour): StreamedResponse
+    public function image(Request $request, VirtualTour $tour, PanoramaService $panoramas): StreamedResponse
     {
         abort_unless(VirtualTour::visible()->whereKey($tour->id)->exists(), 404);
+
+        if ($request->boolean('thumbnail')) {
+            $media = $tour->media;
+
+            return Storage::disk($media->disk)->response(
+                $panoramas->thumbnail($media),
+                'thumbnail.webp',
+                [
+                    'Content-Type' => 'image/webp',
+                    'X-Content-Type-Options' => 'nosniff',
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                ],
+                'inline'
+            );
+        }
 
         return $this->stream($tour);
     }
@@ -82,6 +97,15 @@ class VirtualTourController extends Controller
     {
         $media = $tour->media;
 
-        return Storage::disk($media->disk)->response($media->path, $media->name, ['Content-Type' => 'image/webp', 'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store'], 'inline');
+        return Storage::disk($media->disk)->response(
+            $media->path,
+            $media->name,
+            [
+                'Content-Type' => 'image/webp',
+                'X-Content-Type-Options' => 'nosniff',
+                'Cache-Control' => 'public, max-age=31536000, immutable',
+            ],
+            'inline'
+        );
     }
 }

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PlatformSeeder::class);
         if (app()->environment(['local', 'testing'])) {
             $this->call(WebsiteContentSeeder::class);
+            $this->call(VirtualTourSeeder::class);
         }
     }
 }

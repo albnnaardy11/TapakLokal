@@ -10,6 +10,43 @@ use Illuminate\Validation\ValidationException;
 
 class PanoramaService
 {
+    public function thumbnail(MediaAsset $media): string
+    {
+        $disk = Storage::disk($media->disk);
+        $namedThumbnail = 'panoramas/thumbnails/'.pathinfo($media->path, PATHINFO_FILENAME).'.webp';
+        if ($disk->exists($namedThumbnail)) {
+            return $namedThumbnail;
+        }
+
+        $path = 'panoramas/thumbnails/'.hash('sha256', $media->path.'|'.$disk->lastModified($media->path)).'.webp';
+        if (! $disk->exists($path)) {
+            $input = imagecreatefromstring($disk->get($media->path));
+            if (! $input) {
+                throw new \RuntimeException('Panorama tidak dapat dibaca.');
+            }
+            $width = min(480, imagesx($input));
+            $output = imagescale($input, $width);
+            $stream = fopen('php://temp', 'w+b');
+            try {
+                if (! $output || ! imagewebp($output, $stream, 75)) {
+                    throw new \RuntimeException('Thumbnail gagal dibuat.');
+                }
+                rewind($stream);
+                if (! $disk->put($path, $stream)) {
+                    throw new \RuntimeException('Thumbnail gagal disimpan.');
+                }
+            } finally {
+                fclose($stream);
+                imagedestroy($input);
+                if ($output) {
+                    imagedestroy($output);
+                }
+            }
+        }
+
+        return $path;
+    }
+
     public function import(string $source, string $name, User $user): MediaAsset
     {
         $size = getimagesize($source);
@@ -26,7 +63,7 @@ class PanoramaService
             throw ValidationException::withMessages(['file' => 'Foto tidak dapat dibaca.']);
         }
 
-        $outputWidth = min(4096, $size[0]);
+        $outputWidth = min(2560, $size[0]);
         $outputHeight = (int) round($outputWidth / 2);
         $output = imagecreatetruecolor($outputWidth, $outputHeight);
 
@@ -35,7 +72,7 @@ class PanoramaService
 
         $stream = fopen('php://temp', 'w+b');
         try {
-            if (! imagewebp($output, $stream, 92)) {
+            if (! imagewebp($output, $stream, 80)) {
                 throw new \RuntimeException('Gagal mengoptimalkan panorama.');
             }
             rewind($stream);

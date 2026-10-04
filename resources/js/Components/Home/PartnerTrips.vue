@@ -94,7 +94,7 @@ const trips = computed(() => {
         price: formatPrice(trip.selling_price || trip.price),
         rating: trip.reviews_avg_rating ? `${Number(trip.reviews_avg_rating).toFixed(1)}/5` : '4.8/5',
         vendor: { name: trip.vendor?.name || 'BRENGGO.ID' },
-        image: trip.image_url || trip.image || 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85',
+        image: trip.thumbnail_url || trip.image_url || trip.image || 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85',
     }));
 });
 
@@ -257,7 +257,6 @@ onBeforeUnmount(() => {
                             :key="trip.id"
                             :href="route('trips.show', { tripType: trip.type, trip: trip.slug })"
                             class="group flex w-[230px] sm:w-[250px] lg:w-[calc((100%-28px)/3)] shrink-0 snap-start flex-col overflow-hidden rounded-2xl bg-white text-left shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                            :aria-label="`Pilih ${trip.name}, ${trip.price}`"
                         >
                             <!-- Card Image -->
                             <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
@@ -306,7 +305,7 @@ onBeforeUnmount(() => {
                                 v-for="(_, page) in totalPages"
                                 :key="page"
                                 type="button"
-                                class="h-2 rounded-full transition-all duration-300 focus-visible:outline-none"
+                                class="h-6 min-w-6 rounded-full border-y-8 border-transparent bg-clip-padding transition-all duration-300 focus-visible:outline-2 focus-visible:outline-blue-700"
                                 :class="currentPage === page ? 'w-6 bg-white shadow-sm' : 'w-2 bg-white/40 hover:bg-white/70'"
                                 :aria-label="`Pergi ke slide ${page + 1}`"
                                 @click="goToPage(page)"

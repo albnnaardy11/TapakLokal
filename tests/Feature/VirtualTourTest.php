@@ -36,9 +36,14 @@ class VirtualTourTest extends TestCase
         Storage::disk('local')->assertExists($tour->media->path);
         $this->get('/admin/content/virtual-tours/'.$tour->id.'/preview')->assertOk()->assertHeader('Content-Type', 'image/webp');
         $this->get('/virtual-tours/'.$tour->id.'/image')->assertNotFound();
+        $this->get('/virtual-tours/'.$tour->id.'/image?thumbnail=1')->assertNotFound();
         $this->post('/admin/content/virtual-tours/'.$tour->id, [...$this->payload(), 'status' => 'published'])->assertSessionHasNoErrors()->assertRedirect();
         $this->get('/')->assertInertia(fn (Assert $page) => $page->has('virtualTours', 1)->where('virtualTours.0.title', 'Curug Panorama'));
         $this->get('/virtual-tours/'.$tour->id.'/image')->assertOk();
+        $thumbnail = $this->get('/virtual-tours/'.$tour->id.'/image?thumbnail=1')->assertOk()->assertHeader('Content-Type', 'image/webp')->streamedContent();
+        $this->assertSame(480, getimagesizefromstring($thumbnail)[0]);
+        $tour->refresh()->update(['status' => 'draft']);
+        $this->get('/virtual-tours/'.$tour->id.'/image?thumbnail=1')->assertNotFound();
         $this->assertDatabaseHas('audit_logs', ['action' => 'virtual_tour.saved', 'entity_id' => $tour->id]);
     }
 

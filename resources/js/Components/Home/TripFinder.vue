@@ -9,15 +9,21 @@ import {
     Crown,
     Footprints,
     Gift,
+    Landmark,
     MapPin,
     Minus,
+    Mountain,
+    Palmtree,
     Plus,
     Search,
+    Ship,
     Shirt,
     ShoppingBag,
     Sparkles,
+    Sun,
     Tag,
     TentTree,
+    Trees,
     User,
     Users,
     UsersRound,
@@ -26,6 +32,7 @@ import {
 } from 'lucide-vue-next';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 
 const props = defineProps({
     partners: {
@@ -286,6 +293,82 @@ const selectedSouvenirCategoryLabel = computed(() => {
     return found && found.id ? found.title : 'All';
 });
 
+// Destination Autocomplete Suggestions
+const destinationSuggestions = ref([]);
+const popularDestinationsList = [
+    { name: 'Gunung Bromo', region: 'Malang & Probolinggo, Jawa Timur', type: 'open-trip', badge: 'Open Trip', icon: Mountain },
+    { name: 'Labuan Bajo', region: 'Taman Nasional Komodo & Phinisi, NTT', type: 'open-trip', badge: 'Open Trip', icon: Ship },
+    { name: 'Yogyakarta', region: 'DIY, Borobudur & Pantai Selatan', type: 'open-trip', badge: 'Budaya & Alam', icon: Landmark },
+    { name: 'Bali', region: 'Nusa Penida, Ubud & Kintamani', type: 'private-trip', badge: 'Private Trip', icon: Palmtree },
+    { name: 'Gunung Gede', region: 'Taman Nasional Gunung Gede Pangrango', type: 'open-trip', badge: 'Hiking', icon: Mountain },
+    { name: 'Gunung Salak', region: 'Curug & Jalur Rimba Salak Endah', type: 'open-trip', badge: 'Adventure', icon: Trees },
+    { name: 'Kepulauan Seribu', region: 'Pulau Pramuka, Pari & Harapan', type: 'open-trip', badge: 'Island Trip', icon: Sun },
+    { name: 'Lombok', region: 'Gili Trawangan, Mandalika & Rinjani', type: 'open-trip', badge: 'Open Trip', icon: Palmtree },
+];
+
+let locationDebounceTimer = null;
+const fetchLocationSuggestions = async (term = '') => {
+    if (!term) {
+        destinationSuggestions.value = popularDestinationsList;
+        return;
+    }
+    try {
+        const url = new URL(typeof route === 'function' ? route('search.suggestions') : '/search/suggestions', window.location.origin);
+        url.searchParams.set('q', term);
+        const res = await fetch(url.toString(), {
+            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        });
+        if (res.ok) {
+            const data = await res.json();
+            const list = [];
+            data.trips?.forEach((t) => {
+                list.push({
+                    name: t.title,
+                    region: t.destination,
+                    type: t.type,
+                    badge: t.type_label,
+                    icon: t.type === 'private-trip' ? Crown : TentTree,
+                });
+            });
+            data.destinations?.forEach((d) => {
+                list.push({
+                    name: d.title,
+                    region: 'Destinasi Wisata',
+                    type: 'open-trip',
+                    badge: 'Destinasi',
+                    icon: MapPin,
+                });
+            });
+            if (list.length > 0) {
+                destinationSuggestions.value = list;
+            } else {
+                destinationSuggestions.value = popularDestinationsList.filter(
+                    (p) => p.name.toLowerCase().includes(term.toLowerCase()) || p.region.toLowerCase().includes(term.toLowerCase())
+                );
+            }
+        }
+    } catch {
+        destinationSuggestions.value = popularDestinationsList.filter(
+            (p) => p.name.toLowerCase().includes(term.toLowerCase()) || p.region.toLowerCase().includes(term.toLowerCase())
+        );
+    }
+};
+
+const handleLocationInput = () => {
+    clearTimeout(locationDebounceTimer);
+    locationDebounceTimer = setTimeout(() => {
+        fetchLocationSuggestions(tripLocation.value.trim());
+    }, 180);
+};
+
+const selectSuggestedLocation = (item) => {
+    tripLocation.value = item.name;
+    if (item.type && !tripCategory.value) {
+        tripCategory.value = item.type;
+    }
+    openDropdown.value = null;
+};
+
 const selectDestination = (name) => {
     activeTab.value = 'trip';
     tripLocation.value = name;
@@ -304,12 +387,19 @@ defineExpose({ selectDestination });
 const searchTrips = () => {
     closeDropdowns();
     const totalPax = adultCount.value + childCount.value;
-    router.get(route('catalog'), {
-        q: tripLocation.value.trim() || undefined,
-        type: tripCategory.value || undefined,
-        date: tripDate.value || undefined,
-        guests: totalPax > 0 ? totalPax : undefined,
-    });
+    const q = tripLocation.value.trim();
+    const params = {};
+    if (q) params.q = q;
+    if (tripDate.value) params.date = tripDate.value;
+    if (totalPax > 1) params.guests = totalPax;
+
+    if (tripCategory.value === 'open-trip') {
+        router.visit(route('trips.category', { type: 'open-trip', ...params }));
+    } else if (tripCategory.value === 'private-trip') {
+        router.visit(route('trips.category', { type: 'private-trip', ...params }));
+    } else {
+        router.visit(route('catalog', params));
+    }
 };
 
 const searchSouvenirs = () => {
@@ -383,7 +473,7 @@ const searchSouvenirs = () => {
                 class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all duration-150"
                 :class="
                     tripCategory === opt.id
-                        ? 'bg-[#0088ff] text-white shadow-xs'
+                        ? 'bg-[#0066cc] text-white shadow-xs'
                         : 'bg-black/25 text-white/90 hover:bg-black/40 hover:text-white backdrop-blur-md'
                 "
                 @click="tripCategory = opt.id"
@@ -401,7 +491,7 @@ const searchSouvenirs = () => {
                 class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-semibold transition-all duration-150"
                 :class="
                     souvenirCategory === opt.id
-                        ? 'bg-[#0088ff] text-white shadow-xs'
+                        ? 'bg-[#0066cc] text-white shadow-xs'
                         : 'bg-black/25 text-white/90 hover:bg-black/40 hover:text-white backdrop-blur-md'
                 "
                 @click="souvenirCategory = opt.id"
@@ -439,29 +529,88 @@ const searchSouvenirs = () => {
             class="mt-1.5 bg-white rounded-2xl md:rounded-full p-1.5 md:p-2 shadow-[0_20px_50px_rgba(0,0,0,0.30)] flex flex-col md:flex-row items-stretch md:items-center"
             @submit.prevent="searchTrips"
         >
-            <!-- 1. Lokasi/Destinasi -->
-            <div class="flex-1 flex items-center gap-3 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200">
-                <MapPin class="size-5 shrink-0 text-[#0088ff]" />
-                <div class="w-full min-w-0">
-                    <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Lokasi / Destinasi</span>
-                    <input
-                        id="trip-location-input"
-                        ref="tripLocationInput"
-                        v-model="tripLocation"
-                        type="text"
-                        placeholder="Contoh: Yogyakarta, Bali, Malang"
-                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
-                    />
+            <!-- 1. Lokasi/Destinasi with Instant Suggestions Dropdown -->
+            <div class="relative flex-1" data-dropdown>
+                <div class="flex items-center gap-3 px-4 py-2 border-b md:border-b-0 md:border-r border-slate-200">
+                    <MapPin class="size-5 shrink-0 text-[#0088ff]" />
+                    <div class="w-full min-w-0">
+                        <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Lokasi / Destinasi</span>
+                        <input
+                            id="trip-location-input"
+                            aria-label="Lokasi atau destinasi"
+                            ref="tripLocationInput"
+                            v-model="tripLocation"
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Contoh: Yogyakarta, Bali, Malang"
+                            class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-500 placeholder:font-normal focus:outline-none"
+                            @focus="openDropdown = 'tripLocation'; fetchLocationSuggestions(tripLocation)"
+                            @input="openDropdown = 'tripLocation'; handleLocationInput()"
+                        />
+                    </div>
+                    <button
+                        v-if="tripLocation"
+                        type="button"
+                        class="text-slate-300 hover:text-slate-500 p-1"
+                        aria-label="Hapus lokasi"
+                        @click="tripLocation = ''; fetchLocationSuggestions('')"
+                    >
+                        <X class="size-3.5" />
+                    </button>
                 </div>
-                <button
-                    v-if="tripLocation"
-                    type="button"
-                    class="text-slate-300 hover:text-slate-500"
-                    aria-label="Hapus lokasi"
-                    @click="tripLocation = ''"
+
+                <!-- Destination Autocomplete Dropdown Popover (Traveloka Style) -->
+                <Transition
+                    enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="transform opacity-0 -translate-y-1 scale-95"
+                    enter-to-class="transform opacity-100 translate-y-0 scale-100"
+                    leave-active-class="transition duration-100 ease-in"
+                    leave-from-class="transform opacity-100 translate-y-0 scale-100"
+                    leave-to-class="transform opacity-0 -translate-y-1 scale-95"
                 >
-                    <X class="size-3.5" />
-                </button>
+                    <div
+                        v-if="openDropdown === 'tripLocation'"
+                        class="absolute left-0 top-full z-50 mt-2 w-[calc(100vw-2.5rem)] sm:w-[360px] md:w-[420px] max-w-[440px] rounded-2xl border border-slate-100 bg-white p-3 shadow-[0_20px_50px_rgba(15,35,70,0.22)] ring-1 ring-black/5"
+                    >
+                        <div class="mb-2 flex items-center justify-between px-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                {{ tripLocation ? 'Pilihan Destinasi' : 'Destinasi Populer' }}
+                            </span>
+                            <span class="text-[10px] text-slate-400">Klik untuk memilih</span>
+                        </div>
+
+                        <div class="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                            <button
+                                v-for="dest in destinationSuggestions"
+                                :key="dest.name"
+                                type="button"
+                                class="w-full group flex items-center justify-between gap-3 rounded-xl p-2.5 text-left transition hover:bg-sky-50/70 active:bg-sky-100"
+                                @click="selectSuggestedLocation(dest)"
+                            >
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="grid size-8 shrink-0 place-items-center rounded-lg bg-sky-100 text-[#0088ff] group-hover:bg-[#0088ff] group-hover:text-white transition">
+                                        <component :is="dest.icon || MapPin" class="size-4" />
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="truncate text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#0066cc]">
+                                            {{ dest.name }}
+                                        </div>
+                                        <div class="truncate text-[11px] text-slate-400">
+                                            {{ dest.region }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <span
+                                    v-if="dest.badge"
+                                    class="shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold transition"
+                                    :class="dest.type === 'private-trip' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-[#0066cc]'"
+                                >
+                                    {{ dest.badge }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </Transition>
             </div>
 
             <!-- 2. Tanggal Berangkat -->
@@ -475,7 +624,7 @@ const searchSouvenirs = () => {
                         <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Tanggal Berangkat</span>
                         <span
                             class="block truncate text-xs sm:text-sm font-semibold"
-                            :class="tripDate ? 'text-slate-800' : 'text-slate-400 font-normal'"
+                            :class="tripDate ? 'text-slate-800' : 'text-slate-500 font-normal'"
                         >
                             {{ formattedTripDate || 'Pilih tanggal berangkat' }}
                         </span>
@@ -490,7 +639,7 @@ const searchSouvenirs = () => {
                     type="date"
                     class="absolute inset-0 size-full opacity-0 cursor-pointer [color-scheme:light]"
                     aria-label="Tanggal Berangkat"
-                    tabindex="-1"
+                    tabindex="0"
                 />
 
                 <button
@@ -527,7 +676,7 @@ const searchSouvenirs = () => {
                     />
                 </button>
 
-                <!-- Dropdown Menu (Compact & Clean) -->
+                <!-- Dropdown Menu (Traveloka Style) -->
                 <Transition
                     enter-active-class="transition duration-150 ease-out"
                     enter-from-class="transform opacity-0 -translate-y-1 scale-95"
@@ -538,32 +687,37 @@ const searchSouvenirs = () => {
                 >
                     <div
                         v-if="openDropdown === 'tripGuests'"
-                        class="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2.5rem)] max-w-[250px] rounded-xl border border-slate-200/90 bg-white p-3 shadow-[0_15px_40px_rgba(15,35,70,0.20)] ring-1 ring-black/5"
+                        class="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2.5rem)] sm:w-[280px] max-w-[280px] rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_20px_50px_rgba(15,35,70,0.22)] ring-1 ring-black/5"
                     >
-                        <div class="space-y-2.5">
+                        <div class="space-y-3">
                             <!-- Row 1: Adult -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2.5">
-                                    <User class="size-4.5 shrink-0 text-[#0088ff]" />
-                                    <span class="text-sm font-semibold text-slate-800">Adult</span>
+                                    <div class="grid size-7 place-items-center rounded-lg bg-sky-50 text-[#0088ff]">
+                                        <User class="size-4 shrink-0" />
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs font-bold text-slate-800">Adult</span>
+                                        <span class="block text-[10px] text-slate-400">Usia ≥ 12 thn</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1.5">
                                     <button
                                         type="button"
                                         :disabled="adultCount <= 1"
-                                        class="flex size-7 items-center justify-center rounded-md bg-[#f1f5f9] text-[#0088ff] transition hover:bg-[#e2e8f0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="flex size-7 items-center justify-center rounded-lg bg-slate-100 text-[#0088ff] font-bold transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                                         @click.stop="decrementAdults"
                                         aria-label="Kurangi Dewasa"
                                     >
                                         <Minus class="size-3.5 stroke-[2.5]" />
                                     </button>
-                                    <span class="w-7 border-b border-slate-300 pb-0.5 text-center text-sm font-bold text-slate-800">
+                                    <span class="w-7 text-center text-xs font-bold text-slate-800">
                                         {{ adultCount }}
                                     </span>
                                     <button
                                         type="button"
                                         :disabled="adultCount >= 50"
-                                        class="flex size-7 items-center justify-center rounded-md bg-[#f1f5f9] text-[#0088ff] transition hover:bg-[#e2e8f0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="flex size-7 items-center justify-center rounded-lg bg-slate-100 text-[#0088ff] font-bold transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                                         @click.stop="incrementAdults"
                                         aria-label="Tambah Dewasa"
                                     >
@@ -572,29 +726,36 @@ const searchSouvenirs = () => {
                                 </div>
                             </div>
 
+                            <div class="h-px bg-slate-100"></div>
+
                             <!-- Row 2: Children -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2.5">
-                                    <Baby class="size-4.5 shrink-0 text-[#0088ff]" />
-                                    <span class="text-sm font-semibold text-slate-800">Children</span>
+                                    <div class="grid size-7 place-items-center rounded-lg bg-sky-50 text-[#0088ff]">
+                                        <Baby class="size-4 shrink-0" />
+                                    </div>
+                                    <div>
+                                        <span class="block text-xs font-bold text-slate-800">Children</span>
+                                        <span class="block text-[10px] text-slate-400">Usia 2-11 thn</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1.5">
                                     <button
                                         type="button"
                                         :disabled="childCount <= 0"
-                                        class="flex size-7 items-center justify-center rounded-md bg-[#f1f5f9] text-[#0088ff] transition hover:bg-[#e2e8f0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="flex size-7 items-center justify-center rounded-lg bg-slate-100 text-[#0088ff] font-bold transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                                         @click.stop="decrementChildren"
                                         aria-label="Kurangi Anak"
                                     >
                                         <Minus class="size-3.5 stroke-[2.5]" />
                                     </button>
-                                    <span class="w-7 border-b border-slate-300 pb-0.5 text-center text-sm font-bold text-slate-800">
+                                    <span class="w-7 text-center text-xs font-bold text-slate-800">
                                         {{ childCount }}
                                     </span>
                                     <button
                                         type="button"
                                         :disabled="childCount >= 30"
-                                        class="flex size-7 items-center justify-center rounded-md bg-[#f1f5f9] text-[#0088ff] transition hover:bg-[#e2e8f0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+                                        class="flex size-7 items-center justify-center rounded-lg bg-slate-100 text-[#0088ff] font-bold transition hover:bg-slate-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                                         @click.stop="incrementChildren"
                                         aria-label="Tambah Anak"
                                     >
@@ -603,14 +764,14 @@ const searchSouvenirs = () => {
                                 </div>
                             </div>
 
-                            <!-- Bottom Action: Done Button -->
+                            <!-- Bottom Action: Selesai Button -->
                             <div class="flex justify-end pt-1">
                                 <button
                                     type="button"
-                                    class="rounded-lg bg-[#0088ff] px-4 py-1.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#0074e0] active:scale-95"
+                                    class="w-full rounded-xl bg-[#0088ff] py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#0074e0] active:scale-95"
                                     @click="closeDropdowns"
                                 >
-                                    Done
+                                    Selesai
                                 </button>
                             </div>
                         </div>
@@ -643,12 +804,12 @@ const searchSouvenirs = () => {
                 <div class="w-full min-w-0">
                     <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Cari Oleh-Oleh</span>
                     <input
-                        id="souvenir-name-input"
+                        id="souvenir-name-input" aria-label="Nama oleh-oleh"
                         ref="souvenirKeywordInput"
                         v-model="souvenirKeyword"
                         type="text"
                         placeholder="Contoh: Bakpia, Pie Susu, Strudel"
-                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
+                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-500 placeholder:font-normal focus:outline-none"
                     />
                 </div>
                 <button
@@ -668,11 +829,11 @@ const searchSouvenirs = () => {
                 <div class="w-full min-w-0">
                     <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Kota / Asal Daerah</span>
                     <input
-                        id="souvenir-location-input"
+                        id="souvenir-location-input" aria-label="Kota atau asal daerah"
                         v-model="souvenirLocation"
                         type="text"
                         placeholder="Contoh: Yogyakarta, Bali, Bandung"
-                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none"
+                        class="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder:text-slate-500 placeholder:font-normal focus:outline-none"
                     />
                 </div>
                 <button
@@ -697,7 +858,7 @@ const searchSouvenirs = () => {
                         <span class="block md:hidden text-[10px] font-bold uppercase tracking-wider text-slate-400">Batas PO / Tanggal</span>
                         <span
                             class="block truncate text-xs sm:text-sm font-semibold"
-                            :class="souvenirDate ? 'text-slate-800' : 'text-slate-400 font-normal'"
+                            :class="souvenirDate ? 'text-slate-800' : 'text-slate-500 font-normal'"
                         >
                             {{ formattedSouvenirDate || 'Pilih batas tanggal' }}
                         </span>
@@ -712,7 +873,7 @@ const searchSouvenirs = () => {
                     type="date"
                     class="absolute inset-0 size-full opacity-0 cursor-pointer [color-scheme:light]"
                     aria-label="Batas PO atau Tanggal"
-                    tabindex="-1"
+                    tabindex="0"
                 />
 
                 <button

@@ -15,7 +15,7 @@ import {
     UsersRound,
     X,
 } from 'lucide-vue-next';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 
@@ -59,6 +59,7 @@ const handleScroll = () => {
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('keydown', handleGlobalKeydown);
     handleScroll();
 
     // Otomatis buka modal login / register jika ada parameter ?auth= di URL
@@ -76,6 +77,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('keydown', handleGlobalKeydown);
 });
 
 const isTransparent = computed(() => props.transparentOnTop && !isScrolled.value);
@@ -110,11 +112,29 @@ const selectNavigation = (item) => {
     notify(`${item.label} dipilih — ${item.description}`);
 };
 
-import AuthModal from './AuthModal.vue';
+const AuthModal = defineAsyncComponent(() => import('./AuthModal.vue'));
 import AccountDropdown from './AccountDropdown.vue';
-import LoginSuccessModal from './LoginSuccessModal.vue';
+const LoginSuccessModal = defineAsyncComponent(() => import('./LoginSuccessModal.vue'));
+const AlgoliaSearchModal = defineAsyncComponent(() => import('./AlgoliaSearchModal.vue'));
 
-const submitGlobalSearch = () => router.get(typeof route === 'function' ? route('catalog') : '/cari-trip', { q: globalSearch.value.trim() });
+const isSearchModalOpen = ref(false);
+const searchModalQuery = ref('');
+
+const openSearchModal = (query = '') => {
+    searchModalQuery.value = query || globalSearch.value || '';
+    isSearchModalOpen.value = true;
+};
+
+const handleGlobalKeydown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        openSearchModal();
+    }
+};
+
+const submitGlobalSearch = () => {
+    openSearchModal(globalSearch.value);
+};
 
 const isAuthModalOpen = ref(false);
 const authModalMode = ref('login');
@@ -327,7 +347,7 @@ const openAuthModal = (mode = 'login') => {
                         <button
                             type="button"
                             class="rounded-lg px-3 py-2 text-xs font-bold text-white shadow-sm transition-all duration-300 cursor-pointer"
-                            :class="isTransparent ? 'bg-[#0088ff] hover:bg-[#0074e0]' : 'bg-[#3E7BEF] hover:bg-[#2e69d9]'"
+                            :class="isTransparent ? 'bg-[#0066cc] hover:bg-[#0054ad]' : 'bg-[#3E7BEF] hover:bg-[#2e69d9]'"
                             @click="openAuthModal('register')"
                         >
                             Daftar
@@ -402,31 +422,52 @@ const openAuthModal = (mode = 'login') => {
                         </component>
                     </div>
 
-                    <form class="ml-auto w-52" @submit.prevent="submitGlobalSearch">
-                        <label
-                            class="flex h-7 items-center gap-1.5 rounded-full px-3 shadow-sm transition-all duration-500"
-                            :class="isTransparent ? 'bg-white/15 text-white placeholder:text-white/70 ring-1 ring-white/25 hover:bg-white/25 focus-within:bg-white/30 focus-within:ring-white/50' : 'bg-white text-slate-400'"
+                    <div class="ml-auto w-56 sm:w-64">
+                        <button
+                            type="button"
+                            @click="openSearchModal(globalSearch)"
+                            class="group flex h-7.5 w-full items-center justify-between rounded-full px-3 text-xs shadow-xs transition-all duration-300 cursor-pointer"
+                            :class="
+                                isTransparent
+                                    ? 'bg-white/15 text-white/90 ring-1 ring-white/25 hover:bg-white/25 hover:ring-white/50'
+                                    : 'bg-white text-slate-600 hover:bg-slate-50 ring-1 ring-slate-200/80 shadow-inner'
+                            "
+                            aria-label="Cari destinasi atau trip (Ctrl+K)"
                         >
-                            <input
-                                v-model="globalSearch"
-                                class="min-w-0 flex-1 bg-transparent text-xs outline-none transition-colors duration-500"
-                                :class="isTransparent ? 'text-white placeholder:text-white/75' : 'text-slate-700 placeholder:text-slate-400'"
-                                placeholder="Cari destinasi atau trip"
-                            />
-                            <Search class="size-3.5 transition-colors duration-500" :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'" />
-                        </label>
-                    </form>
+                            <span class="flex items-center gap-1.5 min-w-0">
+                                <Search class="size-3.5 shrink-0 transition-colors duration-500" :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'" />
+                                <span class="truncate" :class="isTransparent ? 'text-white/80' : 'text-slate-400'">
+                                    {{ globalSearch || 'Cari destinasi atau trip...' }}
+                                </span>
+                            </span>
+                            <kbd
+                                class="hidden sm:inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold transition"
+                                :class="isTransparent ? 'bg-white/20 text-white/90' : 'bg-slate-100 text-slate-500 border border-slate-200'"
+                            >
+                                <span class="text-[9px]">⌘</span>K
+                            </kbd>
+                        </button>
+                    </div>
                 </div>
             </nav>
 
             <!-- Mobile Menu Dropdown -->
             <div v-if="isMobileMenuOpen" class="max-h-[calc(100dvh-70px)] overflow-y-auto border-t border-slate-100 bg-white px-5 py-4 shadow-[0_12px_24px_rgba(15,44,92,0.12)] text-slate-800 lg:hidden">
-                <form class="mb-3.5" @submit.prevent="submitGlobalSearch">
-                    <label class="flex h-11 items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-slate-400 focus-within:border-[#3E7BEF] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#3E7BEF]/15 transition">
-                        <Search class="size-4.5 text-[#3E7BEF]" />
-                        <input v-model="globalSearch" class="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-700 outline-none" placeholder="Cari destinasi atau trip..." />
-                    </label>
-                </form>
+                <div class="mb-3.5">
+                    <button
+                        type="button"
+                        @click="isMobileMenuOpen = false; openSearchModal(globalSearch)"
+                        class="flex h-11 w-full items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-left text-sm text-slate-400 transition hover:border-[#3E7BEF] hover:bg-white focus:outline-none"
+                    >
+                        <span class="flex items-center gap-2.5 min-w-0">
+                            <Search class="size-4.5 text-[#3E7BEF]" />
+                            <span class="truncate text-slate-500 font-medium">
+                                {{ globalSearch || 'Cari destinasi atau trip...' }}
+                            </span>
+                        </span>
+                        <span class="rounded bg-[#edf3ff] px-2 py-0.5 text-[11px] font-bold text-[#3E7BEF]">Cari</span>
+                    </button>
+                </div>
                 <div class="grid grid-cols-2 gap-2">
                     <component
                         :is="item.href ? Link : 'button'"
@@ -492,7 +533,7 @@ const openAuthModal = (mode = 'login') => {
             </div>
 
             <!-- Traveloka 1:1 Auth Modal -->
-            <AuthModal
+            <AuthModal v-if="isAuthModalOpen"
                 :open="isAuthModalOpen"
                 :mode="authModalMode"
                 :title="authModalTitle"
@@ -502,7 +543,7 @@ const openAuthModal = (mode = 'login') => {
             />
 
             <!-- Traveloka Style Login Success Modal -->
-            <LoginSuccessModal
+            <LoginSuccessModal v-if="isSuccessModalOpen"
                 :open="isSuccessModalOpen"
                 :user="successUserData"
                 @close="isSuccessModalOpen = false"
@@ -515,6 +556,14 @@ const openAuthModal = (mode = 'login') => {
                     {{ notification }}
                 </div>
             </Transition>
+
+            <!-- Algolia DocSearch / Traveloka Style Instant Search Modal -->
+            <AlgoliaSearchModal
+                v-if="isSearchModalOpen"
+                :open="isSearchModalOpen"
+                :initial-query="searchModalQuery"
+                @close="isSearchModalOpen = false"
+            />
         </header>
     </div>
 </template>

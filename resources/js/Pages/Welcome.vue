@@ -13,8 +13,6 @@ import TravelFaq from '../Components/Home/TravelFaq.vue';
 import TravelerReviews from '../Components/Home/TravelerReviews.vue';
 import TravelBackdrop from '../Components/Home/TravelBackdrop.vue';
 import { computed, ref } from 'vue';
-import ContentCards from '../Components/Shared/ContentCards.vue';
-import TripCards from '../Components/Shared/TripCards.vue';
 import MainFooter from '../Components/Shared/MainFooter.vue';
 
 const tripFinder = ref(null);
@@ -58,6 +56,7 @@ const reviewsLoading = false;
         <section class="relative w-full overflow-hidden bg-[#0c1f38] text-white min-h-[475px] sm:min-h-[495px] lg:min-h-[500px]">
             <!-- Full Width Background Image -->
             <img
+                fetchpriority="high" loading="eager" decoding="async" width="1920" height="800"
                 :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88'"
                 :alt="hero?.title || 'Jelajahi Indonesia'"
                 class="absolute inset-0 z-0 size-full object-cover object-center brightness-[0.88] transition-opacity duration-500"
@@ -92,9 +91,9 @@ const reviewsLoading = false;
                         alt="Promo spesial kemerdekaan TapakLokal"
                         width="1531"
                         height="351"
-                        loading="eager"
-                        fetchpriority="high"
-                        decoding="sync"
+                        loading="lazy"
+                        fetchpriority="auto"
+                        decoding="async"
                         class="w-full h-auto aspect-[1531/351] object-cover block"
                     />
                 </Link>

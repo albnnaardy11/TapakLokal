@@ -35,8 +35,29 @@ class PublicContentService
             'cmsDestinations' => $this->published('destination')->orderBy('position')->orderBy('id')->limit(7)->get(['id', 'title', 'slug', 'excerpt', 'image_url'])->toArray(),
             'cmsTestimonials' => $this->published('testimonial')->orderBy('position')->orderBy('id')->limit(8)->get()->map(fn ($page) => ['id' => 'cms-'.$page->id, 'user' => ['name' => $page->title], 'trip' => ['title' => $page->excerpt], 'body' => $page->body, 'rating' => 5, 'highlight' => $page->metadata['highlight'] ?? '', 'demo' => true])->values()->all(),
             'virtualTours' => VirtualTour::visible()->where('placement', 'homepage')->orderBy('position')->orderBy('id')->get()->map(fn ($tour) => $tour->presentation())->values()->all(),
-            'featuredTrips' => Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))->where('departure_date', '>=', today()->toDateString())->latest('id')->limit(12)->get(['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->toArray(),
+            'featuredTrips' => $this->featuredTrips(),
             'travelerReviews' => Review::with(['user:id,name', 'trip:id,title'])->where('status', 'published')->whereHas('trip', fn ($query) => $query->where('status', 'published')->whereHas('vendor', fn ($vendor) => $vendor->where('status', 'verified')))->latest('id')->limit(8)->get(['id', 'user_id', 'trip_id', 'rating', 'body'])->toArray(),
         ]);
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    private function featuredTrips(): array
+    {
+        $images = app(TripImageService::class);
+
+        return Trip::with('vendor:id,name')
+            ->where('status', 'published')
+            ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+            ->where('departure_date', '>=', today()->toDateString())
+            ->latest('id')
+            ->limit(12)
+            ->get(['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])
+            ->map(function (Trip $trip) use ($images): array {
+                return [
+                    ...$trip->toArray(),
+                    'thumbnail_url' => $images->publicSourcePath($trip) ? route('trips.thumbnail', $trip) : null,
+                ];
+            })
+            ->all();
     }
 }

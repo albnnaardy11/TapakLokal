@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookingRequest;
 use App\Models\Booking;
+use App\Models\ContentPage;
 use App\Models\Refund;
 use App\Models\Review;
+use App\Models\SouvenirProduct;
 use App\Models\Trip;
 use App\Models\Vendor;
 use App\Models\VirtualTour;
@@ -13,6 +15,7 @@ use App\Services\AuditService;
 use App\Services\BookingService;
 use App\Services\CorporateService;
 use App\Services\PublicContentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +30,117 @@ class BookingController extends Controller
     public function __construct(
         protected PublicContentService $content
     ) {}
+
+    public function suggestions(Request $request): JsonResponse
+    {
+        $rawQuery = trim((string) $request->input('q', ''));
+        $lower = Str::lower($rawQuery);
+
+        $trips = Trip::with('vendor:id,name')
+            ->where('status', 'published')
+            ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+            ->where('departure_date', '>=', today()->toDateString())
+            ->when($lower !== '', function ($query) use ($lower) {
+                $query->where(function ($q) use ($lower) {
+                    $q->whereRaw('LOWER(title) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw('LOWER(destination) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw('LOWER(type) LIKE ?', ["%{$lower}%"]);
+                });
+            })
+            ->latest('id')
+            ->limit(6)
+            ->get()
+            ->map(fn (Trip $trip) => [
+                'id' => $trip->id,
+                'title' => $trip->title,
+                'slug' => $trip->slug,
+                'type' => $trip->type,
+                'type_label' => $trip->type === 'open-trip' ? 'Open Trip' : 'Private Trip',
+                'destination' => $trip->destination,
+                'price' => $trip->selling_price,
+                'formatted_price' => 'Rp '.number_format($trip->selling_price, 0, ',', '.'),
+                'image_url' => $trip->image_url,
+                'vendor_name' => $trip->vendor?->name,
+                'departure_date' => $trip->departure_date ? $trip->departure_date->format('d M Y') : null,
+                'url' => route('trips.show', ['tripType' => $trip->type, 'trip' => $trip->slug]),
+            ]);
+
+        $destinations = ContentPage::whereIn('type', ['destination', 'hidden-gem'])
+            ->where('status', 'published')
+            ->when($lower !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$lower}%"]))
+            ->limit(4)
+            ->get()
+            ->map(fn (ContentPage $page) => [
+                'id' => $page->id,
+                'title' => $page->title,
+                'slug' => $page->slug,
+                'image_url' => $page->image_url,
+                'url' => route('catalog', ['q' => $page->title]),
+            ]);
+
+        $souvenirs = SouvenirProduct::where('status', 'active')
+            ->when($lower !== '', function ($query) use ($lower) {
+                $query->where(function ($q) use ($lower) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
+                        ->orWhereRaw('LOWER(city) LIKE ?', ["%{$lower}%"]);
+                });
+            })
+            ->limit(4)
+            ->get()
+            ->map(fn (SouvenirProduct $prod) => [
+                'id' => $prod->id,
+                'name' => $prod->name,
+                'city' => $prod->city,
+                'price' => $prod->price,
+                'formatted_price' => 'Rp '.number_format($prod->price, 0, ',', '.'),
+                'image_url' => $prod->image_url,
+                'url' => route('souvenirs.show', ['product' => $prod->slug ?: $prod->id]),
+            ]);
+
+        $popularDestinations = [
+            ['name' => 'Gunung Bromo', 'region' => 'Malang, Jawa Timur', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Bromo'])],
+            ['name' => 'Labuan Bajo', 'region' => 'Taman Nasional Komodo, NTT', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Labuan Bajo'])],
+            ['name' => 'Yogyakarta', 'region' => 'DIY & Candi Prambanan', 'type' => 'open-trip', 'url' => route('catalog', ['q' => 'Yogyakarta'])],
+            ['name' => 'Bali', 'region' => 'Nusa Penida & Ubud', 'type' => 'private-trip', 'url' => route('trips.category', ['type' => 'private-trip', 'q' => 'Bali'])],
+            ['name' => 'Gunung Gede', 'region' => 'Taman Nasional Gede Pangrango', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Gede'])],
+            ['name' => 'Gunung Salak', 'region' => 'Curug & Jalur Rimba Salak', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Salak'])],
+            ['name' => 'Kepulauan Seribu', 'region' => 'Pulau Pramuka & Pari', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Kepulauan Seribu'])],
+            ['name' => 'Lombok', 'region' => 'Gili Trawangan & Rinjani', 'type' => 'open-trip', 'url' => route('trips.category', ['type' => 'open-trip', 'q' => 'Lombok'])],
+        ];
+
+        $quickCategories = [
+            [
+                'title' => 'Cari di Open Trip',
+                'type' => 'open-trip',
+                'badge' => 'Paling Populer',
+                'description' => 'Gabung trip bersama traveler lain, hemat & seru.',
+                'url' => route('trips.category', array_filter(['type' => 'open-trip', 'q' => $rawQuery ?: null])),
+            ],
+            [
+                'title' => 'Cari di Private Trip',
+                'type' => 'private-trip',
+                'badge' => 'Eksklusif & Fleksibel',
+                'description' => 'Jadwal dan rute khusus keluarga / rombonganmu.',
+                'url' => route('trips.category', array_filter(['type' => 'private-trip', 'q' => $rawQuery ?: null])),
+            ],
+            [
+                'title' => 'Cari di Open PO Oleh-Oleh',
+                'type' => 'souvenir',
+                'badge' => 'Khas Nusantara',
+                'description' => 'Produk kuliner & kerajinan autentik nusantara.',
+                'url' => route('souvenirs.index', array_filter(['q' => $rawQuery ?: null])),
+            ],
+        ];
+
+        return response()->json([
+            'query' => $rawQuery,
+            'trips' => $trips,
+            'destinations' => $destinations,
+            'souvenirs' => $souvenirs,
+            'popularDestinations' => $popularDestinations,
+            'quickCategories' => $quickCategories,
+        ]);
+    }
 
     public function catalog(Request $request): Response
     {

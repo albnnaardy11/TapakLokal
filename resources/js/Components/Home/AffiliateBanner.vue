@@ -88,7 +88,7 @@ defineProps({
                             class="group inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-[#0256af] shadow-[0_8px_20px_rgba(2,30,85,0.22)] transition-all duration-200 hover:bg-[#f0f7ff] hover:shadow-[0_12px_28px_rgba(2,30,85,0.28)] hover:scale-[1.01] active:scale-95"
                         >
                             <span>Pelajari Lebih Lanjut</span>
-                            <ArrowRight class="size-4 text-[#0175ea] transition-transform duration-200 group-hover:translate-x-1" />
+                            <ArrowRight class="size-4 text-[#0066cc] transition-transform duration-200 group-hover:translate-x-1" />
                         </Link>
                     </div>
                 </div>
@@ -103,18 +103,18 @@ defineProps({
                             </div>
                             <div class="pr-1 text-left">
                                 <p class="text-[10px] font-extrabold text-slate-800 leading-none">Komisi Baru!</p>
-                                <p class="mt-1 text-[9px] font-bold text-emerald-600 leading-none">+Rp 250.000 Masuk</p>
+                                <p class="mt-1 text-[9px] font-bold text-emerald-700 leading-none">+Rp 250.000 Masuk</p>
                             </div>
                         </div>
 
                         <!-- Floating Badge 2: Link Referral (Kanan Bawah) -->
                         <div class="pointer-events-none absolute -bottom-3 -right-3 z-20 hidden sm:flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/95 px-3 py-2 shadow-[0_12px_24px_rgba(0,30,80,0.2)] backdrop-blur-md">
-                            <div class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#0175ea] text-white shadow-xs">
+                            <div class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#0066cc] text-white shadow-xs">
                                 <Share2 class="size-3.5 text-white" />
                             </div>
                             <div class="pr-1 text-left">
                                 <p class="text-[10px] font-extrabold text-slate-800 leading-none">Link Referral</p>
-                                <p class="mt-1 text-[9px] font-bold text-[#0175ea] leading-none">Siap Dibagikan</p>
+                                <p class="mt-1 text-[9px] font-bold text-[#0066cc] leading-none">Siap Dibagikan</p>
                             </div>
                         </div>
 
@@ -128,12 +128,12 @@ defineProps({
                                 <!-- App Header Inside Tablet -->
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
                                     <div class="flex items-center gap-2">
-                                        <div class="flex size-6 items-center justify-center rounded-lg bg-[#0175ea] text-[10px] font-bold text-white shadow-xs">
+                                        <div class="flex size-6 items-center justify-center rounded-lg bg-[#0066cc] text-[10px] font-bold text-white shadow-xs">
                                             TL
                                         </div>
                                         <span class="text-xs font-bold text-slate-800">TapakLokal Affiliate</span>
                                     </div>
-                                    <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600 border border-emerald-200">
+                                    <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 border border-emerald-200">
                                         ● Aktif
                                     </span>
                                 </div>
@@ -161,7 +161,7 @@ defineProps({
                                 <div class="mt-3">
                                     <div class="flex items-center justify-between text-[10px] font-semibold text-slate-500 mb-1.5">
                                         <span>Trip Populer Dibagikan</span>
-                                        <span class="text-[9px] text-[#0175ea] font-medium">Lihat Semua</span>
+                                        <span class="text-[9px] text-[#0066cc] font-medium">Lihat Semua</span>
                                     </div>
 
                                     <!-- Trip Item 1 -->
@@ -174,10 +174,10 @@ defineProps({
                                             />
                                             <div class="min-w-0">
                                                 <div class="truncate text-[10px] font-bold text-slate-800">Open Trip Komodo</div>
-                                                <div class="text-[9px] text-emerald-600 font-semibold">Komisi: Rp 120.000 / pax</div>
+                                                <div class="text-[9px] text-emerald-700 font-semibold">Komisi: Rp 120.000 / pax</div>
                                             </div>
                                         </div>
-                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0175ea]">
+                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0066cc]">
                                             <Share2 class="size-2.5" />
                                             <span>Bagikan</span>
                                         </button>
@@ -193,10 +193,10 @@ defineProps({
                                             />
                                             <div class="min-w-0">
                                                 <div class="truncate text-[10px] font-bold text-slate-800">Bromo Sunrise Tour</div>
-                                                <div class="text-[9px] text-emerald-600 font-semibold">Komisi: Rp 85.000 / pax</div>
+                                                <div class="text-[9px] text-emerald-700 font-semibold">Komisi: Rp 85.000 / pax</div>
                                             </div>
                                         </div>
-                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0175ea]">
+                                        <button type="button" class="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#edf5ff] px-2 py-1 text-[9px] font-semibold text-[#0066cc]">
                                             <Share2 class="size-2.5" />
                                             <span>Bagikan</span>
                                         </button>

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
-import { Search, ChevronRight, ChevronLeft, X, Compass } from 'lucide-vue-next';
+import { Search, ChevronRight, ChevronLeft, X, Compass, RotateCw } from 'lucide-vue-next';
 import PanoramaMark from '../Shared/PanoramaMark.vue';
 import PanoramaViewer from '../Shared/PanoramaViewer.vue';
 
@@ -15,12 +15,14 @@ const query = ref('');
 const chosen = ref(null);
 const listContainer = ref(null);
 const thumbnailSlider = ref(null);
+const announceText = ref('');
 
 const filtered = computed(() => {
     const q = query.value.trim().toLocaleLowerCase('id-ID');
     if (!q) return props.tours;
     return props.tours.filter((tour) =>
-        tour.title.toLocaleLowerCase('id-ID').includes(q)
+        (tour.title || '').toLocaleLowerCase('id-ID').includes(q) ||
+        (tour.description || '').toLocaleLowerCase('id-ID').includes(q)
     );
 });
 
@@ -35,12 +37,40 @@ const active = computed(() => {
     return displayTours.value[0] || props.tours[0];
 });
 
+// JSON-LD Structured Data untuk SEO Google Search
+const schemaStructuredData = computed(() => {
+    if (!props.tours.length) return null;
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        'name': 'Galeri Panorama 360 Derajat TapakLokal',
+        'description': 'Koleksi virtual tour panorama interaktif 360 derajat destinasi wisata, gunung, dan curug di Indonesia.',
+        'numberOfItems': props.tours.length,
+        'itemListElement': props.tours.map((tour, index) => ({
+            '@type': 'ListItem',
+            'position': index + 1,
+            'item': {
+                '@type': 'TouristDestination',
+                'name': tour.title,
+                'description': tour.description || 'Virtual tour panorama 360 derajat interaktif TapakLokal.',
+                'image': tour.image_url,
+                'url': typeof window !== 'undefined' ? window.location.href : '',
+            },
+        })),
+    });
+});
+
 function selectTour(tourId) {
     chosen.value = tourId;
+    const tour = props.tours.find((t) => t.id === tourId);
+    if (tour) {
+        announceText.value = `Menampilkan panorama 360 derajat ${tour.title}`;
+    }
 }
 
 function clearQuery() {
     query.value = '';
+    announceText.value = 'Pencarian dihapus, menampilkan semua destinasi';
 }
 
 // Navigasi slide thumbnail pada card kiri
@@ -83,40 +113,57 @@ watch(
 </script>
 
 <template>
+    <!-- Schema.org JSON-LD Structured Data for Google Rich Snippets -->
+    <component :is="'script'" v-if="schemaStructuredData" type="application/ld+json">
+        {{ schemaStructuredData }}
+    </component>
+
+    <!-- Screen Reader Live Region for Accessibility -->
+    <div class="sr-only" aria-live="polite" aria-atomic="true">
+        {{ announceText }}
+    </div>
+
     <section
+        id="jelajah-360"
         class="mx-auto mt-20 grid max-w-[1180px] gap-3 text-[#172c70] sm:mt-24 lg:grid-cols-[704fr_462fr] lg:items-stretch"
         aria-labelledby="destination-gallery-heading"
+        role="region"
     >
         <!-- Card Kiri: Virtual Tour Panorama 360 -->
         <div class="flex flex-col justify-between min-w-0 rounded-2xl bg-white/95 p-5 sm:p-6 shadow-sm border border-slate-100">
             <div>
                 <div class="mb-4 flex items-start gap-3">
-                    <PanoramaMark class="size-11 shrink-0 text-[#0088ff]" />
+                    <PanoramaMark class="size-11 shrink-0 text-[#0066cc]" aria-hidden="true" />
                     <div>
-                        <h2 id="destination-gallery-heading" class="text-lg sm:text-xl font-bold text-[#172c70]">
+                        <h2 id="destination-gallery-heading" class="text-lg sm:text-xl font-bold text-[#172c70] tracking-tight">
                             Jelajahi Destinasi dalam 360°
                         </h2>
-                        <p class="mt-1 text-xs leading-5 text-[#788caf]">
+                        <p class="mt-1 text-xs leading-5 text-[#526581]">
                             Rasakan pengalaman virtual sebelum kamu berangkat. Pilih panorama untuk melihat suasana destinasi secara menyeluruh.
                         </p>
                     </div>
                 </div>
 
                 <!-- Panorama WebGL Canvas Viewer -->
-                <div class="overflow-hidden rounded-xl bg-slate-900">
+                <div class="overflow-hidden rounded-xl bg-slate-900 shadow-inner">
                     <PanoramaViewer v-if="active" :key="active.id" :tour="active" />
                     <div v-else class="flex flex-col items-center justify-center rounded-xl bg-sky-50/70 p-12 text-center text-sm text-slate-500">
-                        <Compass class="size-8 text-sky-400 mb-2" />
+                        <Compass class="size-8 text-sky-400 mb-2" aria-hidden="true" />
                         <p>Panorama belum diterbitkan.</p>
                     </div>
                 </div>
+
+                <!-- Deskripsi Destinasi Aktif untuk SEO & Pembaca -->
+                <p v-if="active?.description" class="mt-3 text-xs leading-relaxed text-[#526581]">
+                    {{ active.description }}
+                </p>
             </div>
 
             <!-- List Thumbnail Virtual Tour di Card Kiri: Horizontal Slidable Carousel -->
             <div class="mt-4">
                 <div class="mb-2 flex items-center justify-between text-xs">
                     <span class="font-medium text-slate-500 text-[11px]">Pilihan Cepat Panorama</span>
-                    <span class="text-[11px] font-semibold text-[#0088ff]">
+                    <span class="text-[11px] font-semibold text-[#0066cc] truncate max-w-[200px]" :title="active?.title">
                         {{ active ? active.title : 'Pilih Destinasi' }}
                     </span>
                 </div>
@@ -125,43 +172,52 @@ watch(
                     <!-- Tombol Navigasi Slide Kiri -->
                     <button
                         type="button"
-                        class="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/70 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 disabled:opacity-0"
-                        aria-label="Geser ke kiri"
+                        class="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/75 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                        aria-label="Geser pilihan panorama ke kiri"
                         @click="slideThumbnails(-1)"
                     >
-                        <ChevronLeft class="size-4" />
+                        <ChevronLeft class="size-4" aria-hidden="true" />
                     </button>
 
                     <!-- Container Thumbnail Slidable -->
                     <div
                         ref="thumbnailSlider"
                         class="flex gap-2.5 overflow-x-auto scroll-smooth no-scrollbar py-1 px-0.5"
+                        role="tablist"
+                        aria-label="Daftar thumbnail panorama 360 derajat"
                     >
                         <button
                             v-for="tour in displayTours"
                             :key="tour.id"
                             :data-thumb-id="tour.id"
                             type="button"
-                            class="group relative aspect-[4/3] w-24 sm:w-28 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 active:scale-95"
+                            role="tab"
+                            :aria-selected="active?.id === tour.id"
+                            :aria-label="`Lihat panorama 360 ${tour.title}`"
+                            class="group relative aspect-[4/3] w-24 sm:w-28 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff] focus-visible:ring-offset-2"
                             :class="active?.id === tour.id
                                 ? 'border-[#0088ff] ring-2 ring-[#0088ff]/30 shadow-md scale-[1.02]'
                                 : 'border-transparent opacity-75 hover:opacity-100 hover:border-slate-300'"
-                            :aria-pressed="active?.id === tour.id"
                             @click="selectTour(tour.id)"
                         >
                             <img
-                                :src="tour.image_url"
-                                :alt="tour.title"
+                                :src="tour.thumbnail_url || tour.image_url"
+                                :alt="`Thumbnail panorama 360 ${tour.title}`"
+                                width="112"
+                                height="84"
                                 loading="lazy"
+                                decoding="async"
+                                fetchpriority="low"
                                 class="size-full object-cover transition duration-300 group-hover:scale-105"
                             />
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                            <span class="absolute inset-x-0 bottom-0 p-1.5 text-center text-[10px] font-medium leading-tight text-white truncate block drop-shadow-sm">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+                            <span class="absolute inset-x-0 bottom-0 p-1.5 text-center text-[10px] font-medium leading-tight text-white truncate block drop-shadow-sm pointer-events-none">
                                 {{ tour.title }}
                             </span>
                             <span
                                 v-if="active?.id === tour.id"
                                 class="absolute top-1 right-1 size-2 rounded-full bg-[#0088ff] ring-2 ring-white"
+                                aria-hidden="true"
                             ></span>
                         </button>
                     </div>
@@ -169,11 +225,11 @@ watch(
                     <!-- Tombol Navigasi Slide Kanan -->
                     <button
                         type="button"
-                        class="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/70 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 disabled:opacity-0"
-                        aria-label="Geser ke kanan"
+                        class="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/75 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                        aria-label="Geser pilihan panorama ke kanan"
                         @click="slideThumbnails(1)"
                     >
-                        <ChevronRight class="size-4" />
+                        <ChevronRight class="size-4" aria-hidden="true" />
                     </button>
                 </div>
             </div>
@@ -183,31 +239,31 @@ watch(
         <div class="flex flex-col rounded-2xl bg-white/95 p-5 sm:p-6 shadow-sm border border-slate-100 min-w-0">
             <!-- Search Input -->
             <label class="mb-3 flex items-center gap-2.5 rounded-xl border border-[#e5edf8] bg-[#f8fbff] px-3.5 py-2.5 transition-colors focus-within:border-[#0088ff] focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100">
-                <Search class="size-4 text-[#0088ff] shrink-0" />
+                <Search class="size-4 text-[#0066cc] shrink-0" aria-hidden="true" />
                 <input
                     v-model="query"
                     type="search"
-                    placeholder="Cari destinasi..."
-                    aria-label="Cari panorama destinasi"
+                    placeholder="Cari destinasi 360°..."
+                    aria-label="Cari panorama destinasi wisata 360 derajat"
                     class="w-full bg-transparent text-xs text-slate-800 placeholder-slate-400 outline-none"
                 />
                 <button
                     v-if="query"
                     type="button"
-                    class="size-4 rounded-full text-slate-400 hover:text-slate-600 transition"
-                    aria-label="Hapus pencarian"
+                    class="size-4 rounded-full text-slate-500 hover:text-slate-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    aria-label="Hapus kata kunci pencarian"
                     @click="clearQuery"
                 >
-                    <X class="size-3.5" />
+                    <X class="size-3.5" aria-hidden="true" />
                 </button>
             </label>
 
             <!-- Header Info & Item Counter -->
             <div class="mb-2.5 flex items-center justify-between px-0.5">
-                <span class="text-xs font-bold text-[#172c70]">
+                <h3 class="text-xs font-bold text-[#172c70]">
                     Daftar Lokasi 360°
-                </span>
-                <span class="rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#0088ff]">
+                </h3>
+                <span class="rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#0066cc]">
                     {{ displayTours.length }} Destinasi
                 </span>
             </div>
@@ -216,13 +272,18 @@ watch(
             <div
                 ref="listContainer"
                 class="flex flex-1 flex-col gap-2.5 overflow-y-auto pr-1 sm:pr-1.5 max-h-[380px] sm:max-h-[440px] lg:max-h-[470px] custom-scrollbar scroll-smooth"
+                role="listbox"
+                aria-label="Daftar lengkap destinasi 360 derajat"
             >
                 <button
                     v-for="tour in displayTours"
                     :key="tour.id"
                     :data-list-id="tour.id"
                     type="button"
-                    class="group flex items-center gap-3 rounded-xl border p-2 text-left transition duration-200"
+                    role="option"
+                    :aria-selected="active?.id === tour.id"
+                    :aria-label="`Pilih lokasi ${tour.title}`"
+                    class="group flex items-center gap-3 rounded-xl border p-2 text-left transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff] focus-visible:ring-offset-1"
                     :class="active?.id === tour.id
                         ? 'border-[#0088ff] bg-[#edf5ff] shadow-sm ring-1 ring-[#0088ff]/30'
                         : 'border-[#e5edf8] bg-white hover:border-[#8bc5ff] hover:bg-[#f8fbff]'"
@@ -231,12 +292,15 @@ watch(
                     <!-- Thumbnail Image -->
                     <div class="relative shrink-0 overflow-hidden rounded-lg bg-slate-100">
                         <img
-                            :src="tour.image_url"
-                            alt=""
+                            :src="tour.thumbnail_url || tour.image_url"
+                            :alt="`Thumbnail ${tour.title}`"
+                            width="96"
+                            height="64"
                             loading="lazy"
+                            decoding="async"
                             class="h-16 w-24 object-cover transition-transform duration-300 group-hover:scale-105"
                         />
-                        <span class="absolute bottom-1 right-1 rounded bg-black/70 px-1 py-0.5 text-[8px] font-bold tracking-wider text-white">
+                        <span class="absolute bottom-1 right-1 rounded bg-black/75 px-1 py-0.5 text-[8px] font-bold tracking-wider text-white pointer-events-none">
                             360°
                         </span>
                     </div>
@@ -244,20 +308,23 @@ watch(
                     <!-- Detail Text -->
                     <div class="min-w-0 flex-1">
                         <strong
-                            class="block truncate text-xs font-semibold text-[#172c70] group-hover:text-[#0088ff] transition-colors"
+                            class="block truncate text-xs font-semibold text-[#172c70] group-hover:text-[#0066cc] transition-colors"
                             :title="tour.title"
                         >
                             {{ tour.title }}
                         </strong>
+                        <p class="mt-0.5 line-clamp-1 text-[10px] text-slate-500">
+                            {{ tour.description || 'Eksplorasi virtual interaktif 360°' }}
+                        </p>
                         <div class="mt-1 flex items-center gap-1.5 text-[10px]">
                             <template v-if="active?.id === tour.id">
-                                <span class="inline-flex items-center gap-1 font-semibold text-[#0088ff]">
-                                    <span class="size-1.5 rounded-full bg-[#0088ff] animate-pulse"></span>
+                                <span class="inline-flex items-center gap-1 font-semibold text-[#0066cc]">
+                                    <span class="size-1.5 rounded-full bg-[#0088ff] animate-pulse" aria-hidden="true"></span>
                                     Sedang Ditampilkan
                                 </span>
                             </template>
                             <template v-else>
-                                <span class="text-slate-500">Panorama 360°</span>
+                                <span class="text-slate-400">Klik untuk melihat</span>
                             </template>
                         </div>
                     </div>
@@ -265,7 +332,8 @@ watch(
                     <!-- Right Arrow -->
                     <ChevronRight
                         class="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
-                        :class="active?.id === tour.id ? 'text-[#0088ff]' : 'text-slate-400'"
+                        :class="active?.id === tour.id ? 'text-[#0066cc]' : 'text-slate-400'"
+                        aria-hidden="true"
                     />
                 </button>
 
@@ -274,13 +342,13 @@ watch(
                     v-if="!displayTours.length"
                     class="flex flex-col items-center justify-center p-8 text-center text-xs text-slate-500 my-auto"
                 >
-                    <Compass class="mb-2 size-8 text-sky-300" />
+                    <Compass class="mb-2 size-8 text-sky-300" aria-hidden="true" />
                     <p class="font-medium text-slate-700">Destinasi tidak ditemukan</p>
-                    <p class="mt-0.5 text-[11px] text-slate-400">Coba kata kunci pencarian yang lain</p>
+                    <p class="mt-0.5 text-[11px] text-slate-500">Coba kata kunci pencarian yang lain</p>
                     <button
                         v-if="query"
                         type="button"
-                        class="mt-3 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-semibold text-[#0088ff] hover:bg-sky-100 transition"
+                        class="mt-3 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-semibold text-[#0066cc] hover:bg-sky-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
                         @click="clearQuery"
                     >
                         Reset Pencarian

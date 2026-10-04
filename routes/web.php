@@ -97,6 +97,7 @@ Route::get('/bantuan/{category}/{slug}', [HelpCenterController::class, 'article'
 Route::redirect('/help-center', '/bantuan');
 Route::redirect('/help', '/bantuan');
 
+Route::get('/search/suggestions', [BookingController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/pilihan-trip/{type}', [BookingController::class, 'tripType'])->whereIn('type', ['open-trip', 'private-trip'])->name('trips.category');
 Route::get('/mitra/{partner}', [BookingController::class, 'partner'])->name('partners.show');
 Route::redirect('/open-trip', '/pilihan-trip/open-trip');
@@ -104,6 +105,7 @@ Route::redirect('/private-trip', '/pilihan-trip/private-trip');
 Route::redirect('/trips/open-trip', '/pilihan-trip/open-trip');
 Route::redirect('/trips/private-trip', '/pilihan-trip/private-trip');
 
+Route::get('/trips/{trip}/thumbnail', [PublicContentController::class, 'tripThumbnail'])->name('trips.thumbnail');
 Route::get('/trips/{tripType}/{trip}', [BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
 Route::get('/bisnis/mitra-vendor', fn (): Response => Inertia::render('BusinessPartner'))->name('business.partner');
 Route::get('/bisnis/corporate', fn (): Response => Inertia::render('BusinessCorporate'))->name('business.corporate');

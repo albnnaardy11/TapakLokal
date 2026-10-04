@@ -50,6 +50,6 @@ class VirtualTour extends Model
     /** @return array<string, mixed> */
     public function presentation(bool $preview = false): array
     {
-        return ['id' => $this->id, 'title' => $this->title, 'description' => $this->description, 'image_url' => route($preview ? 'admin.tours.preview' : 'tours.image', ['tour' => $this->id])];
+        return ['id' => $this->id, 'title' => $this->title, 'description' => $this->description, 'image_url' => route($preview ? 'admin.tours.preview' : 'tours.image', ['tour' => $this->id]), 'thumbnail_url' => $preview ? null : route('tours.image', ['tour' => $this->id, 'thumbnail' => 1])];
     }
 }

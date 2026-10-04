@@ -27,18 +27,37 @@ const tripCountText = computed(() => {
     const fallback = fallbackCounts[props.destination.name] || 25;
     return `${fallback} Open Trip`;
 });
+
+const optimizedImage = computed(() => {
+    const source = props.destination.image;
+
+    try {
+        const url = new URL(source);
+        if (url.hostname !== 'images.unsplash.com') {
+            return source;
+        }
+
+        url.searchParams.set('auto', 'format');
+        url.searchParams.set('fit', 'crop');
+        url.searchParams.set('w', '720');
+        url.searchParams.set('q', '75');
+
+        return url.toString();
+    } catch {
+        return source;
+    }
+});
 </script>
 
 <template>
     <button
         type="button"
         class="group relative isolate block size-full min-h-36 overflow-hidden rounded-2xl bg-slate-700 text-left text-white shadow-[0_5px_16px_rgba(23,75,120,0.12)] outline-none transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(23,75,120,0.18)] focus-visible:ring-2 focus-visible:ring-[#1677e8] focus-visible:ring-offset-4 md:min-h-0"
-        :aria-label="`Pilih ${destination.name}, ${tripCountText}`"
         :aria-pressed="selected"
         @click="$emit('select', destination.name)"
     >
         <img
-            :src="destination.image"
+            :src="optimizedImage"
             :alt="`Pemandangan ${destination.name}`"
             loading="lazy"
             class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-500 group-hover:scale-105 group-focus-visible:scale-105 motion-reduce:transition-none"
@@ -55,7 +74,7 @@ const tripCountText = computed(() => {
         </div>
 
         <!-- Hover State -->
-        <div
+        <div aria-hidden="true"
             class="absolute bottom-4 left-4 right-4 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none"
             :class="{ '!translate-y-0 !opacity-100': selected }"
         >

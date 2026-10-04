@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { Maximize2, Minimize2, RotateCw, ZoomIn, ZoomOut } from 'lucide-vue-next';
+import { Maximize2, Minimize2, Play, Pause, RotateCw, ZoomIn, ZoomOut, RefreshCw } from 'lucide-vue-next';
 
 const props = defineProps({
     tour: { type: Object, required: true },
@@ -17,7 +17,7 @@ const error = ref('');
 
 let gl, program, texture, buffer, resizeObserver, intersectObserver, image, frameId = null;
 let locViewport, locView;
-let yaw = 0, pitch = 0, fov = 75, isDisposed = false, isVisible = true, previousFrame = 0, drag = null;
+let yaw = 0, pitch = 0, fov = 75, isDisposed = false, isVisible = false, previousFrame = 0, drag = null;
 const shaders = [];
 
 function createShader(type, source) {
@@ -91,11 +91,11 @@ function stopRenderLoop() {
 let resumeTimer;
 function resumeRotation() {
     clearTimeout(resumeTimer);
-    if (props.autoRotate) {
+    if (props.autoRotate && !window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
         resumeTimer = window.setTimeout(() => {
             isRotating.value = true;
             startRenderLoop();
-        }, 2500);
+        }, 3000);
     }
 }
 
@@ -228,9 +228,8 @@ function loadTexture(url) {
         if (isDisposed || !gl) return;
         try {
             const maxGpuDim = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
-            // Retain crisp 4K or source dimension up to GPU limits
             const targetWidth = Math.min(maxGpuDim, Math.max(image.width, 2048));
-            const targetHeight = Math.round(targetWidth / 2); // 2:1 equirectangular sphere standard
+            const targetHeight = Math.round(targetWidth / 2);
 
             const offCanvas = document.createElement('canvas');
             offCanvas.width = targetWidth;
@@ -243,19 +242,15 @@ function loadTexture(url) {
             const imgH = image.height;
             const imgAspect = imgW / imgH;
 
-            // If image is already close to 2:1 equirectangular
             if (Math.abs(imgAspect - 2.0) < 0.08) {
                 ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
             } else {
-                // Fill full frame seamlessly without black bars
                 const drawH = Math.round(targetWidth / imgAspect);
                 const drawY = Math.max(0, Math.round((targetHeight - drawH) / 2));
 
                 if (drawY > 0) {
                     const sampleH = Math.max(10, Math.min(60, Math.round(imgH * 0.08)));
-                    // Top sky extension
                     ctx.drawImage(image, 0, 0, imgW, sampleH, 0, 0, targetWidth, drawY + 2);
-                    // Bottom ground extension
                     ctx.drawImage(
                         image,
                         0,
@@ -315,17 +310,24 @@ function zoom(amount) {
 }
 
 function keyboard(event) {
-    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '-'].includes(event.key)) return;
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '-', 'r', 'R', 'f', 'F', ' '].includes(event.key)) return;
     event.preventDefault();
     clearTimeout(resumeTimer);
     isRotating.value = false;
+
     if (event.key === 'ArrowLeft') yaw -= 0.08;
     if (event.key === 'ArrowRight') yaw += 0.08;
     if (event.key === 'ArrowUp') pitch = Math.min(1.3, pitch + 0.08);
     if (event.key === 'ArrowDown') pitch = Math.max(-1.3, pitch - 0.08);
     if (event.key === '+') zoom(-6);
     if (event.key === '-') zoom(6);
-    resumeRotation();
+    if (event.key === 'r' || event.key === 'R') resetView();
+    if (event.key === 'f' || event.key === 'F') toggleFullscreen();
+    if (event.key === ' ') toggleRotation();
+
+    if (event.key !== ' ' && event.key !== 'r' && event.key !== 'R') {
+        resumeRotation();
+    }
     startRenderLoop();
 }
 
@@ -361,12 +363,15 @@ async function toggleFullscreen() {
 watch(
     () => props.tour.image_url,
     (newUrl) => {
-        if (newUrl) loadTexture(newUrl);
+        if (newUrl && gl) loadTexture(newUrl);
     }
 );
 
 onMounted(() => {
-    initWebGL();
+    // Respect prefers-reduced-motion accessibility standard
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
+        isRotating.value = false;
+    }
 
     document.addEventListener('fullscreenchange', onFullscreenChange);
     document.addEventListener('webkitfullscreenchange', onFullscreenChange);
@@ -376,6 +381,7 @@ onMounted(() => {
             ([entry]) => {
                 isVisible = entry.isIntersecting;
                 if (isVisible) {
+                    if (!gl) initWebGL();
                     startRenderLoop();
                 } else {
                     stopRenderLoop();
@@ -384,6 +390,9 @@ onMounted(() => {
             { threshold: 0.1 }
         );
         intersectObserver.observe(container.value);
+    } else {
+        isVisible = true;
+        initWebGL();
     }
 
     if (container.value && window.ResizeObserver) {
@@ -428,6 +437,8 @@ onBeforeUnmount(() => {
                 ? 'fixed inset-0 z-[9999] h-screen w-screen rounded-none'
                 : 'h-[240px] min-h-[240px] rounded-none sm:h-[300px] sm:min-h-[300px]'
         ]"
+        role="region"
+        :aria-label="`Viewer panorama interaktif 360 derajat ${tour.title}`"
     >
         <!-- Canvas Viewer with high-dpi rendering -->
         <canvas
@@ -435,7 +446,8 @@ onBeforeUnmount(() => {
             class="w-full cursor-grab touch-none active:cursor-grabbing block"
             :class="[isFullscreen ? 'h-full' : 'h-[240px] sm:h-[300px]']"
             tabindex="0"
-            :aria-label="`Panorama 360 ${tour.title}. Berputar otomatis. Geser untuk menjelajah.`"
+            role="img"
+            :aria-label="`Panorama 360 derajat ${tour.title}. Gunakan tombol panah untuk memutar, plus minus untuk zoom, R untuk reset, dan F untuk layar penuh.`"
             @pointerdown="pointerDown"
             @pointermove="pointerMove"
             @pointerup="pointerUp"
@@ -444,61 +456,104 @@ onBeforeUnmount(() => {
             @webglcontextlost.prevent="error = 'Koneksi grafis terhenti. Silakan muat ulang halaman.'"
         ></canvas>
 
+        <!-- Low-res Thumbnail Blurred Placeholder (Instant Preview while WebGL texture is decoding) -->
+        <img
+            v-if="!ready && tour.thumbnail_url"
+            :src="tour.thumbnail_url"
+            :alt="tour.title"
+            width="480"
+            height="240"
+            class="absolute inset-0 size-full object-cover blur-sm opacity-40 transition-opacity duration-500 pointer-events-none"
+            aria-hidden="true"
+        />
+
         <!-- Loading / Error Overlay -->
         <div
             v-if="!ready"
-            class="absolute inset-0 grid place-content-center gap-3 bg-[#081c3b]/90 p-8 text-center backdrop-blur-sm z-10"
+            class="absolute inset-0 grid place-content-center gap-3 bg-[#081c3b]/85 p-8 text-center backdrop-blur-sm z-10"
         >
             <span
                 v-if="!error"
                 class="mx-auto size-10 animate-spin rounded-full border-3 border-sky-400/20 border-t-sky-400"
                 aria-hidden="true"
             ></span>
-            <p class="text-lg font-bold text-white">{{ tour.title }}</p>
-            <p class="text-xs text-sky-200/80">{{ error || 'Memuat panorama 360° resolusi tinggi…' }}</p>
+            <p class="text-base font-bold text-white tracking-tight">{{ tour.title }}</p>
+            <p class="text-xs text-sky-200/90">{{ error || 'Memuat panorama 360° resolusi tinggi…' }}</p>
             <a
                 v-if="error && tour.image_url"
                 :href="tour.image_url"
                 target="_blank"
                 rel="noopener"
-                class="mt-2 text-xs text-sky-400 underline hover:text-sky-300"
+                class="mt-2 text-xs text-sky-400 underline hover:text-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-400"
             >
                 Buka gambar sumber
             </a>
         </div>
 
+        <!-- Top Indicator Badge -->
+        <div class="absolute top-3 left-3 flex items-center gap-2 z-20 pointer-events-none">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-md border border-white/10 shadow-sm">
+                <span class="size-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
+                <span>360° Interaktif</span>
+            </span>
+        </div>
+
         <!-- Bottom Controls Overlay -->
         <div
             v-if="ready"
-            class="absolute inset-x-0 bottom-0 flex items-center justify-end p-4 text-xs z-20 pointer-events-none"
+            class="absolute inset-x-0 bottom-0 flex items-center justify-between p-3.5 text-xs z-20 pointer-events-none"
         >
+            <div class="pointer-events-auto">
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-black/60 px-2.5 py-1.5 text-[11px] font-medium text-white/90 backdrop-blur-md transition hover:bg-black/80 active:scale-95 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    :aria-label="isRotating ? 'Jeda putaran otomatis' : 'Mulai putaran otomatis'"
+                    :title="isRotating ? 'Jeda Putaran (Spasi)' : 'Mulai Putaran (Spasi)'"
+                    @click="toggleRotation"
+                >
+                    <Pause v-if="isRotating" class="size-3.5 text-sky-400" aria-hidden="true" />
+                    <Play v-else class="size-3.5 text-sky-400" aria-hidden="true" />
+                    <span class="hidden sm:inline">{{ isRotating ? 'Jeda' : 'Putar' }}</span>
+                </button>
+            </div>
+
             <div class="flex items-center gap-1.5 pointer-events-auto">
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center size-8 rounded-lg bg-white/15 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95 font-bold text-sm"
-                    aria-label="Perbesar tampilan"
-                    title="Zoom In (+)"
+                    class="inline-flex items-center justify-center size-8 rounded-lg bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 active:scale-95 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    aria-label="Reset sudut pandang ke awal"
+                    title="Reset Posisi (R)"
+                    @click="resetView"
+                >
+                    <RefreshCw class="size-3.5" aria-hidden="true" />
+                </button>
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center size-8 rounded-lg bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 active:scale-95 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    aria-label="Perbesar tampilan panorama"
+                    title="Perbesar (+)"
                     @click="zoom(-10)"
                 >
-                    <ZoomIn class="size-4" />
+                    <ZoomIn class="size-4" aria-hidden="true" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center size-8 rounded-lg bg-white/15 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95 font-bold text-sm"
-                    aria-label="Perkecil tampilan"
-                    title="Zoom Out (-)"
+                    class="inline-flex items-center justify-center size-8 rounded-lg bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80 active:scale-95 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    aria-label="Perkecil tampilan panorama"
+                    title="Perkecil (-)"
                     @click="zoom(10)"
                 >
-                    <ZoomOut class="size-4" />
+                    <ZoomOut class="size-4" aria-hidden="true" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white/25 active:scale-95"
-                    aria-label="Beralih layar penuh"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-black/60 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-black/80 active:scale-95 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                    :aria-label="isFullscreen ? 'Keluar dari mode layar penuh' : 'Tampilkan mode layar penuh'"
+                    :title="isFullscreen ? 'Keluar Layar Penuh (F / Esc)' : 'Layar Penuh (F)'"
                     @click="toggleFullscreen"
                 >
-                    <Minimize2 v-if="isFullscreen" class="size-3.5" />
-                    <Maximize2 v-else class="size-3.5" />
+                    <Minimize2 v-if="isFullscreen" class="size-3.5 text-sky-400" aria-hidden="true" />
+                    <Maximize2 v-else class="size-3.5 text-sky-400" aria-hidden="true" />
                     <span class="hidden sm:inline">{{ isFullscreen ? 'Keluar' : 'Layar Penuh' }}</span>
                 </button>
             </div>
