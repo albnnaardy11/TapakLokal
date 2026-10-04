@@ -78,15 +78,11 @@ class JawaBaratVendorTripSeeder extends Seeder
 
     public function run(AccessService $access): void
     {
-        $password = (string) env('SEED_VENDOR_PASSWORD');
-        if ($password === '' && ! app()->environment(['local', 'testing'])) {
-            throw new \RuntimeException('Set SEED_VENDOR_PASSWORD before running this production seeder.');
-        }
-
         foreach ($this->vendors as $vendorIndex => $vendorData) {
+            $password = Str::password(32);
             $user = User::firstOrCreate(
                 ['email' => 'vendor.'.$vendorData['slug'].'@seed.tapaklokal.test'],
-                ['name' => $vendorData['name'], 'password' => Hash::make($password ?: 'VendorTrip2026!'), 'phone' => '0812'.str_pad((string) ($vendorIndex + 1), 8, '0', STR_PAD_LEFT), 'city' => $vendorData['city'], 'status' => 'active', 'email_verified_at' => now()],
+                ['name' => $vendorData['name'], 'password' => Hash::make($password), 'phone' => '0812'.str_pad((string) ($vendorIndex + 1), 8, '0', STR_PAD_LEFT), 'city' => $vendorData['city'], 'status' => 'active', 'email_verified_at' => now()],
             );
             $access->grant($user, 'vendor_admin');
             $vendor = Vendor::firstOrCreate(

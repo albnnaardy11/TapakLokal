@@ -70,11 +70,13 @@ class AdminAccountSeederTest extends TestCase
         $this->assertDatabaseCount('users', 1);
     }
 
-    public function test_production_creates_default_admin_accounts_without_environment_configuration(): void
+    public function test_production_database_seeder_completes_without_seed_environment_configuration(): void
     {
+        Storage::fake('local');
+        $this->assertDatabaseCount('users', 0);
         $this->app->detectEnvironment(fn () => 'production');
         try {
-            $this->artisan('db:seed', ['--class' => AdminAccountSeeder::class, '--force' => true])->run();
+            (new DatabaseSeeder)->setContainer($this->app)->run();
         } finally {
             $this->app->detectEnvironment(fn () => 'testing');
         }
@@ -86,5 +88,8 @@ class AdminAccountSeederTest extends TestCase
             $this->assertTrue(Hash::check('admin123', $user->password));
             $this->assertTrue($user->roles()->where('name', $role)->exists());
         }
+
+        $this->assertDatabaseHas('trips', ['slug' => 'bromo']);
+        $this->assertDatabaseHas('content_pages', ['slug' => 'bali']);
     }
 }

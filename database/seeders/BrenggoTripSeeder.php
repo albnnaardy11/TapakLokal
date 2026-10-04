@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BrenggoTripSeeder extends Seeder
 {
@@ -53,15 +54,11 @@ class BrenggoTripSeeder extends Seeder
             }
 
             if (! $owner) {
-                $password = env('SEED_VENDOR_PASSWORD') ?: config('demo.vendor_password');
-                if (! $password && ! app()->environment(['local', 'testing'])) {
-                    throw new \RuntimeException('Set SEED_VENDOR_PASSWORD sebelum membuat akun vendor Brenggo di production.');
-                }
-
+                $password = Str::password(32);
                 $owner = User::create([
                     'name' => 'Vendor Brenggo',
                     'email' => $email,
-                    'password' => Hash::make($password ?: 'VendorTrip2026!'),
+                    'password' => Hash::make($password),
                     'phone' => '081200000001',
                     'city' => 'Malang',
                     'status' => 'active',
