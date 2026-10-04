@@ -31,8 +31,8 @@ const move = (direction) => {
                 <p class="mt-3 text-sm leading-6 text-slate-500">Sudut pandang traveler tentang destinasi, teman baru, dan pengalaman lokal.</p>
             </div>
             <div class="flex items-center gap-2">
-                <button type="button" class="grid size-10 place-items-center rounded-full border border-[#d4e7fa] bg-white text-[#0066cc] transition hover:bg-sky-50 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" aria-label="Ulasan sebelumnya" @click="move(-1)"><ArrowLeft class="size-4" aria-hidden="true" /></button>
-                <button type="button" class="grid size-10 place-items-center rounded-full bg-[#078cff] text-white shadow-sm transition hover:bg-[#0875d2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" aria-label="Ulasan berikutnya" @click="move(1)"><ArrowRight class="size-4" aria-hidden="true" /></button>
+                <button type="button" class="grid min-h-[44px] min-w-[44px] size-11 place-items-center rounded-full border border-[#d4e7fa] bg-white text-[#0066cc] transition hover:bg-sky-50 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" aria-label="Ulasan sebelumnya" @click="move(-1)"><ArrowLeft class="size-5" aria-hidden="true" /></button>
+                <button type="button" class="grid min-h-[44px] min-w-[44px] size-11 place-items-center rounded-full bg-[#078cff] text-white shadow-sm transition hover:bg-[#0875d2] active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#078cff]" aria-label="Ulasan berikutnya" @click="move(1)"><ArrowRight class="size-5" aria-hidden="true" /></button>
             </div>
         </div>
 

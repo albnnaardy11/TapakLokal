@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(PlatformSeeder::class);
+        $this->call(AdminAccountSeeder::class);
         $this->call(JawaBaratVendorTripSeeder::class);
         if (app()->environment(['local', 'testing'])) {
             $this->call(WebsiteContentSeeder::class);

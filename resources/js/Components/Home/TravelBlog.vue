@@ -175,7 +175,7 @@ onBeforeUnmount(() => observer?.disconnect());
                 v-for="(position, index) in positions"
                 :key="index"
                 type="button"
-                class="grid min-h-8 min-w-8 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-[#0175ea]"
+                class="grid min-h-[44px] min-w-[44px] place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-[#0175ea]"
                 :aria-label="`Halaman artikel ${index + 1}`"
                 :aria-current="page === index ? 'page' : undefined"
                 @click="move(index)"

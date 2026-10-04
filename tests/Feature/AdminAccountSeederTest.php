@@ -5,12 +5,27 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\AccessService;
 use Database\Seeders\AdminAccountSeeder;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminAccountSeederTest extends TestCase
 {
+    public function test_database_seeder_creates_the_configured_admin_accounts(): void
+    {
+        Storage::fake('local');
+
+        $this->seed(DatabaseSeeder::class);
+
+        foreach (array_keys(config('admin_accounts')) as $role) {
+            $account = config('admin_accounts.'.$role);
+            $user = User::where('email', $account['email'])->firstOrFail();
+
+            $this->assertTrue($user->roles()->where('name', $role)->exists());
+        }
+    }
+
     public function test_seeder_creates_five_separate_admin_accounts_and_never_resets_existing_accounts(): void
     {
         Storage::fake('local');

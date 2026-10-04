@@ -286,21 +286,21 @@ onBeforeUnmount(() => {
                         <div v-if="totalPages > 1" class="flex items-center gap-2">
                             <button
                                 type="button"
-                                class="grid size-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition duration-200 hover:bg-white hover:text-slate-900 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                                class="grid min-h-[44px] min-w-[44px] size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition duration-200 hover:bg-white hover:text-slate-900 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                                 :disabled="currentPage === 0"
                                 aria-label="Trip sebelumnya"
                                 @click="prevPage"
                             >
-                                <ArrowLeft class="size-4" />
+                                <ArrowLeft class="size-4.5" />
                             </button>
                             <button
                                 type="button"
-                                class="grid size-8 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition duration-200 hover:bg-white hover:text-slate-900 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                                class="grid min-h-[44px] min-w-[44px] size-11 place-items-center rounded-full bg-white/20 text-white backdrop-blur-sm transition duration-200 hover:bg-white hover:text-slate-900 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                                 :disabled="currentPage >= totalPages - 1"
                                 aria-label="Trip berikutnya"
                                 @click="nextPage"
                             >
-                                <ArrowRight class="size-4" />
+                                <ArrowRight class="size-4.5" />
                             </button>
                         </div>
                     </div>

@@ -356,7 +356,7 @@ const openAuthModal = (mode = 'login') => {
                 </div>
 
                 <!-- Mobile Header Right -->
-                <div class="ml-auto mr-1.5 flex items-center lg:hidden">
+                <div class="ml-auto mr-1 flex items-center gap-0.5 lg:hidden">
                     <OrderNavigation :is-transparent="isTransparent" />
                     <AccountDropdown
                         v-if="currentPage.props.auth?.user"
@@ -366,8 +366,8 @@ const openAuthModal = (mode = 'login') => {
                     <button
                         v-else
                         type="button"
-                        class="min-h-9 rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 cursor-pointer"
-                        :class="isTransparent ? 'text-white' : 'text-[#3E7BEF]'"
+                        class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-lg px-2.5 text-xs font-bold transition-colors duration-500 cursor-pointer"
+                        :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
                         @click="openAuthModal('login')"
                     >
                         Masuk
@@ -375,14 +375,14 @@ const openAuthModal = (mode = 'login') => {
                 </div>
 
                 <button
-                    class="rounded-lg p-2 transition-all duration-300 lg:hidden"
+                    class="min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-lg p-2 transition-all duration-300 lg:hidden"
                     :class="isTransparent ? 'text-white hover:bg-white/15' : 'text-[#3E7BEF] hover:bg-[#edf3ff]'"
                     :aria-expanded="isMobileMenuOpen"
-                    aria-label="Buka menu"
+                    aria-label="Buka menu navigasi"
                     @click="isMobileMenuOpen = !isMobileMenuOpen"
                 >
-                    <X v-if="isMobileMenuOpen" class="size-5" />
-                    <Menu v-else class="size-5" />
+                    <X v-if="isMobileMenuOpen" class="size-6" />
+                    <Menu v-else class="size-6" />
                 </button>
             </div>
 
@@ -567,4 +567,3 @@ const openAuthModal = (mode = 'login') => {
         </header>
     </div>
 </template>
-

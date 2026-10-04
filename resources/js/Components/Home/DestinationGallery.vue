@@ -172,11 +172,11 @@ watch(
                     <!-- Tombol Navigasi Slide Kiri -->
                     <button
                         type="button"
-                        class="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/75 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                        class="absolute left-1 top-1/2 -translate-y-1/2 z-10 flex min-h-[44px] min-w-[44px] size-9 items-center justify-center rounded-full bg-slate-900/85 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
                         aria-label="Geser pilihan panorama ke kiri"
                         @click="slideThumbnails(-1)"
                     >
-                        <ChevronLeft class="size-4" aria-hidden="true" />
+                        <ChevronLeft class="size-5" aria-hidden="true" />
                     </button>
 
                     <!-- Container Thumbnail Slidable -->
@@ -225,11 +225,11 @@ watch(
                     <!-- Tombol Navigasi Slide Kanan -->
                     <button
                         type="button"
-                        class="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex size-7 items-center justify-center rounded-full bg-slate-900/75 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                        class="absolute right-1 top-1/2 -translate-y-1/2 z-10 flex min-h-[44px] min-w-[44px] size-9 items-center justify-center rounded-full bg-slate-900/85 text-white shadow-md backdrop-blur-sm transition hover:bg-slate-900 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
                         aria-label="Geser pilihan panorama ke kanan"
                         @click="slideThumbnails(1)"
                     >
-                        <ChevronRight class="size-4" aria-hidden="true" />
+                        <ChevronRight class="size-5" aria-hidden="true" />
                     </button>
                 </div>
             </div>

@@ -66,7 +66,7 @@ function hoverRole(event, index) { if (event.pointerType === 'mouse') hoveredRol
         <header class="corporate-header sticky top-0 z-40 bg-white/95 backdrop-blur-md" @keydown.esc="mobileNavigationOpen = false">
             <nav aria-label="Navigasi corporate" class="mx-auto flex h-[68px] max-w-[1180px] items-center justify-between gap-5 px-5 sm:px-8 xl:px-0">
                 <Link :href="route('home')" aria-label="TapakLokal beranda" class="flex shrink-0 items-center gap-3">
-                    <span class="text-[23px] font-extrabold tracking-[-0.065em] text-slate-800">tapak<span class="text-[#009cf0]">lokal</span></span>
+                    <img src="/Assets/Images/logo.webp" alt="TapakLokal Logo" class="h-8 w-auto object-contain" />
                     <span class="border-l border-slate-200 pl-3 text-[10px] leading-tight font-semibold tracking-wide text-slate-500">FOR<br /><span class="text-[13px] font-bold text-[#009cf0]">CORPORATES</span></span>
                 </Link>
                 <div class="hidden items-center gap-7 text-xs font-semibold text-slate-800 lg:flex">

@@ -9,7 +9,7 @@ const props = defineProps({ currentPortal: String, targetPortal: String });
 const page = usePage();
 const dialog = ref(null);
 const busy = ref(false);
-const labels = { traveler: 'Traveler', corporate: 'Corporate', vendor: 'Vendor', admin: 'Admin' };
+const labels = { traveler: 'Traveler', corporate: 'Corporate', vendor: 'Vendor', affiliate: 'Affiliate', admin: 'Admin' };
 const homes = { traveler: 'account', corporate: 'corporate.dashboard', vendor: 'vendor.dashboard', admin: 'admin.dashboard' };
 const initials = computed(() => (page.props.auth?.user?.name || 'Akun').split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase());
 

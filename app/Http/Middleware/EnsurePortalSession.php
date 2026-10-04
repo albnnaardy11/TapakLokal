@@ -41,6 +41,9 @@ class EnsurePortalSession
 
     private function target(Request $request): ?string
     {
+        if ($request->routeIs('login') && $request->query('portal') === 'affiliate') {
+            return 'affiliate';
+        }
         if ($request->is('corporate', 'corporate/*')) {
             return 'corporate';
         }

@@ -86,16 +86,23 @@
         @if (($page['component'] ?? null) === 'Welcome')
             @php
                 $heroSection = collect($page['props']['cmsSections'] ?? [])->firstWhere('slug', 'hero');
-                $heroImage = $heroSection['image_url'] ?? 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88';
+                $rawHero = $heroSection['image_url'] ?? 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80';
+                $isUnsplash = str_contains($rawHero, 'images.unsplash.com');
+                $mobileHero = $isUnsplash ? preg_replace('/w=\d+/', 'w=640', $rawHero) . '&fm=webp' : $rawHero;
+                $tabletHero = $isUnsplash ? preg_replace('/w=\d+/', 'w=1024', $rawHero) . '&fm=webp' : $rawHero;
+                $desktopHero = $isUnsplash ? preg_replace('/w=\d+/', 'w=1920', $rawHero) . '&fm=webp' : $rawHero;
             @endphp
-            <link rel="preload" as="image" href="{{ $heroImage }}" fetchpriority="high">
+            <link rel="preload" as="image" href="{{ $mobileHero }}" imagesrcset="{{ $mobileHero }} 640w, {{ $tabletHero }} 1024w, {{ $desktopHero }} 1920w" imagesizes="100vw" fetchpriority="high">
             <link rel="modulepreload" href="{{ Vite::asset('resources/js/Pages/Welcome.vue') }}">
         @endif
 
-        <!-- Fonts Preconnect -->
+        <!-- Fonts Preconnect & Non-blocking Async Stylesheet -->
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link rel="dns-prefetch" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&amp;display=swap" rel="stylesheet" />
+        <link rel="preload" href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&amp;display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet" href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&amp;display=swap">
+        </noscript>
 
         <!-- Scripts -->
         @routes

@@ -194,6 +194,7 @@ class AuthController extends Controller
             'corporate' => to_route('corporate.login'),
             'admin' => to_route('admin.login'),
             'vendor' => to_route('vendor.login'),
+            'affiliate' => to_route('login', ['portal' => 'affiliate']),
             'traveler' => to_route('login'),
             default => redirect('/'),
         };

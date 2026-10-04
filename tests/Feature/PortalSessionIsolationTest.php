@@ -50,6 +50,22 @@ class PortalSessionIsolationTest extends TestCase
         $this->assertAuthenticatedAs($traveler);
     }
 
+    public function test_affiliate_login_shows_the_same_logout_reminder_for_travelers(): void
+    {
+        $traveler = User::factory()->create();
+        $this->actingAs($traveler)->withSession(['auth_portal' => 'traveler']);
+
+        $this->get('/login?portal=affiliate')->assertForbidden()->assertInertia(fn (Assert $page) => $page
+            ->component('Auth/PortalSessionConflict')
+            ->where('currentPortal', 'traveler')
+            ->where('targetPortal', 'affiliate'));
+
+        $this->post('/logout', ['switch_portal' => 'affiliate'])
+            ->assertRedirect(route('login', ['portal' => 'affiliate']));
+        $this->assertGuest();
+        $this->get('/login?portal=affiliate')->assertRedirect('/?auth=login');
+    }
+
     public function test_logout_is_required_before_corporate_login_and_sets_new_portal(): void
     {
         $traveler = User::factory()->create();

@@ -59,12 +59,12 @@ function safeRoute(name, params) {
                             type="email"
                             required
                             placeholder="Masukkan Alamat Email Anda"
-                            class="h-10 w-full rounded-md border-0 bg-white pl-9 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm"
+                            class="h-11 w-full rounded-md border-0 bg-white pl-9 pr-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 shadow-sm"
                         />
                     </div>
                     <button
                         type="submit"
-                        class="h-10 shrink-0 rounded-md bg-[#c2410c] px-4 text-xs font-bold text-white shadow-sm transition hover:bg-[#e64f12] active:scale-95"
+                        class="min-h-[44px] h-11 shrink-0 rounded-md bg-[#c2410c] px-5 text-xs font-bold text-white shadow-sm transition hover:bg-[#e64f12] active:scale-95"
                     >
                         Langganan Newsletter
                     </button>
@@ -94,9 +94,9 @@ function safeRoute(name, params) {
                         <div class="mt-6 flex w-full justify-center sm:justify-start">
                             <Link
                                 :href="safeRoute('vendor.login')"
-                                class="inline-flex items-center gap-2 rounded-full bg-[#0066cc] px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#0080d3] active:scale-95"
+                                class="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#0066cc] px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#0080d3] active:scale-95"
                             >
-                                <Handshake class="size-3.5" />
+                                <Handshake class="size-4" />
                                 <span>Partner with Tapak Lokal</span>
                             </Link>
                         </div>

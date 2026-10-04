@@ -33,7 +33,7 @@ function openRegistration() {
 
 <template>
     <Head title="Affiliate — Berbagi Perjalanan, Membuka Peluang"><meta name="description" content="Jadikan rekomendasi perjalanan Anda lebih berarti bersama TapakLokal Affiliate. Kenali cara kerja program dan simulasikan potensi komisi Anda." /></Head>
-    <BusinessLanding program="AFFILIATES" :links="links" :faqs="faqs" :login-href="route('home', { auth: 'login' })" cta="Mulai bergabung" @join="openRegistration">
+    <BusinessLanding program="AFFILIATES" :links="links" :faqs="faqs" :login-href="route('login', { portal: 'affiliate' })" cta="Mulai bergabung" @join="openRegistration">
         <section class="business-hero flex min-h-[calc(100dvh-68px)] flex-col justify-between">
             <div class="business-container my-auto grid w-full flex-1 items-center gap-8 py-6 sm:py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-8 xl:gap-16">
                 <div>

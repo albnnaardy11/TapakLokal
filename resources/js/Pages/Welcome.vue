@@ -38,6 +38,19 @@ const hero = computed(() => {
     return sections.find(section => section && section.slug === 'hero') || sections[0] || null;
 });
 
+const heroMobileUrl = computed(() => {
+    const raw = hero.value?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80';
+    return raw.includes('images.unsplash.com') ? raw.replace(/w=\d+/, 'w=640') + '&fm=webp' : raw;
+});
+const heroTabletUrl = computed(() => {
+    const raw = hero.value?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80';
+    return raw.includes('images.unsplash.com') ? raw.replace(/w=\d+/, 'w=1024') + '&fm=webp' : raw;
+});
+const heroDesktopUrl = computed(() => {
+    const raw = hero.value?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80';
+    return raw.includes('images.unsplash.com') ? raw.replace(/w=\d+/, 'w=1920') + '&fm=webp' : raw;
+});
+
 // Section-level loading states (Level 3 Loading Architecture)
 const partnerTripsLoading = false;
 const destinationsLoading = false;
@@ -46,9 +59,7 @@ const reviewsLoading = false;
 </script>
 
 <template>
-    <Head :title="appName">
-        <link rel="preload" as="image" href="/Assets/Images/benner/Benner-17an.svg" type="image/svg+xml" fetchpriority="high" />
-    </Head>
+    <Head :title="appName" />
 
     <div class="min-h-screen overflow-x-hidden bg-[#f8fafc] font-sans text-slate-900">
         <!-- Main Navigation with transparent hero integration at top -->
@@ -59,9 +70,15 @@ const reviewsLoading = false;
             <!-- Full Width Background Image (contained in overflow-hidden) -->
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <img
-                    fetchpriority="high" loading="eager" decoding="async" width="1920" height="800"
-                    :src="hero?.image_url || 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=88'"
-                    :alt="hero?.title || 'Jelajahi Indonesia'"
+                    fetchpriority="high"
+                    loading="eager"
+                    decoding="async"
+                    width="1920"
+                    height="800"
+                    :src="heroMobileUrl"
+                    :srcset="`${heroMobileUrl} 640w, ${heroTabletUrl} 1024w, ${heroDesktopUrl} 1920w`"
+                    sizes="100vw"
+                    :alt="hero?.title || 'Jelajahi Indonesia Secara Otentik'"
                     class="size-full object-cover object-center brightness-[0.88] transition-opacity duration-500"
                     @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80'; }"
                 />
@@ -90,16 +107,19 @@ const reviewsLoading = false;
                     href="/account/vouchers"
                     class="block overflow-hidden rounded-2xl border border-sky-100 bg-[#0088ff] shadow-[0_10px_24px_rgba(22,53,102,0.08)] transition-transform duration-200 hover:scale-[1.008]"
                 >
-                    <img
-                        src="/Assets/Images/benner/Benner-17an.svg"
-                        alt="Promo spesial kemerdekaan TapakLokal"
-                        width="1531"
-                        height="351"
-                        loading="lazy"
-                        fetchpriority="auto"
-                        decoding="async"
-                        class="w-full h-auto aspect-[1531/351] object-cover block"
-                    />
+                    <picture>
+                        <source srcset="/Assets/Images/benner/Benner-17an.webp" type="image/webp" />
+                        <img
+                            src="/Assets/Images/benner/Benner-17an.webp"
+                            alt="Promo spesial kemerdekaan TapakLokal"
+                            width="1531"
+                            height="351"
+                            loading="lazy"
+                            fetchpriority="auto"
+                            decoding="async"
+                            class="w-full h-auto aspect-[1531/351] object-cover block"
+                        />
+                    </picture>
                 </Link>
             </section>
 
