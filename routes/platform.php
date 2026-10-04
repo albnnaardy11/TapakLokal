@@ -126,6 +126,7 @@ Route::prefix('vendor')->name('vendor.')->middleware(['auth', 'can:vendor.access
     Route::get('/trips/{trip}/edit', [Vendor\TripController::class, 'edit'])->name('trips.edit');
     Route::put('/trips/{trip}', [Vendor\TripController::class, 'update'])->name('trips.update');
     Route::delete('/trips/{trip}', [Vendor\TripController::class, 'destroy'])->name('trips.destroy');
+    Route::post('/trips/upload-image', [Vendor\TripController::class, 'uploadImage'])->name('trips.upload-image');
     Route::put('/bookings/{booking}', [Vendor\BookingController::class, 'update'])->name('bookings.update');
     Route::put('/profile', [Vendor\DashboardController::class, 'saveProfile'])->name('profile.save');
     Route::get('/{section}', [Vendor\DashboardController::class, 'index'])->name('section');

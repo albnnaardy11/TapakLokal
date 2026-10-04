@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class WorkflowController extends Controller
@@ -77,6 +78,21 @@ class WorkflowController extends Controller
             $before = $item->status;
             $item->status = $target;
             $item->save();
+            if ($module === 'trips') {
+                $item->vendor->user->notifications()->create([
+                    'id' => (string) Str::uuid7(), 'type' => 'trip.reviewed',
+                    'data' => [
+                        'title' => match ($target) {
+                            'published' => 'Trip Anda telah diterbitkan',
+                            'rejected' => 'Pengajuan trip ditolak',
+                            default => 'Trip Anda diarsipkan',
+                        },
+                        'reference' => $item->title,
+                        'body' => $request->input('note'),
+                        'url' => route('vendor.trips.edit', $item->id, false),
+                    ],
+                ]);
+            }
             $audit->record($module.'.'.$action, $item, ['before' => $before, 'after' => $target, 'note' => $request->input('note')]);
         });
 

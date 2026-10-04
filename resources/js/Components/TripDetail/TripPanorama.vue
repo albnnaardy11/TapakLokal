@@ -12,28 +12,9 @@ const props = defineProps({
 const isPrivateTrip = computed(() => props.tripType === 'private-trip');
 const selectedSpot = ref(0);
 
-const openTripSpots = [
-    { name: 'Pulau Pramuka', label: 'Pulau utama', image: 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Pulau Semak Daun', label: 'Spot snorkeling', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Pantai Perawan', label: 'Waktu bebas', image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Tepi mangrove', label: 'Jelajah pulau', image: 'https://images.unsplash.com/photo-1470165518243-ff5f2f6f9f37?auto=format&fit=crop&w=1600&q=90' },
-];
-
-const privateTripSpots = [
-    { name: 'Pelabuhan Labuan Bajo', label: 'Titik keberangkatan', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Pulau Kelor', label: 'Trekking ringan', image: 'https://images.unsplash.com/photo-1493552152660-f915ab47ae9d?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Pink Beach', label: 'Pantai dan laut', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1600&q=90' },
-    { name: 'Pulau Kalong', label: 'Titik sunset', image: 'https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=1600&q=90' },
-];
-
-const spots = computed(() => (isPrivateTrip.value ? privateTripSpots : openTripSpots));
+const spots = computed(() => props.tours.map(tour => ({ name: tour.title, label: tour.label || tour.description || '', image: tour.image_url })));
 const activeSpot = computed(() => spots.value[selectedSpot.value]);
-const activeTour = computed(() => props.tours[selectedSpot.value] || {
-    id: activeSpot.value.name,
-    title: activeSpot.value.name,
-    image_url: activeSpot.value.image,
-});
-
+const activeTour = computed(() => props.tours[selectedSpot.value]);
 const showSpot = (index) => {
     const count = props.tours.length || spots.value.length;
     selectedSpot.value = (index + count) % count;
@@ -42,7 +23,7 @@ const showSpot = (index) => {
 
 <template>
     <section class="mt-7 overflow-hidden rounded-xl border border-[#dbe8f5] bg-white shadow-[0_12px_30px_rgba(23,75,120,0.07)]" aria-labelledby="trip-panorama-heading">
-        <div class="grid lg:grid-cols-[minmax(0,1fr)_290px]">
+        <p v-if="!tours.length" class="p-6 text-sm text-[#60789c]">Preview 360° belum diunggah oleh vendor.</p><div v-if="tours.length" class="grid lg:grid-cols-[minmax(0,1fr)_290px]">
             <div class="min-w-0 p-4 sm:p-5">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-start gap-3">

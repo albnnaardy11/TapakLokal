@@ -214,6 +214,9 @@ class BookingController extends Controller
             'tripType' => $tripType,
             'trip' => $trip,
             'tripData' => $record,
+            'relatedTrips' => Trip::where('vendor_id', $record->vendor_id)->where('id', '!=', $record->id)
+                ->where('status', 'published')->whereDate('departure_date', '>=', today())
+                ->orderBy('departure_date')->limit(4)->get(['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'price']),
             'canBook' => $record->departure_date->greaterThanOrEqualTo(today()) && $record->capacity > $record->reserved_seats,
             'bookingKey' => (string) Str::uuid(),
             'virtualTours' => $record ? VirtualTour::visible()->where('trip_id', $record->id)->orderBy('position')->orderBy('id')->limit(12)->get()->map(fn ($tour) => $tour->presentation()) : [],

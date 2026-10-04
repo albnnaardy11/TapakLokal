@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import {
-    ArrowUpRight,
+    CalendarDays, Ticket, Wallet, Star, ShoppingBag, Building2, Headphones, ArrowUpRight,
     Bell,
     Check,
     ChevronDown,
@@ -34,6 +34,7 @@ const showProfileMenu = ref(false);
 const showNotifications = ref(false);
 const showMessages = ref(false);
 
+const vendorIcons = { trips: CalendarDays, bookings: Ticket, finance: Wallet, reviews: Star, souvenirs: ShoppingBag, profile: Building2, support: Headphones };
 const groups = computed(() => Object.groupBy(props.navigation, (item) => item.group));
 const user = computed(() => page.props.auth?.user || {});
 const userName = computed(() => user.value?.name || (props.vendor ? 'Partner Vendor' : 'Admin TapakLokal'));
@@ -156,7 +157,7 @@ onBeforeUnmount(() => {
                     class="mb-4 flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all duration-200"
                     :class="
                         page.url === (vendor ? '/vendor' : '/admin/' + panel?.key)
-                            ? 'bg-gradient-to-r from-[#1677e8] to-[#078cff] text-white shadow-md shadow-blue-500/25'
+                            ? 'bg-[#eaf5ff] text-[#087bd2] ring-1 ring-blue-100'
                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     "
                 >
@@ -177,12 +178,12 @@ onBeforeUnmount(() => {
                             class="flex min-h-9 items-center justify-between rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200"
                             :class="
                                 page.url.split('?')[0].startsWith(item.url.replace(/^https?:\/\/[^/]+/, ''))
-                                    ? 'bg-gradient-to-r from-[#1677e8] to-[#078cff] text-white shadow-md shadow-blue-500/25'
+                                    ? 'bg-[#eaf5ff] text-[#087bd2] ring-1 ring-blue-100'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                             "
                             @click="open = false"
                         >
-                            <span>{{ item.label }}</span>
+                            <span class="flex items-center gap-3"><component :is="vendorIcons[item.key] || Compass" v-if="vendor" class="size-4 shrink-0" />{{ item.label }}</span>
                         </Link>
                     </div>
                 </div>
@@ -332,7 +333,7 @@ onBeforeUnmount(() => {
                             </div>
 
                             <!-- Circular Coral/Red Avatar -->
-                            <span class="grid size-10 place-items-center rounded-full bg-gradient-to-br from-rose-500 via-rose-600 to-red-600 text-sm font-black text-white shadow-md ring-2 ring-white">
+                            <span class="grid size-10 place-items-center rounded-full bg-[#103b60] text-sm font-black text-white shadow-md ring-2 ring-white">
                                 {{ initials }}
                             </span>
                         </button>
@@ -411,7 +412,7 @@ onBeforeUnmount(() => {
                 <!-- Page Title Header -->
                 <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <div class="mb-2 flex items-center gap-2">
+                        <div v-if="!vendor" class="mb-2 flex items-center gap-2">
                             <span class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-blue-600">
                                 <Shield class="size-3" />
                                 <span>TAPAK LOKAL &bull; {{ vendor ? 'PARTNER' : panel?.label || 'ADMIN' }}</span>
@@ -425,24 +426,6 @@ onBeforeUnmount(() => {
                         </p>
                     </div>
                     <slot name="actions" />
-                </div>
-
-                <!-- Flash Notifications -->
-                <div
-                    v-if="page.props.flash?.success"
-                    role="status"
-                    class="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200/80 bg-emerald-50/90 px-4 py-3.5 text-xs font-semibold text-emerald-800 shadow-sm"
-                >
-                    <Check class="size-4 shrink-0 text-emerald-600" />
-                    <span>{{ page.props.flash.success }}</span>
-                </div>
-                <div
-                    v-if="page.props.flash?.error || Object.keys(page.props.errors || {}).length"
-                    role="alert"
-                    class="mb-6 rounded-2xl border border-rose-200/80 bg-rose-50/90 p-4 text-xs font-semibold text-rose-800 shadow-sm"
-                >
-                    <p v-if="page.props.flash?.error">{{ page.props.flash.error }}</p>
-                    <p v-for="(error, key) in page.props.errors" :key="key">{{ error }}</p>
                 </div>
 
                 <!-- Slot Content -->

@@ -101,6 +101,8 @@ Route::get('/pilihan-trip/{type}', [BookingController::class, 'tripType'])->wher
 Route::get('/mitra/{partner}', [BookingController::class, 'partner'])->name('partners.show');
 Route::redirect('/open-trip', '/pilihan-trip/open-trip');
 Route::redirect('/private-trip', '/pilihan-trip/private-trip');
+Route::redirect('/trips/open-trip', '/pilihan-trip/open-trip');
+Route::redirect('/trips/private-trip', '/pilihan-trip/private-trip');
 
 Route::get('/trips/{tripType}/{trip}', [BookingController::class, 'detail'])->whereIn('tripType', ['open-trip', 'private-trip'])->name('trips.show');
 Route::get('/bisnis/mitra-vendor', fn (): Response => Inertia::render('BusinessPartner'))->name('business.partner');

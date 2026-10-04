@@ -8,6 +8,7 @@ use App\Models\Faq;
 use App\Models\Partner;
 use App\Models\SouvenirOrder;
 use App\Models\SupportMessage;
+use App\Models\Trip;
 use App\Models\User;
 use App\Observers\OrderNotificationObserver;
 use App\Observers\PublicContentObserver;
@@ -45,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
         Booking::observe(OrderNotificationObserver::class);
         SouvenirOrder::observe(OrderNotificationObserver::class);
         SupportMessage::observe(OrderNotificationObserver::class);
-        foreach ([ContentPage::class, Faq::class, Partner::class] as $model) {
+        foreach ([ContentPage::class, Faq::class, Partner::class, Trip::class] as $model) {
             $model::observe(PublicContentObserver::class);
         }
         foreach (collect((new AccessService)->rolePermissions())->flatten()->unique() as $permission) {

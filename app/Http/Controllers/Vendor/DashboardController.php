@@ -25,6 +25,8 @@ class DashboardController extends Controller
         abort_unless(in_array($section, ['dashboard', 'trips', 'bookings', 'finance', 'profile', 'reviews', 'support']), 404);
         $vendor = Vendor::where('user_id', $request->user()->id)->first();
         $records = null;
+        $filters = $request->validate(['search' => ['nullable', 'string', 'max:180'], 'status' => ['nullable', 'in:draft,pending,published,rejected,archived']]);
+        $tripCounts = $vendor ? Trip::where('vendor_id', $vendor->id)->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status') : [];
         if ($vendor) {
             $query = match ($section) {
                 'trips' => Trip::where('vendor_id', $vendor->id),
@@ -34,11 +36,20 @@ class DashboardController extends Controller
                 'support' => SupportTicket::where(fn ($q) => $q->where('user_id', $request->user()->id)->orWhere('vendor_id', $vendor->id)),
                 default => null,
             };
-            $records = $query?->orderByDesc('id')->paginate(15);
+            if ($section === 'trips') {
+                if (! empty($filters['search'])) {
+                    $query->where(fn ($query) => $query->whereLike('title', '%'.$filters['search'].'%')->orWhereLike('destination', '%'.$filters['search'].'%'));
+                }
+                if (! empty($filters['status'])) {
+                    $query->where('status', $filters['status']);
+                }
+            }
+            $records = $query?->orderByDesc('id')->paginate(15)->withQueryString();
         }
 
         return Inertia::render('Vendor/Dashboard', [
             'section' => $section, 'vendor' => $vendor, 'records' => $records,
+            'filters' => $filters, 'tripCounts' => $tripCounts,
             'stats' => $vendor ? [
                 ['label' => 'Trip Anda', 'value' => Trip::where('vendor_id', $vendor->id)->count()],
                 ['label' => 'Pemesanan', 'value' => Booking::where('vendor_id', $vendor->id)->count()],

@@ -1,20 +1,8 @@
 <script setup>
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
-import {
-    Activity,
-    ArrowRight,
-    Compass,
-    Eye,
-    EyeOff,
-    Key,
-    Lock,
-    Server,
-    Shield,
-    ShieldAlert,
-    ShieldCheck,
-} from 'lucide-vue-next';
+import { ArrowRight, Eye, EyeOff, Mail, LockKeyhole } from 'lucide-vue-next';
 
 const page = usePage();
 const showPassword = ref(false);
@@ -25,209 +13,154 @@ const form = useForm({
     remember: false,
 });
 
-const submit = () => {
+function submit() {
     form.post(route('admin.login.store'), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            form.reset('password');
+            showPassword.value = false;
+        },
     });
-};
+}
 </script>
 
 <template>
-    <Head title="Admin Command Center — TapakLokal" />
-    <div class="relative min-h-screen bg-[#070d18] text-slate-100 flex flex-col justify-between selection:bg-cyan-500 selection:text-black">
-        <!-- Background Ambient Glow & Grid -->
-        <div class="pointer-events-none absolute inset-0 overflow-hidden">
-            <div class="absolute -top-40 left-1/2 -translate-x-1/2 size-[600px] rounded-full bg-cyan-600/10 blur-[140px]"></div>
-            <div class="absolute bottom-0 right-0 size-[500px] rounded-full bg-indigo-600/10 blur-[130px]"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px] opacity-25"></div>
-        </div>
-
-        <!-- Top Header Navigation -->
-        <header class="relative z-10 flex items-center justify-between border-b border-slate-800/80 bg-[#070d18]/80 px-6 py-4 backdrop-blur-md lg:px-12">
-            <div class="flex items-center gap-3">
-                <Link href="/" class="flex items-center gap-2.5 font-black tracking-tight text-white group">
-                    <span class="grid size-9 place-items-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition">
-                        <Compass class="size-5" />
-                    </span>
-                    <span class="text-lg">tapak<span class="text-cyan-400">lokal</span></span>
+    <Head title="Masuk Administrator — TapakLokal" />
+    <div class="admin-auth min-h-screen bg-[#f5f9fd] text-[#173451]">
+        <!-- Header -->
+        <header class="border-b border-[#e4edf5] bg-white">
+            <div class="mx-auto flex max-w-[1040px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
+                <Link :href="route('home')" class="flex items-center gap-3">
+                    <span class="text-2xl font-extrabold tracking-tight">tapak<span class="text-[#0088ff]">lokal</span></span>
+                    <span class="border-l border-slate-200 pl-3 text-[9px] font-bold tracking-[.16em]">FOR<br />ADMIN</span>
                 </Link>
-                <div class="hidden sm:flex items-center gap-2 border-l border-slate-800 pl-3">
-                    <span class="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-cyan-300 uppercase">
-                        Internal Console
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 text-xs font-semibold">
-                <div class="hidden md:flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-400">
-                    <span class="size-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>System Operational</span>
-                </div>
                 <Link
-                    href="/"
-                    class="rounded-xl border border-slate-800 bg-slate-900/80 px-3.5 py-1.5 text-xs text-slate-300 transition hover:border-slate-700 hover:text-white"
+                    :href="route('home')"
+                    class="group inline-flex items-center gap-2 rounded-full border border-[#0088ff] bg-[#f0f7ff] px-4 py-1.5 text-xs font-semibold text-[#0088ff] transition hover:bg-[#0088ff] hover:text-white sm:text-sm"
                 >
-                    &larr; Beranda Utama
+                    <span>Beranda utama</span>
+                    <ArrowRight class="size-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <main class="relative z-10 flex flex-1 items-center justify-center p-6 sm:p-10">
-            <div class="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] rounded-3xl border border-slate-800/80 bg-slate-900/60 shadow-2xl shadow-black/80 backdrop-blur-xl overflow-hidden">
-                <!-- Left Info Banner -->
-                <div class="relative hidden lg:flex flex-col justify-between p-10 bg-gradient-to-br from-[#0c1626] via-[#09111e] to-[#060a12] border-r border-slate-800/60">
-                    <div>
-                        <div class="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-950/40 px-3 py-1 text-[11px] font-bold tracking-wide text-cyan-300">
-                            <ShieldCheck class="size-3.5 text-cyan-400" />
-                            <span>ACCESS CONTROL ENGINE</span>
-                        </div>
-
-                        <h1 class="mt-6 text-3xl font-black leading-tight text-white tracking-tight">
-                            Platform Management & Command Center.
-                        </h1>
-
-                        <p class="mt-4 text-xs leading-relaxed text-slate-400">
-                            Portal terenkripsi untuk manajemen operasional, validasi transaksi, analitik pertumbuhan, dan tata kelola ekosistem TapakLokal.
-                        </p>
-
-                        <!-- System Security Badges -->
-                        <div class="mt-8 space-y-3.5 text-xs">
-                            <div class="flex items-start gap-3 rounded-2xl border border-slate-800 bg-slate-950/50 p-3 text-slate-300">
-                                <Shield class="size-4 shrink-0 text-cyan-400 mt-0.5" />
-                                <div>
-                                    <p class="font-bold text-slate-200">Role-Based Access Control</p>
-                                    <p class="text-[11px] text-slate-400">Hanya akun internal berizin resmi yang dapat mengelola sumber daya platform.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-3 rounded-2xl border border-slate-800 bg-slate-950/50 p-3 text-slate-300">
-                                <Activity class="size-4 shrink-0 text-indigo-400 mt-0.5" />
-                                <div>
-                                    <p class="font-bold text-slate-200">Automated Audit Trail</p>
-                                    <p class="text-[11px] text-slate-400">Setiap aktivitas login dan modifikasi data terekam lengkap demi kepatuhan sistem.</p>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Main Card Section -->
+        <main class="mx-auto flex max-w-[1000px] items-center px-5 py-6 sm:px-8 lg:py-10">
+            <div class="w-full overflow-hidden rounded-[28px] border border-[#e3ecf5] bg-white shadow-[0_20px_60px_-20px_rgba(38,91,140,.18)] sm:rounded-[32px] lg:grid lg:grid-cols-[1.1fr_1fr]">
+                <!-- Aside Branding (Identical to Corporate & Vendor) -->
+                <aside class="hidden flex-col justify-center border-r border-[#e4edf5] bg-linear-to-br from-[#eaf4fd] via-[#f4f9fd] to-[#e6f1fb] p-10 lg:flex">
+                    <h1 class="text-[38px] font-bold leading-[1.15] tracking-[-.035em]">
+                        Pusat kendali.<br /><span class="text-[#0088ff]">Tata kelola ekosistem.</span>
+                    </h1>
+                    <p class="mt-3.5 text-sm leading-6 text-[#6b829e]">
+                        Akses terpusat untuk verifikasi mitra, moderasi perjalanan, validasi transaksi, dan administrasi sistem TapakLokal.
+                    </p>
+                    <div class="mt-6 flex justify-center">
+                        <img
+                            src="/Assets/Images/Corporate/login.svg"
+                            alt="Ilustrasi login administrator TapakLokal"
+                            class="h-[210px] w-full max-w-[320px] object-contain"
+                        />
                     </div>
+                </aside>
 
-                    <!-- Footer Warning -->
-                    <div class="pt-6 border-t border-slate-800/60 text-[11px] text-slate-400 flex items-center gap-2">
-                        <Server class="size-3.5 text-slate-400" />
-                        <span>TapakLokal Core Engine v2.4</span>
-                    </div>
-                </div>
-
-                <!-- Right Form Area -->
-                <div class="p-8 sm:p-10 flex flex-col justify-center">
+                <!-- Form Section -->
+                <section class="p-6 sm:p-8 lg:p-10" aria-labelledby="admin-auth-heading">
                     <div class="mb-6">
-                        <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2">
-                            <Key class="size-4" />
-                            <span>Admin Authentication</span>
-                        </div>
-                        <h2 class="text-2xl font-black text-white tracking-tight">
-                            Masuk Administrator
-                        </h2>
-                        <p class="mt-1 text-xs text-slate-400">
-                            Gunakan kredensial internal untuk membuka dashboard manajemen.
-                        </p>
+                        <p class="text-[10px] font-bold uppercase tracking-[.15em] text-[#228cd1]">Akun administrator</p>
+                        <h2 id="admin-auth-heading" class="mt-1.5 text-[23px] font-bold leading-[1.2] tracking-tight">Selamat datang kembali</h2>
+                        <p class="mt-2 text-xs leading-5 text-[#7186a0]">Masuk dengan kredensial staf internal untuk mengakses dashboard manajemen.</p>
                     </div>
 
-                    <!-- Flash Message -->
-                    <div
-                        v-if="page.props.flash?.error"
-                        class="mb-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs font-semibold text-rose-300 flex items-start gap-2"
-                    >
-                        <ShieldAlert class="size-4 shrink-0 text-rose-400 mt-0.5" />
-                        <span>{{ page.props.flash.error }}</span>
-                    </div>
+                    <!-- Flash Messages -->
+                    <p v-if="page.props.flash?.error" role="alert" class="mb-4 rounded-xl bg-red-50 p-3.5 text-xs font-semibold text-red-700">
+                        {{ page.props.flash.error }}
+                    </p>
+                    <p v-if="page.props.flash?.success" role="status" class="mb-4 rounded-xl bg-emerald-50 p-3.5 text-sm text-emerald-800">
+                        {{ page.props.flash.success }}
+                    </p>
 
                     <!-- Form -->
                     <form class="space-y-4" @submit.prevent="submit">
-                        <div>
-                            <label class="mb-1.5 block text-xs font-bold text-slate-300">
-                                Email Administrator
-                            </label>
-                            <div class="relative">
+                        <label class="auth-label">
+                            Email administrator
+                            <span class="auth-field">
+                                <Mail class="auth-field-icon" />
                                 <input
                                     v-model="form.email"
                                     type="email"
-                                    autocomplete="email"
                                     required
+                                    maxlength="150"
+                                    autocomplete="username"
                                     placeholder="admin@tapaklokal.test"
-                                    class="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-3.5 py-2.5 text-xs text-white placeholder-slate-600 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
                                 />
-                            </div>
-                        </div>
+                            </span>
+                        </label>
 
-                        <div>
-                            <div class="mb-1.5 flex items-center justify-between">
-                                <label class="text-xs font-bold text-slate-300">Kata Sandi</label>
-                            </div>
-                            <div class="relative">
+                        <label class="auth-label">
+                            Kata sandi
+                            <span class="auth-field">
+                                <LockKeyhole class="auth-field-icon" />
                                 <input
                                     v-model="form.password"
                                     :type="showPassword ? 'text' : 'password'"
-                                    autocomplete="current-password"
                                     required
-                                    placeholder="••••••••••••"
-                                    class="w-full rounded-xl border border-slate-700 bg-slate-950/70 px-3.5 py-2.5 pr-10 text-xs text-white placeholder-slate-600 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                                    maxlength="128"
+                                    autocomplete="current-password"
+                                    placeholder="Masukkan kata sandi"
                                 />
                                 <button
                                     type="button"
-                                    class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300"
+                                    class="grid size-10 shrink-0 place-items-center rounded-lg text-[#7c92ac] hover:text-[#0088ff]"
+                                    :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'"
+                                    :aria-pressed="showPassword"
                                     @click="showPassword = !showPassword"
                                 >
-                                    <EyeOff v-if="showPassword" class="size-4" />
-                                    <Eye v-else class="size-4" />
+                                    <component :is="showPassword ? EyeOff : Eye" class="size-[18px]" />
                                 </button>
-                            </div>
-                        </div>
+                            </span>
+                        </label>
 
-                        <div class="flex items-center justify-between text-xs">
-                            <label class="flex items-center gap-2 text-slate-400 cursor-pointer">
-                                <input
-                                    v-model="form.remember"
-                                    type="checkbox"
-                                    class="rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500"
-                                />
-                                <span>Ingat kredensial sesi</span>
+                        <div class="flex flex-wrap items-center justify-between gap-3 py-1 text-xs">
+                            <label class="flex cursor-pointer items-center gap-2 text-[#6b829e]">
+                                <input v-model="form.remember" type="checkbox" class="size-4 accent-[#0088ff]" />
+                                Ingat saya
                             </label>
                         </div>
 
                         <!-- Validation Errors -->
-                        <div v-if="Object.keys(form.errors).length" class="space-y-1 rounded-xl border border-rose-500/30 bg-rose-950/30 p-3 text-xs font-semibold text-rose-400">
-                            <p v-for="(error, key) in form.errors" :key="key">{{ error }}</p>
-                        </div>
+                        <p v-for="(error, key) in form.errors" :key="key" role="alert" class="rounded-lg bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">
+                            {{ error }}
+                        </p>
 
                         <!-- Submit Button -->
                         <button
                             :disabled="form.processing"
-                            class="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 py-3 text-xs font-bold text-white shadow-lg shadow-cyan-500/20 transition hover:brightness-110 active:scale-95 disabled:opacity-50"
+                            class="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-[#0088ff] px-5 py-3 text-sm font-bold text-white shadow-[0_5px_15px_-5px_rgba(0,136,255,.4)] transition hover:bg-[#0078e2] disabled:cursor-wait disabled:opacity-60"
                         >
-                            <Lock class="size-4" />
-                            <span>{{ form.processing ? 'Mengautentikasi…' : 'Buka Command Center' }}</span>
+                            {{ form.processing ? 'Memproses…' : 'Masuk portal admin' }}
                             <ArrowRight class="size-4" />
                         </button>
                     </form>
 
-                    <!-- Bottom Notice -->
-                    <div class="mt-8 rounded-2xl border border-slate-800/80 bg-slate-950/40 p-3 text-center text-[11px] text-slate-400">
-                        Bukan staf admin platform?
-                        <Link :href="route('login')" class="font-bold text-cyan-400 hover:underline">
-                            Login Wisatawan
-                        </Link>
+                    <!-- Footer Link -->
+                    <p class="mt-6 border-t border-[#e6edf5] pt-4 text-[11px] leading-5 text-[#7c92ac]">
+                        Bukan akun staf admin?
+                        <Link :href="route('login')" class="font-bold text-[#0088ee]">Masuk Wisatawan</Link>
                         atau
-                        <Link :href="route('vendor.login')" class="font-bold text-emerald-400 hover:underline">
-                            Portal Mitra Vendor
-                        </Link>
-                    </div>
-                </div>
+                        <Link :href="route('vendor.login')" class="font-bold text-[#0088ee]">Portal Mitra Vendor</Link>.
+                    </p>
+                </section>
             </div>
         </main>
-
-        <!-- Footer -->
-        <footer class="relative z-10 border-t border-slate-800/60 bg-[#070d18]/80 py-4 text-center text-xs text-slate-400 backdrop-blur-md">
-            &copy; {{ new Date().getFullYear() }} TapakLokal. Seluruh hak cipta dilindungi. Portal Operasional & Administrasi Internal.
-        </footer>
     </div>
 </template>
+
+<style scoped>
+@reference "../../../css/app.css";
+.auth-label { @apply block text-xs font-semibold text-[#385675]; }
+.auth-field { @apply mt-1.5 flex min-h-[44px] items-center gap-3 rounded-xl border border-[#dfe8f2] bg-[#fbfdff] px-3.5 transition focus-within:border-[#0088ff] focus-within:bg-white focus-within:ring-3 focus-within:ring-[#0088ff]/10; }
+.auth-field-icon { @apply size-[18px] shrink-0 text-[#8daac4]; }
+.auth-field input { @apply min-w-0 flex-1 border-0 bg-transparent py-2.5 text-[13px] font-normal text-[#173451] outline-none placeholder:text-[#a1b1c5]; }
+.auth-field input::-ms-reveal { display: none; }
+.admin-auth button:focus-visible, .admin-auth a:focus-visible { outline: 2px solid #0088ff; outline-offset: 3px; }
+</style>

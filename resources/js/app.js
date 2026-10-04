@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import AccessibilityWidget from './Components/Shared/AccessibilityWidget.vue';
+import ToastNotification from './Components/Shared/ToastNotification.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'TapakLokal';
 
@@ -21,6 +22,7 @@ createInertiaApp({
             render: () => [
                 h(App, props),
                 h(AccessibilityWidget),
+                h(ToastNotification),
             ],
         })
             .use(plugin)
