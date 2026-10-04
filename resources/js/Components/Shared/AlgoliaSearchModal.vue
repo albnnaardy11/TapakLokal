@@ -248,33 +248,38 @@ onBeforeUnmount(() => {
         >
             <div
                 v-if="open"
-                class="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 md:p-6 lg:p-10 overflow-y-auto bg-slate-900/60 backdrop-blur-md"
+                class="fixed inset-0 z-50 flex items-end sm:items-start justify-center p-0 sm:p-4 md:p-6 lg:p-10 bg-slate-900/60 backdrop-blur-md"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Pencarian Cepat TapakLokal"
                 @click.self="emit('close')"
             >
                 <div
-                    class="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 transition-all my-auto sm:my-8"
+                    class="relative flex flex-col w-full max-w-3xl h-[100dvh] sm:h-auto sm:max-h-[85vh] overflow-hidden rounded-t-3xl sm:rounded-2xl bg-white shadow-2xl ring-1 ring-black/10 transition-all sm:my-auto"
                     @click.stop
                 >
+                    <!-- Mobile Drag Indicator -->
+                    <div class="sm:hidden pt-2 pb-1 bg-white flex justify-center">
+                        <div class="w-10 h-1 rounded-full bg-slate-200"></div>
+                    </div>
+
                     <!-- 1. Search Input Bar Header -->
-                    <div class="relative flex items-center border-b border-slate-100 px-4 py-3.5 sm:px-6">
-                        <Search class="size-5 shrink-0 text-[#0066cc]" aria-hidden="true" />
+                    <div class="relative flex items-center border-b border-slate-100 px-3.5 py-3 sm:px-6">
+                        <Search class="size-4.5 sm:size-5 shrink-0 text-[#0066cc]" aria-hidden="true" />
                         <input
                             ref="inputRef"
                             v-model="query"
                             type="search"
                             autocomplete="off"
                             spellcheck="false"
-                            placeholder="Cari open trip, private trip, destinasi (Bromo, Bali, Salak)..."
-                            class="w-full bg-transparent px-3 text-sm sm:text-base font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                            placeholder="Cari open trip, private trip, destinasi..."
+                            class="w-full bg-transparent px-2.5 sm:px-3 text-sm sm:text-base font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
                             aria-label="Kata kunci pencarian"
                             @keydown.enter.prevent="submitSearch"
                         />
 
-                        <!-- Loading indicator / Clear button / ESC badge -->
-                        <div class="flex items-center gap-2">
+                        <!-- Loading indicator / Clear button / Mobile Close / Desktop ESC -->
+                        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                             <span
                                 v-if="loading"
                                 class="size-4 animate-spin rounded-full border-2 border-sky-200 border-t-[#0088ff]"
@@ -287,7 +292,14 @@ onBeforeUnmount(() => {
                                 aria-label="Hapus teks"
                                 @click="query = ''; inputRef?.focus()"
                             >
-                                <X class="size-4" />
+                                <X class="size-3.5 sm:size-4" />
+                            </button>
+                            <button
+                                type="button"
+                                class="sm:hidden rounded-lg px-2 py-1 text-xs font-bold text-[#0066cc] hover:bg-sky-50 transition"
+                                @click="emit('close')"
+                            >
+                                Tutup
                             </button>
                             <kbd
                                 class="hidden sm:inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-slate-500 shadow-xs cursor-pointer hover:bg-slate-100"
@@ -299,10 +311,10 @@ onBeforeUnmount(() => {
                     </div>
 
                     <!-- 2. Filter Category Pills -->
-                    <div class="flex items-center gap-2 border-b border-slate-100 bg-slate-50/70 px-4 py-2 sm:px-6 overflow-x-auto no-scrollbar text-xs">
+                    <div class="flex items-center gap-1.5 sm:gap-2 border-b border-slate-100 bg-slate-50/70 px-3.5 sm:px-6 py-2 overflow-x-auto no-scrollbar text-xs shrink-0">
                         <button
                             type="button"
-                            class="rounded-full px-3 py-1 font-semibold transition"
+                            class="shrink-0 rounded-full px-3 py-1 font-semibold transition"
                             :class="activeFilter === 'all' ? 'bg-[#0066cc] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
                             @click="activeFilter = 'all'"
                         >
@@ -310,7 +322,7 @@ onBeforeUnmount(() => {
                         </button>
                         <button
                             type="button"
-                            class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
+                            class="shrink-0 inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
                             :class="activeFilter === 'open-trip' ? 'bg-[#0066cc] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
                             @click="activeFilter = 'open-trip'"
                         >
@@ -319,7 +331,7 @@ onBeforeUnmount(() => {
                         </button>
                         <button
                             type="button"
-                            class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
+                            class="shrink-0 inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
                             :class="activeFilter === 'private-trip' ? 'bg-[#0066cc] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
                             @click="activeFilter = 'private-trip'"
                         >
@@ -328,7 +340,7 @@ onBeforeUnmount(() => {
                         </button>
                         <button
                             type="button"
-                            class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
+                            class="shrink-0 inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
                             :class="activeFilter === 'destination' ? 'bg-[#0066cc] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
                             @click="activeFilter = 'destination'"
                         >
@@ -337,7 +349,7 @@ onBeforeUnmount(() => {
                         </button>
                         <button
                             type="button"
-                            class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
+                            class="shrink-0 inline-flex items-center gap-1 rounded-full px-3 py-1 font-semibold transition"
                             :class="activeFilter === 'souvenir' ? 'bg-[#0066cc] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'"
                             @click="activeFilter = 'souvenir'"
                         >
@@ -347,30 +359,30 @@ onBeforeUnmount(() => {
                     </div>
 
                     <!-- 3. Search Results Content (Scrollable Container) -->
-                    <div class="max-h-[60vh] sm:max-h-[460px] overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar">
+                    <div class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-5 custom-scrollbar">
                         <!-- Direct Navigation Categories (Traveloka / Algolia Style) -->
                         <div v-if="results.quickCategories?.length && (activeFilter === 'all' || activeFilter === 'open-trip' || activeFilter === 'private-trip')" class="space-y-2">
                             <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                 {{ query ? `Jelajahi Kategori untuk "${query}"` : 'Kategori Pilihan' }}
                             </p>
-                            <div class="grid sm:grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <a
                                     v-for="(cat, idx) in results.quickCategories"
                                     :key="cat.type"
                                     v-show="activeFilter === 'all' || activeFilter === cat.type"
                                     :href="cat.url"
-                                    class="group flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-gradient-to-r hover:border-sky-300 hover:from-sky-50/80 hover:to-blue-50/40 transition cursor-pointer"
+                                    class="group flex items-center justify-between gap-2 p-2.5 sm:p-3 rounded-xl border border-slate-100 bg-gradient-to-r hover:border-sky-300 hover:from-sky-50/80 hover:to-blue-50/40 transition cursor-pointer"
                                     :class="cat.type === 'open-trip' ? 'from-blue-50/50 to-white' : 'from-indigo-50/40 to-white'"
                                     @click.prevent="navigateTo(cat)"
                                 >
-                                    <div class="flex items-center gap-3 min-w-0">
+                                    <div class="flex items-center gap-2.5 min-w-0">
                                         <div
-                                            class="grid size-9 shrink-0 place-items-center rounded-lg text-white"
+                                            class="grid size-8 sm:size-9 shrink-0 place-items-center rounded-lg text-white"
                                             :class="cat.type === 'open-trip' ? 'bg-[#0088ff]' : (cat.type === 'private-trip' ? 'bg-amber-500' : 'bg-emerald-500')"
                                         >
-                                            <TentTree v-if="cat.type === 'open-trip'" class="size-5" />
-                                            <Crown v-else-if="cat.type === 'private-trip'" class="size-5" />
-                                            <ShoppingBag v-else class="size-5" />
+                                            <TentTree v-if="cat.type === 'open-trip'" class="size-4.5 sm:size-5" />
+                                            <Crown v-else-if="cat.type === 'private-trip'" class="size-4.5 sm:size-5" />
+                                            <ShoppingBag v-else class="size-4.5 sm:size-5" />
                                         </div>
                                         <div class="min-w-0">
                                             <span class="block truncate text-xs font-bold text-slate-800 group-hover:text-[#0066cc]">
@@ -400,11 +412,11 @@ onBeforeUnmount(() => {
                                     v-for="dest in (query ? results.destinations : results.popularDestinations)"
                                     :key="dest.id || dest.name"
                                     type="button"
-                                    class="group flex items-center gap-2.5 rounded-xl border border-slate-100 bg-white p-2.5 text-left transition hover:border-[#8bc5ff] hover:bg-sky-50/50 hover:shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
+                                    class="group flex items-center gap-2 rounded-xl border border-slate-100 bg-white p-2 sm:p-2.5 text-left transition hover:border-[#8bc5ff] hover:bg-sky-50/50 hover:shadow-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0088ff]"
                                     @click="navigateTo({ ...dest, kind: 'destination' })"
                                 >
-                                    <div class="grid size-8 shrink-0 place-items-center rounded-lg bg-sky-100 text-[#0088ff] group-hover:bg-[#0088ff] group-hover:text-white transition">
-                                        <MapPin class="size-4" />
+                                    <div class="grid size-7 sm:size-8 shrink-0 place-items-center rounded-lg bg-sky-100 text-[#0088ff] group-hover:bg-[#0088ff] group-hover:text-white transition">
+                                        <MapPin class="size-3.5 sm:size-4" />
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <span class="block truncate text-xs font-bold text-slate-800 group-hover:text-[#0066cc]">
@@ -438,7 +450,7 @@ onBeforeUnmount(() => {
                                     :key="trip.id"
                                     v-show="activeFilter === 'all' || activeFilter === trip.type"
                                     :href="trip.url"
-                                    class="group flex items-center gap-3.5 rounded-xl border border-slate-100 bg-white p-2.5 transition hover:border-[#8bc5ff] hover:bg-sky-50/40 hover:shadow-sm"
+                                    class="group flex items-center gap-2.5 sm:gap-3.5 rounded-xl border border-slate-100 bg-white p-2 sm:p-2.5 transition hover:border-[#8bc5ff] hover:bg-sky-50/40 hover:shadow-sm"
                                     @click.prevent="navigateTo({ ...trip, kind: 'trip' })"
                                 >
                                     <img
@@ -447,10 +459,10 @@ onBeforeUnmount(() => {
                                         width="80"
                                         height="60"
                                         loading="lazy"
-                                        class="size-14 sm:size-16 rounded-lg object-cover shrink-0 bg-slate-100"
+                                        class="size-13 sm:size-16 rounded-lg object-cover shrink-0 bg-slate-100"
                                     />
                                     <div class="min-w-0 flex-1">
-                                        <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-1.5">
                                             <span
                                                 class="rounded px-1.5 py-0.5 text-[9px] font-extrabold"
                                                 :class="trip.type === 'open-trip' ? 'bg-sky-100 text-[#0066cc]' : 'bg-amber-100 text-amber-800'"
@@ -464,13 +476,13 @@ onBeforeUnmount(() => {
                                         <h4 class="mt-0.5 truncate text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#0066cc] transition-colors">
                                             {{ trip.title }}
                                         </h4>
-                                        <div class="mt-1 flex items-center gap-3 text-[11px]">
+                                        <div class="mt-0.5 flex items-center gap-2 text-[11px]">
                                             <span class="font-extrabold text-[#ff5e1f]">
                                                 {{ trip.formatted_price }}
                                                 <span class="text-[9px] font-normal text-slate-400">/pax</span>
                                             </span>
                                             <span v-if="trip.vendor_name" class="text-slate-400 truncate hidden sm:inline">
-                                                Mitra: {{ trip.vendor_name }}
+                                                · {{ trip.vendor_name }}
                                             </span>
                                         </div>
                                     </div>
@@ -489,7 +501,7 @@ onBeforeUnmount(() => {
                                     v-for="souvenir in results.souvenirs"
                                     :key="souvenir.id"
                                     :href="souvenir.url"
-                                    class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-2.5 transition hover:border-[#8bc5ff] hover:bg-sky-50/40"
+                                    class="group flex items-center gap-2.5 rounded-xl border border-slate-100 bg-white p-2 sm:p-2.5 transition hover:border-[#8bc5ff] hover:bg-sky-50/40"
                                     @click.prevent="navigateTo({ ...souvenir, kind: 'souvenir' })"
                                 >
                                     <img
@@ -498,13 +510,13 @@ onBeforeUnmount(() => {
                                         width="56"
                                         height="56"
                                         loading="lazy"
-                                        class="size-12 rounded-lg object-cover shrink-0 bg-slate-100"
+                                        class="size-11 sm:size-12 rounded-lg object-cover shrink-0 bg-slate-100"
                                     />
                                     <div class="min-w-0 flex-1">
                                         <span class="block truncate text-xs font-bold text-slate-800 group-hover:text-[#0066cc]">
                                             {{ souvenir.name }}
                                         </span>
-                                        <span class="block text-[10px] text-slate-400">
+                                        <span class="block truncate text-[10px] text-slate-400">
                                             Asal: {{ souvenir.city }}
                                         </span>
                                         <span class="text-[11px] font-bold text-[#ff5e1f]">
@@ -518,7 +530,7 @@ onBeforeUnmount(() => {
                         <!-- Empty State when no results found -->
                         <div
                             v-if="!loading && query && !results.trips?.length && !results.destinations?.length && !results.souvenirs?.length"
-                            class="py-8 text-center"
+                            class="py-8 text-center px-4"
                         >
                             <Compass class="mx-auto size-10 text-slate-300 mb-2" />
                             <p class="text-sm font-bold text-slate-700">
@@ -538,8 +550,21 @@ onBeforeUnmount(() => {
                         </div>
                     </div>
 
-                    <!-- 4. Footer with Keyboard Tips -->
-                    <div class="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-2.5 sm:px-6 text-[11px] text-slate-400">
+                    <!-- 4. Footer -->
+                    <!-- Mobile Footer -->
+                    <div class="flex sm:hidden items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-xs text-slate-500 shrink-0">
+                        <span class="text-[11px] text-slate-400">Pencarian TapakLokal</span>
+                        <button
+                            type="button"
+                            class="text-xs font-bold text-[#0066cc]"
+                            @click="submitSearch"
+                        >
+                            Lihat Semua Hasil →
+                        </button>
+                    </div>
+
+                    <!-- Desktop Footer with Keyboard Tips -->
+                    <div class="hidden sm:flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-2.5 text-[11px] text-slate-400 shrink-0">
                         <div class="flex items-center gap-3">
                             <span class="inline-flex items-center gap-1">
                                 <kbd class="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[9px] shadow-2xs">↵</kbd>

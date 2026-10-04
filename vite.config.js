@@ -31,7 +31,12 @@ export default defineConfig({
         port: 5173,
         strictPort: true,
         watch: {
-            ignored: ['**/storage/framework/views/**'],
+            ignored: [
+                '**/storage/**',
+                '**/public/Assets/**',
+                '**/public/storage/**',
+                '**/.git/**',
+            ],
         },
     },
 });

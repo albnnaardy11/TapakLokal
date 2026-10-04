@@ -1,2 +1,13 @@
 *
 !.gitignore
+!panoramas/
+!panoramas/**/*.webp
+!panoramas/*.webp
+!trips/
+!trips/**/*.webp
+!trips/*.webp
+!*.webp
+!*.png
+!*.svg
+*.jpg
+*.jpeg
