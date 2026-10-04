@@ -17,10 +17,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PlatformSeeder::class);
         $this->call(AdminAccountSeeder::class);
         $this->call(JawaBaratVendorTripSeeder::class);
-        if (app()->environment(['local', 'testing'])) {
-            $this->call(WebsiteContentSeeder::class);
-            $this->call(VirtualTourSeeder::class);
-        }
+        $this->call(WebsiteContentSeeder::class);
+        $this->call(VirtualTourSeeder::class);
         $this->call(BrenggoTripSeeder::class);
     }
 }

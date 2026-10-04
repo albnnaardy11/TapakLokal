@@ -22,9 +22,6 @@ class WebsiteContentSeeder extends Seeder
 {
     public function run(AccessService $access, AuditService $audit): void
     {
-        if (! app()->environment(['local', 'testing'])) {
-            throw new \RuntimeException('Seeder data contoh hanya untuk local/testing.');
-        }
         $source = json_decode(file_get_contents(__DIR__.'/data/website-content.json'), true, 512, JSON_THROW_ON_ERROR);
         $credentials = DB::transaction(function () use ($source, $access, $audit) {
             $email = config('demo.vendor_email');
