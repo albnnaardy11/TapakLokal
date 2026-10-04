@@ -20,6 +20,8 @@
             ];
             $siteLogo = asset('Assets/Images/logo.webp');
         @endphp
+        <link rel="icon" type="image/webp" href="{{ $siteLogo }}">
+        <link rel="apple-touch-icon" href="{{ $siteLogo }}">
         <title inertia>{{ $seo['title'] }}</title>
         <meta name="description" content="{{ $seo['description'] }}" inertia="description">
         <meta name="robots" content="{{ $seo['robots'] }}" inertia="robots">

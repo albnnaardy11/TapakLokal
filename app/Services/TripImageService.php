@@ -8,6 +8,21 @@ use Illuminate\Support\Str;
 
 class TripImageService
 {
+    public function thumbnailUrl(Trip $trip): ?string
+    {
+        $sourcePath = $this->publicSourcePath($trip);
+        if (! $sourcePath) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        return route('trips.thumbnail', [
+            'trip' => $trip,
+            'v' => hash('sha256', $sourcePath.'|'.$disk->lastModified($sourcePath).'|'.$disk->size($sourcePath)),
+        ]);
+    }
+
     public function publicSourcePath(Trip $trip): ?string
     {
         $urlPath = parse_url((string) $trip->image_url, PHP_URL_PATH);

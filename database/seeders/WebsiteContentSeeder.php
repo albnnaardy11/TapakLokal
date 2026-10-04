@@ -30,7 +30,11 @@ class WebsiteContentSeeder extends Seeder
             $email = config('demo.vendor_email');
             $owner = User::where('email', $email)->first();
             if ($owner && ! $owner->roles()->where('name', 'vendor_admin')->exists()) {
-                throw new \RuntimeException('Email vendor contoh sudah dipakai akun lain.');
+                if ($owner->roles()->exists() || $owner->vendor()->exists()) {
+                    throw new \RuntimeException('Email vendor contoh sudah dipakai akun lain.');
+                }
+
+                $access->grant($owner, 'vendor_admin');
             }
             if (! $owner) {
                 $password = config('demo.vendor_password');

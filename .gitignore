@@ -1,8 +1,12 @@
 *.log
 .DS_Store
+
+# Environment
 .env
 .env.backup
 .env.production
+
+# IDE / Editor
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -13,22 +17,35 @@
 /.vscode
 /.zed
 /auth.json
+
+# Dependencies
 /node_modules
+/vendor
+
+# Laravel generated files
 /public/build
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+
+# Static assets - Keep lightweight assets in git, ignore raw huge camera files
+!/public/Assets/
 !/public/Assets/**
 /public/Assets/Images/gn/**
 /public/Assets/Images/360/*.jpg
-*.HEIC
-*.heic
-*.raw
-*.RAW
+
+# Uploaded/runtime storage
 /storage/*.key
 /storage/pail
-/vendor
+
+# Development / OS files
 _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Image formats that should NOT be uploaded
+*.HEIC
+*.heic
+*.raw
+*.RAW

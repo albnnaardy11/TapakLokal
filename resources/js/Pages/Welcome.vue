@@ -25,7 +25,9 @@ const props = defineProps({
     cmsArticles: { type: Array, default: () => [] },
     cmsTestimonials: { type: Array, default: () => [] },
     cmsDestinations: { type: Array, default: () => [] },
+    destinationTrips: { type: Array, default: () => [] },
     featuredTrips: { type: Array, default: () => [] },
+    brenggoTrips: { type: Array, default: () => [] },
     virtualTours: { type: Array, default: () => [] },
     travelerReviews: { type: Array, default: () => [] },
 });
@@ -103,8 +105,8 @@ const reviewsLoading = false;
 
             <div class="relative isolate flow-root">
                 <TravelBackdrop />
-                <DestinationExplore :destinations="cmsDestinations" />
-                <PartnerTrips :items="featuredTrips" />
+                <DestinationExplore :destinations="destinationTrips" />
+                <PartnerTrips :items="brenggoTrips" />
             </div>
             <DestinationGallery :tours="virtualTours" />
             <BookingSteps @explore="tripFinder?.selectDestination('')" />

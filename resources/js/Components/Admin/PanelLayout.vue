@@ -114,15 +114,14 @@ onBeforeUnmount(() => {
             :class="open ? 'translate-x-0' : '-translate-x-full'"
         >
             <!-- Sidebar Brand Header -->
-            <div class="border-b border-slate-100 px-6 py-5">
+            <div class="border-b border-slate-100 px-5 py-4">
                 <Link :href="homeUrl" class="flex items-center gap-3">
-                    <span class="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-[#078cff] to-[#1677e8] text-white shadow-md shadow-blue-500/25">
-                        <Compass class="size-5" />
-                    </span>
-                    <div>
-                        <span class="text-lg font-black tracking-tight text-slate-900">
-                            tapak<span class="text-[#078cff]">lokal</span>
-                        </span>
+                    <img
+                        src="/Assets/Images/logo.webp"
+                        alt="TapakLokal Logo"
+                        class="h-8 w-auto object-contain"
+                    />
+                    <div class="border-l border-slate-200 pl-2.5">
                         <span class="block text-[9px] font-bold uppercase tracking-[0.16em] text-slate-400">
                             {{ vendor ? 'Partner Portal' : panel?.label || 'Admin Panel' }}
                         </span>

@@ -67,7 +67,22 @@ class SearchSuggestionsTest extends TestCase
         $catalogResponse->assertOk();
 
         // Test category search with abbreviation
-        $categoryResponse = $this->get(route('trips.category', ['type' => 'open-trip', 'q' => 'gn salak']));
+        $categoryResponse = $this->get(route('trips.category', ['type' => 'open-trip', 'q' => 'gn salak', 'guests' => 2]));
         $categoryResponse->assertOk();
+        $categoryResponse->assertInertia(fn ($page) => $page
+            ->component('TripCategory')
+            ->has('trips.data', 1)
+            ->where('trips.data.0.title', 'Trekking Gunung Salak & Curug Rimba')
+            ->where('trips.data.0.slug', 'trekking-gunung-salak-curug-rimba')
+        );
+
+        // Test category search with full title "Gunung Salak"
+        $categoryFullResponse = $this->get(route('trips.category', ['type' => 'open-trip', 'q' => 'Gunung Salak', 'guests' => 2]));
+        $categoryFullResponse->assertOk();
+        $categoryFullResponse->assertInertia(fn ($page) => $page
+            ->component('TripCategory')
+            ->has('trips.data', 1)
+            ->where('trips.data.0.title', 'Trekking Gunung Salak & Curug Rimba')
+        );
     }
 }

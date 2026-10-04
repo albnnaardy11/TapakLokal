@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowLeft, ArrowRight, Award, ChevronRight, Star } from 'lucide-vue-next';
+import { ArrowLeft, ArrowRight, ChevronRight, Star } from 'lucide-vue-next';
 import { Link } from '@inertiajs/vue3';
 import { route } from 'ziggy-js';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -53,8 +53,11 @@ const trips = computed(() => {
         rating: trip.reviews_avg_rating ? `${Number(trip.reviews_avg_rating).toFixed(1)}/5` : 'Belum ada ulasan',
         vendor: { name: trip.vendor?.name || 'Mitra TapakLokal' },
         image: trip.thumbnail_url || trip.image_url || trip.image,
+        photoCredit: trip.photo_credit || null,
     }));
 });
+
+const partnerTripsUrl = route('partners.show', { partner: 'brenggo' });
 
 const calculatePagination = () => {
     const el = carouselRef.value;
@@ -138,6 +141,7 @@ onBeforeUnmount(() => {
 
 <template>
     <section
+        v-if="trips.length"
         class="mx-auto mt-10 sm:mt-12 lg:mt-14 max-w-[1180px]"
         aria-labelledby="partner-trips-heading"
     >
@@ -164,36 +168,34 @@ onBeforeUnmount(() => {
                             id="partner-trips-heading"
                             class="text-2xl sm:text-[28px] lg:text-[30px] font-black leading-tight tracking-tight text-white"
                         >
-                            Open Trip Dari Partner Terpercaya
+                            Pilihan Trip dari Brenggo.id
                         </h2>
                         <p class="mt-3 text-xs sm:text-sm font-medium leading-relaxed text-white/80 max-w-sm">
-                            Nikmati perjalanan seru dengan vendor pilihan yang telah melalui proses verifikasi dan KYC dari Tapak Lokal
+                            Jelajahi Bromo dan destinasi Jawa Timur bersama perjalanan yang dikelola Brenggo.id.
                         </p>
                     </div>
 
                     <div class="mt-8 space-y-4">
-                        <!-- Vendor Verified Badge -->
-                        <div class="inline-flex items-center gap-3 rounded-xl bg-white px-4 py-2.5 shadow-lg max-w-[240px]">
-                            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-50 text-[#0088ff] shrink-0">
-                                <Award class="size-5 text-[#0088ff]" />
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-xs font-black uppercase tracking-wider text-slate-900 leading-none">
-                                    Mitra Terverifikasi
-                                </p>
-                                <p class="mt-1 text-[9px] font-semibold text-emerald-600 leading-tight truncate flex items-center gap-1">
-                                    <span class="inline-block size-1.5 rounded-full bg-emerald-500"></span> 100% KYC Approved
-                                </p>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <img
+                                src="/Assets/Images/logo-vendor/logo-brenggo-tour.webp"
+                                alt=""
+                                width="49"
+                                height="49"
+                                loading="lazy"
+                                decoding="async"
+                                class="size-12 shrink-0 object-contain"
+                            />
+                            <span class="text-xl font-extrabold tracking-wide text-white">BRENGGO.ID</span>
                         </div>
 
                         <!-- Pill Button -->
                         <div>
                             <Link
-                                :href="route('catalog', { type: 'open-trip' })"
+                                :href="partnerTripsUrl"
                                 class="group inline-flex items-center gap-1.5 rounded-lg bg-slate-700/60 px-4 py-2 text-xs font-semibold text-white/90 backdrop-blur-md transition duration-200 hover:bg-slate-700/90 hover:text-white focus-visible:outline-2 focus-visible:outline-white"
                             >
-                                <span>Lihat Semua Trip Dari Partner</span>
+                                <span>Lihat Semua Trip Brenggo.id</span>
                                 <ChevronRight class="size-3.5 transition-transform group-hover:translate-x-0.5" />
                             </Link>
                         </div>
@@ -207,7 +209,7 @@ onBeforeUnmount(() => {
                         id="partner-trip-list"
                         ref="carouselRef"
                         class="flex snap-x snap-mandatory gap-3.5 sm:gap-4 overflow-x-auto scroll-smooth pb-1 pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                        aria-label="Pilihan open trip partner"
+                        aria-label="Pilihan perjalanan Brenggo.id"
                         @scroll="onScroll"
                     >
                         <Link
@@ -221,9 +223,19 @@ onBeforeUnmount(() => {
                                 <img
                                     :src="trip.image"
                                     :alt="trip.name"
+                                    width="480"
+                                    height="300"
                                     class="size-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
                                     loading="lazy"
+                                    decoding="async"
                                 />
+                                <a
+                                    v-if="trip.photoCredit"
+                                    href="https://commons.wikimedia.org/wiki/File:KAWAH_IJEN.jpg"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    class="absolute inset-x-0 bottom-0 bg-slate-950/70 px-2 py-1 text-left text-[9px] font-medium text-white"
+                                >{{ trip.photoCredit }}</a>
                             </div>
 
                             <!-- Card Body -->

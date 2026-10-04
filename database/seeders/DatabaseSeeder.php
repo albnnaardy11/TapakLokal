@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(PlatformSeeder::class);
+        $this->call(JawaBaratVendorTripSeeder::class);
         if (app()->environment(['local', 'testing'])) {
             $this->call(WebsiteContentSeeder::class);
             $this->call(VirtualTourSeeder::class);
         }
-
-        $this->call(JawaBaratVendorTripSeeder::class);
+        $this->call(BrenggoTripSeeder::class);
     }
 }

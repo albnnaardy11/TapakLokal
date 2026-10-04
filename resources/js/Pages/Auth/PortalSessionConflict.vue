@@ -25,7 +25,7 @@ function logout() {
 <template>
     <div inert aria-hidden="true" class="pointer-events-none h-screen overflow-hidden select-none">
         <CorporateLogin v-if="targetPortal==='corporate'" />
-        <div v-else class="min-h-screen bg-[#f7f9fc]"><header class="border-b border-slate-200 bg-white px-10 py-6 text-2xl font-extrabold text-[#173451]">tapak<span class="text-[#0088ff]">lokal</span></header></div>
+        <div v-else class="min-h-screen bg-[#f7f9fc]"><header class="border-b border-slate-200 bg-white px-10 py-6"><img src="/Assets/Images/logo.webp" alt="TapakLokal Logo" class="h-8 w-auto object-contain" /></header></div>
     </div>
     <Head title="Konfirmasi perpindahan akun — TapakLokal" />
     <dialog ref="dialog" aria-labelledby="portal-switch-title" aria-describedby="portal-switch-description" class="portal-switch-dialog m-auto max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-[460px] overflow-y-auto rounded-[28px] border border-white/80 bg-white p-0 text-[#173451] shadow-[0_24px_80px_rgba(10,30,58,0.3)] backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm sm:rounded-[32px]" @cancel.prevent="stay">

@@ -235,7 +235,7 @@ class BookingController extends Controller
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
-            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
+            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - COALESCE(reserved_seats, 0)) >= ?', [(int) $guests]))
             ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();
@@ -316,7 +316,7 @@ class BookingController extends Controller
         'brenggo' => [
             'id' => 'brenggo',
             'name' => 'BRENGGO.ID',
-            'logo' => '/Assets/Images/logo-vendor/brenggo.webp',
+            'logo' => '/Assets/Images/logo-vendor/logo-brenggo-tour.webp',
             'city' => 'Malang, Jawa Timur',
             'tagline' => 'Spesialis Bromo, Kawah Ijen & Eksplorasi Eksotis Jawa Timur',
         ],
@@ -327,7 +327,7 @@ class BookingController extends Controller
         $partnerData = self::$popularPartners[$partner] ?? null;
         $vendorRecord = null;
         if ($partnerData) {
-            $vendorRecord = Vendor::where('status', 'verified')->where('name', 'like', '%'.$partnerData['name'].'%')->first();
+            $vendorRecord = Vendor::where('status', 'verified')->where('name', $partnerData['name'])->first();
         } else {
             $vendorRecord = Vendor::where('status', 'verified')->where(function ($q) use ($partner) {
                 $q->where('name', 'like', '%'.$partner.'%')
@@ -356,12 +356,12 @@ class BookingController extends Controller
             ->withAvg(['reviews as reviews_avg_rating' => fn ($query) => $query->where('status', 'published')], 'rating')
             ->withCount(['reviews as reviews_count' => fn ($query) => $query->where('status', 'published')])
             ->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
-            ->when($vendorRecord, fn ($query, $v) => $query->where('vendor_id', $v->id))
+            ->where('vendor_id', $vendorRecord?->id)
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
-            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
+            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - COALESCE(reserved_seats, 0)) >= ?', [(int) $guests]))
             ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();
@@ -396,7 +396,7 @@ class BookingController extends Controller
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
-            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
+            ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - COALESCE(reserved_seats, 0)) >= ?', [(int) $guests]))
             ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();

@@ -23,7 +23,16 @@ const showSpot = (index) => {
 
 <template>
     <section class="mt-7 overflow-hidden rounded-xl border border-[#dbe8f5] bg-white shadow-[0_12px_30px_rgba(23,75,120,0.07)]" aria-labelledby="trip-panorama-heading">
-        <p v-if="!tours.length" class="p-6 text-sm text-[#60789c]">Preview 360° belum diunggah oleh vendor.</p><div v-if="tours.length" class="grid lg:grid-cols-[minmax(0,1fr)_290px]">
+        <div v-if="!tours.length" class="flex items-center gap-3 p-5 sm:p-6">
+            <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf7ff] text-[#1688e8]">
+                <PanoramaMark class="size-6" />
+            </span>
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-[#1688e8]">Preview khusus trip ini</p>
+                <h2 id="trip-panorama-heading" class="mt-0.5 text-sm font-extrabold text-[#173b70]">View 360° belum tersedia</h2>
+                <p class="mt-1 text-xs leading-5 text-[#60789c]">Vendor belum mengunggah view 360° untuk trip ini.</p>
+            </div>
+        </div><div v-if="tours.length" class="grid lg:grid-cols-[minmax(0,1fr)_290px]">
             <div class="min-w-0 p-4 sm:p-5">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-start gap-3">

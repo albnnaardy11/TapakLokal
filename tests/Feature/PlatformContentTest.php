@@ -3,8 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\ContentPage;
+use App\Models\Trip;
 use App\Models\User;
 use App\Services\AccessService;
+use App\Services\PublicContentService;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -51,5 +54,30 @@ class PlatformContentTest extends TestCase
         ContentPage::factory()->create(['type' => 'destination', 'status' => 'published', 'published_at' => now()->subDay(), 'title' => 'Curug Cidaun']);
         ContentPage::factory()->create(['type' => 'destination', 'status' => 'draft']);
         $this->get('/')->assertInertia(fn (Assert $page) => $page->has('cmsDestinations', 1)->where('cmsDestinations.0.title', 'Curug Cidaun'));
+    }
+
+    public function test_homepage_destination_cards_use_active_trip_counts_and_category_links(): void
+    {
+        Trip::factory()->create([
+            'destination' => 'Kepulauan Uji Dinamis, Indonesia',
+            'type' => 'open-trip',
+            'departure_date' => now()->addWeek(),
+        ]);
+        Trip::factory()->create([
+            'destination' => 'Kepulauan Uji Dinamis, Indonesia',
+            'type' => 'private-trip',
+            'departure_date' => now()->addWeek(),
+        ]);
+        Cache::flush();
+
+        $destination = collect(app(PublicContentService::class)->homepage()['destinationTrips'])
+            ->firstWhere('name', 'Kepulauan Uji Dinamis');
+
+        $this->assertSame(1, $destination['trip_count']);
+        $this->assertSame('open-trip', $destination['trip_type']);
+        $this->assertSame(
+            route('trips.category', ['type' => 'open-trip', 'q' => 'Kepulauan Uji Dinamis']),
+            $destination['url'],
+        );
     }
 }

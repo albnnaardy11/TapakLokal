@@ -22,6 +22,7 @@ class TripThumbnailTest extends TestCase
             ->streamedContent();
 
         $this->assertSame(480, getimagesizefromstring($thumbnail)[0]);
-        $this->get('/')->assertInertia(fn ($page) => $page->where('featuredTrips.0.thumbnail_url', route('trips.thumbnail', $trip)));
+        $version = hash('sha256', 'trips/cover.jpg|'.Storage::disk('public')->lastModified('trips/cover.jpg').'|'.Storage::disk('public')->size('trips/cover.jpg'));
+        $this->get('/')->assertInertia(fn ($page) => $page->where('featuredTrips.0.thumbnail_url', route('trips.thumbnail', ['trip' => $trip, 'v' => $version])));
     }
 }

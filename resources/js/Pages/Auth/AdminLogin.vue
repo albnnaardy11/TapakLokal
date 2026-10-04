@@ -30,7 +30,7 @@ function submit() {
         <header class="border-b border-[#e4edf5] bg-white">
             <div class="mx-auto flex max-w-[1040px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
                 <Link :href="route('home')" class="flex items-center gap-3">
-                    <span class="text-2xl font-extrabold tracking-tight">tapak<span class="text-[#0088ff]">lokal</span></span>
+                    <img src="/Assets/Images/logo.webp" alt="TapakLokal Logo" class="h-8 w-auto object-contain" />
                     <span class="border-l border-slate-200 pl-3 text-[9px] font-bold tracking-[.16em]">FOR<br />ADMIN</span>
                 </Link>
                 <Link

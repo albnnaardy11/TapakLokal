@@ -81,10 +81,11 @@ const submit = () => {
 
             <!-- Top Logo -->
             <Link href="/" class="flex items-center gap-3 text-2xl font-black tracking-tight text-white group">
-                <span class="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-[#078cff] to-[#0060df] text-white shadow-xl shadow-blue-500/30 group-hover:scale-105 transition">
-                    <Compass class="size-6" />
-                </span>
-                <span>tapak<span class="text-[#38bdf8]">lokal</span></span>
+                <img
+                    src="/Assets/Images/logo.webp"
+                    alt="TapakLokal Logo"
+                    class="h-10 w-auto object-contain brightness-0 invert"
+                />
             </Link>
 
             <!-- Center Value Prop -->
@@ -140,11 +141,12 @@ const submit = () => {
         <main class="flex items-center justify-center px-6 py-12 sm:px-10 lg:px-14">
             <div class="w-full max-w-md">
                 <!-- Mobile Logo -->
-                <Link href="/" class="mb-8 flex items-center gap-2.5 text-xl font-black text-slate-900 lg:hidden">
-                    <span class="grid size-9 place-items-center rounded-xl bg-blue-600 text-white shadow-md">
-                        <Compass class="size-5" />
-                    </span>
-                    <span>tapak<span class="text-blue-600">lokal</span></span>
+                <Link href="/" class="mb-8 flex items-center gap-2.5 lg:hidden">
+                    <img
+                        src="/Assets/Images/logo.webp"
+                        alt="TapakLokal Logo"
+                        class="h-8 w-auto object-contain"
+                    />
                 </Link>
 
                 <!-- Header Title & Subtitle -->

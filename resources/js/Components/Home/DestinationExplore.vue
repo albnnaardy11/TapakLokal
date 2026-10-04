@@ -15,13 +15,13 @@ const props = defineProps({
 const cards = computed(() =>
     props.destinations.map((item) => ({
         ...item,
-        name: item.title,
+        name: item.name ?? item.title,
         image: item.image_url,
         trip_count: item.trip_count ?? item.trips_count,
     }))
 );
 
-const open = (item) => router.visit(route('content.show', item.slug));
+const open = (item) => router.visit(item.url ?? route('trips.category', { type: item.trip_type ?? 'open-trip', q: item.name }));
 </script>
 
 <template>
@@ -45,7 +45,7 @@ const open = (item) => router.visit(route('content.show', item.slug));
 
             <!-- Action Link -->
             <Link
-                :href="typeof route === 'function' ? route('explore', 'destination') : '/explore/destination'"
+                :href="typeof route === 'function' ? route('trips.category', 'open-trip') : '/pilihan-trip/open-trip'"
                 class="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0088ff] hover:text-[#0064d2] transition-colors py-1.5 px-3 rounded-xl hover:bg-sky-50/80 self-start sm:self-auto shrink-0 border border-transparent hover:border-sky-100"
             >
                 <span>Lihat Semua Destinasi</span>

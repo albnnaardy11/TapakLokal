@@ -203,13 +203,13 @@ const openAuthModal = (mode = 'login') => {
         >
             <div class="mx-auto flex h-[58px] max-w-[1180px] items-center px-4 sm:px-6 lg:px-0">
                 <!-- Logo -->
-                <Link href="/" class="shrink-0 text-left" aria-label="TapakLokal beranda" @click="selectNavigation(navItems[0])">
-                    <span
-                        class="text-[15px] font-extrabold tracking-[-0.07em] transition-colors duration-500"
-                        :class="isTransparent ? 'text-white' : 'text-slate-900'"
-                    >
-                        tapa<span :class="isTransparent ? 'text-[#38bdf8]' : 'text-[#3E7BEF]'" class="transition-colors duration-500">k</span>lokal
-                    </span>
+                <Link href="/" class="shrink-0 flex items-center gap-2" aria-label="TapakLokal beranda" @click="selectNavigation(navItems[0])">
+                    <img
+                        src="/Assets/Images/logo.webp"
+                        alt="TapakLokal Logo"
+                        class="h-7 sm:h-8 w-auto object-contain transition-all duration-300"
+                        :class="isTransparent ? 'brightness-0 invert drop-shadow-sm' : ''"
+                    />
                 </Link>
 
                 <!-- Desktop Right Nav -->

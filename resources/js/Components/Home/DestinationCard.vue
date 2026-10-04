@@ -9,23 +9,12 @@ const props = defineProps({
 
 defineEmits(['select']);
 
-const fallbackCounts = {
-    'Yogyakarta': 34,
-    'Bali': 28,
-    'Lombok': 19,
-    'Kepulauan Seribu': 24,
-    'Jawa Barat': 31,
-    'Raja Ampat': 16,
-    'Pulau Komodo': 18,
-};
-
 const tripCountText = computed(() => {
     const raw = props.destination.trip_count ?? props.destination.trips_count;
-    if (typeof raw === 'number' && raw > 0) {
-        return `${raw} Open Trip`;
-    }
-    const fallback = fallbackCounts[props.destination.name] || 25;
-    return `${fallback} Open Trip`;
+    const count = Number(raw) || 0;
+    const type = props.destination.trip_type === 'private-trip' ? 'Private Trip' : 'Open Trip';
+
+    return `${count} ${type}`;
 });
 
 const optimizedImage = computed(() => {

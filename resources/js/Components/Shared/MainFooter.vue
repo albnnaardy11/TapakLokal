@@ -81,15 +81,13 @@ function safeRoute(name, params) {
                 <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1.05fr_1.15fr_1.25fr] lg:gap-8">
                     <!-- Column 1: Brand, Certifications, Partner Button & Payments -->
                     <div class="flex flex-col items-center text-center sm:items-start sm:text-left">
-                        <!-- Brand Logo (Traveloka Style with Blue Bird/Compass) -->
-                        <Link href="/" class="inline-flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-white sm:justify-start">
-                            <span class="text-2xl font-black tracking-tight text-white">
-                                tapak<span class="text-[#38bdf8]">lokal</span>
-                            </span>
-                            <!-- Swift Bird Icon matching Traveloka silhouette -->
-                            <svg class="size-6 text-[#0066cc]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M21.7 4.2c-.4-.3-1-.2-1.3.2l-5.6 7.4-4.8-2.7c-.5-.3-1.1-.1-1.4.4l-6 10c-.3.5-.1 1.1.4 1.4.2.1.4.1.6.1.4 0 .7-.2.9-.5l5.2-8.6 4.9 2.8c.4.2.9.2 1.3-.1l6.8-9c.3-.4.2-1-.1-1.4zM22.5 2.5c-.7-.4-1.6-.2-2 .5l-3.2 5.5 3.8 2.2 2-6.5c.3-.8-.1-1.4-.6-1.7z" opacity="0.9" />
-                            </svg>
+                        <!-- Brand Logo -->
+                        <Link href="/" class="inline-flex items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-white sm:justify-start" aria-label="TapakLokal beranda">
+                            <img
+                                src="/Assets/Images/logo.webp"
+                                alt="TapakLokal Logo"
+                                class="h-9 w-auto object-contain brightness-0 invert"
+                            />
                         </Link>
 
                         <!-- Partner with Tapak Lokal Button (Traveloka Light Blue Pill) -->

@@ -182,24 +182,13 @@ const openStickyDatePicker = () => {
 const handleSearch = () => {
     activeDropdown.value = null;
 
-    const type = tripType.value === 'private-trip' ? 'private-trip' : 'open-trip';
-    const dest = (destination.value || '').toLowerCase().trim();
-
-    let targetSlug = type === 'private-trip' ? 'labuan-bajo' : 'komodo';
-
-    if (dest.includes('bromo')) {
-        targetSlug = 'bromo';
-    } else if (dest.includes('raja') || dest.includes('ampat')) {
-        targetSlug = 'raja-ampat';
-    } else if (dest.includes('bali')) {
-        targetSlug = 'bali';
-    } else if (dest.includes('pramuka') || dest.includes('seribu')) {
-        targetSlug = 'pulau-pramuka';
-    } else if (dest.includes('komodo') || dest.includes('bajo') || dest.includes('phinisi')) {
-        targetSlug = type === 'private-trip' ? 'labuan-bajo' : 'komodo';
-    }
+    const type = tripType.value || props.initialFilters?.type || 'open-trip';
+    const q = (destination.value || '').trim();
 
     const queryParams = {};
+    if (q) {
+        queryParams.q = q;
+    }
     if (departureDate.value) {
         queryParams.date = departureDate.value;
     }
@@ -208,24 +197,27 @@ const handleSearch = () => {
         queryParams.guests = totalGuests;
     }
 
-    emit('search', { q: destination.value, type, ...queryParams });
+    emit('search', { q, type, ...queryParams });
 
-    router.visit(
-        typeof route === 'function'
-            ? route('trips.show', { tripType: type, trip: targetSlug })
-            : `/trips/${type}/${targetSlug}`
-    );
+    if (isPartnerPage.value && props.partner?.id) {
+        router.visit(route('partner', { partner: props.partner.id, ...queryParams, type: type || undefined }));
+    } else if (type === 'open-trip' || type === 'private-trip') {
+        router.visit(route('trips.category', { type, ...queryParams }));
+    } else {
+        router.visit(route('catalog', queryParams));
+    }
 };
 
 // Popular destination quick picks
 const popularDestinations = [
-    'Labuan Bajo',
+    'Gunung Salak',
+    'Gunung Gede',
     'Bromo',
+    'Labuan Bajo',
     'Raja Ampat',
     'Pulau Pramuka',
     'Bali',
     'Dieng',
-    'Derawan',
 ];
 
 const selectQuickDestination = (dest) => {
