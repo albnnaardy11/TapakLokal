@@ -307,6 +307,36 @@ const popularDestinationsList = [
 ];
 
 let locationDebounceTimer = null;
+
+const normalizeQuery = (text) => {
+    let s = (text || '').toLowerCase().trim();
+    s = s.replace(/\b(gn|mt|g)\b/g, 'gunung')
+        .replace(/\b(plu|p)\b/g, 'pulau')
+        .replace(/\b(kep|k)\b/g, 'kepulauan')
+        .replace(/\b(jogja|yogya|yk)\b/g, 'yogyakarta')
+        .replace(/\b(bj)\b/g, 'labuan bajo')
+        .replace(/\b(bwi)\b/g, 'banyuwangi')
+        .replace(/\b(jkt|dki)\b/g, 'jakarta')
+        .replace(/\b(jabar)\b/g, 'jawa barat')
+        .replace(/\b(jatim)\b/g, 'jawa timur')
+        .replace(/\b(jateng)\b/g, 'jawa tengah');
+    return s;
+};
+
+const filterPopularFallback = (term) => {
+    const raw = (term || '').toLowerCase().trim();
+    if (!raw) return popularDestinationsList;
+
+    const norm = normalizeQuery(raw);
+    const tokens = Array.from(new Set([raw, norm, ...raw.split(/\s+/), ...norm.split(/\s+/)])).filter(w => w.length >= 2);
+
+    return popularDestinationsList.filter((p) => {
+        const pName = p.name.toLowerCase();
+        const pRegion = p.region.toLowerCase();
+        return tokens.some((t) => pName.includes(t) || pRegion.includes(t));
+    });
+};
+
 const fetchLocationSuggestions = async (term = '') => {
     if (!term) {
         destinationSuggestions.value = popularDestinationsList;
@@ -342,15 +372,11 @@ const fetchLocationSuggestions = async (term = '') => {
             if (list.length > 0) {
                 destinationSuggestions.value = list;
             } else {
-                destinationSuggestions.value = popularDestinationsList.filter(
-                    (p) => p.name.toLowerCase().includes(term.toLowerCase()) || p.region.toLowerCase().includes(term.toLowerCase())
-                );
+                destinationSuggestions.value = filterPopularFallback(term);
             }
         }
     } catch {
-        destinationSuggestions.value = popularDestinationsList.filter(
-            (p) => p.name.toLowerCase().includes(term.toLowerCase()) || p.region.toLowerCase().includes(term.toLowerCase())
-        );
+        destinationSuggestions.value = filterPopularFallback(term);
     }
 };
 
@@ -570,21 +596,21 @@ const searchSouvenirs = () => {
                 >
                     <div
                         v-if="openDropdown === 'tripLocation'"
-                        class="absolute left-0 top-full z-50 mt-2 w-[calc(100vw-2.5rem)] sm:w-[360px] md:w-[420px] max-w-[440px] rounded-2xl border border-slate-100 bg-white p-3 shadow-[0_20px_50px_rgba(15,35,70,0.22)] ring-1 ring-black/5"
+                        class="absolute left-0 top-full z-[60] mt-2 w-[calc(100vw-2.5rem)] sm:w-[380px] md:w-[440px] max-w-[460px] rounded-2xl border border-slate-100 bg-white p-3.5 shadow-[0_20px_50px_rgba(15,35,70,0.25)] ring-1 ring-black/5"
                     >
-                        <div class="mb-2 flex items-center justify-between px-2">
+                        <div class="mb-2.5 flex items-center justify-between px-1">
                             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                                 {{ tripLocation ? 'Pilihan Destinasi' : 'Destinasi Populer' }}
                             </span>
                             <span class="text-[10px] text-slate-400">Klik untuk memilih</span>
                         </div>
 
-                        <div class="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                        <div class="max-h-72 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                             <button
                                 v-for="dest in destinationSuggestions"
                                 :key="dest.name"
                                 type="button"
-                                class="w-full group flex items-center justify-between gap-3 rounded-xl p-2.5 text-left transition hover:bg-sky-50/70 active:bg-sky-100"
+                                class="w-full group flex items-center justify-between gap-3 rounded-xl p-2.5 text-left transition hover:bg-sky-50/80 active:bg-sky-100"
                                 @click="selectSuggestedLocation(dest)"
                             >
                                 <div class="flex items-center gap-3 min-w-0">
@@ -608,6 +634,10 @@ const searchSouvenirs = () => {
                                     {{ dest.badge }}
                                 </span>
                             </button>
+
+                            <div v-if="destinationSuggestions.length === 0" class="py-6 text-center text-xs text-slate-400">
+                                Tidak ada destinasi yang cocok untuk "{{ tripLocation }}"
+                            </div>
                         </div>
                     </div>
                 </Transition>
@@ -687,7 +717,7 @@ const searchSouvenirs = () => {
                 >
                     <div
                         v-if="openDropdown === 'tripGuests'"
-                        class="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2.5rem)] sm:w-[280px] max-w-[280px] rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_20px_50px_rgba(15,35,70,0.22)] ring-1 ring-black/5"
+                        class="absolute right-0 top-full z-[60] mt-2 w-[calc(100vw-2.5rem)] sm:w-[290px] max-w-[300px] rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_20px_50px_rgba(15,35,70,0.25)] ring-1 ring-black/5"
                     >
                         <div class="space-y-3">
                             <!-- Row 1: Adult -->
@@ -968,5 +998,20 @@ const searchSouvenirs = () => {
 .partner-slide-leave-to {
     opacity: 0;
     transform: translateY(-6px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f8fafc;
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 </style>

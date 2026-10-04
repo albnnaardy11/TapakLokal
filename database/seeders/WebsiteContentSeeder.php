@@ -73,6 +73,8 @@ class WebsiteContentSeeder extends Seeder
                 ['Banda Neira', '1518548419970-58e3b4079ab2', 'Sejarah kejayaan rempah pala berpadu keindahan laut biru Maluku.'],
                 ['Kepulauan Seribu', '1516690561799-46d8f74f9abf', 'Pelarian pulau tropis dekat ibukota dengan pasir putih dan biota laut.'],
                 ['Jawa Barat', '1501179691627-eeaa65ea017c', 'Hamparan kebun teh berkabut, kawah belerang, dan jalur alam pegunungan Sunda.'],
+                ['Gunung Salak', '1501179691627-eeaa65ea017c', 'Jalur trekking rimba, pos registrasi, curug eksotis, dan keindahan alam pegunungan Salak Endah Bogor.'],
+                ['Gunung Gede', '1588668214407-6ea9a6d8c272', 'Taman Nasional Gunung Gede Pangrango dengan Surya Kencana dan panorama lembah berkabut.'],
             ] as [$name, $photo, $desc]) {
                 $pages[] = ['destination', 'destinasi-'.Str::slug($name), $name, $desc, $image($photo)];
             }

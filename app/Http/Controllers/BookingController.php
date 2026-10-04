@@ -31,22 +31,83 @@ class BookingController extends Controller
         protected PublicContentService $content
     ) {}
 
+    /**
+     * Normalize Indonesian travel abbreviations and extract search tokens.
+     *
+     * @return array<int, string>
+     */
+    protected function extractSearchTokens(string $rawQuery): array
+    {
+        $raw = trim($rawQuery);
+        if ($raw === '') {
+            return [];
+        }
+
+        $lower = Str::lower($raw);
+        $clean = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $lower) ?? $lower;
+        $clean = trim(preg_replace('/\s+/', ' ', $clean) ?? $clean);
+
+        $replacements = [
+            '/\b(gn|mt|g)\b/i' => 'gunung',
+            '/\b(mount)\b/i' => 'gunung',
+            '/\b(plu|p)\b/i' => 'pulau',
+            '/\b(kep|k)\b/i' => 'kepulauan',
+            '/\b(jogja|yogya|yk)\b/i' => 'yogyakarta',
+            '/\b(bj)\b/i' => 'labuan bajo',
+            '/\b(bwi)\b/i' => 'banyuwangi',
+            '/\b(jkt|dki)\b/i' => 'jakarta',
+            '/\b(jabar)\b/i' => 'jawa barat',
+            '/\b(jatim)\b/i' => 'jawa timur',
+            '/\b(jateng)\b/i' => 'jawa tengah',
+            '/\b(crg)\b/i' => 'curug',
+        ];
+
+        $expanded = preg_replace(array_keys($replacements), array_values($replacements), $clean) ?? $clean;
+        $expanded = trim(preg_replace('/\s+/', ' ', $expanded) ?? $expanded);
+
+        $rawWords = array_filter(explode(' ', $clean), fn ($w) => mb_strlen($w) >= 2);
+        $expandedWords = array_filter(explode(' ', $expanded), fn ($w) => mb_strlen($w) >= 2);
+
+        $all = array_unique(array_merge([$raw, $clean, $expanded], $rawWords, $expandedWords));
+
+        return array_values(array_filter($all, fn ($t) => trim($t) !== ''));
+    }
+
+    /**
+     * Apply intelligent travel search conditions on Eloquent queries.
+     */
+    protected function applySmartTripSearch($query, string $term)
+    {
+        $tokens = $this->extractSearchTokens($term);
+        if (empty($tokens)) {
+            return $query;
+        }
+
+        return $query->where(function ($search) use ($tokens, $term) {
+            $search->whereRaw('LOWER(title) LIKE ?', ['%'.Str::lower($term).'%'])
+                ->orWhereRaw('LOWER(destination) LIKE ?', ['%'.Str::lower($term).'%'])
+                ->orWhereRaw('LOWER(slug) LIKE ?', ['%'.Str::slug($term).'%']);
+
+            foreach ($tokens as $token) {
+                $lowerToken = Str::lower($token);
+                $search->orWhereRaw('LOWER(title) LIKE ?', ['%'.$lowerToken.'%'])
+                    ->orWhereRaw('LOWER(destination) LIKE ?', ['%'.$lowerToken.'%'])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ['%'.$lowerToken.'%'])
+                    ->orWhereRaw('LOWER(meeting_point) LIKE ?', ['%'.$lowerToken.'%']);
+            }
+        });
+    }
+
     public function suggestions(Request $request): JsonResponse
     {
         $rawQuery = trim((string) $request->input('q', ''));
-        $lower = Str::lower($rawQuery);
+        $tokens = $this->extractSearchTokens($rawQuery);
 
         $trips = Trip::with('vendor:id,name')
             ->where('status', 'published')
             ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('departure_date', '>=', today()->toDateString())
-            ->when($lower !== '', function ($query) use ($lower) {
-                $query->where(function ($q) use ($lower) {
-                    $q->whereRaw('LOWER(title) LIKE ?', ["%{$lower}%"])
-                        ->orWhereRaw('LOWER(destination) LIKE ?', ["%{$lower}%"])
-                        ->orWhereRaw('LOWER(type) LIKE ?', ["%{$lower}%"]);
-                });
-            })
+            ->when(! empty($tokens), fn ($query) => $this->applySmartTripSearch($query, $rawQuery))
             ->latest('id')
             ->limit(6)
             ->get()
@@ -67,7 +128,17 @@ class BookingController extends Controller
 
         $destinations = ContentPage::whereIn('type', ['destination', 'hidden-gem'])
             ->where('status', 'published')
-            ->when($lower !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$lower}%"]))
+            ->when(! empty($tokens), function ($query) use ($tokens, $rawQuery) {
+                $query->where(function ($q) use ($tokens, $rawQuery) {
+                    $q->whereRaw('LOWER(title) LIKE ?', ['%'.Str::lower($rawQuery).'%'])
+                        ->orWhereRaw('LOWER(excerpt) LIKE ?', ['%'.Str::lower($rawQuery).'%']);
+                    foreach ($tokens as $token) {
+                        $lowerToken = Str::lower($token);
+                        $q->orWhereRaw('LOWER(title) LIKE ?', ['%'.$lowerToken.'%'])
+                            ->orWhereRaw('LOWER(excerpt) LIKE ?', ['%'.$lowerToken.'%']);
+                    }
+                });
+            })
             ->limit(4)
             ->get()
             ->map(fn (ContentPage $page) => [
@@ -78,11 +149,17 @@ class BookingController extends Controller
                 'url' => route('catalog', ['q' => $page->title]),
             ]);
 
-        $souvenirs = SouvenirProduct::where('status', 'active')
-            ->when($lower !== '', function ($query) use ($lower) {
-                $query->where(function ($q) use ($lower) {
-                    $q->whereRaw('LOWER(name) LIKE ?', ["%{$lower}%"])
-                        ->orWhereRaw('LOWER(city) LIKE ?', ["%{$lower}%"]);
+        $souvenirs = SouvenirProduct::where('status', 'published')
+            ->when(! empty($tokens), function ($query) use ($tokens, $rawQuery) {
+                $query->where(function ($q) use ($tokens, $rawQuery) {
+                    $q->whereRaw('LOWER(name) LIKE ?', ['%'.Str::lower($rawQuery).'%'])
+                        ->orWhereRaw('LOWER(region) LIKE ?', ['%'.Str::lower($rawQuery).'%']);
+                    foreach ($tokens as $token) {
+                        $lowerToken = Str::lower($token);
+                        $q->orWhereRaw('LOWER(name) LIKE ?', ['%'.$lowerToken.'%'])
+                            ->orWhereRaw('LOWER(region) LIKE ?', ['%'.$lowerToken.'%'])
+                            ->orWhereRaw('LOWER(description) LIKE ?', ['%'.$lowerToken.'%']);
+                    }
                 });
             })
             ->limit(4)
@@ -90,7 +167,7 @@ class BookingController extends Controller
             ->map(fn (SouvenirProduct $prod) => [
                 'id' => $prod->id,
                 'name' => $prod->name,
-                'city' => $prod->city,
+                'city' => $prod->region,
                 'price' => $prod->price,
                 'formatted_price' => 'Rp '.number_format($prod->price, 0, ',', '.'),
                 'image_url' => $prod->image_url,
@@ -152,7 +229,7 @@ class BookingController extends Controller
         ]);
         $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('departure_date', '>=', today()->toDateString())
-            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
+            ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
@@ -275,7 +352,7 @@ class BookingController extends Controller
         $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->when($vendorRecord, fn ($query, $v) => $query->where('vendor_id', $v->id))
             ->where('departure_date', '>=', today()->toDateString())
-            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
+            ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
@@ -308,7 +385,7 @@ class BookingController extends Controller
         $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('type', $type)
             ->where('departure_date', '>=', today()->toDateString())
-            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('destination', 'like', '%'.$term.'%')))
+            ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
             ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
