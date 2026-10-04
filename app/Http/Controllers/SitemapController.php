@@ -45,9 +45,11 @@ class SitemapController extends Controller
         return response()->stream(function () use ($type, $part): void {
             echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
             if ($type === 'static') {
-                foreach (['home', 'open.preorder', 'souvenirs.index', 'blog', 'discount', 'help.index'] as $name) {
-                    echo '<url><loc>'.$this->escape(route($name)).'</loc></url>';
+                foreach (['home', 'open.preorder', 'souvenirs.index', 'blog', 'discount', 'help.index', 'business.partner', 'business.corporate', 'business.affiliate', 'points.guide', 'accessibility.guide'] as $name) {
+                    echo '<url><loc>'.$this->escape(route($name)).'</loc><changefreq>daily</changefreq><priority>0.8</priority></url>';
                 }
+                echo '<url><loc>'.$this->escape(route('trips.category', ['type' => 'open-trip'])).'</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>';
+                echo '<url><loc>'.$this->escape(route('trips.category', ['type' => 'private-trip'])).'</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>';
             } else {
                 $columns = $type === 'products' ? ['id', 'slug', 'updated_at'] : ['id', 'slug', 'type', 'updated_at'];
                 foreach ($this->query($type)->whereBetween('id', [($part - 1) * 1000 + 1, $part * 1000])->select($columns)->lazyById(100) as $item) {

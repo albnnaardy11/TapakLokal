@@ -18,7 +18,13 @@
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
-/public/Assets/Images/gn/
+!/public/Assets/**
+/public/Assets/Images/gn/**
+/public/Assets/Images/360/*.jpg
+*.HEIC
+*.heic
+*.raw
+*.RAW
 /storage/*.key
 /storage/pail
 /vendor
