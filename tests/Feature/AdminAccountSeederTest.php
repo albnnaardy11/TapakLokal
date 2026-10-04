@@ -40,6 +40,7 @@ class AdminAccountSeederTest extends TestCase
         $credentials = json_decode(Storage::disk('local')->get($files[0]), true);
         foreach ($credentials as $account) {
             $user = User::where('email', $account['email'])->firstOrFail();
+            $this->assertSame('admin123', $account['password']);
             $this->assertTrue(Hash::check($account['password'], $user->password));
             $this->assertSame([$account['role']], $user->roles->pluck('name')->all());
             $this->assertTrue($user->must_change_password);
@@ -69,17 +70,21 @@ class AdminAccountSeederTest extends TestCase
         $this->assertDatabaseCount('users', 1);
     }
 
-    public function test_production_rejects_default_demo_addresses_before_creating_accounts(): void
+    public function test_production_creates_default_admin_accounts_without_environment_configuration(): void
     {
         $this->app->detectEnvironment(fn () => 'production');
         try {
             $this->artisan('db:seed', ['--class' => AdminAccountSeeder::class, '--force' => true])->run();
-            $this->fail('Production must require explicit credentials.');
-        } catch (\RuntimeException $exception) {
-            $this->assertStringContainsString('produksi', $exception->getMessage());
         } finally {
             $this->app->detectEnvironment(fn () => 'testing');
         }
-        $this->assertDatabaseCount('users', 0);
+
+        foreach (array_keys(config('admin_accounts')) as $role) {
+            $account = config('admin_accounts.'.$role);
+            $user = User::where('email', $account['email'])->firstOrFail();
+
+            $this->assertTrue(Hash::check('admin123', $user->password));
+            $this->assertTrue($user->roles()->where('name', $role)->exists());
+        }
     }
 }

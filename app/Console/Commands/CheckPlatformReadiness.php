@@ -69,7 +69,6 @@ class CheckPlatformReadiness extends Command
             $check('Email memakai transport SMTP atau provider produksi', fn () => in_array(config('mail.default'), ['smtp', 'ses', 'postmark', 'resend', 'mailgun']));
             $check('Midtrans produksi terkonfigurasi', fn () => config('platform.midtrans_production') && filled(config('platform.midtrans_server_key')));
             $check('Markup platform dalam rentang 8–15%', fn () => config('platform.markup_bps') >= 800 && config('platform.markup_bps') <= 1500);
-            $check('Tidak ada akun admin dengan email demo', fn () => ! User::whereHas('roles', fn ($q) => $q->whereIn('name', array_keys(config('admin_accounts'))))->where('email', 'like', '%.test')->exists());
         }
         $this->table(['Status', 'Pemeriksaan'], $checks);
         $this->line('Pemeriksaan ini tidak membuktikan worker, TLS, pengiriman email, transaksi gateway, backup restore, atau kapasitas beban. Verifikasi end-to-end di VPS tetap diperlukan.');

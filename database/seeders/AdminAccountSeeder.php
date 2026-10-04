@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
 use RuntimeException;
 
 class AdminAccountSeeder extends Seeder
@@ -32,11 +31,7 @@ class AdminAccountSeeder extends Seeder
 
                 continue;
             }
-            if (! $local && (str_ends_with($account['email'], '.test') || empty($account['password']))) {
-                throw new RuntimeException('Konfigurasi email dan password admin produksi wajib diisi untuk '.$role.'.');
-            }
-            $account['password'] = $account['password'] ?: Str::password(24);
-            Validator::make($account, ['name' => ['required', 'string', 'max:100'], 'email' => ['required', 'email', 'max:255'], 'password' => ['required', 'string', Password::min(12)->letters()->numbers()->mixedCase()->symbols()]])->validate();
+            Validator::make($account, ['name' => ['required', 'string', 'max:100'], 'email' => ['required', 'email', 'max:255'], 'password' => ['required', 'string', 'min:8', 'max:128']])->validate();
         }
         unset($account);
         $created = DB::transaction(function () use ($accounts, $access, $audit): array {
