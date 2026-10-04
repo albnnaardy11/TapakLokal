@@ -20,27 +20,36 @@ class PanoramaService
 
         $path = 'panoramas/thumbnails/'.hash('sha256', $media->path.'|'.$disk->lastModified($media->path)).'.webp';
         if (! $disk->exists($path)) {
-            $input = imagecreatefromstring($disk->get($media->path));
-            if (! $input) {
-                throw new \RuntimeException('Panorama tidak dapat dibaca.');
+            if (! function_exists('imagecreatefromstring') || ! function_exists('imagewebp') || ! $disk->exists($media->path)) {
+                return $media->path;
             }
-            $width = min(480, imagesx($input));
-            $output = imagescale($input, $width);
-            $stream = fopen('php://temp', 'w+b');
+
             try {
-                if (! $output || ! imagewebp($output, $stream, 75)) {
-                    throw new \RuntimeException('Thumbnail gagal dibuat.');
+                $content = $disk->get($media->path);
+                $input = @imagecreatefromstring($content);
+                if (! $input) {
+                    return $media->path;
                 }
-                rewind($stream);
-                if (! $disk->put($path, $stream)) {
-                    throw new \RuntimeException('Thumbnail gagal disimpan.');
+                $width = min(480, imagesx($input));
+                $output = imagescale($input, $width);
+                $stream = fopen('php://temp', 'w+b');
+                try {
+                    if (! $output || ! imagewebp($output, $stream, 75)) {
+                        return $media->path;
+                    }
+                    rewind($stream);
+                    if (! $disk->put($path, $stream)) {
+                        return $media->path;
+                    }
+                } finally {
+                    fclose($stream);
+                    imagedestroy($input);
+                    if ($output) {
+                        imagedestroy($output);
+                    }
                 }
-            } finally {
-                fclose($stream);
-                imagedestroy($input);
-                if ($output) {
-                    imagedestroy($output);
-                }
+            } catch (\Throwable) {
+                return $media->path;
             }
         }
 

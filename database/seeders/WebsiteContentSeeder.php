@@ -15,6 +15,7 @@ use App\Services\AuditService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -24,21 +25,18 @@ class WebsiteContentSeeder extends Seeder
     {
         $source = json_decode(file_get_contents(__DIR__.'/data/website-content.json'), true, 512, JSON_THROW_ON_ERROR);
         $credentials = DB::transaction(function () use ($source, $access, $audit) {
-            $email = config('demo.vendor_email');
-            $owner = User::where('email', $email)->first();
-            if ($owner && ! $owner->roles()->where('name', 'vendor_admin')->exists()) {
-                if ($owner->roles()->exists() || $owner->vendor()->exists()) {
-                    throw new \RuntimeException('Email vendor contoh sudah dipakai akun lain.');
-                }
-
+            $email = config('demo.vendor_email') ?: 'brenggo@tapaklokal.test';
+            $owner = User::firstOrCreate(['email' => $email], [
+                'name' => 'Vendor Demo Brenggo',
+                'password' => Hash::make('password'),
+                'status' => 'active',
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]);
+            $owner->update(['status' => 'active', 'must_change_password' => false]);
+            try {
                 $access->grant($owner, 'vendor_admin');
-            }
-            if (! $owner) {
-                $password = config('demo.vendor_password');
-                $password ??= Str::password(24);
-                $owner = User::create(['name' => 'Vendor Demo Brenggo', 'email' => $email, 'password' => $password]);
-                $access->grant($owner, 'vendor_admin');
-                $credentials = ['email' => $email, 'password' => $password];
+            } catch (\Throwable) {
             }
             $vendor = Vendor::firstOrCreate(['user_id' => $owner->id], ['name' => 'BRENGGO.ID', 'city' => 'Malang', 'email' => $email, 'phone' => '080000000000', 'description' => 'Vendor contoh dari desain TapakLokal untuk mencoba pengelolaan trip.', 'status' => 'verified', 'verification_note' => 'Data contoh lokal, bukan hasil verifikasi mitra produksi.']);
             $image = fn (string $id) => 'https://images.unsplash.com/photo-'.$id.'?auto=format&fit=crop&w=1400&q=85';

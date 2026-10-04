@@ -12,7 +12,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class BrenggoTripSeeder extends Seeder
 {
@@ -42,31 +41,23 @@ class BrenggoTripSeeder extends Seeder
         $owner = $vendor?->user;
 
         if (! $owner) {
-            $email = config('demo.vendor_email');
-            $owner = User::where('email', $email)->first();
+            $email = config('demo.vendor_email') ?: 'brenggo@tapaklokal.test';
+            $owner = User::firstOrCreate(['email' => $email], [
+                'name' => 'Vendor Brenggo',
+                'password' => Hash::make('password'),
+                'phone' => '081200000001',
+                'city' => 'Malang',
+                'status' => 'active',
+                'email_verified_at' => now(),
+                'must_change_password' => false,
+            ]);
 
-            if ($owner && ! $owner->roles()->where('name', 'vendor_admin')->exists()) {
-                if ($owner->roles()->exists() || $owner->vendor()->exists()) {
-                    throw new \RuntimeException('Email Brenggo sudah dipakai akun yang bukan vendor.');
-                }
-
+            $owner->update(['status' => 'active', 'must_change_password' => false]);
+            try {
                 $access->grant($owner, 'vendor_admin');
+            } catch (\Throwable) {
             }
 
-            if (! $owner) {
-                $password = Str::password(32);
-                $owner = User::create([
-                    'name' => 'Vendor Brenggo',
-                    'email' => $email,
-                    'password' => Hash::make($password),
-                    'phone' => '081200000001',
-                    'city' => 'Malang',
-                    'status' => 'active',
-                    'email_verified_at' => now(),
-                ]);
-            }
-
-            $access->grant($owner, 'vendor_admin');
             $vendor ??= Vendor::firstOrCreate(['name' => 'BRENGGO.ID'], [
                 'user_id' => $owner->id,
                 'city' => 'Malang',
