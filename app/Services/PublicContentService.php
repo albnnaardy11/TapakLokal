@@ -46,6 +46,8 @@ class PublicContentService
         $images = app(TripImageService::class);
 
         return Trip::with('vendor:id,name')
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($query) => $query->where('status', 'published')], 'rating')
+            ->withCount(['reviews as reviews_count' => fn ($query) => $query->where('status', 'published')])
             ->where('status', 'published')
             ->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('departure_date', '>=', today()->toDateString())

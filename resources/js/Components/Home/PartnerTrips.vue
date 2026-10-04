@@ -41,60 +41,18 @@ const formatPrice = (value) => {
     }).format(value).replace(/\s/g, '');
 };
 
-const defaultTrips = [
-    {
-        id: 1,
-        slug: 'open-trip-pulau-komodo',
-        type: 'open-trip',
-        name: 'Open Trip pulau komodo',
-        location: 'Malang',
-        duration: '3 hari 2 malam',
-        price: 'Rp350.000',
-        rating: '4.8/5',
-        vendor: { name: 'BRENGGO.ID' },
-        image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85',
-    },
-    {
-        id: 2,
-        slug: 'open-trip-bromo',
-        type: 'open-trip',
-        name: 'Open Trip Bromo',
-        location: 'Malang',
-        duration: '3 hari 2 malam',
-        price: 'Rp350.000',
-        rating: '4.8/5',
-        vendor: { name: 'BRENGGO.ID' },
-        image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=85',
-    },
-    {
-        id: 3,
-        slug: 'open-raja-ampat',
-        type: 'open-trip',
-        name: 'Open Raja Ampat',
-        location: 'Papua',
-        duration: '6 hari 5 malam',
-        price: 'Rp15.000.000',
-        rating: '4.8/5',
-        vendor: { name: 'BRENGGO.ID' },
-        image: '/Assets/Images/logo-vendor/a6f6f78acd99081647225f8a7a9d6369.jpg',
-    },
-];
-
 const trips = computed(() => {
-    if (!props.items || props.items.length === 0) {
-        return defaultTrips;
-    }
-    return props.items.map((trip) => ({
+    return (props.items || []).map((trip) => ({
         id: trip.id,
         slug: trip.slug,
         type: trip.type || 'open-trip',
         name: trip.title || trip.name,
-        location: trip.destination || 'Malang',
+        location: trip.destination || 'Indonesia',
         duration: formatDuration(trip.departure_date, trip.end_date),
         price: formatPrice(trip.selling_price || trip.price),
-        rating: trip.reviews_avg_rating ? `${Number(trip.reviews_avg_rating).toFixed(1)}/5` : '4.8/5',
-        vendor: { name: trip.vendor?.name || 'BRENGGO.ID' },
-        image: trip.thumbnail_url || trip.image_url || trip.image || 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85',
+        rating: trip.reviews_avg_rating ? `${Number(trip.reviews_avg_rating).toFixed(1)}/5` : 'Belum ada ulasan',
+        vendor: { name: trip.vendor?.name || 'Mitra TapakLokal' },
+        image: trip.thumbnail_url || trip.image_url || trip.image,
     }));
 });
 

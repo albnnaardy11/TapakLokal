@@ -227,13 +227,16 @@ class BookingController extends Controller
             'date' => ['nullable', 'date_format:Y-m-d'],
             'guests' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
-        $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+        $trips = Trip::with('vendor:id,name')
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($query) => $query->where('status', 'published')], 'rating')
+            ->withCount(['reviews as reviews_count' => fn ($query) => $query->where('status', 'published')])
+            ->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -349,14 +352,17 @@ class BookingController extends Controller
             'guests' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+        $trips = Trip::with('vendor:id,name')
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($query) => $query->where('status', 'published')], 'rating')
+            ->withCount(['reviews as reviews_count' => fn ($query) => $query->where('status', 'published')])
+            ->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->when($vendorRecord, fn ($query, $v) => $query->where('vendor_id', $v->id))
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['type'] ?? null, fn ($query, $type) => $query->where('type', $type))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 
@@ -382,13 +388,16 @@ class BookingController extends Controller
         ]);
         $filters['type'] = $type;
 
-        $trips = Trip::with('vendor:id,name')->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
+        $trips = Trip::with('vendor:id,name')
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($query) => $query->where('status', 'published')], 'rating')
+            ->withCount(['reviews as reviews_count' => fn ($query) => $query->where('status', 'published')])
+            ->where('status', 'published')->whereHas('vendor', fn ($query) => $query->where('status', 'verified'))
             ->where('type', $type)
             ->where('departure_date', '>=', today()->toDateString())
             ->when($filters['q'] ?? null, fn ($query, $term) => $this->applySmartTripSearch($query, $term))
             ->when($filters['date'] ?? null, fn ($query, $date) => $query->where('departure_date', $date))
             ->when($filters['guests'] ?? null, fn ($query, $guests) => $query->whereRaw('(capacity - reserved_seats) >= ?', [$guests]))
-            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price'])->withQueryString();
+            ->latest('id')->paginate(8, ['id', 'vendor_id', 'title', 'slug', 'type', 'destination', 'meeting_point', 'image_url', 'departure_date', 'end_date', 'capacity', 'reserved_seats', 'price', 'experience'])->withQueryString();
 
         $homepageData = $this->content->homepage();
 

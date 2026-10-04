@@ -857,54 +857,59 @@ const curatedTripsData = [
     },
 ];
 
-// Combine DB props with curated trips
-const allAvailableTrips = computed(() => {
-    const dbTrips = (props.trips?.data || []).map((t, idx) => ({
-        id: t.id || `db-${idx}`,
-        slug: t.slug || `trip-${t.id}`,
-        title: t.title || 'Paket Wisata Eksplorasi Nusantara',
-        type: t.type || 'open-trip',
-        categoryName: t.type === 'private-trip' ? 'Private Trip' : 'Open Trip',
-        destination: t.destination || 'Indonesia',
-        meetingPoint: t.meeting_point || 'Meeting Point Kota Terdekat',
-        duration: '3 Hari 2 Malam (3H2M)',
-        durationCode: '3d2n',
-        price: Number(t.selling_price || t.price || 1500000),
-        originalPrice: Math.round(Number(t.selling_price || t.price || 1500000) * 1.15),
-        rating: 8.7,
-        ratingLabel: 'Sangat Bagus',
-        reviewCount: 320 + idx * 45,
-        bookedThisWeek: 15 + idx * 3,
-        isPreferred: true,
-        instantConfirmation: true,
-        freeReschedule: true,
-        stars: 5,
-        facilities: ['Transport AC PP', 'Makan Termasuk', 'Dokumentasi Foto', 'Tour Guide Lokal', 'Tiket Objek Wisata'],
-        promoCode: 'TAPAKLOKAL',
-        promoBadge: 'Diskon 8% Pengguna Baru! Gunakan kode: TAPAKLOKAL',
-        reviewSnippet: {
-            author: 'Pengguna TapakLokal',
-            badge: 'Verified Buyer',
-            quote: 'Perjalanan sangat terorganisir dengan baik, fasilitas sesuai deskripsi dan pemandu lokal sangat ramah.',
-        },
-        images: [
-            t.image_url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=800&q=80',
-        ],
-        isDbTrip: true,
-    }));
-
-    // If dbTrips exist, prioritize them and only add non-duplicate curated items
-    if (dbTrips.length > 0) {
-        if (props.partner) {
-            return dbTrips;
-        }
-        const slugs = new Set(dbTrips.map(d => d.slug));
-        const nonDuplicateCurated = curatedTripsData.filter(c => !slugs.has(c.slug));
-        return [...dbTrips, ...nonDuplicateCurated];
+const formatTripDuration = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+        return 'Jadwal tersedia';
     }
 
-    return curatedTripsData;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.max(1, Math.round((end - start) / 86400000) + 1);
+    const nights = Math.max(0, days - 1);
+
+    return nights > 0 ? `${days} Hari ${nights} Malam (${days}H${nights}M)` : '1 Hari';
+};
+
+// The public catalogue only renders records returned by the backend.
+const allAvailableTrips = computed(() => {
+    return (props.trips?.data || []).map((t) => {
+        const rating = Number(t.reviews_avg_rating || 0);
+        const reviewCount = Number(t.reviews_count || 0);
+        const photos = Array.isArray(t.experience?.detail?.images)
+            ? t.experience.detail.images.filter(Boolean)
+            : [];
+        const facilities = Array.isArray(t.experience?.facilities)
+            ? t.experience.facilities.map((facility) => facility.label || facility).filter(Boolean)
+            : [];
+
+        return {
+        id: t.id,
+        slug: t.slug,
+        title: t.title,
+        type: t.type,
+        categoryName: t.type === 'private-trip' ? 'Private Trip' : 'Open Trip',
+        destination: t.destination,
+        meetingPoint: t.meeting_point,
+        duration: formatTripDuration(t.departure_date, t.end_date),
+        durationCode: '',
+        price: Number(t.selling_price || t.price),
+        originalPrice: null,
+        rating: rating ? Number((rating * 2).toFixed(1)) : 0,
+        ratingLabel: rating ? (rating >= 4.5 ? 'Luar Biasa' : 'Sangat Bagus') : 'Belum ada ulasan',
+        reviewCount,
+        bookedThisWeek: Number(t.reserved_seats || 0),
+        isPreferred: rating >= 4.5 && reviewCount >= 4,
+        instantConfirmation: false,
+        freeReschedule: false,
+        stars: rating ? Math.max(1, Math.round(rating)) : 0,
+        facilities,
+        promoCode: null,
+        promoBadge: null,
+        reviewSnippet: null,
+        images: photos.length > 0 ? photos : [t.image_url].filter(Boolean),
+        isDbTrip: true,
+        };
+    });
 });
 
 // Sidebar & Filter States

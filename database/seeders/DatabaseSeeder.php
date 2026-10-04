@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
             $this->call(WebsiteContentSeeder::class);
             $this->call(VirtualTourSeeder::class);
         }
+
+        $this->call(JawaBaratVendorTripSeeder::class);
     }
 }
