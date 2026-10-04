@@ -31,6 +31,20 @@ const props = defineProps({
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+const permissions = computed(() => page.props.auth?.permissions || []);
+const isAdmin = computed(() => permissions.value.includes('admin.access'));
+const isVendor = computed(() => !isAdmin.value && permissions.value.includes('vendor.access'));
+const isTraveler = computed(() => !isAdmin.value && !isVendor.value);
+const adminPanels = [
+    ['super', 'Super Admin', 'system.view'],
+    ['content', 'Content Admin', 'content.view'],
+    ['operations', 'Operations Admin', 'operations.view'],
+    ['finance', 'Finance Admin', 'finance.view'],
+    ['growth', 'Growth Admin', 'growth.view'],
+];
+const roleLabel = computed(() => isAdmin.value
+    ? adminPanels.filter(([, , permission]) => permissions.value.includes(permission)).map(([, label]) => label).join(' · ') || 'Admin'
+    : isVendor.value ? 'Mitra Vendor' : 'Traveler');
 
 const open = ref(false);
 const root = ref(null);
@@ -41,6 +55,12 @@ const tier = computed(() => user.value?.tier ?? 'Bronze');
 
 // Professional Traveloka Priority standard color palette
 const tierConfig = computed(() => {
+    if (!isTraveler.value) return {
+        gradientBorder: 'linear-gradient(135deg, #078cff, #173b70)',
+        glowShadow: '0 2px 8px rgba(7,140,255,0.18)',
+        avatarBg: 'bg-[#0175ea]', headerGradient: 'from-[#f5faff] to-[#e8f3ff]',
+        textTitle: 'text-[#173b70]', textSub: 'text-[#526e91]', iconColor: 'text-[#0175ea]',
+    };
     const t = (tier.value || 'Bronze').toLowerCase();
     if (t === 'gold') {
         return {
@@ -92,7 +112,7 @@ const handle = computed(() => {
     return '@petualangnyasar';
 });
 
-const groups = [
+const travelerGroups = [
     {
         title: 'AKUN & PEMBAYARAN',
         items: [
@@ -114,6 +134,20 @@ const groups = [
         ],
     },
 ];
+
+const groups = computed(() => {
+    if (isAdmin.value) return [{ title: 'PANEL PENGELOLAAN', items: adminPanels
+        .filter(([, , permission]) => permissions.value.includes(permission))
+        .map(([key, label]) => ({ key, label, icon: Shield, href: route('admin.panel.dashboard', { panel: key }) })) }];
+    if (isVendor.value) return [{ title: 'PORTAL MITRA', items: [
+        ['dashboard', 'Overview', ClipboardList], ['trips', 'Trip & Jadwal', BookingPassIcon],
+        ['bookings', 'Pemesanan', PurchaseListIcon], ['finance', 'Keuangan', Wallet],
+        ['reviews', 'Rating & Ulasan', Star], ['profile', 'Profil & Verifikasi', Settings],
+        ['support', 'Bantuan & Chat', Headset],
+    ].map(([key, label, icon]) => ({ key, label, icon, href: route('vendor.section', key) }))
+        .concat([{ key: 'souvenirs', label: 'Produk & Pesanan Oleh-oleh', icon: Gift, href: route('vendor.souvenirs') }]) }];
+    return travelerGroups;
+});
 
 const close = (restore = false) => {
     open.value = false;
@@ -256,8 +290,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', outside));
                         </div>
                     </div>
 
+                    <p v-if="!isTraveler" class="mt-3 flex items-center gap-2 rounded-xl bg-white/80 px-3 py-2 text-xs font-bold text-[#173b70]"><Shield class="size-4 shrink-0 text-[#0175ea]" />{{ roleLabel }}</p>
                     <!-- Tier Badge & Point Navigation -->
                     <Link
+                        v-if="isTraveler"
                         :href="route('account.section', 'points')"
                         class="mt-3 flex items-center justify-between rounded-xl bg-white/85 hover:bg-white px-3 py-2 text-xs font-bold shadow-2xs transition backdrop-blur-xs"
                         :class="tierConfig.textTitle"
@@ -274,7 +310,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', outside));
                     </Link>
                 </div>
 
-                <Link :href="route('souvenirs.orders')" class="mx-2 flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-semibold text-[#0175ea]" @click="close()"><ReceiptText class="size-4" />Pesanan oleh-oleh</Link>
+                <Link v-if="isTraveler" :href="route('souvenirs.orders')" class="mx-2 flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-semibold text-[#0175ea]" @click="close()"><ReceiptText class="size-4" />Pesanan oleh-oleh</Link>
 <!-- Navigation Groups -->
                 <div class="p-2 space-y-1">
                     <div v-for="group in groups" :key="group.title">
@@ -284,7 +320,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', outside));
                         <Link
                             v-for="item in group.items"
                             :key="item.key"
-                            :href="route('account.section', item.key)"
+                            :href="item.href || route('account.section', item.key)"
                             class="group flex min-h-9.5 items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 transition duration-200 hover:bg-[#edf5ff] hover:text-[#0194f3] focus-visible:outline-2 focus-visible:outline-[#0194f3]"
                             @click="close()"
                         >
